@@ -8,13 +8,16 @@ import java.util.Collections;
 import java.util.List;
 
 public class ServiceRegistry implements Watcher {
-    private static final String REGISTRY_ZNODE = "/service_registry";
+    public static final String WORKERS_REGISTRY_ZNODE = "/workers_service_registry";
+    public static final String COORDINATORS_REGISTRY_ZNODE = "/coordinators_service_registry";
     private final ZooKeeper zooKeeper;
     private String currentZnode = null;
     private List<String> allServiceAddresses = null;
+    private String serviceRegistryZnode;
 
-    public ServiceRegistry(ZooKeeper zooKeeper) {
+    public ServiceRegistry(ZooKeeper zooKeeper, String serviceRegistryZnode) {
         this.zooKeeper = zooKeeper;
+        this.serviceRegistryZnode = serviceRegistryZnode;
         createServiceRegistryZnode();
     }
 
@@ -28,7 +31,7 @@ public class ServiceRegistry implements Watcher {
         if (currentZnode != null && zooKeeper.exists(currentZnode, false) != null) {
             return;
         }
-        currentZnode = zooKeeper.create(REGISTRY_ZNODE + "/n_", metadata.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
+        currentZnode = zooKeeper.create(serviceRegistryZnode + "/n_", metadata.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
         System.out.println("Registered to service registry - " + currentZnode);
     }
 
@@ -70,8 +73,8 @@ public class ServiceRegistry implements Watcher {
 
     private void createServiceRegistryZnode() {
         try {
-            if (zooKeeper.exists(REGISTRY_ZNODE, false) == null) {
-                zooKeeper.create(REGISTRY_ZNODE, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+            if (zooKeeper.exists(serviceRegistryZnode, false) == null) {
+                zooKeeper.create(serviceRegistryZnode, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
             }
         } catch (KeeperException e) {
             e.printStackTrace();
@@ -87,12 +90,12 @@ public class ServiceRegistry implements Watcher {
      * @throws KeeperException
      */
     private synchronized void updateAddresses() throws InterruptedException, KeeperException {
-        List<String> workerZnodes = zooKeeper.getChildren(REGISTRY_ZNODE, this);
+        List<String> workerZnodes = zooKeeper.getChildren(serviceRegistryZnode, this);
 
         List<String> addresses = new ArrayList<>(workerZnodes.size());
 
         for (String workerZnode : workerZnodes) {
-            String workerZnodeFullPath = REGISTRY_ZNODE + "/" + workerZnode;
+            String workerZnodeFullPath = serviceRegistryZnode + "/" + workerZnode;
             Stat stat = zooKeeper.exists(workerZnodeFullPath, false);
             if (stat == null) continue;
 

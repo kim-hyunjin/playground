@@ -4,42 +4,22 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
-import model.DocumentTFMap;
-import model.SerializationUtils;
-import model.TFMap;
-import model.Task;
-import search.TFIDFCalculator;
 
 import java.io.*;
-import java.math.BigInteger;
 import java.net.InetSocketAddress;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 public class WebServer {
-    private static final String TASK_ENDPOINT = "/task";
     private static final String STATUS_ENDPOINT = "/status";
+    private RequestHandler requestHandler;
 
     private final int port;
     private HttpServer server;
 
-    public static void main(String[] args) {
-        int serverPort = 8080;
-        if (args.length == 1) {
-            serverPort = Integer.parseInt(args[0]);
-        }
-
-        WebServer webServer = new WebServer(serverPort);
-        webServer.startServer();
-
-        System.out.println("Server is listening on port " + serverPort);
-    }
-
-    public WebServer(int port) {
+    public WebServer(int port, RequestHandler requestHandler) {
         this.port = port;
+        this.requestHandler = requestHandler;
     }
 
     public void startServer() {
@@ -51,7 +31,7 @@ public class WebServer {
         }
 
         HttpContext statusContext = server.createContext(STATUS_ENDPOINT);
-        HttpContext taskContext = server.createContext(TASK_ENDPOINT);
+        HttpContext taskContext = server.createContext(requestHandler.getEndpoint());
 
         statusContext.setHandler(this::handleStatusCheckRequest);
         taskContext.setHandler(this::handleTaskRequest);
@@ -62,7 +42,8 @@ public class WebServer {
 
     public void stopServer() {
         if (server != null) {
-            server.stop(0);
+            server.stop(10);
+            server = null;
         }
     }
 
@@ -95,7 +76,7 @@ public class WebServer {
             long startTime = System.nanoTime();
 
             byte[] requestBytes = exchange.getRequestBody().readAllBytes();
-            byte[] responseBytes = calculateResponse(requestBytes);
+            byte[] responseBytes = requestHandler.handleRequest(requestBytes);
 
             long finishTime = System.nanoTime();
 
@@ -121,33 +102,6 @@ public class WebServer {
         exchange.sendResponseHeaders(statusCode, responseBytes.length);
         try (OutputStream outputStream = exchange.getResponseBody()) {
             outputStream.write(responseBytes);
-        }
-    }
-
-    private byte[] calculateResponse(byte[] requestBytes) {
-        Task task = (Task) SerializationUtils.deserialize(requestBytes);
-        List<String> documents = Objects.requireNonNull(task).getDocuments();
-        System.out.printf("Received %d documents to process%n", documents.size());
-
-        DocumentTFMap result = new DocumentTFMap();
-
-        for (String document : documents) {
-            List<String> words = parseWordsFromDocument(document);
-            TFMap documentData = TFIDFCalculator.getTFMap(words, task.getSearchTerms());
-            result.putDocumentTFMap(document, documentData);
-        }
-
-        return SerializationUtils.serialize(result);
-    }
-
-    private List<String> parseWordsFromDocument(String document) {
-        try {
-            FileReader fileReader = new FileReader(document);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-            List<String> lines = bufferedReader.lines().collect(Collectors.toList());
-            return TFIDFCalculator.getWordsFromLines(lines);
-        } catch (FileNotFoundException e) {
-            return Collections.emptyList();
         }
     }
 

@@ -1,17 +1,18 @@
 package model;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 public class DocumentTFMap implements Serializable {
-    private Map<String, TFMap> documentToTFMap = new HashMap<>();
+    private final Map<Document, TFMap> documentToTFMap = new HashMap<>();
 
-    public void putDocumentTFMap(String documentName, TFMap tfMap) {
+    public void putDocumentTFMap(Document documentName, TFMap tfMap) {
         documentToTFMap.put(documentName, tfMap);
     }
 
-    public Map<String, TFMap> getDocumentToTFMap() {
-        return documentToTFMap;
+    public Map<Document, TFMap> getDocumentToTFMap() {
+        return Collections.unmodifiableMap(documentToTFMap);
     }
 }

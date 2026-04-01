@@ -6,6 +6,8 @@ import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
+import search.SearchCoordinator;
+import search.SearchWorker;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -23,7 +25,8 @@ public class Application implements Watcher {
         int currentServerPort = args.length == 1 ? Integer.parseInt(args[0]) : DEFAULT_PORT;
         Application application = new Application();
         ZooKeeper zooKeeper = application.connectToZookeeper();
-        ServiceRegistry serviceRegistry = new ServiceRegistry(zooKeeper);
+        ServiceRegistry workersServiceRegistry = new ServiceRegistry(zooKeeper, ServiceRegistry.WORKERS_REGISTRY_ZNODE);
+        ServiceRegistry coordinatorsServiceRegistry = new ServiceRegistry(zooKeeper, ServiceRegistry.COORDINATORS_REGISTRY_ZNODE);
 
         LeaderElection leaderElection = new LeaderElection(zooKeeper, new OnElectionCallback() {
             @Override
@@ -31,13 +34,23 @@ public class Application implements Watcher {
                 try {
                     if (webServer != null) {
                         webServer.stopServer();
-                        webServer = null;
                     }
-                    serviceRegistry.unregisterFromCluster();
-                    serviceRegistry.registerForUpdates();
+
+                    SearchCoordinator searchCoordinator = new SearchCoordinator(workersServiceRegistry);
+                    webServer = new WebServer(currentServerPort, searchCoordinator);
+                    webServer.startServer();
+
+                    workersServiceRegistry.unregisterFromCluster();
+                    workersServiceRegistry.registerForUpdates();
+
+                    String currentServerAddress =
+                            String.format("http://%s:%d%s", InetAddress.getLocalHost().getCanonicalHostName(), currentServerPort, searchCoordinator.getEndpoint());
+                    coordinatorsServiceRegistry.registerToCluster(currentServerAddress);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (KeeperException e) {
+                    e.printStackTrace();
+                } catch (UnknownHostException e) {
                     e.printStackTrace();
                 }
             }
@@ -45,12 +58,13 @@ public class Application implements Watcher {
             @Override
             public void onWorker() {
                 try {
+                    SearchWorker searchWorker = new SearchWorker();
                     if (webServer == null) {
-                        webServer = new WebServer(currentServerPort);
+                        webServer = new WebServer(currentServerPort, searchWorker);
                         webServer.startServer();
                     }
-                    String currentServerAddress = String.format("http://%s:%d", InetAddress.getLocalHost().getCanonicalHostName(), currentServerPort);
-                    serviceRegistry.registerToCluster(currentServerAddress);
+                    String currentServerAddress = String.format("http://%s:%d%s", InetAddress.getLocalHost().getCanonicalHostName(), currentServerPort, searchWorker.getEndpoint());
+                    workersServiceRegistry.registerToCluster(currentServerAddress);
                 } catch (UnknownHostException e) {
                     e.printStackTrace();
                 } catch (InterruptedException e) {

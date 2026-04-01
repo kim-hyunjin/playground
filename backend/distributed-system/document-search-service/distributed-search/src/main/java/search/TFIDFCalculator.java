@@ -1,5 +1,6 @@
 package search;
 
+import model.Document;
 import model.IDFMap;
 import model.TFMap;
 
@@ -14,7 +15,7 @@ public class TFIDFCalculator {
     /**
      * 문서의 전체 본문 내용과 검색 쿼리(String)를 받아 TF를 계산합니다.
      * @param allWordsInDocument 문서의 전체 단어 리스트
-     * @param query 검색 쿼리
+     * @param searchTerms 검색 쿼리의 단어 목록
      * @return 검색 쿼리의 단어와 해당 단어의 TF를 매핑한 맵
      */
     public static TFMap getTFMap(List<String> allWordsInDocument, List<String> searchTerms) {
@@ -29,13 +30,12 @@ public class TFIDFCalculator {
 
     /**
      * 검색 쿼리와 각 문서에 계산된 tf를 바탕으로 각 문서의 최종 점수를 계산하여 내림차순으로 정렬된 맵을 반환합니다.
-     * @param query 검색 쿼리
+     * @param searchTerms 검색 쿼리의 단어 목록
      * @param documentToTFMap 문서 이름과 해당 문서의 TF 맵을 매핑한 맵
      * @return 스코어를 키로, 해당 스코어에 해당하는 문서 이름 리스트를 값으로 가지는 맵
      */
-    public static Map<Double, List<String>> getDocumentsSortedByScore(String query, Map<String, TFMap> documentToTFMap) {
-        TreeMap<Double, List<String>> scoreToDocuments = new TreeMap<>();
-        List<String> searchTerms = getWordsFromLine(query);
+    public static Map<Double, List<Document>> getDocumentsSortedByScore(List<String> searchTerms, Map<Document, TFMap> documentToTFMap) {
+        TreeMap<Double, List<Document>> scoreToDocuments = new TreeMap<>();
 
         IDFMap idfMap = new IDFMap();
         for (String term : searchTerms) {
@@ -43,7 +43,7 @@ public class TFIDFCalculator {
             idfMap.putTermIDF(term, idf);
         }
 
-        for (String documentName : documentToTFMap.keySet()) {
+        for (Document documentName : documentToTFMap.keySet()) {
             TFMap tfMap = documentToTFMap.get(documentName);
             double score = calculateDocumentScore(searchTerms, tfMap, idfMap);
 
@@ -65,6 +65,13 @@ public class TFIDFCalculator {
     }
 
     /**
+     * 특정 줄에서 단어들을 추출하여 리스트로 반환합니다.
+     */
+    public static List<String> getWordsFromLine(String line) {
+        return Arrays.asList(line.split("(\\.)+|(,)+|( )+|(-)+|(\\?)+|(!)+|(;)+|(:)+|(\\d)+|(\\n)+"));
+    }
+
+    /**
      * 특정 단어가 한 문서 내에서 나타나는 빈도(TF)를 계산합니다.
      */
     private static double calculateTermFrequency(List<String> allWordsInDocument, String term) {
@@ -80,7 +87,7 @@ public class TFIDFCalculator {
     /**
      * 단어의 역문서 빈도(IDF)를 계산합니다.
      */
-    private static double calculateInverseDocumentFrequency(String term, Map<String, TFMap> documentToTFMap) {
+    private static double calculateInverseDocumentFrequency(String term, Map<Document, TFMap> documentToTFMap) {
         double documentsWithTermCount = 0;
         for (TFMap tfMap : documentToTFMap.values()) {
             if (tfMap.getTermFrequency(term) > 0) {
@@ -101,12 +108,5 @@ public class TFIDFCalculator {
             totalScore += tf * idf;
         }
         return totalScore;
-    }
-
-    /**
-     * 특정 줄에서 단어들을 추출하여 리스트로 반환합니다.
-     */
-    private static List<String> getWordsFromLine(String line) {
-        return Arrays.asList(line.split("(\\.)+|(,)+|( )+|(-)+|(\\?)+|(!)+|(;)+|(:)+|(\\d)+|(\\n)+"));
     }
 }

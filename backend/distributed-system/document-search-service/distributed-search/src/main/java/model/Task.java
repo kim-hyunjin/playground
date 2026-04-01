@@ -6,9 +6,9 @@ import java.util.List;
 
 public class Task implements Serializable {
     private final List<String> searchTerms;
-    private final List<String> documents;
+    private final List<Document> documents;
 
-    public Task(List<String> searchTerms, List<String> documents) {
+    public Task(List<String> searchTerms, List<Document> documents) {
         this.searchTerms = searchTerms;
         this.documents = documents;
     }
@@ -17,7 +17,7 @@ public class Task implements Serializable {
         return Collections.unmodifiableList(searchTerms);
     }
 
-    public List<String> getDocuments() {
+    public List<Document> getDocuments() {
         return Collections.unmodifiableList(documents);
     }
 }
