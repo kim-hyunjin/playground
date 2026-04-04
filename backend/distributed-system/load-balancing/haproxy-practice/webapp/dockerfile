@@ -6,7 +6,7 @@ WORKDIR /tmp/
 RUN mvn package
 RUN ls -la /tmp
 
-FROM openjdk:11
+FROM eclipse-temurin:11-jdk-jammy
 COPY --from=MAVEN_TOOL_CHAIN_CONTAINER /tmp/target/webapp-1.0-SNAPSHOT-jar-with-dependencies.jar /tmp/
 WORKDIR /tmp/
 ENTRYPOINT ["java","-jar", "webapp-1.0-SNAPSHOT-jar-with-dependencies.jar"]
