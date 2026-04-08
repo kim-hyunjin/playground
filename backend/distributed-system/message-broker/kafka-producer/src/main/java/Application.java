@@ -54,14 +54,13 @@ public class Application {
 
     public static void produceMessages(int numberOfMessages, Producer<Long, String> kafkaProducer)
             throws ExecutionException, InterruptedException {
-        int partition = 1;
 
         for (int i = 0; i < numberOfMessages; i++) {
             long key = i;
             String value = String.format("event %d", i);
 
-            long timeStamp = System.currentTimeMillis();
-
+            // int partition = 1;
+            // long timeStamp = System.currentTimeMillis();
             // ProducerRecord<Long, String> record = new ProducerRecord<>(TOPIC, partition,
             // timeStamp, key, value);
 
