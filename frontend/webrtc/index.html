@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P2P Screen Share (Zero Server)</title>
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; background: #f8fafc; color: #1e293b; margin: 0; padding: 2rem; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        .container { max-width: 800px; width: 100%; display: flex; flex-direction: column; gap: 2rem; }
+        header { text-align: center; }
+        h1 { margin: 0; font-size: 1.875rem; color: #0f172a; }
+        p { color: #64748b; margin-top: 0.5rem; }
+
+        .video-wrapper { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1); position: relative; }
+        video { width: 100%; height: 100%; object-fit: contain; }
+        .video-placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 1.125rem; text-align: center; pointer-events: none; flex-direction: column; gap: 0.5rem; }
+
+        .fullscreen-btn { position: absolute; bottom: 1rem; right: 1rem; background: rgba(0,0,0,0.6); color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; padding: 0.5rem 1rem; cursor: pointer; display: block; z-index: 10; transition: background 0.2s; font-size: 0.875rem; }
+        .fullscreen-btn:hover { background: rgba(0,0,0,0.8); }
+
+        .fill-window { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 9999 !important; border-radius: 0 !important; max-width: none !important; }
+
+        .steps { display: flex; flex-direction: column; gap: 1.5rem; background: #fff; padding: 2rem; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1); }
+        .step { display: flex; flex-direction: column; gap: 0.75rem; padding-bottom: 1.5rem; border-bottom: 1px solid #f1f5f9; }
+        .step:last-child { border-bottom: none; padding-bottom: 0; }
+        .step h2 { margin: 0; font-size: 1.125rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
+        .step h2 span { background: #3b82f6; color: #fff; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.875rem; }
+        
+        .description { font-size: 0.875rem; color: #475569; line-height: 1.5; }
+        textarea { width: 100%; height: 100px; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; font-family: monospace; font-size: 0.75rem; resize: none; background: #f8fafc; color: #334155; box-sizing: border-box; }
+        textarea:focus { outline: 2px solid #3b82f6; border-color: transparent; }
+
+        .actions { display: flex; gap: 0.75rem; align-items: center; margin-top: 0.5rem; }
+        button { padding: 0.625rem 1.25rem; border-radius: 6px; font-size: 0.875rem; font-weight: 500; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-primary { background: #2563eb; color: #fff; }
+        .btn-primary:hover:not(:disabled) { background: #1d4ed8; }
+        .btn-secondary { background: #fff; border-color: #cbd5e1; color: #334155; }
+        .btn-secondary:hover:not(:disabled) { background: #f1f5f9; border-color: #94a3b8; }
+        .btn-danger { background: #ef4444; color: white; border-color: #ef4444; }
+        .btn-danger:hover:not(:disabled) { background: #dc2626; }
+
+        .status-badge { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; padding: 0.25rem 0.5rem; border-radius: 9999px; }
+        .status-waiting { background: #fef3c7; color: #92400e; }
+        .status-gathering { background: #dbeafe; color: #1e40af; }
+        .status-ready { background: #dcfce7; color: #166534; }
+        .status-connected { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+        
+        .toast { 
+            position: fixed; 
+            background: #1e293b; 
+            color: #fff; 
+            padding: 0.5rem 1rem; 
+            border-radius: 6px; 
+            font-size: 0.75rem; 
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.2s ease;
+            z-index: 10000;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3);
+            white-space: nowrap;
+        }
+        .toast.show { 
+            opacity: 1;
+        }
+
+        #localIndicator {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            display: none;
+            z-index: 10;
+        }
+        .blinking-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #ef4444;
+            border-radius: 50%;
+            margin-right: 6px;
+            animation: blink 1.5s infinite;
+        }
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>P2P Screen Share</h1>
+        <p>No server. No recording. Purely peer-to-peer.</p>
+        <div id="connStatus" class="status-badge status-waiting" style="margin-top: 1rem; display: inline-block;">Disconnected</div>
+    </header>
+
+    <div id="videoWrapper" class="video-wrapper">
+        <div id="placeholder" class="video-placeholder">
+            <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+            <span>Remote screen will appear here...</span>
+        </div>
+        <video id="remoteVideo" autoplay playsinline></video>
+        <div id="localIndicator"><span class="blinking-dot"></span>You are sharing your screen</div>
+        <button id="btnFillWindow" class="fullscreen-btn">Fill Window</button>
+    </div>
+
+    <!-- Initial Setup Controls -->
+    <div id="setupControls" class="steps">
+        <!-- Step 0: Permission Check -->
+        <div class="step">
+            <h2><span>0</span> macOS Users: Check Permissions</h2>
+            <div class="description">If you are on macOS and haven't granted screen recording permissions to this browser, test it now before setting up the connection to avoid restarting the browser later.</div>
+            <div class="actions">
+                <button id="btnCheckPermission" class="btn-secondary">Test Screen Share</button>
+            </div>
+            <div id="permissionStatus" style="font-size: 0.875rem; margin-top: 0.5rem; display: none;"></div>
+        </div>
+
+        <!-- Step 1: Host -->
+        <div class="step">
+            <h2><span>1</span> The Host: Initialize</h2>
+            <div class="description">Click to generate a connection <b>Offer</b>. You can share your screen now, or wait until connected.</div>
+            <div class="actions">
+                <button id="btnInitHost" class="btn-primary">Initialize Connection</button>
+                <button id="btnCopyOffer" class="btn-secondary" disabled>Copy Offer Code</button>
+            </div>
+            <textarea id="offerSdp" readonly placeholder="Your Offer Code will appear here..."></textarea>
+        </div>
+
+        <!-- Step 2: Guest -->
+        <div class="step">
+            <h2><span>2</span> The Guest: Paste & Answer</h2>
+            <div class="description">Paste the Offer code from your friend, then generate your <b>Answer</b>.</div>
+            <textarea id="guestOfferInput" placeholder="Paste your friend's Offer Code here..."></textarea>
+            <div class="actions">
+                <button id="btnCreateAnswer" class="btn-primary">Connect & Create Answer</button>
+                <button id="btnCopyAnswer" class="btn-secondary" disabled>Copy Answer Code</button>
+            </div>
+            <textarea id="answerSdp" readonly placeholder="Your Answer Code will appear here..."></textarea>
+        </div>
+
+        <!-- Step 3: Host Final -->
+        <div class="step">
+            <h2><span>3</span> Finalize: Host Pastes Answer</h2>
+            <div class="description">Host: Paste the Answer code back from your friend to complete the link.</div>
+            <textarea id="hostAnswerInput" placeholder="Paste the Answer Code from your guest here..."></textarea>
+            <div class="actions">
+                <button id="btnFinalize" class="btn-primary">Complete Connection</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Connected Controls -->
+    <div id="connectedControls" class="steps" style="display: none;">
+        <div class="step">
+            <h2><span>★</span> Connection Established</h2>
+            <div class="description">You are now connected peer-to-peer. Either of you can share your screen.</div>
+            <div class="actions" style="justify-content: center; margin-top: 1rem;">
+                <button id="btnShareSwap" class="btn-primary" style="width: 200px;">Share My Screen</button>
+                <button id="btnStopShare" class="btn-danger" style="display: none; width: 200px;">Stop Sharing</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="toast">Code copied to clipboard!</div>
+
+<script>
+    // Configuration: Free Google STUN servers for NAT traversal
+    const pcConfig = {
+        iceServers: [
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:stun1.l.google.com:19302' },
+            { urls: 'stun:stun2.l.google.com:19302' }
+        ]
+    };
+
+    let pc = new RTCPeerConnection(pcConfig);
+    let localStream = null;
+    let isConnected = false;
+
+    // In-band Signaling (DataChannel) for swapping screens
+    let signalingChannel = pc.createDataChannel('signaling');
+    let makingOffer = false;
+    let ignoreOffer = false;
+    let isPolite = true; // Host defaults to polite
+
+    setupSignaling(signalingChannel);
+
+    pc.ondatachannel = (e) => {
+        if (e.channel.label === 'signaling') {
+            signalingChannel = e.channel;
+            isPolite = false; // Guest is impolite
+            setupSignaling(signalingChannel);
+        }
+    };
+
+    function setupSignaling(channel) {
+        channel.onmessage = async (e) => {
+            const msg = JSON.parse(e.data);
+            try {
+                if (msg.description) {
+                    const offerCollision = msg.description.type === 'offer' && (makingOffer || pc.signalingState !== 'stable');
+                    ignoreOffer = !isPolite && offerCollision;
+                    if (ignoreOffer) return;
+
+                    await pc.setRemoteDescription(new RTCSessionDescription(msg.description));
+                    if (msg.description.type === 'offer') {
+                        const answer = await pc.createAnswer();
+                        await pc.setLocalDescription(answer);
+                        channel.send(JSON.stringify({ description: pc.localDescription }));
+                    }
+                } else if (msg.candidate) {
+                    try {
+                        await pc.addIceCandidate(new RTCIceCandidate(msg.candidate));
+                    } catch (err) {
+                        if (!ignoreOffer) console.error(err);
+                    }
+                } else if (msg.type === 'stop') {
+                    // Remote peer stopped sharing
+                    remoteVideo.srcObject = null;
+                    placeholder.style.display = 'flex';
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        };
+    }
+
+    pc.onnegotiationneeded = async () => {
+        if (!isConnected || !signalingChannel || signalingChannel.readyState !== 'open') return;
+        try {
+            makingOffer = true;
+            const offer = await pc.createOffer();
+            await pc.setLocalDescription(offer);
+            signalingChannel.send(JSON.stringify({ description: pc.localDescription }));
+        } catch (err) {
+            console.error(err);
+        } finally {
+            makingOffer = false;
+        }
+    };
+
+    pc.onicecandidate = (e) => {
+        // Send trickle ICE over datachannel once connected
+        if (isConnected && signalingChannel && signalingChannel.readyState === 'open' && e.candidate) {
+            signalingChannel.send(JSON.stringify({ candidate: e.candidate }));
+        }
+    };
+
+    // UI Elements
+    const btnCheckPermission = document.getElementById('btnCheckPermission');
+    const permissionStatus = document.getElementById('permissionStatus');
+    const btnInitHost = document.getElementById('btnInitHost');
+    const btnCopyOffer = document.getElementById('btnCopyOffer');
+    const offerSdpText = document.getElementById('offerSdp');
+    const guestOfferInput = document.getElementById('guestOfferInput');
+    const btnCreateAnswer = document.getElementById('btnCreateAnswer');
+    const btnCopyAnswer = document.getElementById('btnCopyAnswer');
+    const answerSdpText = document.getElementById('answerSdp');
+    const hostAnswerInput = document.getElementById('hostAnswerInput');
+    const btnFinalize = document.getElementById('btnFinalize');
+    const connStatus = document.getElementById('connStatus');
+    
+    const remoteVideo = document.getElementById('remoteVideo');
+    const placeholder = document.getElementById('placeholder');
+    const videoWrapper = document.getElementById('videoWrapper');
+    const btnFillWindow = document.getElementById('btnFillWindow');
+    const localIndicator = document.getElementById('localIndicator');
+    
+    const setupControls = document.getElementById('setupControls');
+    const connectedControls = document.getElementById('connectedControls');
+    const btnShareSwap = document.getElementById('btnShareSwap');
+    const btnStopShare = document.getElementById('btnStopShare');
+
+    // Fill Window Logic
+    btnFillWindow.onclick = () => {
+        videoWrapper.classList.toggle('fill-window');
+        if (videoWrapper.classList.contains('fill-window')) {
+            btnFillWindow.innerText = 'Exit Fill';
+        } else {
+            btnFillWindow.innerText = 'Fill Window';
+        }
+    };
+
+    // Helper: Toast notification
+    function showToast(msg, targetEl) {
+        const toast = document.getElementById('toast');
+        toast.innerText = msg;
+        
+        if (targetEl) {
+            const rect = targetEl.getBoundingClientRect();
+            toast.style.left = `${rect.left + rect.width / 2}px`;
+            toast.style.top = `${rect.top - 10}px`;
+            toast.style.transform = 'translate(-50%, -100%)';
+        }
+
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    // Helper: Copy to clipboard
+    async function copyToClipboard(text, targetEl) {
+        try {
+            await navigator.clipboard.writeText(text);
+            showToast("Copied to clipboard!", targetEl);
+        } catch (err) {
+            console.error('Failed to copy: ', err);
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            showToast("Copied to clipboard!", targetEl);
+        }
+    }
+
+    // SDP Encoding
+    function encodeSDP(sdp) {
+        return btoa(JSON.stringify(sdp));
+    }
+
+    function decodeSDP(encoded) {
+        try {
+            return JSON.parse(atob(encoded.trim()));
+        } catch (e) {
+            alert("Invalid connection code. Please check if you copied the full code correctly.");
+            return null;
+        }
+    }
+
+    // WebRTC: Handle incoming tracks
+    pc.ontrack = (event) => {
+        console.log('Received remote track:', event.streams[0]);
+        // Only set the remote video source if a new stream comes in
+        if (remoteVideo.srcObject !== event.streams[0]) {
+            remoteVideo.srcObject = event.streams[0];
+            placeholder.style.display = 'none';
+        }
+        
+        event.streams[0].onremovetrack = () => {
+            if (event.streams[0].getTracks().length === 0) {
+                remoteVideo.srcObject = null;
+                placeholder.style.display = 'flex';
+            }
+        };
+    };
+
+    pc.onconnectionstatechange = () => {
+        console.log('Connection state:', pc.connectionState);
+        if (pc.connectionState === 'connected') {
+            isConnected = true;
+            connStatus.innerText = 'Connected';
+            connStatus.className = 'status-badge status-connected';
+            setupControls.style.display = 'none';
+            connectedControls.style.display = 'flex';
+        } else if (pc.connectionState === 'disconnected' || pc.connectionState === 'failed') {
+            isConnected = false;
+            connStatus.innerText = 'Disconnected';
+            connStatus.className = 'status-badge status-waiting';
+            setupControls.style.display = 'flex';
+            connectedControls.style.display = 'none';
+            
+            // Clean up video if disconnected
+            remoteVideo.srcObject = null;
+            placeholder.style.display = 'flex';
+            stopLocalShare();
+        }
+    };
+
+    // --- SWAP / SIMULTANEOUS SCREEN LOGIC ---
+    async function startLocalShare() {
+        try {
+            localStream = await navigator.mediaDevices.getDisplayMedia({ video: { cursor: "always" }, audio: true });
+            
+            // Add new tracks
+            localStream.getTracks().forEach(track => {
+                pc.addTrack(track, localStream);
+                track.onended = stopLocalShare;
+            });
+
+            btnShareSwap.style.display = 'none';
+            btnStopShare.style.display = 'inline-flex';
+            localIndicator.style.display = 'block';
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    function stopLocalShare() {
+        if (localStream) {
+            localStream.getTracks().forEach(t => t.stop());
+            localStream = null;
+        }
+        pc.getSenders().forEach(sender => {
+            if (sender.track) pc.removeTrack(sender);
+        });
+        
+        btnShareSwap.style.display = 'inline-flex';
+        btnStopShare.style.display = 'none';
+        localIndicator.style.display = 'none';
+        
+        if (signalingChannel && signalingChannel.readyState === 'open') {
+            signalingChannel.send(JSON.stringify({ type: 'stop' }));
+        }
+    }
+
+    btnShareSwap.onclick = startLocalShare;
+    btnStopShare.onclick = stopLocalShare;
+
+    // --- INITIAL MANUAL SETUP ---
+    if (btnCheckPermission) {
+        btnCheckPermission.onclick = async () => {
+            try {
+                const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                stream.getTracks().forEach(track => track.stop());
+                
+                permissionStatus.style.display = 'block';
+                permissionStatus.innerText = 'Permission granted! You can proceed to connect.';
+                permissionStatus.style.color = '#15803d';
+                btnCheckPermission.disabled = true;
+                btnCheckPermission.innerText = 'Tested';
+            } catch (err) {
+                console.error('Permission check failed:', err);
+                permissionStatus.style.display = 'block';
+                permissionStatus.innerText = 'Permission denied or error. If you just granted it in macOS settings, please restart your browser.';
+                permissionStatus.style.color = '#dc2626';
+            }
+        };
+    }
+
+    btnInitHost.onclick = async () => {
+        try {
+            btnInitHost.disabled = true;
+            offerSdpText.placeholder = "Generating connection code (gathering network paths)...";
+            connStatus.innerText = 'Gathering ICE...';
+            connStatus.className = 'status-badge status-gathering';
+
+            const offer = await pc.createOffer();
+            await pc.setLocalDescription(offer);
+
+            // Wait for ICE gathering to complete before showing the offer
+            pc.onicegatheringstatechange = () => {
+                if (pc.iceGatheringState === 'complete') {
+                    offerSdpText.value = encodeSDP(pc.localDescription);
+                    btnCopyOffer.disabled = false;
+                    connStatus.innerText = 'Ready to Share';
+                    connStatus.className = 'status-badge status-ready';
+                }
+            };
+            
+            // Fallback if ICE gathering takes too long or is already complete
+            if (pc.iceGatheringState === 'complete') {
+                offerSdpText.value = encodeSDP(pc.localDescription);
+                btnCopyOffer.disabled = false;
+                connStatus.innerText = 'Ready to Share';
+                connStatus.className = 'status-badge status-ready';
+            }
+        } catch (err) {
+            console.error('Error initializing connection:', err);
+            alert("Initialization error: " + err.message);
+            btnInitHost.disabled = false;
+        }
+    };
+
+    btnCopyOffer.onclick = (e) => copyToClipboard(offerSdpText.value, e.target);
+
+    btnCreateAnswer.onclick = async () => {
+        const encodedOffer = guestOfferInput.value;
+        if (!encodedOffer) return alert("Please paste the Offer code first.");
+
+        const offerDesc = decodeSDP(encodedOffer);
+        if (!offerDesc) return;
+
+        try {
+            await pc.setRemoteDescription(new RTCSessionDescription(offerDesc));
+            const answer = await pc.createAnswer();
+            await pc.setLocalDescription(answer);
+
+            btnCreateAnswer.disabled = true;
+            answerSdpText.placeholder = "Generating answer code...";
+            
+            pc.onicegatheringstatechange = () => {
+                if (pc.iceGatheringState === 'complete') {
+                    answerSdpText.value = encodeSDP(pc.localDescription);
+                    btnCopyAnswer.disabled = false;
+                }
+            };
+
+            if (pc.iceGatheringState === 'complete') {
+                answerSdpText.value = encodeSDP(pc.localDescription);
+                btnCopyAnswer.disabled = false;
+            }
+        } catch (err) {
+            console.error('Error creating answer:', err);
+            alert("Connection error: " + err.message);
+        }
+    };
+
+    btnCopyAnswer.onclick = (e) => copyToClipboard(answerSdpText.value, e.target);
+
+    btnFinalize.onclick = async () => {
+        const encodedAnswer = hostAnswerInput.value;
+        if (!encodedAnswer) return alert("Please paste the Answer code first.");
+
+        const answerDesc = decodeSDP(encodedAnswer);
+        if (!answerDesc) return;
+
+        try {
+            await pc.setRemoteDescription(new RTCSessionDescription(answerDesc));
+            btnFinalize.disabled = true;
+            connStatus.innerText = 'Finalizing...';
+        } catch (err) {
+            console.error('Error finalizing connection:', err);
+            alert("Finalization error: " + err.message);
+        }
+    };
+</script>
+</body>
+</html>
