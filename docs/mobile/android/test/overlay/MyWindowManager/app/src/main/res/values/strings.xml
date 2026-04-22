@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">MyWindowManager</string>
+    <string name="destroy">Destroy</string>
+    <string name="overlay">Overlay</string>
+    <string name="send_message_to_webview">Send message to webview</string>
+    <string name="say_to_webview">Say to Webview</string>
+    <string name="webview_says_placeholder">Webview Says:</string>
+    <string name="webview_says">Webview says: %1$s</string>
+    <string name="foreground">Foreground</string>
+</resources>

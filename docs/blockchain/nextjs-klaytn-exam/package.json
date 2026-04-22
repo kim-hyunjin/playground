@@ -1,0 +1,32 @@
+{
+  "name": "nextjs-caver",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@ethersproject/bignumber": "^5.6.0",
+    "@ethersproject/providers": "^5.6.1",
+    "@web3-react/core": "^6.1.9",
+    "@web3-react/injected-connector": "^6.0.7",
+    "caver-js": "^1.8.0",
+    "ethers": "^5.6.1",
+    "mobx": "^6.5.0",
+    "mobx-react-lite": "^3.3.0",
+    "next": "12.1.0",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "web3": "^1.7.1"
+  },
+  "devDependencies": {
+    "@types/node": "17.0.23",
+    "@types/react": "17.0.42",
+    "eslint": "8.11.0",
+    "eslint-config-next": "12.1.0",
+    "typescript": "4.6.2"
+  }
+}

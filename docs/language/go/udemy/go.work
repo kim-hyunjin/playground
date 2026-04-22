@@ -1,0 +1,11 @@
+go 1.18
+
+use (
+	./section14-function
+	./section17-pointer
+	./section18-application
+	./section20-concurrency
+	./section22-channel
+	./section24-error-handling
+	./section28-testing
+)

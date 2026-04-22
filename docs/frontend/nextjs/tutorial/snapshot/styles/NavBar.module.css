@@ -1,0 +1,11 @@
+.nav {
+    font-size: larger;
+}
+
+.active {
+    background-color: tomato;
+}
+
+.link {
+    text-decoration: none;
+}

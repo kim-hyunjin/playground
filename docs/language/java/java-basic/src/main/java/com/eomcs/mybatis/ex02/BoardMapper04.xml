@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="BoardMapper">
+
+  <resultMap type="Board" id="BoardMap">
+    <id column="board_id" property="no"/>
+    <result column="title" property="title"/>
+    <result column="contents" property="content"/>
+    <result column="created_date" property="registeredDate"/>
+    <result column="view_count" property="viewCount"></result>    
+  </resultMap>
+  
+  <!-- SQL 문에 값 삽입하기 : in-parameter 지정하기
+  		 => parameterType에 지정된 객체의 프로퍼티명을 사용하여 값을 삽입한다.
+       => #{프로퍼티명}
+       => parameterType으로 primitive/String/wrapper class인 경우 아무 이름을 적어도 된다.
+         - 예) #{아무이름}
+       => parameterType이 Map객체인 경우는 Map에 저장된 key값을 적는다.
+         - 예) #{키값} 
+       => SQL을 실행할 때 파라미터로 넘어오는 값의 타입을 지정한다.
+          parameterType="값이 들어있는 객체의 타입명 또는 별명"
+          타입?
+          int 		: _int
+          Integer : int
+          String  : string
+          Map 		: map
+          HashMap : hashmap
+          Board 	: board
+          ...
+          참고) https://mybatis.org/mybatis-3/configuration.html#typeAliases
+   -->
+  <select id="selectBoard1" 
+          resultMap="BoardMap"
+          parameterType="int">
+    select 
+      board_id,
+      title, 
+      contents, 
+      created_date, 
+      view_count
+    from x_board
+    where board_id > #{ohora}
+  </select>
+  
+   <select id="selectBoard2" 
+          resultMap="BoardMap"
+          parameterType="string">
+    select 
+      board_id,
+      title, 
+      contents, 
+      created_date, 
+      view_count
+    from x_board
+    where title like #{str}
+  </select>
+  
+  
+  <!-- selectList(sqlId, HashMap)
+  		=> Map에서 값을 꺼낼때는 map에 저장된 키값을 이용한다.
+   -->
+  <select id="selectBoard3" 
+          resultMap="BoardMap"
+          parameterType="hashmap">
+    select 
+      board_id,
+      title, 
+      contents, 
+      created_date, 
+      view_count
+    from x_board
+    limit #{startIndex}, #{size}
+  </select>
+  
+</mapper>
+
+
+
+
+
+
+

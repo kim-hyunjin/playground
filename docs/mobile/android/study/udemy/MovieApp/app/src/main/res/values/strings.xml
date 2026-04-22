@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MovieApp</string>
+    <string name="api_key">Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0ZDFiNTY1NDJhMjU4NmQ0OWUxYmFhODRhMjIwZGM4MyIsInN1YiI6IjY0N2YyYzhjY2Y0YjhiMDEwMzFmZTExMiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.BnHKa9G3j8V2_ImNrI8XuHM4JgP4Xh-Jr_Unz_Uhxeg</string>
+    <string name="movie_poster">movie poster</string>
+</resources>

@@ -1,0 +1,38 @@
+.card {
+  min-width: calc(1366px / 100 * 80);
+  height: 4rem;
+  border-radius: 0.8rem;
+  border: 1px solid rgb(167, 160, 160);
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 0 2.2rem;
+
+  .left {
+    width: 50%;
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+    img {
+      width: 1.2rem;
+      height: 2rem;
+    }
+    .name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .right {
+    width: 50%;
+    font-size: 1rem;
+    font-weight: 600;
+    display: grid;
+    grid-template-columns: 2fr 1fr 0.5fr;
+    gap: 1rem;
+    align-items: center;
+  }
+}

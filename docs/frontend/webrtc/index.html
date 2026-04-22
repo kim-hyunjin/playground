@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P2P Screen Share (Zero Server)</title>
+    <link rel="icon" href="data:,">
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; background: #f8fafc; color: #1e293b; margin: 0; padding: 2rem; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        .container { max-width: 800px; width: 100%; display: flex; flex-direction: column; gap: 2rem; }
+        header { text-align: center; }
+        h1 { margin: 0; font-size: 1.875rem; color: #0f172a; }
+        p { color: #64748b; margin-top: 0.5rem; }
+
+        .video-wrapper { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1); position: relative; }
+        video { width: 100%; height: 100%; object-fit: contain; }
+        .video-placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 1.125rem; text-align: center; pointer-events: none; flex-direction: column; gap: 0.5rem; }
+
+        .fullscreen-btn { position: absolute; bottom: 1rem; right: 1rem; background: rgba(0,0,0,0.6); color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; padding: 0.5rem 1rem; cursor: pointer; display: block; z-index: 10; transition: background 0.2s; font-size: 0.875rem; }
+        .fullscreen-btn:hover { background: rgba(0,0,0,0.8); }
+
+        .fill-window { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 9999 !important; border-radius: 0 !important; max-width: none !important; }
+
+        .steps { display: flex; flex-direction: column; gap: 1.5rem; background: #fff; padding: 2rem; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1); }
+        .step { display: flex; flex-direction: column; gap: 0.75rem; padding-bottom: 1.5rem; border-bottom: 1px solid #f1f5f9; }
+        .step:last-child { border-bottom: none; padding-bottom: 0; }
+        .step h2 { margin: 0; font-size: 1.125rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
+        .step h2 span { background: #3b82f6; color: #fff; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.875rem; }
+        
+        .description { font-size: 0.875rem; color: #475569; line-height: 1.5; }
+        textarea { width: 100%; height: 100px; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; font-family: monospace; font-size: 0.75rem; resize: none; background: #f8fafc; color: #334155; box-sizing: border-box; }
+        textarea:focus { outline: 2px solid #3b82f6; border-color: transparent; }
+
+        .actions { display: flex; gap: 0.75rem; align-items: center; margin-top: 0.5rem; }
+        button { padding: 0.625rem 1.25rem; border-radius: 6px; font-size: 0.875rem; font-weight: 500; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-primary { background: #2563eb; color: #fff; }
+        .btn-primary:hover:not(:disabled) { background: #1d4ed8; }
+        .btn-secondary { background: #fff; border-color: #cbd5e1; color: #334155; }
+        .btn-secondary:hover:not(:disabled) { background: #f1f5f9; border-color: #94a3b8; }
+        .btn-danger { background: #ef4444; color: white; border-color: #ef4444; }
+        .btn-danger:hover:not(:disabled) { background: #dc2626; }
+
+        .spinner {
+            display: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .loading .spinner {
+            display: inline-block;
+        }
+        .loading .btn-text {
+            display: none;
+        }
+
+        .status-badge { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; padding: 0.25rem 0.5rem; border-radius: 9999px; }
+        .status-waiting { background: #fef3c7; color: #92400e; }
+        .status-gathering { background: #dbeafe; color: #1e40af; }
+        .status-ready { background: #dcfce7; color: #166534; }
+        .status-connected { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+        
+        .toast { 
+            position: fixed; 
+            background: #1e293b; 
+            color: #fff; 
+            padding: 0.5rem 1rem; 
+            border-radius: 6px; 
+            font-size: 0.75rem; 
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.2s ease;
+            z-index: 10000;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3);
+            white-space: nowrap;
+        }
+        .toast.show { 
+            opacity: 1;
+        }
+
+        .indicator-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+        .indicator-active {
+            background: #dcfce7;
+            color: #166534;
+            border-color: #bbf7d0;
+        }
+        .indicator-sharing {
+            background: #fef2f2;
+            color: #991b1b;
+            border-color: #fecaca;
+        }
+
+        .blinking-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #ef4444;
+            border-radius: 50%;
+            animation: blink 1.5s infinite;
+        }
+        .speaking-active {
+            background: #22c55e !important;
+            color: white !important;
+            border-color: #16a34a !important;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.4);
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>P2P Screen Share</h1>
+        <p>No server. No recording. Purely peer-to-peer.</p>
+        <div id="connStatus" class="status-badge status-waiting" style="margin-top: 1rem; display: inline-block;">Disconnected</div>
+    </header>
+
+    <div id="videoWrapper" class="video-wrapper">
+        <div id="placeholder" class="video-placeholder">
+            <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2-2v10a2 2 0 002 2z"></path></svg>
+            <span>Remote screen will appear here...</span>
+        </div>
+        <video id="remoteVideo" autoplay playsinline muted></video>
+        <audio id="remoteAudio" autoplay></audio>
+        <button id="btnFillWindow" class="fullscreen-btn">Fill Window</button>
+    </div>
+
+    <!-- Initial Setup Controls -->
+    <div id="setupControls" class="steps">
+        <!-- Step 0: Permission Check -->
+        <div class="step">
+            <h2><span>0</span> macOS Users: Check Permissions</h2>
+            <div class="description">If you are on macOS and haven't granted screen recording permissions to this browser, test it now before setting up the connection to avoid restarting the browser later.</div>
+            <div class="actions">
+                <button id="btnCheckPermission" class="btn-secondary">Test Screen Share</button>
+            </div>
+            <div id="permissionStatus" style="font-size: 0.875rem; margin-top: 0.5rem; display: none;"></div>
+        </div>
+
+        <!-- Step 1: Host -->
+        <div class="step">
+            <h2><span>1</span> The Host: Initialize</h2>
+            <div class="description">Click to generate a connection <b>Offer</b>. You can share your screen now, or wait until connected.</div>
+            <div class="actions">
+                <button id="btnInitHost" class="btn-primary">
+                    <span class="spinner"></span>
+                    <span class="btn-text">Initialize Connection</span>
+                </button>
+                <button id="btnCopyOffer" class="btn-secondary" disabled>Copy Offer Code</button>
+            </div>
+            <textarea id="offerSdp" readonly placeholder="Your Offer Code will appear here..."></textarea>
+        </div>
+
+        <!-- Step 2: Guest -->
+        <div class="step">
+            <h2><span>2</span> The Guest: Paste & Answer</h2>
+            <div class="description">Paste the Offer code from your friend, then generate your <b>Answer</b>.</div>
+            <textarea id="guestOfferInput" placeholder="Paste your friend's Offer Code here..."></textarea>
+            <div class="actions">
+                <button id="btnCreateAnswer" class="btn-primary">
+                    <span class="spinner"></span>
+                    <span class="btn-text">Connect & Create Answer</span>
+                </button>
+                <button id="btnCopyAnswer" class="btn-secondary" disabled>Copy Answer Code</button>
+            </div>
+            <textarea id="answerSdp" readonly placeholder="Your Answer Code will appear here..."></textarea>
+        </div>
+
+        <!-- Step 3: Host Final -->
+        <div class="step">
+            <h2><span>3</span> Finalize: Host Pastes Answer</h2>
+            <div class="description">Host: Paste the Answer code back from your friend to complete the link.</div>
+            <textarea id="hostAnswerInput" placeholder="Paste the Answer Code from your guest here..."></textarea>
+            <div class="actions">
+                <button id="btnFinalize" class="btn-primary">Complete Connection</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Connected Controls -->
+    <div id="connectedControls" class="steps" style="display: none;">
+        <div class="step">
+            <h2><span>★</span> Connection Established</h2>
+            <div class="description">You are now connected peer-to-peer. Either of you can share your screen.</div>
+            
+            <div class="actions" style="justify-content: center; margin-top: 1rem; flex-wrap: wrap; gap: 1rem;">
+                <div id="localIndicator" class="indicator-label indicator-sharing" style="display: none;">
+                    <span class="blinking-dot"></span>Sharing Screen
+                </div>
+                
+                <button id="btnShareSwap" class="btn-primary" style="width: 200px;">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2-2v10a2 2 0 002 2z"></path></svg>
+                    Share My Screen
+                </button>
+                <button id="btnStopShare" class="btn-danger" style="display: none; width: 200px;">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    Stop Sharing
+                </button>
+                <button id="btnToggleMic" class="btn-secondary" style="width: 200px;">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+                    Enable Mic
+                </button>
+                <button id="btnMuteRemote" class="btn-secondary" style="width: 200px;">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+                    <span class="btn-text">Mute Remote</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="toast">Code copied to clipboard!</div>
+
+<script>
+    const pcConfig = {
+        iceServers: [
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:stun1.l.google.com:19302' },
+            { urls: 'stun:stun2.l.google.com:19302' }
+        ]
+    };
+
+    let pc = new RTCPeerConnection(pcConfig);
+    let localStream = null;
+    let isConnected = false;
+
+    let signalingChannel = pc.createDataChannel('signaling');
+    let makingOffer = false;
+    let ignoreOffer = false;
+    let isPolite = false; // Host is impolite
+    let remoteAudioStream = new MediaStream();
+
+    setupSignaling(signalingChannel);
+
+    pc.ondatachannel = (e) => {
+        if (e.channel.label === 'signaling') {
+            signalingChannel = e.channel;
+            isPolite = true; // Guest is polite
+            setupSignaling(signalingChannel);
+        }
+    };
+
+    function setupSignaling(channel) {
+        channel.onmessage = async (e) => {
+            const msg = JSON.parse(e.data);
+            try {
+                if (msg.description) {
+                    const offerCollision = msg.description.type === 'offer' && (makingOffer || pc.signalingState !== 'stable');
+                    ignoreOffer = !isPolite && offerCollision;
+                    if (ignoreOffer) return;
+
+                    if (offerCollision) {
+                        await Promise.all([
+                            pc.setLocalDescription({ type: 'rollback' }),
+                            pc.setRemoteDescription(new RTCSessionDescription(msg.description))
+                        ]);
+                    } else {
+                        await pc.setRemoteDescription(new RTCSessionDescription(msg.description));
+                    }
+
+                    if (msg.description.type === 'offer') {
+                        const answer = await pc.createAnswer();
+                        await pc.setLocalDescription(answer);
+                        channel.send(JSON.stringify({ description: pc.localDescription }));
+                    }
+                } else if (msg.candidate) {
+                    try {
+                        await pc.addIceCandidate(new RTCIceCandidate(msg.candidate));
+                    } catch (err) {
+                        if (!ignoreOffer) console.error(err);
+                    }
+                } else if (msg.type === 'stop') {
+                    remoteVideo.srcObject = null;
+                    placeholder.style.display = 'flex';
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        };
+    }
+
+    pc.onnegotiationneeded = async () => {
+        if (!isConnected || !signalingChannel || signalingChannel.readyState !== 'open') return;
+        try {
+            makingOffer = true;
+            const offer = await pc.createOffer();
+            await pc.setLocalDescription(offer);
+            signalingChannel.send(JSON.stringify({ description: pc.localDescription }));
+        } catch (err) {
+            console.error(err);
+        } finally {
+            makingOffer = false;
+        }
+    };
+
+    pc.onicecandidate = (e) => {
+        if (isConnected && signalingChannel && signalingChannel.readyState === 'open' && e.candidate) {
+            signalingChannel.send(JSON.stringify({ candidate: e.candidate }));
+        }
+    };
+
+    // UI Elements
+    const btnCheckPermission = document.getElementById('btnCheckPermission');
+    const permissionStatus = document.getElementById('permissionStatus');
+    const btnInitHost = document.getElementById('btnInitHost');
+    const btnCopyOffer = document.getElementById('btnCopyOffer');
+    const offerSdpText = document.getElementById('offerSdp');
+    const guestOfferInput = document.getElementById('guestOfferInput');
+    const btnCreateAnswer = document.getElementById('btnCreateAnswer');
+    const btnCopyAnswer = document.getElementById('btnCopyAnswer');
+    const answerSdpText = document.getElementById('answerSdp');
+    const hostAnswerInput = document.getElementById('hostAnswerInput');
+    const btnFinalize = document.getElementById('btnFinalize');
+    const connStatus = document.getElementById('connStatus');
+    
+    const remoteVideo = document.getElementById('remoteVideo');
+    const remoteAudio = document.getElementById('remoteAudio');
+    const placeholder = document.getElementById('placeholder');
+    const videoWrapper = document.getElementById('videoWrapper');
+    const btnFillWindow = document.getElementById('btnFillWindow');
+    const localIndicator = document.getElementById('localIndicator');
+    
+    const setupControls = document.getElementById('setupControls');
+    const connectedControls = document.getElementById('connectedControls');
+    const btnShareSwap = document.getElementById('btnShareSwap');
+    const btnStopShare = document.getElementById('btnStopShare');
+    const btnToggleMic = document.getElementById('btnToggleMic');
+    const btnMuteRemote = document.getElementById('btnMuteRemote');
+
+    let micStream = null;
+    let micSender = null;
+    let screenSenders = [];
+
+    // Speaker detection variables
+    let audioContext = null;
+    let analyser = null;
+    let dataArray = null;
+    let animationId = null;
+
+    function clearSavedKeys() {
+        ['offerSdp', 'guestOfferInput', 'answerSdp', 'hostAnswerInput'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+    }
+
+    function startSpeakerDetection(stream) {
+        if (audioContext) audioContext.close();
+        try {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioContext.createAnalyser();
+            const source = audioContext.createMediaStreamSource(stream);
+            source.connect(analyser);
+            analyser.fftSize = 256;
+            dataArray = new Uint8Array(analyser.frequencyBinCount);
+            
+            function checkVolume() {
+                analyser.getByteFrequencyData(dataArray);
+                const sum = dataArray.reduce((a, b) => a + b, 0);
+                const average = sum / dataArray.length;
+                
+                if (average > 15) {
+                    btnMuteRemote.classList.add('speaking-active');
+                } else {
+                    btnMuteRemote.classList.remove('speaking-active');
+                }
+                animationId = requestAnimationFrame(checkVolume);
+            }
+            checkVolume();
+        } catch (e) { console.error("Speaker detection failed", e); }
+    }
+
+    function stopSpeakerDetection() {
+        if (animationId) cancelAnimationFrame(animationId);
+        if (audioContext) audioContext.close();
+        btnMuteRemote.classList.remove('speaking-active');
+    }
+
+    btnMuteRemote.onclick = () => {
+        remoteAudio.muted = !remoteAudio.muted;
+        btnMuteRemote.querySelector('.btn-text').innerText = remoteAudio.muted ? 'Unmute Remote' : 'Mute Remote';
+        btnMuteRemote.classList.toggle('btn-danger', remoteAudio.muted);
+    };
+
+    btnFillWindow.onclick = () => {
+        videoWrapper.classList.toggle('fill-window');
+        btnFillWindow.innerText = videoWrapper.classList.contains('fill-window') ? 'Exit Fill' : 'Fill Window';
+    };
+
+    function showToast(msg, targetEl) {
+        const toast = document.getElementById('toast');
+        toast.innerText = msg;
+        if (targetEl) {
+            const rect = targetEl.getBoundingClientRect();
+            toast.style.left = `${rect.left + rect.width / 2}px`;
+            toast.style.top = `${rect.top - 10}px`;
+            toast.style.transform = 'translate(-50%, -100%)';
+        }
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    async function copyToClipboard(text, targetEl) {
+        try {
+            await navigator.clipboard.writeText(text);
+            showToast("Copied to clipboard!", targetEl);
+        } catch (err) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            showToast("Copied to clipboard!", targetEl);
+        }
+    }
+
+    function encodeSDP(sdp) { return btoa(JSON.stringify(sdp)); }
+    function decodeSDP(encoded) {
+        try { return JSON.parse(atob(encoded.trim())); }
+        catch (e) { alert("Invalid connection code."); return null; }
+    }
+
+    pc.ontrack = (event) => {
+        if (event.track.kind === 'video') {
+            remoteVideo.srcObject = event.streams[0];
+            placeholder.style.display = 'none';
+            event.track.onended = () => {
+                if (remoteVideo.srcObject === event.streams[0]) {
+                    remoteVideo.srcObject = null;
+                    placeholder.style.display = 'flex';
+                }
+            };
+        } else if (event.track.kind === 'audio') {
+            remoteAudioStream.getAudioTracks().forEach(t => {
+                if (t.id !== event.track.id) {
+                    remoteAudioStream.removeTrack(t);
+                    t.stop();
+                }
+            });
+            
+            remoteAudioStream.addTrack(event.track);
+            if (!remoteAudio.srcObject) remoteAudio.srcObject = remoteAudioStream;
+            startSpeakerDetection(remoteAudioStream);
+            
+            event.track.onended = () => {
+                remoteAudioStream.removeTrack(event.track);
+                if (remoteAudioStream.getAudioTracks().length === 0) {
+                    stopSpeakerDetection();
+                    remoteAudio.srcObject = null;
+                }
+            };
+        }
+    };
+
+    pc.onconnectionstatechange = () => {
+        if (pc.connectionState === 'connected') {
+            isConnected = true;
+            connStatus.innerText = 'Connected';
+            connStatus.className = 'status-badge status-connected';
+            setupControls.style.display = 'none';
+            connectedControls.style.display = 'flex';
+            clearSavedKeys();
+        } else if (pc.connectionState === 'disconnected' || pc.connectionState === 'failed') {
+            isConnected = false;
+            connStatus.innerText = 'Disconnected';
+            connStatus.className = 'status-badge status-waiting';
+            setupControls.style.display = 'flex';
+            connectedControls.style.display = 'none';
+            btnInitHost.disabled = false;
+            btnCreateAnswer.disabled = false;
+            btnCreateAnswer.classList.remove('loading');
+            btnFinalize.disabled = false;
+            remoteVideo.srcObject = null;
+            remoteAudioStream.getTracks().forEach(t => { t.stop(); remoteAudioStream.removeTrack(t); });
+            stopSpeakerDetection();
+            placeholder.style.display = 'flex';
+            stopLocalShare();
+            if (micStream) stopMic();
+        }
+    };
+
+    async function startLocalShare() {
+        try {
+            localStream = await navigator.mediaDevices.getDisplayMedia({ video: { cursor: "always" }, audio: true });
+            localStream.getTracks().forEach(track => {
+                const sender = pc.addTrack(track, localStream);
+                screenSenders.push(sender);
+                track.onended = stopLocalShare;
+            });
+            btnShareSwap.style.display = 'none';
+            btnStopShare.style.display = 'inline-flex';
+            localIndicator.style.display = 'inline-flex';
+        } catch (err) { console.error(err); }
+    }
+
+    function stopLocalShare() {
+        if (localStream) {
+            localStream.getTracks().forEach(t => t.stop());
+            localStream = null;
+        }
+        screenSenders.forEach(sender => { try { pc.removeTrack(sender); } catch(e) {} });
+        screenSenders = [];
+        btnShareSwap.style.display = 'inline-flex';
+        btnStopShare.style.display = 'none';
+        localIndicator.style.display = 'none';
+        if (signalingChannel && signalingChannel.readyState === 'open') {
+            signalingChannel.send(JSON.stringify({ type: 'stop' }));
+        }
+    }
+
+    async function toggleMic() {
+        if (micStream) {
+            stopMic();
+        } else {
+            try {
+                micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                const track = micStream.getAudioTracks()[0];
+                micSender = pc.addTrack(track, micStream);
+                btnToggleMic.innerHTML = `
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+                    Disable Mic
+                `;
+                btnToggleMic.classList.add('btn-primary');
+                btnToggleMic.classList.remove('btn-secondary');
+                track.onended = stopMic;
+            } catch (err) { alert("Could not access microphone."); }
+        }
+    }
+
+    function stopMic() {
+        if (micSender) {
+            try { pc.removeTrack(micSender); } catch(e) {}
+            micSender = null;
+        }
+        if (micStream) {
+            micStream.getTracks().forEach(t => t.stop());
+            micStream = null;
+        }
+        btnToggleMic.innerHTML = `
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+            Enable Mic
+        `;
+        btnToggleMic.classList.remove('btn-primary');
+        btnToggleMic.classList.add('btn-secondary');
+    }
+
+    btnShareSwap.onclick = startLocalShare;
+    btnStopShare.onclick = stopLocalShare;
+    btnToggleMic.onclick = toggleMic;
+
+    if (btnCheckPermission) {
+        btnCheckPermission.onclick = async () => {
+            try {
+                const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                stream.getTracks().forEach(track => track.stop());
+                permissionStatus.style.display = 'block';
+                permissionStatus.innerText = 'Permission granted!';
+                permissionStatus.style.color = '#15803d';
+                btnCheckPermission.disabled = true;
+                btnCheckPermission.innerText = 'Tested';
+            } catch (err) {
+                permissionStatus.style.display = 'block';
+                permissionStatus.innerText = 'Permission denied.';
+                permissionStatus.style.color = '#dc2626';
+            }
+        };
+    }
+
+    async function waitForIceGathering(pc) {
+        if (pc.iceGatheringState === 'complete') return;
+        
+        return new Promise(resolve => {
+            const check = () => {
+                if (pc.iceGatheringState === 'complete') {
+                    pc.removeEventListener('icegatheringstatechange', check);
+                    resolve();
+                }
+            };
+            pc.addEventListener('icegatheringstatechange', check);
+            // Safety timeout
+            setTimeout(resolve, 10000);
+        });
+    }
+
+    btnInitHost.onclick = async () => {
+        try {
+            btnInitHost.disabled = true;
+            btnInitHost.classList.add('loading');
+            offerSdpText.value = '';
+            offerSdpText.placeholder = "Gathering ICE candidates...";
+            
+            const offer = await pc.createOffer();
+            await pc.setLocalDescription(offer);
+            
+            await waitForIceGathering(pc);
+            
+            offerSdpText.value = encodeSDP(pc.localDescription);
+            btnCopyOffer.disabled = false;
+            connStatus.innerText = 'Ready';
+            btnInitHost.classList.remove('loading');
+        } catch (err) { 
+            alert("Error: " + err.message); 
+            btnInitHost.disabled = false; 
+            btnInitHost.classList.remove('loading');
+        }
+    };
+
+    btnCopyOffer.onclick = (e) => copyToClipboard(offerSdpText.value, e.target);
+
+    btnCreateAnswer.onclick = async () => {
+        const offerDesc = decodeSDP(guestOfferInput.value);
+        if (!offerDesc) return;
+        try {
+            btnCreateAnswer.disabled = true;
+            btnCreateAnswer.classList.add('loading');
+            answerSdpText.value = '';
+            answerSdpText.placeholder = "Generating answer & gathering paths...";
+
+            await pc.setRemoteDescription(new RTCSessionDescription(offerDesc));
+            const answer = await pc.createAnswer();
+            await pc.setLocalDescription(answer);
+
+            await waitForIceGathering(pc);
+
+            answerSdpText.value = encodeSDP(pc.localDescription);
+            btnCopyAnswer.disabled = false;
+            btnCreateAnswer.classList.remove('loading');
+            // We keep btnCreateAnswer disabled to prevent re-submitting the same offer
+        } catch (err) { 
+            alert("Error: " + err.message); 
+            btnCreateAnswer.disabled = false;
+            btnCreateAnswer.classList.remove('loading');
+        }
+    };
+
+    btnCopyAnswer.onclick = (e) => copyToClipboard(answerSdpText.value, e.target);
+
+    btnFinalize.onclick = async () => {
+        const answerDesc = decodeSDP(hostAnswerInput.value);
+        if (!answerDesc) return;
+        try {
+            await pc.setRemoteDescription(new RTCSessionDescription(answerDesc));
+            btnFinalize.disabled = true;
+        } catch (err) { alert("Error: " + err.message); }
+    };
+</script>
+</body>
+</html>

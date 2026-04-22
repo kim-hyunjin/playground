@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Momentum-clone coding</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="index.css" />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.11.2/css/all.css"
+    />
+  </head>
+
+  <body>
+    <div class="js-clock">
+      <h1>00:00</h1>
+    </div>
+    <form class="js-form form nameBox">
+      <input type="text" placeholder="What is your name?" />
+    </form>
+    <div class="greetBox" id="greet">
+      <h4 class="js-greetings greetings"></h4>
+      <span class="editNameBtn" title="EDIT NAME" id="editNameBtn">
+        <i class="fas fa-ellipsis-h"></i>
+      </span>
+    </div>
+    <form class="js-toDoForm toDoForm">
+      <input type="text" placeholder="Write a to do" />
+    </form>
+    <ul class="js-toDoList toDoList"></ul>
+    <div class="js-weather weather">
+      <div class="weather column">
+        <div class="js-state weather__state"></div>
+      </div>
+      <div class="weather column">
+        <div class="js-temp weather__temp"></div>
+        <div class="js-place weather__place"></div>
+      </div>
+    </div>
+    <script src="clock.js"></script>
+    <script src="greeting.js"></script>
+    <script src="todo.js"></script>
+    <script src="bg.js"></script>
+    <script src="weather.js"></script>
+    <script src="editName.js"></script>
+  </body>
+</html>

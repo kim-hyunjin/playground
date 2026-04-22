@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=euc-kr" />
+
+ <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/Team-project/css/style.css" />
+<!--favicon -->
+<link rel="favicon" href="images/favicon.ico">
+<link rel="shortcut icon" href="http://localhost:9999/Team-project/images/favicon.ico" type="image/x-icon" />
+<link rel="icon" href="http://localhost:9999/Team-project/images/favicon.ico" type="image/x-icon" />
+
+<!-- Required meta tags -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script
+  src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+  integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+  crossorigin="anonymous"></script>
+<link rel="stylesheet"
+  href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+  integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+  crossorigin="anonymous">
+<script
+  src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+  integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+  crossorigin="anonymous"></script>
+<link rel="stylesheet" href="/Team-project/css/style.css" />
+<style>
+* {
+box-sizing: border-box;
+-webkit-box-sizing: border-box;
+-moz-box-sizing: border-box;
+}
+html {
+height: 100%;
+}
+body {
+margin: 0;
+height: 100%;
+}
+.wrap {
+min-height: 100%;
+position: relative;
+padding-bottom: 19px; /* footer height */
+}
+ol {
+margin: 0;
+}
+.footer {
+text-align: center;
+bottom: 0;
+left: 0;
+right: 0;
+color: white;
+background-color: black;
+}
+</style>
+</head>
+<body>
+<div class="wrap" style="min-width:1200px">
+	<div class="main-bg d-flex flex-column justify-content-center"
+		style="background-image: url('images/hero-bg.png'); background-repeat:no-repeat;">
+        <div id="carouselExampleCaptions" class="carousel slide" data-ride="carousel" style="height:40em;">
+          <ol class="carousel-indicators">
+            <li data-target="#carouselExampleCaptions" data-slide-to="0" class="active"></li>
+            <li data-target="#carouselExampleCaptions" data-slide-to="1"></li>
+            <li data-target="#carouselExampleCaptions" data-slide-to="2"></li>
+          </ol>
+          <div class="carousel-inner">
+            <div class="carousel-item active" style="width:100%; height:40em; object-fit: cover;">
+              <img src="images/index/1.jpg" class="d-block w-100" alt="...">
+              <div class="carousel-caption d-none d-md-block">
+                <h1 style="font-size:4em;">Back To School에 오신 것을 환영합니다!</h1>
+                <p>온라인을 통해 수업을 관리하고 함께 공부해보세요.</p>
+              </div>
+            </div>
+            <div class="carousel-item" style="width:100%; height:40em; object-fit: cover;">
+              <img src="images/index/2.jpg" class="d-block w-100" alt="...">
+              <div class="carousel-caption d-none d-md-block">
+                <h5>뭐든지 손쉽고 간편하게</h5>
+                <p>수업은 물론, 과제와 성적을 관리하세요.</p>
+              </div>
+            </div>
+            <div class="carousel-item" style="width:100%; height:40em; object-fit: cover;">
+              <img src="images/index/3.jpg" class="d-block w-100" alt="...">
+              <div class="carousel-caption d-none d-md-block">
+                <h5>언제 어디서든 함께 공부하세요.</h5>
+                <p>멀리 떨어져있어도 함께 공부하며 꿈을 나누세요.</p>
+              </div>
+            </div>
+          </div>
+          <a class="carousel-control-prev" href="#carouselExampleCaptions" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+          </a>
+          <a class="carousel-control-next" href="#carouselExampleCaptions" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+          </a>
+        </div>
+      
+      <div class="index_title" style="text-align:center; margin-top:6em;">
+        <a href="app/auth/form" style="text-decoration: none;">
+          <span onmouseover="this.style.color='gray'" onmouseleave="this.style.color='white'" style="color: white; font-size: 5em; font-weight: bold;">
+          시 작 하 기</span>
+        </a>
+      </div>
+
+			<div class="heading-content d-flex flex-column justify-content-center align-items-center mt-10">
+				<div class="d-block mx-auto">
+            <img src="images/hero.png" alt="" class="img-fluid">
+        </div>
+				<h1 style="font-size: 4.5em; margin-top:1em;">손쉽게 수업을 관리하세요</h1>
+			</div>
+		</div>
+
+		<div class="d-flex" style="margin-top:10em;">
+			<div class="col-4" style="text-align:center;">
+					<div class="content1">수업 정보를 한 눈에 확인하세요</div>
+			</div>
+			<div class="col-4" style="text-align:center;">
+					<div class="content1">학생 성적 관리도 간편하게</div>
+			</div>
+
+			<div class="col-4" style="text-align:center;">
+					<div class="content1">과제 제출을 놓치지 마세요</div>
+			</div>
+		</div>
+
+		<!--  두번째 content -->
+				<div class="homepage-mask" style="margin-top:20em; text-align:center;">
+					<img src="images/homepage-mask.png">
+					<div class="heading">
+						<div class="h2">집, 학교 그 밖에 어디든지, 어디에서나</div>
+						<div class="details" style="margint-buttom: 10em;margin-bottom: 10px;margin-top: 35px;">BTS가 회원님을 위해 맞추겠습니다.</div>
+					</div>
+				</div>
+	<!--  세번째 content -->
+    <div class="d-flex" style="margin-top: 20em;">
+      <div class="col-4" style="text-align:center;">
+        <img src="images/index_logo_bts.png" >
+          <div class="content1">회원가입하세요</div>
+            <h6>계정을 만들고 무료로 서비스를 이용해보세요</h6>
+      </div>
+      <div class="col-4" style="text-align:center;">
+         <img src="images/index_makefg.png" >
+          <div class="content1">수업을 관리를 한번에 해결하세요</div>
+            <h6>수업을 만들고, 과제를 추가하고 파일을 공유해보세요</h6>
+        </div>
+      <div class="col-4" style="text-align:center;">
+         <img src="images/index_makefg3.png" >
+          <div class="content1">과제를 놓치지 마세요</div>
+          <h6>과제와 성적을 확인하고, 게시판에 질문하세요</h6>
+        </div>
+    </div>
+     <div style="text-decoration: none; margin-top: 6em; color: teal; font-size: 3em; font-weight: bold; text-align:center;">
+       <a href="app/auth/form">시 작 하 기</a>
+    </div>
+
+  
+  <div class="footer" style="margin-top:10em;">
+      <p>Copyright © 2020 BacktoSchool.co.,Ltd. All rights reserved.</p>
+    <address>Contact webmaster for more information. 010-0x0x-xxxx</address>
+  </div>
+    
+</div>
+</body>
+</html>

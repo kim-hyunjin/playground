@@ -1,0 +1,44 @@
+pre {
+    padding: 2rem;
+    background-color: #f4f4f4;
+    font-size: 1rem;
+    border-left: 6px solid #005282;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    width: 70%;
+}
+
+main button {
+    width: 4rem;
+    height: 2rem;
+    background-color: #04aa6d;
+    color: white;
+    border: none;
+    border-radius: 0.2rem;
+    cursor: pointer;
+}
+
+table {
+    width: 100%;
+    border-top: 1px solid #444444;
+    border-collapse: collapse;
+}
+th,
+td {
+    border-bottom: 1px solid #444444;
+    padding: 10px;
+}
+
+h3 {
+    text-align: center;
+    margin-top: 3rem;
+    font-size: 2rem;
+}
+
+h4 {
+    font-size: 1.25rem;
+}

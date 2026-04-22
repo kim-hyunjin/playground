@@ -1,0 +1,34 @@
+<!DOCTYPE >
+<html>
+  <head>
+    <title>VueJS Course</title>
+    <link rel="stylesheet" type="text/css" href="main.css" />
+  </head>
+
+  <body>
+    <!-- https://vuejs.org/guide/essentials/conditional.html -->
+    <div id="app">
+      <!-- v-if v-else-if v-else 는 나란히 선언되어야 한다. -->
+      <p v-if="mode == 1">v-if directive content</p>
+      <!-- template은 실제 html dom으로 만들어지지 않는다. -->
+      <!-- cheap on load because it's lazy -->
+      <template v-else-if="mode == 2">
+        <p>Bonus content</p>
+        <h3>v-else-if content</h3>
+      </template>
+      <p v-else>v-else content</p>
+
+      <!-- v-show is expensive on load, cheap on toggle -->
+      <i v-show="mode == 1">v-show</i>
+
+      <select v-model="mode">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+      </select>
+    </div>
+
+    <script src="https://unpkg.com/vue@next"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

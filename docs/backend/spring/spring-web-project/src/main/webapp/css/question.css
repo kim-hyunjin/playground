@@ -1,0 +1,16 @@
+#multipleBox {
+  margin-bottom:1em;
+  user-select:none;	
+}
+
+#multipleBox i {
+	font-size: 1.5em;
+}
+
+#multipleBox input {
+  border:none;
+  border-bottom:thin solid #0073e6;
+  font-size:1em;
+  margin-bottom:1em;
+  text-align : center;
+}

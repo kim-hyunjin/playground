@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>VueJS Course</title>
+    <link rel="stylesheet" type="text/css" href="main.css" />
+  </head>
+  <body>
+    <div id="app1" v-cloak>
+      <p>{{ `${firstName} ${lastName.toUpperCase()}` }} {{ fullName }}</p>
+      <p><a :href="url" target="_blank">Google</a></p>
+      <!-- use raw html very carefully. It can be manipulated by malicious attack - like cross site scripting -->
+      <p v-html="raw_url"></p>
+      <p>{{ typeof age }}</p>
+      <hr />
+      <label for="firstName">First Name</label>
+      <input type="text" id="firstName" v-model.lazy.trim="firstName" />
+
+      <label for="middleName">Middle Name</label>
+      <!-- https://www.toptal.com/developers/keycode https://vuejs.org/guide/essentials/event-handling.html#key-modifiers -->
+      <input type="text" id="middleName" @keyup.enter="updateMiddleName" />
+
+      <label for="lastName">Last Name</label>
+      <!-- https://vuejs.org/guide/essentials/event-handling.html#event-modifiers -->
+      <input
+        type="text"
+        id="lastName"
+        :value="lastName"
+        @input.prevent="updateLastName('last name change event!', $event)"
+      />
+
+      <label for="age"></label>
+      <input type="number" id="age" v-model.number="age" />
+
+      <button v-on:click="increment">Increment</button>
+      <button @click.ctrl="age--">Decrement</button>
+    </div>
+    <!-- <div id="app2">{{ firstName }} {{ lastName }}</div> -->
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

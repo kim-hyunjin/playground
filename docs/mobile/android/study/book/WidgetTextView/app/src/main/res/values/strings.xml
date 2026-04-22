@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">WidgetTextView</string>
+    <string name="string_01">화면에 보여질 글자 01\nhello\nbye\ndidn't show</string>
+    <string name="string_02">화면에 보여질 글자 02\n이건 한줄로 보여진다는 것이다</string>
+</resources>

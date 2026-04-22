@@ -1,0 +1,390 @@
+{
+	"info": {
+		"_postman_id": "48a603a2-26ba-4db2-bb57-ec3b62bffad1",
+		"name": "msa-practice",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "회원가입",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"test@test.com\",\r\n    \"name\": \"hyunjin\",\r\n    \"pwd\": \"1234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8000/user-service/users",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"user-service",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "회원목록",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0N2VkZTEwZC1hODNiLTQ3NjgtYTNkOC03ZWJiY2MzZGVlNmIiLCJleHAiOjE2MzgxMDg4ODF9.bt7r4-0g6AHWcMQ5Ep-hHK-RcLvX4tewy9cR0gm5iyxnqeJUHfzTJTSDhR7JGe2Dn63r7C4oOK3qqQkJdHOOVw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "userId",
+						"value": "{{userId}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:8000/user-service/users",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"user-service",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "사용자정보",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "userId",
+						"value": "{{userId}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:8000/user-service/users/{{userId}}",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"user-service",
+						"users",
+						"{{userId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "로그인",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"test@test.com\",\r\n    \"password\": \"1234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8000/user-service/login",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"user-service",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user-service/welcome",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/user-service/welcome",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"user-service",
+						"welcome"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user-service/health-check",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI5NTY4N2ZlNy05OGQ2LTRlNzgtYjlmMy05MTc2M2ViOTJiOWQiLCJleHAiOjE2MzkyMzA0MTF9.IoyPB9k7LQFYj9A5LBxjanrtp3uU9FnprXwtuDjJpQe0bs_tBRSHGrQD57YIBwL6VCj94VFmRTcC6ZlrTzs-6w",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "userId",
+						"value": "95687fe7-98d6-4e78-b9f3-91763eb92b9d",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:8000/user-service/health-check",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"user-service",
+						"health-check"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "userservice/actuator/refresh",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/user-service/actuator/refresh",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"user-service",
+						"actuator",
+						"refresh"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "apigateway/actuator/refresh",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/actuator/refresh",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"actuator",
+						"refresh"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user-service/actuator/busrefresh",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/actuator/busrefresh",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"actuator",
+						"busrefresh"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8888/encrypt",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "my_secret_default"
+				},
+				"url": {
+					"raw": "localhost:8888/encrypt",
+					"host": [
+						"localhost"
+					],
+					"port": "8888",
+					"path": [
+						"encrypt"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8888/decrypt",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "AQAqEG/v8AxEHqQ2X4syA05bfQ9Nw++v1VrtYxbnIy8NvlBUYKjRFLN0pgdCypWmK1u39Lqks8r2nz2LuXM/j7/x346WIyqGpv6mKBFQyWhWMPtQ3zrlzDLH2cOfjYvJIo+8fxyHCDFF+Ce/DrFFyY3o1SQBw93G4LR3bCIg2WR4zSnrSCUjU9AAQNRyRqWXN4sIBYpPDh/QOKk579Wp5MmbPcLtfeNYSaXDURl5UUGgj4ndTVoeHWwQ+2phEUssPj3LCJ/U3DmK9T0rjAvdjvccMifjYJqm5KgE9QPB7rYxlorKC8DyMi/z/11Ft77wN+PQq/LRfdlmUgT1k805ud0vlcCBRcTc1nLxIRbmMXR5RuLMpL2w5LYO3nWjGwF+4G0="
+				},
+				"url": {
+					"raw": "localhost:8888/decrypt",
+					"host": [
+						"localhost"
+					],
+					"port": "8888",
+					"path": [
+						"decrypt"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "주문하기",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"productId\": \"CATALOG-002\",\r\n    \"qty\": 7,\r\n    \"unitPrice\": 1100000\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/order-service/{{userId}}/orders",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"order-service",
+						"{{userId}}",
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "catalog-service/catalogs",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/catalog-service/catalogs",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"catalog-service",
+						"catalogs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "connectors",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8083/connectors",
+					"host": [
+						"localhost"
+					],
+					"port": "8083",
+					"path": [
+						"connectors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "connectors",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\":\"my-order-sink-connect\",\r\n    \"config\":{\r\n        \"connector.class\":\"io.confluent.connect.jdbc.JdbcSinkConnector\",\r\n        \"connection.url\":\"jdbc:mysql://localhost:3306/mydb\",\r\n        \"connection.user\":\"root\",\r\n        \"connection.password\":\"1234\",\r\n        \"auto.create\":\"true\",\r\n        \"auto.evolve\":\"true\",\r\n        \"delete.enabled\":\"false\",\r\n        \"tasks.max\":\"1\",\r\n        \"topics\":\"orders\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8083/connectors",
+					"host": [
+						"localhost"
+					],
+					"port": "8083",
+					"path": [
+						"connectors"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

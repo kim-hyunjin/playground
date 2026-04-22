@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, height=device-height initial-scale=1.0" />
+    <link rel="stylesheet" href="./index.css" />
+    <title>Fast Bank</title>
+  </head>
+
+  <body>
+    <div id="main-img-wrapper">
+      <img
+        width="320"
+        src="Lovepik_com-401339128-data-management-data-analysis-icon-free-vector-illustration-mate.png"
+        alt="coding image"
+      />
+    </div>
+    <div id="intro-main">
+      <p>이미 모두의 은행, 패스트뱅크</p>
+      <p>함께 일해요.</p>
+      <p id="join-us-text">Join us!</p>
+      <img id="down-arrow-icon" src="down-arrow.png" alt="down arrow icon" />
+    </div>
+    <ul id="list-item-wrapper">
+      <li class="list-item">26주적금</li>
+      <li class="list-item">저금</li>
+      <li class="list-item">패스트캠퍼스</li>
+      <li class="list-item">떡볶이</li>
+      <li class="list-item">치킨</li>
+      <li class="list-item">축구</li>
+      <li class="list-item">축구선수</li>
+      <li class="list-item">마이너스통장대출</li>
+      <li class="list-item">26주적금</li>
+      <li class="list-item">저금</li>
+      <li class="list-item">패스트캠퍼스</li>
+      <li class="list-item">떡볶이</li>
+      <li class="list-item">치킨</li>
+      <li class="list-item">축구</li>
+      <li class="list-item">축구선수</li>
+      <li class="list-item">마이너스통장대출</li>
+      <li class="list-item">26주적금</li>
+      <li class="list-item">저금</li>
+      <li class="list-item">패스트캠퍼스</li>
+      <li class="list-item">떡볶이</li>
+      <li class="list-item">치킨</li>
+      <li class="list-item">축구</li>
+      <li class="list-item">축구선수</li>
+      <li class="list-item">마이너스통장대출</li>
+      <li class="list-item">26주적금</li>
+      <li class="list-item">저금</li>
+      <li class="list-item">패스트캠퍼스</li>
+      <li class="list-item">떡볶이</li>
+      <li class="list-item">치킨</li>
+      <li class="list-item">축구</li>
+      <li class="list-item">축구선수</li>
+      <li class="list-item">마이너스통장대출</li>
+    </ul>
+    <main>
+      <section id="panel1-img">
+        <img src="santa_flying.png" alt="santa flying" id="flying-santa-image" />
+      </section>
+      <section id="video-section">
+        <div id="fixed-wrapper">
+          <video
+            id="video"
+            src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+            type="video/mp4"
+            muted
+            loop
+          ></video>
+          <div id="fixed-description">
+            <div>혁신이 만든</div>
+            <div>압도적인 성장</div>
+          </div>
+        </div>
+      </section>
+      <div id="bank-beyond-wrapper">
+        <div id="bank-beyond">
+          <img src="05-text.png" alt="sample text" width="315" />
+        </div>
+      </div>
+      <div id="white-wrapper">
+        <div id="slider-container">
+          <div id="slider-content-wrapper">
+            <div id="slider-content">
+              <img src="https://picsum.photos/id/1/600/933" class="slider-image" alt="" />
+              <img src="https://picsum.photos/id/59/600/933" class="slider-image" alt="" />
+              <img src="https://picsum.photos/id/89/600/933" class="slider-image" alt="" />
+            </div>
+          </div>
+          <div class="slider-button" id="left-button">&lt;</div>
+          <div class="slider-button" id="right-button">&gt;</div>
+          <div id="slider-index">1/3</div>
+        </div>
+      </div>
+    </main>
+  </body>
+
+  <script>
+    /**
+     * 1. 스크롤에 따라 텍스트 리스트 스타일 변경
+     */
+    const listStyleChangeStartY = 373;
+    const listStyleChangeEndY = 1585;
+
+    const listItems = document.querySelectorAll(".list-item");
+
+    const division = (listStyleChangeEndY - listStyleChangeStartY) / listItems.length;
+
+    function changeTextListStyle() {
+      if (document.getElementById("on")) document.getElementById("on").removeAttribute("id");
+
+      if (window.scrollY > listStyleChangeStartY && window.scrollY < listStyleChangeEndY) {
+        const targetIndex = Math.floor((window.scrollY - listStyleChangeStartY) / division);
+
+        listItems[targetIndex].id = "on";
+      }
+    }
+
+    /*
+     * 2. 스크롤에 따라 산타 움직이기
+     */
+    const panel1Img = document.getElementById("panel1-img");
+    const flyingSantaImg = document.getElementById("flying-santa-image");
+
+    function changePanelImg() {
+      const scrollYBottom = window.scrollY + document.documentElement.clientHeight;
+      const santaImgChangeStart = panel1Img.offsetTop;
+      const changeRange = panel1Img.offsetHeight + 100;
+      const santaImgChangeEnd = santaImgChangeStart + changeRange;
+      // console.log({scrollYBottom, santaImgChangeStart, santaImgChangeEnd})
+
+      if (scrollYBottom > santaImgChangeStart && scrollYBottom < santaImgChangeEnd) {
+        const progress = scrollYBottom - santaImgChangeStart;
+        const translateX = 80 - (80 * 1.3 * progress) / changeRange;
+        const translateY = -13 + (13 * 1.3 * progress) / changeRange;
+        const rotate = 23 - (23 * 2 * progress) / changeRange;
+        flyingSantaImg.style.transform = `translate(${translateX}px, ${translateY}px) rotate(${rotate}deg)`;
+      }
+    }
+
+    /*
+     * 3. 스크롤에 따라 비디오 재생 및 텍스트 나타내기
+     */
+    const videoPlayBack = 500;
+
+    const videoElement = document.getElementById("video");
+    const videoSection = document.getElementById("video-section");
+    const fixedWrapper = document.getElementById("fixed-wrapper");
+    const fixedDescription = document.getElementById("fixed-description");
+
+    videoElement.addEventListener("loadedmetadata", () => {
+      videoSection.style.height = videoElement.duration * videoPlayBack + "px";
+    });
+
+    function fixElementToCenter(elementId, video) {
+      const element = document.getElementById(elementId);
+      const parent = element.parentElement;
+
+      const upperBlank = (document.documentElement.clientHeight - element.offsetHeight) / 2;
+      //   console.log({ upperBlank, scrollY: window.scrollY, offsetTop: parent.offsetTop });
+      if (window.scrollY > parent.offsetTop - upperBlank) {
+        element.style.position = "fixed";
+        element.style.top = "50%";
+        element.style.left = "50%";
+        element.style.transform = "translate(-50%, -50%)";
+
+        if (video) {
+          const progress = window.scrollY - videoSection.offsetTop;
+          video.currentTime = progress / videoPlayBack;
+        }
+      } else {
+        element.style.position = "relative";
+        element.style.top = "initial";
+        element.style.left = "initial";
+        element.style.transform = "initial";
+      }
+    }
+
+    function changeVideoWrapper() {
+      const videoSectionBottomY = videoSection.offsetTop + videoSection.offsetHeight;
+      const bottomBlank = (document.documentElement.clientHeight - fixedWrapper.offsetHeight) / 2;
+      // console.log({videoSectionBottomY, bottomBlank, scrollY: window.scrollY, offsetHeight: fixedWrapper.offsetHeight})
+      if (window.scrollY > videoSectionBottomY - fixedWrapper.offsetHeight + bottomBlank) {
+        fixedWrapper.style.position = "relative";
+        fixedWrapper.style.top = "initial";
+        fixedWrapper.style.left = "initial";
+        fixedWrapper.style.transform = `translateY(${
+          videoSection.offsetHeight - fixedWrapper.offsetHeight
+        }px)`;
+      }
+    }
+
+    /**
+     * 동영상 및 텍스트 나타내기
+     */
+    const fixedDescriptionAppearTiming = 3470;
+    const fixedDescriptionAppearEnds = 3800;
+    const fixedDesc = document.getElementById("fixed-description");
+    function changeFixedDescription() {
+      if (
+        window.scrollY > fixedDescriptionAppearTiming &&
+        window.scrollY < fixedDescriptionAppearEnds
+      ) {
+        fixedDesc.style.transform = `translateY(${fixedDescriptionAppearEnds - window.scrollY}px)`;
+        const progress = window.scrollY - fixedDescriptionAppearTiming;
+        fixedDesc.style.opacity = `${progress / 300}`;
+      } else if (window.scrollY > fixedDescriptionAppearEnds) {
+        fixedDesc.style.transform = `translateY(0px)`;
+        fixedDesc.style.opacity = `1`;
+      } else {
+        fixedDesc.style.transform = `translateY(100px)`;
+        fixedDesc.style.opacity = `0`;
+      }
+    }
+
+    /**
+     * 4. 슬라이더
+     */
+    let currentImageIndex = 0;
+    const sliderImages = document.querySelectorAll(".slider-image");
+    const sliderIndex = document.getElementById("slider-index");
+    const sliderContentWrapper = document.getElementById("slider-content-wrapper");
+    const handleSlideChange = (step) => {
+      currentImageIndex += step;
+
+      if (currentImageIndex < 0) {
+        currentImageIndex = sliderImages.length - 1;
+      } else if (currentImageIndex >= sliderImages.length) {
+        currentImageIndex = 0;
+      }
+
+      sliderContentWrapper.scrollLeft = sliderImages[currentImageIndex].offsetLeft;
+    };
+    document.getElementById("left-button").addEventListener("click", () => {
+      handleSlideChange(-1);
+    });
+    document.getElementById("right-button").addEventListener("click", () => {
+      handleSlideChange(1);
+    });
+
+    sliderContentWrapper.addEventListener("scroll", () => {
+      changeSliderIndex();
+    });
+
+    function changeSliderIndex() {
+      const imageWidth = document.querySelectorAll(".slider-image")[0].offsetWidth;
+
+      currentImageIndex = Math.round(sliderContentWrapper.scrollLeft / imageWidth);
+      sliderIndex.innerText = `${currentImageIndex + 1}/${sliderImages.length}`;
+    }
+
+    window.addEventListener("scroll", () => {
+      changeTextListStyle();
+      changePanelImg();
+      changeVideoWrapper();
+      fixElementToCenter("fixed-wrapper", videoElement);
+      changeFixedDescription();
+      fixElementToCenter("bank-beyond");
+    });
+  </script>
+</html>

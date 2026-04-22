@@ -1,0 +1,10 @@
+mode: set
+example.com/testing/benchmark.go:8.23,10.2 1 1
+example.com/testing/benchmark.go:13.30,15.2 1 1
+example.com/testing/benchmark.go:18.30,20.27 2 1
+example.com/testing/benchmark.go:24.2,24.10 1 1
+example.com/testing/benchmark.go:20.27,23.3 2 1
+example.com/testing/benchmark.go:27.31,29.2 1 1
+example.com/testing/exam1.go:3.27,5.23 2 1
+example.com/testing/exam1.go:8.2,8.12 1 1
+example.com/testing/exam1.go:5.23,7.3 1 1

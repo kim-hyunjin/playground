@@ -1,0 +1,7 @@
+encrypt:
+#  key: oqiwhksjdvnuovnwerovnaejkdfnasodfawe
+  key-store:
+    #location: file:///${user.home}\\workspace\\keystore\\apiEncKey.jks
+    location: file:/apiEncKey.jks
+    password: 1234qwer
+    alias: apiEncKey

@@ -1,0 +1,229 @@
+.container {
+  color: var(--white10);
+  position: fixed;
+  top: 0px;
+
+  --gradient-from: var(--black);
+  --gradient-to: rgba(0, 0, 0, 0);
+  /* --gradient-stops: var(--gradient-from), var(--gradient-to, rgba(0, 0, 0, 0)); */
+  --gradient-stops: var(--gradient-from), var(--gradient-to) /* 위와 동일 */ 
+
+  background-image: linear-gradient(to bottom, var(--gradient-stops));
+
+  width: 100vw;
+  z-index: 50;
+}
+
+.container2 {
+  color: var(--white10);
+  position: fixed;
+  top: 0px;
+  width: 100vw;
+  z-index: 50;
+  background-color: var(--black);
+}
+
+.wrapper {
+  padding-left: 1rem /* 16px */;
+  padding-right: 1rem /* 16px */;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 1rem;
+}
+
+.navWrapper {
+  width: 90%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.navItems {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-left: 1.5rem /* 24px */;
+
+  line-height: 1.25rem /* 20px */;
+  list-style: none;
+}
+
+.navItem {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1.2rem;
+  margin-right: 0.75rem /* 12px */;
+}
+
+.navItem2 {
+  cursor: pointer;
+}
+
+.navContainer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  font-size: 1.3rem;
+  gap: 1rem;
+}
+
+.usernameBtn {
+  font-size: 1.3rem;
+}
+
+.username {
+  font-size: 1.3rem;
+}
+
+.userMenuOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  z-index: 49;
+}
+
+.userMenuBox {
+  position: absolute;
+  right: 1rem;
+  top: 4rem;
+  background-color: var(--black);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  gap: 0.5rem;
+}
+
+.userMenu {
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.userMenu:hover {
+  text-decoration: underline;
+}
+
+.navDropdown {
+  position: absolute;
+  margin-left: auto;
+  margin-top: 0.5rem /* 8px */;
+  padding-top: 0.5rem /* 8px */;
+  padding-bottom: 0.5rem /* 8px */;
+  padding-right: 0.5rem;
+  background-color: var(--black50);
+  border-width: 1px;
+  color: var(--white);
+  border-radius: 0.25rem /* 4px */;
+
+  border-color: var(--blue);
+
+  box-shadow: var(--shadow30, 0 0 #0000), var(--ring-shadow, 0 0 #0000), var(--shadow30);
+}
+
+.searchBox {
+  color: var(--white);
+}
+.searchBoxActive {
+  display: flex;
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid white;
+  gap: 0.5rem;
+  color: var(--white);
+  background-color: var(--black);
+}
+.mobileSearchBox {
+  color: var(--white);
+  display: none  !important;
+}
+.mobileSearchBoxActive {
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid white;
+  gap: 0.5rem;
+  color: var(--white);
+  background-color: var(--black);
+  position: absolute;
+  display: none !important;
+}
+
+
+.searchInput {
+  width: 100%;
+  background-color: transparent;
+  border: none;
+}
+.searchInput:focus {
+  outline: none;
+}
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  z-index: 49;
+}
+
+.linkName {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+  display: block;
+  padding-left: 0.5rem /* 8px */;
+  padding-right: 0.5rem /* 8px */;
+
+  font-size: 1rem /* 16px */;
+  line-height: 1.25rem /* 20px */;
+  border-radius: 0.25rem /* 4px */;
+  cursor: pointer;
+}
+
+.linkName:hover {
+  text-decoration: underline;
+}
+
+.lineWrapper {
+  padding-top: 0.5rem /* 8px */;
+  padding-bottom: 0.5rem /* 8px */;
+}
+
+@media (min-width: 768px) {
+  .wrapper {
+    padding-left: 4rem /* 64px */;
+    padding-right: 4rem /* 64px */;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .navItems {
+    margin-left: 3rem /* 48px */;
+  }
+
+  .navItem {
+    margin-right: 1.25rem /* 20px */;
+  }
+}
+
+@media (max-width: 450px) {
+  .searchBox,
+  .searchBoxActive {
+    display: none !important;
+  }
+  .mobileSearchBox,
+  .mobileSearchBoxActive {
+    display: flex !important;
+  }
+
+  .navItem {
+    font-size: 1rem;
+  }
+}

@@ -1,0 +1,60 @@
+{{>layout/header}}
+    <header>
+        <div class="navbar navbar-dark bg-dark shadow-sm">
+             <div class="container d-flex justify-content-between">
+                 <a href="#" class="navbar-brand d-flex align-items-center">
+                     <strong>Springboot2-webservice</strong>
+                 </a>
+                 <div class="col-md-4">
+                     {{#user}}
+                         <b class="text-white">{{name}}</b>
+                         <a href="/logout" class="btn btn-info active" role="button">Logout</a>
+                     {{/user}}
+                     {{^user}} <!-- userName 값이 존재하지 않는 경우 -->
+                         <a href="/oauth2/authorization/google" class="btn btn-light active" role="button">Google Login</a> <!-- 스프링 시큐리티에서 기본적으로 제공하는 로그인 URL. 로그아웃 URL과 마찬가지로 별도의 컨트롤러를 생성할 필요가 없다. -->
+                         <a href="/oauth2/authorization/naver" class="btn btn-success active" role="button">Naver Login</a> <!-- 네이버 로그인 URL은 application-oauth.properties에 등록한 redirect-uri 값에 맞춰 자동으로 등록된다. -->
+                     {{/user}}
+                 </div>
+             </div>
+        </div>
+    </header>
+    <main role="main" class="py-5 bg-light">
+        <div class="container">
+            <div class="col-md-12">
+                <div class="row d-flex flex-row-reverse">
+                    <a href="/posts-form" role="button" class="btn btn-primary">글 등록</a>
+                </div>
+                <br>
+                <!-- 목록 출력 영역 -->
+                <table class="table table-horizontal table-bordered">
+                    <colgroup>
+                        <col style="width: 15%;">
+                        <col style="width: 45%;">
+                        <col style="width: 20%;">
+                        <col style="width: 20%;">
+                    </colgroup>
+                    <thead class="thead-strong" style="text-align:center;">
+                    <tr>
+                        <th>번호</th>
+                        <th>제목</th>
+                        <th>작성자</th>
+                        <th>최종수정일</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    {{#posts}} <!-- posts라는 리스트를 순회 -->
+                    <tr>
+                        <td style="text-align:center;">{{id}}</td> <!-- 리스트에서 뽑아낸 객체의 필드 -->
+                        <td><a href="/posts/{{id}}">{{title}}</a></td>
+                        <td>{{author}}</td>
+                        <td>{{formattedDate}}</td>
+                    </tr>
+                    {{/posts}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+    <footer></footer>
+<!-- 현재 머스테치 파일을 기준으로 다른 파일을 가져옴 -->
+{{>layout/footer}}

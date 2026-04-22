@@ -1,0 +1,8 @@
+# 공통된 설정값은 여기로
+
+token:
+  expiration_time: 864000000 # 하루
+  secret: "{cipher}AQAOSSP81q13lt215MfyKUzwLhGnxHqnfxstvJi/dYd69iSDu+6ScL1SSYiigeyaICBDl6IP4AIU8S/HWsqW/MX/E/b9i2vfGOda8l4i4o5O7Rvz6AQtNZZRrdkdUhvYYBsg3fKNB09tbGRvStYVczUAOP1pCfCWdkV/IJqmSHjwfr9Oj9tejMsjoEwjJEPr1ZoXlftCvj1crsHcbLONoxngqcCXATsyTYjTXbA5ei/2IBPhDtpNCHiw5qLufNoUWHy07IUT3XzyefkFxALlDTidob7u9OaK6eE3Q00gs/zC40qgoZWmCDV6syeLqdtesiN3RN3r4dvIWHOPbxbPUEBSp/K064OThg/Ne059e9tdspfUhNdzECCOYdX/eTD3ocnw8AwIrU06pKyesBR0wbcu"
+
+gateway:
+  ip: 127.0.0.1

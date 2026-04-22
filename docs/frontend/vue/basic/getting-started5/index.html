@@ -1,0 +1,24 @@
+<!DOCTYPE >
+<html>
+  <head>
+    <title>VueJS Course</title>
+    <link rel="stylesheet" type="text/css" href="main.css" />
+  </head>
+
+  <body>
+    <div id="app">
+      <button type="button" class="move" @click="move">Move to Bottom</button>
+      <!-- key를 사용하지 않으면 data만 변경, element는 변경되지 않음. -->
+      <!-- https://vuejs.org/guide/essentials/list.html#maintaining-state-with-key -->
+      <!-- only suitable when your list render output does not rely on child component state or temporary DOM state (e.g. form input values). -->
+      <div class="card" v-for="person in people" :key="person.name">
+        <h3>{{ person.name }}</h3>
+        <p>{{ person.message }}</p>
+        <input type="text" />
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/vue@next"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

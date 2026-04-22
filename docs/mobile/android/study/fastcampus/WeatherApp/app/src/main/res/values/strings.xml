@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">WeatherApp</string>
+    <string name="temperature_text">%.1f°C</string>
+    <string name="precipication_text">강수확률 : %d %%</string>
+    <string name="widget_refresh_channel">widget_refresh_channel</string>
+</resources>

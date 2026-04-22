@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Adding an path in path.xml file in xml resource folder to save or exporting the image to your phone storage)-->
+<paths>
+    <external-path
+        name="captured"
+        path="Android/data/com.example.kidsdrawingapp/files" />
+</paths>

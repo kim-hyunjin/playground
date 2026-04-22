@@ -1,0 +1,110 @@
+:root {
+  --highlight-color: #127374;
+  --primary-color: #b8e1ee;
+}
+
+body {
+  height: 200vh;
+  background-color: #00110c;
+}
+
+#header {
+  height: 34px;
+  background-color: #04120c;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#header a {
+  padding: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  height: 34px;
+  box-sizing: border-box;
+}
+
+#header a:hover {
+  background-color: var(--highlight-color);
+}
+
+#title {
+  /* disable a tag default style */
+  text-decoration: none;
+  color: inherit;
+}
+
+#right-in-header {
+  display: flex;
+  align-items: center;
+}
+
+.long-text {
+  display: none;
+}
+
+#active-menu {
+  background-color: var(--highlight-color);
+}
+#image-wrapper {
+  overflow: hidden;
+}
+#main-image {
+  min-width: 1000px;
+}
+
+#main-content {
+  margin-top: 50px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+#document-title {
+  color: var(--primary-color);
+  font-size: 170%;
+  font-weight: 300;
+  letter-spacing: 10px;
+  text-align: center;
+}
+
+#platform-tag-wrapper {
+  margin-top: 2.5rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2.5rem;
+  width: 50%;
+}
+
+@media (max-width: 800px) {
+  #platform-tag-wrapper {
+    grid-template-columns: 1fr;
+  }
+  #header a {
+    font-weight: 500;
+  }
+}
+
+.platform-tag {
+  background-color: var(--primary-color);
+  color: #00110c;
+  font-size: 1.2rem;
+  font-weight: 700;
+  /*height: 32px;*/
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem;
+  text-align: center;
+}
+
+@media (min-width: 680px) {
+  .menu .long-text {
+    display: block;
+  }
+  .menu .short-text {
+    display: none;
+  }
+}

@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">MyQuizApp</string>
+    <string name="title">Quiz App!</string>
+    <string name="welcome">Welcome</string>
+    <string name="please_enter_your_name">Please enter your name</string>
+    <string name="name_hint">e.g. John</string>
+    <string name="btn_start">Start</string>
+    <string name="quiz_image">Quiz Image</string>
+    <string name="tv_progress">%1$d / %2$d</string>
+    <string name="submit">SUBMIT</string>
+    <string name="result">Result</string>
+    <string name="trophy_image">trophy image</string>
+    <string name="hey_congratulations">Hey, Congratulations!</string>
+    <string name="finish">FINISH</string>
+    <string name="tv_score">Your Score is %1$d out of %2$d</string>
+</resources>

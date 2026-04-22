@@ -1,0 +1,12 @@
+{
+  "rules": {
+    "quotes": "warn"
+  },
+  "env": {
+    "browser": true
+  },
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  }
+}

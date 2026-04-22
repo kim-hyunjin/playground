@@ -1,0 +1,43 @@
+{
+  "name": "youflix",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.4.0",
+    "@fortawesome/free-regular-svg-icons": "^6.4.0",
+    "@fortawesome/free-solid-svg-icons": "^6.4.0",
+    "@fortawesome/react-fontawesome": "latest",
+    "@magic-sdk/admin": "^1.10.0",
+    "@tanstack/react-query": "^4.29.5",
+    "@tanstack/react-query-devtools": "^4.29.6",
+    "classnames": "^2.3.2",
+    "cookie": "^0.5.0",
+    "framer-motion": "latest",
+    "jotai": "^2.0.4",
+    "jsonwebtoken": "^9.0.0",
+    "magic-sdk": "^13.3.0",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-modal": "^3.16.1",
+    "react-youtube": "^10.1.0"
+  },
+  "devDependencies": {
+    "@types/cookie": "^0.5.1",
+    "@types/jsonwebtoken": "^9.0.1",
+    "@types/node": "18.7.18",
+    "@types/react": "18.0.20",
+    "@types/react-dom": "18.0.6",
+    "@types/react-modal": "^3.13.1",
+    "eslint": "8.23.1",
+    "eslint-config-next": "latest",
+    "typescript": "4.8.3"
+  },
+  "packageManager": "yarn@3.4.1"
+}

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="Team.project.dao.AssignmentSubmitDao">
+
+  <resultMap type="AssignmentSubmit" id="AssignmentSubmitMap">
+  <id column="assignment_no" property="assignmentNo"/>
+  <id column="member_no" property="memberNo"/>
+  <result column="file" property="file"/>
+  <result column="score" property="score"/>
+  <result column="content" property="content"/>
+  <result column="feedback" property="feedback"/>
+  <result column="create_date" property="createDate"/>
+  <association property="user" javaType="User">
+      <id column="user_no"   property="userNo"/>
+      <result column="name"  property="name"/>
+      <result column="profile_photo" property="profilePhoto"/>
+  </association>
+  <association property="clazzMember" javaType="ClazzMember">
+    <id column="member_no" property="memberNo"/>
+  </association>
+  <association property="assignment" javaType="Assignment">
+    <id column="assignment_no" property="assignmentNo"/>
+    <result column="title" property="title"/>
+    <result column="content" property="content"/>
+    <result column="deadline" property="deadline"/>
+</association>
+<association property="fileVO" javaType="FileVO">
+  <id column="file_id" property="fileId"></id>
+  <result column="original_name" property="originalName"></result>
+</association>
+  </resultMap>
+
+  <select id="findAll" resultMap="AssignmentSubmitMap" parameterType="int">
+    select s.*, u.name, u.user_no, u.profile_photo, cm.member_no, a.title, a.content, a.deadline, f.file_id, f.original_name
+    from assignment_submit s
+    join class_member cm on s.member_no = cm.member_no
+    join user u on cm.user_no = u.user_no
+    join assignment a on a.assignment_no = s.assignment_no
+    left outer join file f on f.file_id = s.file
+    where s.assignment_no = #{assignmentNo}
+  </select>
+
+  <select id="findAllByClassNoAndUserNo" resultMap="AssignmentSubmitMap" parameterType="map">
+  select
+    c.class_no,
+    a.assignment_no,
+    a.title,
+    cm.member_no,
+    cm.user_no,
+    ass.score,
+    ass.assignment_no,
+    ass.content,
+    ass.feedback,
+    ass.create_date
+  from
+    class c
+    left outer join assignment a on c.class_no = a.class_no
+    left outer join class_member cm on c.class_no = cm.class_no
+    left outer join assignment_submit ass on a.assignment_no = ass.assignment_no and cm.member_no = ass.member_no
+  where 
+    c.class_no = #{classNo} and cm.user_no = #{userNo} and cm.role=1
+  order by a.assignment_no
+  </select>
+
+  <insert id="insert" parameterType="AssignmentSubmit">
+    insert into assignment_submit(assignment_no, member_no, file, content)
+    values(#{assignmentNo}, #{memberNo}, #{file}, #{content})
+  </insert>
+  
+  <select id="findByAssignmentNoAndMemberNo" resultMap="AssignmentSubmitMap">
+    select s.*, u.name, u.user_no, cm.member_no, f.file_id, f.original_name
+    from assignment_submit s
+    join class_member cm on s.member_no = cm.member_no
+    join user u on cm.user_no = u.user_no
+    left outer join file f on f.file_id = s.file
+    where s.assignment_no = #{assignmentNo} and s.member_no = #{memberNo}
+  </select>
+  
+  <update id="update" parameterType="AssignmentSubmit">
+    update assignment_submit
+    <set>
+      <if test="content != null and content != ''">content = #{content},</if>
+      <if test="file != null and file != ''">file = #{file},</if>
+      <if test="score != null">score = #{score},</if>
+      <if test="feedback != null">feedback = #{feedback}</if>
+    </set>
+    where assignment_no = #{assignmentNo} and member_no = #{memberNo}
+  </update>
+  
+  
+</mapper>

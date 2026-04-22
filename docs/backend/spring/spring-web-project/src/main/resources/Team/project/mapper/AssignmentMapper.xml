@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="Team.project.dao.AssignmentDao">
+
+<resultMap type="Assignment" id="AssignmentMap">
+    <id column="assignment_no" property="assignmentNo"/>
+    <result column="class_no" property="classNo"/>
+    <result column="member_no" property="memberNo"/>
+    <result column="title" property="title"/>
+    <result column="content" property="content"/>
+    <result column="file" property="file"/>
+    <result column="deadline" property="deadline"/>
+    <result column="standard" property="standard"/>
+    <result column="create_date" property="createDate"/>
+    <result column="start_date" property="startDate"/>
+</resultMap>
+
+<select id="findByClassNo" resultMap="AssignmentMap" parameterType="int">
+  select assignment_no, title, create_date, deadline
+  from assignment a
+  where class_no=#{no}
+  order by assignment_no
+</select>
+
+<insert id="insert" parameterType="Assignment">
+  insert into assignment(class_no, member_no, title, content, file, start_date, deadline, standard)
+  values(
+    #{classNo},
+    #{memberNo},
+    #{title},
+    #{content},
+    #{file},
+    #{startDate},
+    #{deadline},
+    #{standard}
+  )
+
+</insert>
+
+  <delete id="delete" parameterType="int">
+    delete from assignment
+    where assignment_no=#{no}
+  </delete>
+
+<select id="findByNo" resultMap="AssignmentMap" parameterType="int">
+select 
+  *
+from 
+  assignment
+where 
+  assignment_no=#{no}
+</select>
+
+<select id="findByNoOfClass" resultMap="AssignmentMap" parameterType="int">
+select 
+*
+from class c, assignment a
+where
+  c.class_no = a.class_no and
+  c.class_no = #{no};
+</select>
+
+
+
+<update id="update" parameterType="Assignment">
+update assignment
+    <set>
+      <if test="title != null and title != ''">title=#{title},</if>
+      <if test="content != null and content != ''">content=#{content},</if>
+      <if test="startDate != null">start_date=#{startDate},</if>
+      <if test="deadline != null">deadline=#{deadline},</if>
+      <if test="file != null and file != ''">file = #{file},</if>
+    </set>
+    where 
+  assignment_no=#{assignmentNo}
+</update>
+
+</mapper>

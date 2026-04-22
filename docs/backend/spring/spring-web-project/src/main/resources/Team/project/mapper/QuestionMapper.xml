@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="Team.project.dao.QuestionDao">
+  <resultMap type="Question" id="QuestionMap">
+    <id column="question_no"   property="questionNo"/>
+    <result column="member_no" property="memberNo"/>
+    <result column="class_no" property="classNo"/>
+    <result column="title"  property="title"/>
+    <result column="content"  property="content"/>
+    <result column="file"  property="filePath"/>
+    <result column="start_date" property="startDate"/>
+    <result column="deadline"  property="deadline"/>
+    <result column="create_date"  property="createDate"/>
+  </resultMap>
+  
+  <select id="findAll" resultMap="QuestionMap" parameterType="int">
+  select question_no, title, deadline, create_date
+  from question q
+  where class_no=#{no}
+  order by question_no
+  </select>
+  
+  <insert id="insert" useGeneratedKeys="true" keyProperty="questionNo" parameterType="Question">
+    insert into question(member_no, class_no, title, content, file, start_date, deadline)
+    values(#{memberNo}, #{classNo}, #{title}, #{content}, #{filePath}, #{startDate}, #{deadline})
+  </insert>
+  
+  <select id="findByNo" resultMap="QuestionMap" parameterType="int">
+    select *
+    from question
+    where question_no = #{no}
+  </select>
+  
+  <select id="findByNoOfClass" resultMap="QuestionMap" parameterType="int">
+select 
+*
+from 
+  question q, class_member cm, class c
+where 
+  cm.member_no = q.member_no and
+   c.class_no = cm.class_no and  
+  c.class_no = #{no}  
+  </select>
+  
+  <update id="update" parameterType="Question">
+    update question
+    <set>
+      <if test="title != null and title != ''">title=#{title},</if>
+      <if test="content != null and content != ''">content=#{content},</if> 
+      <if test="filePath != null and filePath != ''">file=#{filePath},</if>
+      <if test="startDate != null">start_date=#{startDate},</if>
+      <if test="deadline != null">deadline=#{deadline}</if>
+    </set>
+    where question_no=#{questionNo}
+  </update>
+  
+  <delete id="delete" parameterType="int">
+    delete from question
+    where question_no=#{no}
+  </delete>
+  
+</mapper>

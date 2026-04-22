@@ -1,0 +1,19 @@
+{
+  "name": "udp-example",
+  "version": "1.0.0",
+  "description": "Example of UDP communication with Node.js",
+  "main": "server.js",
+  "scripts": {
+    "start-server": "node server.js",
+    "start-client": "node client.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "udp",
+    "nodejs",
+    "networking",
+    "datagram"
+  ],
+  "author": "",
+  "license": "ISC"
+}

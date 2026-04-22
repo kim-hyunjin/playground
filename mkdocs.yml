@@ -3,7 +3,7 @@ site_description: 학습한 내용을 기록하고 공유하는 기술 블로그
 site_author: kim-hyunjin
 site_url: https://kim-hyunjin.github.io/study/
 
-docs_dir: .
+# docs_dir: docs (default)
 exclude_docs: |
   .git/*
   .github/*
@@ -20,8 +20,8 @@ exclude_docs: |
 theme:
   name: material
   language: ko
-  favicon: assets/favicon.png
-  logo: assets/logo.png
+  # favicon: assets/favicon.png
+  # logo: assets/logo.png
   palette:
     - scheme: default
       primary: indigo

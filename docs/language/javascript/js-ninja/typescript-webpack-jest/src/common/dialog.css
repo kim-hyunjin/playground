@@ -1,0 +1,91 @@
+#commonDialogs {
+    display: none;
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0, 0, 0); /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+    justify-content: center;
+    flex-direction: column;
+}
+
+.dialog {
+    background-color: #fefefe;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+    margin: auto;
+}
+
+.dialog.hidden {
+    display: none;
+}
+
+.dialog > .title {
+    margin-bottom: 2rem;
+    width: 90%;
+    height: 2rem;
+    font-size: 1.2rem;
+}
+
+.dialog > .title[readonly] {
+    border: #fefefe;
+}
+
+.dialog > .content {
+    display: flex;
+    height: 2rem;
+    margin-bottom: 1rem;
+}
+
+.dialog > .content > label {
+    margin-left: 1rem;
+    width: 20%;
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.dialog > .content > .text {
+    width: 70%;
+}
+
+.dialog > .content > .text[readonly] {
+    border: #fefefe;
+}
+
+.dialog > .button-group {
+    display: flex;
+    justify-content: end;
+    margin-top: 2rem;
+}
+
+.dialog > .button-group.hidden {
+    display: none;
+}
+
+.dialog > .button-group > button {
+    margin-right: 1rem;
+    border-radius: 0.25rem;
+    border: #fefefe;
+    cursor: pointer;
+    color: white;
+    width: 4rem;
+    height: 2rem;
+}
+
+.dialog > .button-group .edit-btn {
+    background-color: #008b8b;
+}
+.dialog > .button-group .close-btn {
+    background-color: gray;
+}
+.dialog > .button-group .save-btn {
+    background-color: #1e90ff;
+}
+.dialog > .button-group .cancel-btn {
+    background-color: #dc143c;
+}

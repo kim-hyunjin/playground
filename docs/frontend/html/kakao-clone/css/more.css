@@ -1,0 +1,57 @@
+.more__header .more__btn-list {
+  margin: 25px 0px;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.more .more__suggestions-list {
+  margin-top: 15px;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.more__btn-list .more__btn {
+  margin-right: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.more .suggestion {
+  margin-right: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+
+.more .more__header i {
+  font-size: 27px;
+  opacity: 0.8;
+}
+.more__btn .more__btn-title {
+  font-size: 12px;
+  margin-top: 10px;
+  opacity: 0.8;
+}
+
+.more .more__suggestions {
+  border-top: 1px solid #f7f7f7;
+  padding-top: 20px;
+}
+
+.more .more__title {
+  font-size: 13px;
+}
+
+.more__suggestion .suggestion__title {
+  font-size: 13px;
+  margin-top: 8px;
+  opacity: 0.5;
+}
+
+.more__suggestion .suggestion__icon {
+  width: 40px;
+}

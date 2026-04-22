@@ -1,0 +1,29 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: config-service
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+  cloud:
+    config:
+      server:
+        #native:
+        #  search-locations: file:///C:\\Users\\ygaso\\workspace\\config-local # 로컬 파일시스템 해당 경로에서 설정 파일 불러옴
+        git:
+          uri: https://github.com/kim-hyunjin/msa-practice-config.git
+          #username: [my username] # private repo 인 경우 필요
+          #password: [my password]
+
+          #uri: file:///C:\\Users\\ygaso\\workspace\\config-local
+          #default-label: main # 설정하지 않으면 기본값은 master
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, busrefresh

@@ -1,0 +1,114 @@
+@import "reset.css";
+@import url("https://fonts.googleapis.com/css?family=Noto+Sans+KR:400,700&display=swap&subset=korean");
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  background-color: #34495e;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: "Noto Sans KR", sans-serif, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+    sans-serif;
+}
+
+.form,
+.greetings,
+.editNameBtn {
+  display: none;
+}
+
+.showing {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.bgImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  animation: fadeIn 0.5s linear;
+}
+
+.js-clock {
+  font-size: 150px;
+}
+
+.nameBox,
+.toDoForm {
+  margin-top: 20px;
+}
+
+.nameBox input,
+.toDoForm input {
+  outline: none;
+  border: none;
+  font-size: 20px;
+  text-align: center;
+  width: 100%;
+  padding: 10px;
+  border-radius: 40px;
+}
+
+.greetings {
+  font-size: 50px;
+  margin: 10px 0px;
+}
+
+.greetBox {
+  display: flex;
+  align-items: center;
+}
+
+.editNameBtn {
+  font-size: 20px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.toDoList li {
+  font-size: 25px;
+  margin: 10px 0px;
+  display: flex;
+  align-items: center;
+}
+
+.delBtn {
+  cursor: pointer;
+  font-size: 15px;
+  margin-left: 10px;
+}
+
+.weather {
+  display: block;
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 20px;
+}
+.weather .weather__state {
+  margin-right: 70px;
+}
+
+.weather .weather__temp {
+  font-size: 30px;
+  font-weight: 700;
+}

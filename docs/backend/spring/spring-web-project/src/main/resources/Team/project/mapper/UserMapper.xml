@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="Team.project.dao.UserDao">
+
+  <resultMap type="User" id="UserMap">
+    <id column="user_no"   property="userNo"/>
+    <result column="email"  property="email"/>
+    <result column="name"  property="name"/>
+    <result column="password"  property="password"/>
+    <result column="tel"  property="tel"/>
+    <result column="major"  property="major"/>
+    <result column="introduce"    property="introduce"/>
+    <result column="profile_photo"    property="profilePhoto"/>
+    <result column="login_method" property="loginMethod"/>
+    <result column="create_date" property="createDate"/>
+    <result column="alterkey" property="alterKey"/>
+  </resultMap>
+  
+    
+  <sql id="select1">
+    select 
+      user_no, 
+      email, 
+      name, 
+      introduce
+    from 
+      user
+  </sql>
+    
+  <insert id="insert" parameterType="User">
+    insert into user
+    (email, name, password, tel, major, introduce, profile_photo, login_method, alterkey) 
+    values(#{email}, 
+    #{name}, 
+    password(#{password}), 
+    #{tel}, 
+    #{major}, 
+    #{introduce}, 
+    #{profilePhoto},
+    #{loginMethod},
+    "Y"
+    )
+  </insert>
+  
+  <select id="findAll" resultMap="UserMap">
+    <include refid="select1"/>
+  </select>
+  
+  <select id="findByNo" resultMap="UserMap" parameterType="int">
+    select *
+    from user
+    where 
+      user_no=#{no}
+  </select>
+  
+   <select id="findByClassNo" resultMap="UserMap" parameterType="int">
+   select user.user_no, email, name, tel, major, introduce, profile_photo, login_method, create_date 
+    from user join class_member on user.user_no = class_member.user_no
+    where class_no=#{no}
+  </select>
+  
+  <update id="update" parameterType="User">
+    update user
+    <set>
+      <if test="name != null and name != ''">name=#{name},</if>
+      <if test="email != null and email != ''">email=#{email},</if> 
+      <if test="password != null and password != ''">password=password(#{password}),</if>
+      <if test="tel != null and tel != ''">tel=#{tel},</if>
+      <if test="major != null and major != ''">major=#{major},</if>
+      <if test="introduce != null and introduce != ''">introduce=#{introduce},</if>
+      <if test="profilePhoto != null and profilePhoto != ''">profile_photo=#{profilePhoto},</if>
+      <if test="alterKey != null and alterKey != ''">alterkey=#{alterKey}</if>
+    </set>
+    where user_no=#{userNo}
+  </update>
+  
+  <delete id="delete" parameterType="int">
+    delete from user
+    where user_no=#{no}
+  </delete>
+  
+  <delete id="delete2" parameterType="int">
+    delete from member_no
+    where class_no=#{no}
+  </delete>
+  
+  <!-- 회원 가입 -->
+    <insert id="join" parameterType="User">
+    insert into user
+    (email, name, password, login_method)
+    values(#{email},
+    #{name},
+    password(#{password}),
+    #{loginMethod})
+    </insert>    
+  
+  
+  <select id="findByKeyword" 
+    resultMap="UserMap" 
+    parameterType="string">
+    <bind name="keywordPattern" value="'%' + _parameter + '%'"/>
+    select * from user
+    where 
+      name like #{keywordPattern}
+      or email like #{keywordPattern}
+      or tel like #{keywordPattern}
+  </select>
+  
+  <select id="findByEmailAndPassword" resultMap="UserMap" parameterType="map">
+  select * from user
+  where email=#{email} and password=password(#{password})
+  </select>
+  
+  <select id="findByEmail" resultMap="UserMap" parameterType="string">
+  select * from user
+  where email=#{email} 
+  </select>
+  
+  <select id="findByRoomNoAndEmail" resultMap="UserMap" parameterType="map">
+    select * from user u
+    join class_member cm on u.user_no = cm.user_no
+    where email=#{email} and class_no = #{roomNo}
+  </select>
+
+<update id="alterUserKey" parameterType="Map">
+        update user set alterkey = 'Y' where email = #{email} and alterkey = #{key}
+</update>
+
+ <update id="alterKey" parameterType="map">
+        update user set alterkey = #{key} where email = #{email}
+    </update> 
+
+
+</mapper>
+
+
+
+
+
+
+

@@ -1,0 +1,15 @@
+server:
+  port: 8761
+
+spring:
+  application:
+    name: discovery-service
+  cloud:
+    config:
+      uri: http://localhost:8888
+      name: ecommerce
+
+eureka:
+  client:
+    register-with-eureka: false # 자신을 client 등록하지 않는다.
+    fetch-registry: false

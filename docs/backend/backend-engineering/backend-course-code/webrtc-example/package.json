@@ -1,0 +1,21 @@
+{
+  "name": "webrtc-example",
+  "version": "1.0.0",
+  "description": "A simple WebRTC example for peer-to-peer communication",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.7.2"
+  },
+  "keywords": [
+    "webrtc",
+    "p2p",
+    "real-time",
+    "communication"
+  ],
+  "author": "",
+  "license": "MIT"
+}

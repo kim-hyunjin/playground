@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./style.css" />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.0/gsap.min.js"
+      integrity="sha512-GQ5/eIhs41UXpG6fGo4xQBpwSEj9RrBvMuKyE2h/2vw3a9x85T1Bt0JglOUVJJLeyIUl/S/kCdDXlE/n7zCjIg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.js"></script>
+    <title>Nudake</title>
+  </head>
+  <body>
+    <img class="preload-nudake-img" src="./nudake-1.jpg" alt="image1" />
+    <img class="preload-nudake-img" src="./nudake-2.jpg" alt="image2" />
+    <img class="preload-nudake-img" src="./nudake-3.jpg" alt="image3" />
+    <div class="app">
+      <section class="section-1">
+        <header>
+          <h1>Portfolio</h1>
+          <ul>
+            <li>instagram</li>
+            <li>twitter</li>
+            <li>codepen</li>
+          </ul>
+        </header>
+        <main>
+          <div class="nudake">
+            <canvas id="nudake-canvas"></canvas>
+          </div>
+        </main>
+      </section>
+      <section class="section-2">What is Lorem Ipsum?</section>
+      <section class="section-3">
+        <aside>
+          <div class="top">1914 translation by H. Rackham</div>
+          <div class="bottom">
+            <img src="./arrow.svg" alt="arrow" />
+            <img src="./arrow.svg" alt="arrow" />
+          </div>
+        </aside>
+        <article>
+          Lorem Ipsum is simply dummy text of the printing and typesetting
+          industry. Lorem Ipsum has been the industry's standard dummy text ever
+          since the 1500s, when an unknown printer took a galley of type and
+          scrambled it to make a type specimen book. It has survived not only
+          five centuries, but also the leap into electronic typesetting,
+          remaining essentially unchanged. It was popularised in the 1960s with
+          the release of Letraset sheets containing Lorem Ipsum passages, and
+          more recently with desktop publishing software like Aldus PageMaker
+          including versions of Lorem Ipsum.
+        </article>
+      </section>
+      <section class="section-4">
+        <div class="rotate-canvas-wrapper">
+          <canvas id="rotate-canvas"></canvas>
+          <aside>
+            <h1 id="section-4-title"></h1>
+            <h2 id="section-4-stars"></h2>
+            <p id="section-4-desc"></p>
+          </aside>
+        </div>
+      </section>
+    </div>
+    <footer>
+      <div class="email">test@gmail.com</div>
+    </footer>
+    <script type="module" src="./index.js"></script>
+  </body>
+</html>

@@ -1,0 +1,161 @@
+body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #24145E;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@keyframes rotation {
+    to {
+        transform: rotateZ(360deg);
+    }
+}
+
+#planet_1,
+#planet_2 {
+    animation-name: rotation;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+#planet_1 {
+    animation-duration: 3s;
+}
+#planet_2 {
+    animation-duration: 4s;
+}
+
+@keyframes shrinkAndGlow {
+    0% {
+        transform: scale(0);
+    }
+    25% {
+        transform: scale(0.5);
+
+    }
+    50% {
+        transform: scale(0);
+
+    }
+    75% {
+        transform: scale(1);
+
+    }
+    100% {
+        transform: scale(0);
+
+    }
+}
+
+#star_2,
+#star_4{
+    animation: shrinkAndGlow 3s infinite;
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+#star_1,
+#star_3 {
+    animation: shrinkAndGlow 5s infinite;
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+#star_5,
+#star_7 {
+    animation: shrinkAndGlow 7s infinite;
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+#star_6 {
+    animation: shrinkAndGlow 9s infinite;
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+@keyframes expandHorizontal {
+    from {
+        transform: scaleX(0);
+    }
+    to {
+        transform: scaleX(1);
+    }
+}
+
+#UFO-beam {
+    animation: expandHorizontal 3.5s;
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+@keyframes appearFromBottom {
+    from {
+        transform: translateY(1000px);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+#number-0 {
+    animation: appearFromBottom 3.5s;
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+@keyframes shakingUpAndDown {
+    0% {
+        transform: translateY(0);
+    }
+    25% {
+        transform: translateY(5px);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+    75% {
+        transform: translateY(5px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+#alien_hand-L, #alien_hand-R {
+    animation: shakingUpAndDown 1s infinite;
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+@keyframes soaking {
+    to {
+        transform: translateY(-250px) scale(0);
+    }
+}
+
+#number-0-soaking {
+    animation: soaking 2s;
+    animation-fill-mode: forwards;
+    animation-timing-function: cubic-bezier(.21,1.45,.97,.95);
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+@keyframes shrinkHorizontal {
+    to {
+        transform: scaleX(0);
+    }
+}
+
+#shrink-ufo-beam {
+    animation: shrinkHorizontal 2s;
+    animation-fill-mode: forwards;
+    transform-box: fill-box;
+    transform-origin: center;
+}

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>resize textarea</title>
+    <style>
+      html,
+      body,
+      #main {
+        margin: 0;
+      }
+      #main {
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+      #paragraph {
+        border: 1px solid black;
+        width: 300px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="main">
+      <p id="paragraph">hello!</p>
+      <input type="text" id="textInput" />
+      <input type="range" id="rangeInput" min="100" value="300" />
+    </div>
+    <script>
+      const paragraph = document.getElementById("paragraph");
+      const textInput = document.getElementById("textInput");
+      const rangeInput = document.getElementById("rangeInput");
+      textInput.oninput = handleInputChange;
+      rangeInput.oninput = handleRangeChange;
+
+      rangeInput.max = window.innerWidth - 50;
+
+      function handleInputChange(e) {
+        paragraph.innerText = e.target.value;
+      }
+
+      function handleRangeChange(e) {
+        paragraph.style.width = `${e.target.value}px`;
+      }
+
+      let currentFontSize = Number(
+        window
+          .getComputedStyle(paragraph)
+          .getPropertyValue("font-size")
+          .split("px")[0]
+      );
+
+      let timeout = null;
+      const widthResizeObserver = new ResizeObserver(() => {
+        if (timeout) clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          resize(currentFontSize);
+        }, 1000);
+      });
+      widthResizeObserver.observe(paragraph);
+
+      const pTextChangeObserver = new MutationObserver(handleInnerTextChange);
+      pTextChangeObserver.observe(paragraph, {
+        attributes: true,
+        childList: true,
+        subtree: true,
+      });
+
+      function handleInnerTextChange() {
+        resize(currentFontSize);
+      }
+
+      function resize(fontSize) {
+        const pWidth = paragraph.getBoundingClientRect().width;
+        const textWidth = calculateTextWidth(fontSize);
+        const diff = pWidth - textWidth;
+
+        const isOverflowed = diff < 0;
+        console.log("isOverflowed", isOverflowed);
+
+        const isEnoughWidth = !isOverflowed && diff <= fontSize;
+        if (isEnoughWidth) {
+          currentFontSize = fontSize;
+          paragraph.style.fontSize = `${fontSize}px`;
+          return;
+        }
+
+        const weight = Math.abs(diff) / pWidth;
+        if (isOverflowed) {
+          resize(fontSize - weight);
+        } else {
+          resize(fontSize + weight);
+        }
+      }
+
+      function calculateTextWidth(fontSize) {
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+
+        const fontFamily = window
+          .getComputedStyle(paragraph)
+          .getPropertyValue("font-family");
+
+        context.font = `${fontSize}px ${fontFamily}`;
+
+        return context.measureText(paragraph.innerText).width;
+      }
+    </script>
+  </body>
+</html>

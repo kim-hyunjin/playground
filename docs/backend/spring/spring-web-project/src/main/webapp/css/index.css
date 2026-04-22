@@ -1,0 +1,94 @@
+.hero_section {
+}
+
+.index_title{
+  
+}
+
+.img-fluid {
+  width:auto;
+  height:30em;
+  float:right
+}
+
+.content-container {
+	align-items: center;
+	display: flex;
+	margin: 0 auto;
+	max-width: 1220px;
+	padding: 30px 0;
+}
+
+.content {
+	color: #fff;
+	padding: 0 40px 40px 0;
+	width: 50%;
+	letter-spacing: 0;
+	position: relative;
+	z-index: 1;
+}
+
+.h1 {
+	font size: 3rem;
+}
+
+.h4 {
+	font size: 10%;
+}
+
+.heading-content {
+	margin-top: 23em;
+	margin-bottom: 10em;
+	text-align: center;
+}
+
+.heading-content img+.heading {
+	margin-bottom : 20px;
+	font-size: 48px;
+	text-aling: centered;
+	line-height: 80px;
+	margin-top: 100px;
+	word-break: keep-all;
+}
+
+.content1 {
+	font-size : 28px;
+	color : #666;
+}
+
+.contentcard {
+	boarder : 0;
+}
+
+.heading {
+	margin-top: 30px;
+	font-size: 28px;
+}
+
+.h2{
+	margin-top: 3em;
+	font-weight: bold;
+}
+
+
+
+.row {
+	max-width: 1220px;
+	margin: 0 auto;
+	padding : 0 40px;
+}
+
+.heading-content2 img+.homepage-mask{
+	font-size: 28px;
+	margin-top: 40px;
+	margin-bottom: 200px;
+	text-align: center;
+}
+
+.howtouse .howtousetitle {
+	 text-align: center;
+  font-weight: bold;
+ font-size: 28px;
+  margin-right: 15em;
+  margin-left: 17em;
+}

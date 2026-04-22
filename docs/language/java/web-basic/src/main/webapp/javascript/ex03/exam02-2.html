@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ex03</title>
+</head>
+<body>
+<h1>함수 - 함수오버로딩></h1>
+<script>
+
+// 같은 이름의 변수를 여러개 선언 => 문법오류는 아니다. 기존 변수를 가리킨다.
+var v1 = 100;
+var v1 = true;
+var v1= "hello"; // 기존의 v1변수의 값을 변경한다.
+
+
+// 같은 이름의 함수를 여러 개 선언
+// 문법 오류가 아니다. 단지, 기존의 함수를 대체한다.
+// 즉, 메서드 오버로딩을 지원하지 않는다.
+function f1(a) { 
+	console.log("f1(a) 호출됨",a);
+}
+
+function f1() { 
+	console.log("f1() 호출됨!");
+}
+
+function f1(a, b, c) { 
+	console.log("f1(a, b, c)호출됨", a, b, c);
+}
+
+f1(100); // 마지막으로 대체한 f1(a, b, c)가 호출된다.
+f1();
+f1(200, 300, 400);
+
+
+</script>
+</body>
+</html>
+
+
+
+
+

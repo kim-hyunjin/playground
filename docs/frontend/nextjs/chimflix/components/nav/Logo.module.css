@@ -1,0 +1,24 @@
+.logoLink {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  color: var(--white10);
+}
+
+.logoWrapper {
+  color: var(--red);
+  width: 8rem /* 128px */;
+  font-size: 2rem;
+}
+
+@media (min-width: 768px) {
+  .logoLink {
+    margin-bottom: 0px;
+  }
+}
+@media (max-width: 450px) {
+  .logoWrapper {
+    width: 4rem;
+    font-size: 1.2rem;
+  }
+}

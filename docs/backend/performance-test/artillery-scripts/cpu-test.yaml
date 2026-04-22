@@ -1,0 +1,12 @@
+config:
+  target: "http://34.97.209.230"
+  phases:
+    - duration: 300 # 테스트 수행 시간
+      arrivalRate: 2 # 초당 api 요청 횟수
+      name: Warm up
+scenarios:
+  # We define one scenario:
+  - name: "just get hash"
+    flow:
+      - get:
+          url: "/hash/123"

@@ -1,0 +1,13 @@
+.idea/
+out/
+*.iml
+*.exe
+.DS_Store
+/bin/
+.project
+.settings/
+.classpath
+
+__pycache__/
+
+build

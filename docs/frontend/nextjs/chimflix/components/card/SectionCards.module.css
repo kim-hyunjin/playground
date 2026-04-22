@@ -1,0 +1,112 @@
+.container {
+  color: var(--blue20);
+  background-color: --var(--black50);
+  padding-left: 1rem /* 16px */;
+  padding-right: 1rem /* 16px */;
+  margin-top: 2rem;
+  position: relative;
+}
+
+.title {
+  color: var(--white10);
+  font-weight: 700;
+  font-size: 2rem;
+}
+
+.cardWrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  margin-right: 0.75rem /* 12px */;
+  max-width: 100vw;
+}
+
+.wrap {
+  flex-wrap: wrap;
+}
+
+.mb3 {
+  margin-bottom: 3rem /* 48px */;
+}
+
+.mb2 {
+  margin-bottom: 2rem /* 32px */;
+}
+
+.cardImg:hover {
+  z-index: 50;
+}
+
+.goLeftButton {
+  position: absolute;
+  left: 0rem;
+  width: 3.5rem;
+  height: 85%;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.goRightButton {
+  position: absolute;
+  right: 0rem;
+  width: 3.5rem;
+  height: 85%;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.leftArrow {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-color: white;
+  border-style: solid;
+  border-top: 1rem;
+  border-left: 1rem;
+  transform: rotate(135deg);
+}
+.rightArrow {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-color: white;
+  border-style: solid;
+  border-top: 1rem;
+  border-left: 1rem;
+  transform: rotate(-45deg);
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding-left: 4rem /* 64px */;
+    padding-right: 4rem /* 64px */;
+  }
+}
+
+@media (max-width: 450px) {
+  .title {
+    font-size: 1.2rem;
+  }
+  .goLeftButton {
+    width: 1.6rem;
+  }
+  .goRightButton {
+    width: 1.6rem;
+  }
+  .leftArrow {
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 0.1rem;
+    border-top: 1px;
+    border-left: 1px;
+  }
+  .rightArrow {
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 0.1rem;
+    border-top: 1px;
+    border-left: 1px;
+  }
+}

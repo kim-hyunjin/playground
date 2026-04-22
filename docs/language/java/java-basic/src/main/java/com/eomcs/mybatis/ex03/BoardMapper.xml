@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<!-- SQL 문장을 찾을 때 사용할 그룹명을 설정한다. 
+     보통 그룹명은 SQL 맵퍼 파일이 있는 경로를 그룹명으로 지정한다.
+     또는 SQL을 사용할 인터페이스나 클래스 경로를 그룹명으로 지정한다.
+     물론 어떤 이름으로 지정해도 상관없지만, 가능한 위의 규칙을 준수하여 
+     유지보수의 일관성을 유지하라!-->
+<mapper namespace="BoardMapper">
+
+  <resultMap type="Board" id="BoardMap">
+    <id column="board_id" property="no"/>
+    <result column="title" property="title"/>
+    <result column="contents" property="content"/>
+    <result column="created_date" property="registeredDate"/>
+    <result column="view_count" property="viewCount"></result>    
+  </resultMap>
+
+  <select id="select1" resultMap="BoardMap" parameterType="int">
+    select 
+      board_id,
+      title,
+      contents,
+      created_date,
+      view_count
+    from x_board
+    where board_id = #{value}
+  </select>
+  
+  <select id="select2" resultMap="BoardMap" parameterType="int">
+    select 
+      board_id,
+      title,
+      contents,
+      created_date,
+      view_count
+    from x_board
+  </select>
+  
+  <select id="select3" resultMap="BoardMap" parameterType="int">
+    select 
+      board_id,
+      title,
+      contents,
+      created_date,
+      view_count
+    from x_board
+    <if test = "ohora != null">
+    	where board_id = #{value}
+    </if>
+  </select>
+  
+  <select id="select4" resultMap="BoardMap" parameterType="map">
+    select 
+      board_id,
+      title,
+      contents,
+      created_date,
+      view_count
+    from x_board
+    <if test = "item == 1">
+    	where board_id = #{keyword}
+    </if>
+    <if test = "item == 2">
+    	where title like "%"#{keyword}"%"
+    </if>
+    <if test = "item == 3">
+    	where contents like "%"#{keyword}"%"
+    </if>
+  </select>
+  
+  <select id="select5" resultMap="BoardMap" parameterType="map">
+    select 
+      board_id,
+      title,
+      contents,
+      created_date,
+      view_count
+    from x_board
+    where
+    <if test = "no != null">
+    	board_id = #{no}
+    </if>
+    <if test = "title != null">
+    	or title like "%"#{title}"%"
+    </if>
+    <if test = "content != null">
+    	or contents like "%"#{content}"%"
+    </if>
+  </select>
+  
+  <select id="select6" resultMap="BoardMap" parameterType="map">
+    select 
+      board_id,
+      title,
+      contents,
+      created_date,
+      view_count
+    from x_board
+    where 1=0 <!-- or 앞에 조건이 없을 경우를 대비하여 임의 조건 삽입
+    단, 임의 조건은 실행에 영향을 끼치지 않아야 한다. -->
+    <if test = "no != null">
+    	or board_id = #{no}
+    </if>
+    <if test = "title != null">
+    	or title like "%"#{title}"%"
+    </if>
+    <if test = "content != null">
+    	or contents like "%"#{content}"%"
+    </if>
+  </select>
+  
+  <select id="select7" resultMap="BoardMap" parameterType="map">
+    select 
+      board_id,
+      title,
+      contents,
+      created_date,
+      view_count
+    from x_board
+    <where> <!-- or/and 앞에 아무것도 없을 때 or/and를 자동으로 제거한다. -->
+	    <if test = "no != null">
+	    	board_id = #{no}
+	    </if>
+	    <if test = "title != null">
+	    	or title like "%"#{title}"%"
+	    </if>
+	    <if test = "content != null">
+	    	or contents like "%"#{content}"%"
+	    </if>
+    </where>
+  </select>
+  
+  <select id="select8" resultMap="BoardMap" parameterType="map">
+    select 
+      board_id,
+      title,
+      contents,
+      created_date,
+      view_count
+    from x_board
+    <trim prefix="where" prefixOverrides="OR | AND"> 
+    <!-- or/and 앞에 아무것도 없을 때 or/and를 자동으로 제거한다. -->
+	    <if test = "no != null">
+	    	board_id = #{no}
+	    </if>
+	    <if test = "title != null">
+	    	or title like "%"#{title}"%"
+	    </if>
+	    <if test = "content != null">
+	    	or contents like "%"#{content}"%"
+	    </if>
+    </trim>
+  </select>
+  
+  <select id="select21" resultMap="BoardMap" parameterType="map">
+    select 
+      board_id,
+      title,
+      contents,
+      created_date,
+      view_count
+    from x_board
+    <choose>
+	    <when test = "no">
+	    	where board_id = #{no}
+	    </when>
+	    <when test = "title">
+	    	where title like "%"#{title}"%"
+	    </when>
+	    <otherwise>
+	    	where contents like "%"#{keyword}"%"
+	    </otherwise>
+	  </choose>
+  </select>
+  
+  <select id="select22" resultMap="BoardMap" parameterType="map">
+    select 
+      board_id,
+      title,
+      contents,
+      created_date,
+      view_count
+    from x_board
+    <where> <!-- or/and 앞에 아무것도 없을 때 or/and를 자동으로 제거한다. -->
+	    <if test = "no0 != null">
+	    	board_id = #{no0}
+	    </if>
+	    <if test = "no1 != null">
+	    	or board_id = #{no1}
+	    </if>
+	    <if test = "no2 != null">
+	    	or board_id = #{no2}
+	    </if>
+	    <if test = "no3 != null">
+	    	or board_id = #{no3}
+	    </if>
+	    <if test = "no4 != null">
+	    	or board_id = #{no4}
+	    </if>
+	    
+    </where>
+  </select>
+  
+  <select id="select23" resultMap="BoardMap" parameterType="map">
+    select 
+      board_id,
+      title,
+      contents,
+      created_date,
+      view_count
+    from x_board
+    <where> <!-- or/and 앞에 아무것도 없을 때 or/and를 자동으로 제거한다. -->
+    	<foreach collection="noList" item="no">
+    		or board_id = #{no}
+    	</foreach>
+    </where>
+  </select>
+  
+  <select id="select24" resultMap="BoardMap" parameterType="map">
+    select 
+      board_id,
+      title,
+      contents,
+      created_date,
+      view_count
+    from x_board
+    <where> <!-- or/and 앞에 아무것도 없을 때 or/and를 자동으로 제거한다. -->
+    	board_id in (
+    	<foreach collection="noList" item="no" separator=",">
+    		#{no}
+    	</foreach>
+    	)
+    </where>
+  </select>
+  
+  <select id="select25" resultMap="BoardMap" parameterType="map">
+    select 
+      board_id,
+      title,
+      contents,
+      created_date,
+      view_count
+    from x_board
+    <where> <!-- or/and 앞에 아무것도 없을 때 or/and를 자동으로 제거한다. -->
+    	<foreach collection="words" item="word">
+    	or title like concat('%', #{word}, '%')
+    	</foreach>
+    </where>
+  </select>
+  
+  <select id="select26" resultMap="BoardMap" parameterType="map">
+  <bind name="titlePattern" value="'%' + _parameter.title + '%'" />
+    select 
+      board_id,
+      title,
+      contents,
+      created_date,
+      view_count
+    from x_board
+    <where> <!-- or/and 앞에 아무것도 없을 때 or/and를 자동으로 제거한다. -->
+    	title like #{titlePattern}
+    </where>
+  </select>
+  
+  <update id="update1" parameterType="map">
+  	update x_board set
+  		title=#{title},
+  		contents=#{content}
+  	where board_id=#{no}
+  </update> <!-- 제목만 바꾸거나 내용만 바꿀 수가 없다. -->
+  
+  <update id="update2" parameterType="map">
+  	update x_board set
+  		title=#{title}
+  	where board_id=#{no}
+  </update> 
+  
+  <update id="update3" parameterType="map">
+  	update x_board set
+  		contents=#{content}
+  	where board_id=#{no}
+  </update> 
+  
+  <update id="update4" parameterType="map">
+  	update x_board 
+  	<set>
+  		<if test="title != null">
+  			title=#{title},
+  		</if>
+  		<if test="content != null">
+  			contents=#{content}
+  		</if>
+  	</set>
+  	where board_id=#{no}
+  </update> 
+  
+  
+</mapper>
+
+
+
+
+
+
+

@@ -1,0 +1,35 @@
+.settings .settings__sections {
+  border-top: 1px solid #f7f7f7;
+  padding: 20px 0px;
+}
+
+.settings_setting .settings__icon {
+  font-size: 20px;
+}
+
+.settings_setting .settings__title {
+  font-size: 17px;
+  opacity: 0.8;
+  margin-left: 20px;
+}
+
+.settings__sections .settings_setting {
+  display: flex;
+  margin-bottom: 28px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.settings .settings_setting:last-child {
+  margin-bottom: 0;
+}
+
+.settings .settings__column {
+  display: flex;
+  justify-content: space-between;
+}
+
+.settings__column .settings__content {
+  font-size: 14px;
+  opacity: 0.5;
+}

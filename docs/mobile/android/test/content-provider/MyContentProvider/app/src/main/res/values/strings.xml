@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">MyContentProvider</string>
+    <string name="insert">INSERT</string>
+    <string name="query">QUERY</string>
+    <string name="update">UPDATE</string>
+    <string name="delete">DELETE</string>
+</resources>

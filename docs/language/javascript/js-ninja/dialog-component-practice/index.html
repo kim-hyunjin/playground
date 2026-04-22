@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script type="module" src="./src/app.js"></script>
+        <link rel="stylesheet" href="./src/common/dialog.css" />
+        <link rel="stylesheet" href="./index.css" />
+        <title>공용 Dialog</title>
+    </head>
+    <body>
+        <main>
+            <h1>CommonDialog</h1>
+            <h3>how to use</h3>
+            <h4>파라미터</h4>
+            <pre>
+CommonDialog(title, options)
+
+    title: string - 대화창 상단 헤더 제목. 기본값: ""
+    options: object - 대화창 설정 옵션(optional)
+            </pre>
+            <h4>options</h4>
+            <pre>
+contents: content[] - 대화창에 나타낼 항목(content) 목록
+content: {
+    label: string; // 항목명. 기본값: ""
+    text: string; // 항목값. 기본값: ""
+    editable: boolean; // 항목 편집 가능여부. 기본값: true
+    computed: Function; // 계산되는 항목값(optional). 함수의 결과가 항목값으로 사용됩니다.
+}
+            </pre>
+            <h4>예제</h4>
+            <pre>
+import { CommonDialog } from "./common/dialog.js";
+
+    const dialog1 = CommonDialog("예제1", {
+        contents: [
+            {
+                label: "이름",
+                text: "김현진",
+                editable: false,
+            },
+            {
+                label: "나이",
+                text: 30,
+                editable: false,
+            },
+            {
+                label: "이메일",
+                text: "hyunjin1612@gmail.com",
+            },
+            {
+                label: "자기소개",
+            },
+        ],
+    });
+
+    const dialog2 = CommonDialog("예제2", {
+        contents: [
+            {
+                label: "날짜",
+                computed: function () {
+                    const now = new Date();
+                    return `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+                },
+                editable: false,
+            },
+        ],
+    });
+            </pre>
+            <div>
+                <button id="exam1">예제1</button>
+                <button id="exam2">예제2</button>
+            </div>
+            <h3>API</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>항목</th>
+                        <th>전달인자</th>
+                        <th>반환값</th>
+                        <th>설명</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>open()</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>대화창을 표시합니다</td>
+                    </tr>
+                    <tr>
+                        <td>close()</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>대화창을 닫습니다.</td>
+                    </tr>
+                    <tr>
+                        <td>changeTitle()</td>
+                        <td>String: title</td>
+                        <td>-</td>
+                        <td>대화창 상단 헤더 제목을 변경합니다.</td>
+                    </tr>
+                    <tr>
+                        <td>editable()</td>
+                        <td>Boolean: isEditable</td>
+                        <td>Boolean: isEditable</td>
+                        <td>Dialog의 조회/편집 모드를 전환(토글)합니다.</td>
+                    </tr>
+                    <tr>
+                        <td>save()</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>항목값들을 저장하고 조회 모드로 돌아갑니다.</td>
+                    </tr>
+                    <tr>
+                        <td>cancel()</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>항목값들의 수정 사항을 취소하며, 조회 모드로 돌아갑니다.</td>
+                    </tr>
+                    <tr>
+                        <td>getDataSource()</td>
+                        <td>-</td>
+                        <td>Array: contents</td>
+                        <td>대화창에 표시되는 제목, 항목들의 정보를 리턴합니다.</td>
+                    </tr>
+                    <tr>
+                        <td>setDataSource()</td>
+                        <td>Array: contents</td>
+                        <td>-</td>
+                        <td>대화창의 항목들을 전달인자의 항목들로 갱신합니다.</td>
+                    </tr>
+                    <tr>
+                        <td>on()</td>
+                        <td>String: eventName, Function: callback</td>
+                        <td>-</td>
+                        <td>대화창의 이벤트를 리슨합니다.</td>
+                    </tr>
+                </tbody>
+            </table>
+            <h4>예제</h4>
+            <pre>
+const dialog3 = CommonDialog("예제3", {
+    contents: [
+        {
+            label: "팀명",
+            text: "Scuderia Ferrari",
+        },
+    ],
+});
+
+dialog3.changeTitle("F1");
+
+dialog3.setDataSource([
+    {
+        label: "팀명",
+        text: " Red Bull Racing",
+    },
+    {
+        label: "드라이버",
+        text: "막스 베르스타펜, 세르히오 페레즈",
+    },
+]);
+console.log(dialog3.getDataSource());
+            </pre>
+            <div>
+                <button id="exam3">예제3</button>
+            </div>
+            <h3>Event</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>항목</th>
+                        <th>설명</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>onOpen</td>
+                        <td>대화창 표시 이벤트</td>
+                    </tr>
+                    <tr>
+                        <td>onClose</td>
+                        <td>대화창 닫힘 이벤트</td>
+                    </tr>
+                    <tr>
+                        <td>onEdit</td>
+                        <td>대화창 편집 모드 진입 시 이벤트</td>
+                    </tr>
+                    <tr>
+                        <td>onSave</td>
+                        <td>저장 버튼 클릭 시 이벤트</td>
+                    </tr>
+                    <tr>
+                        <td>onCancel</td>
+                        <td>취소 버튼 클릭 시 이벤트</td>
+                    </tr>
+                </tbody>
+            </table>
+            <h4>파라미터</h4>
+            <pre>
+dialog.on(eventName, callback);
+
+    eventName: "onOpen" | "onClose" | "onEdit" | "onSave" | "onCancel"
+    callback: Function // 이벤트 발생시 실행할 함수.
+            </pre>
+            <h4>예제</h4>
+            <pre>
+dialog3.on("onOpen", () => {
+    console.log("대화창 열림");
+});
+
+dialog3.on("onClose", () => {
+    console.log("대화창 닫힘");
+});
+            </pre>
+        </main>
+    </body>
+</html>

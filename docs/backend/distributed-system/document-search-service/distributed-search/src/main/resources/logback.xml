@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <appender name="zookeeper" class="ch.qos.logback.core.ConsoleAppender">
+        <target>System.out</target>
+
+        <encoder>
+            <pattern>%d{HH:mm:ss} %-5level %logger{1}:%L - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="WARN">
+        <appender-ref ref="zookeeper" />
+    </root>
+
+</configuration>

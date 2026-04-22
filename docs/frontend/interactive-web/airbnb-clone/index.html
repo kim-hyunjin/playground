@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Airbnb?</title>
+    <link rel="stylesheet" href="style/reset.css" />
+    <link rel="stylesheet" href="style/index.css" />
+  </head>
+  <body>
+    <header>
+      <img
+        id="logo"
+        src="https://upload.wikimedia.org/wikipedia/commons/6/69/Airbnb_Logo_B%C3%A9lo.svg"
+        alt="airbnb logo"
+      />
+      <div id="little-search">
+        <button>어디든지</button>
+        <span class="divider"></span>
+        <button>언제든 일주일</button>
+        <span class="divider"></span>
+        <button>게스트 추가</button>
+        <div id="magnifying-glass-wrapper">
+          <img
+            id="magnifying-glass-icon"
+            src="images/Magnifying_glass_icon.svg"
+            alt="search icon"
+          />
+        </div>
+      </div>
+      <div id="header-right-section">
+        <div id="do-airbnb">당신의 공간을 에어비앤비하세요</div>
+        <div id="profile-section">
+          <img src="images/list.svg" alt="list icon" width="16" />
+          <img src="images/user-circle.svg" alt="user icon" width="30" />
+        </div>
+      </div>
+    </header>
+    <div id="category-bar">
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/airplane.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/airplane_black.svg"
+          alt="airplane icon"
+        />
+        <div>한옥</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/armchair.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/armchair_black.svg"
+          alt="airplane icon"
+        />
+        <div>민박</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/airplane.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/airplane_black.svg"
+          alt="airplane icon"
+        />
+        <div>한옥</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/armchair.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/armchair_black.svg"
+          alt="airplane icon"
+        />
+        <div>민박</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/airplane.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/airplane_black.svg"
+          alt="airplane icon"
+        />
+        <div>한옥</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/armchair.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/armchair_black.svg"
+          alt="airplane icon"
+        />
+        <div>민박</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/airplane.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/airplane_black.svg"
+          alt="airplane icon"
+        />
+        <div>한옥</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/armchair.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/armchair_black.svg"
+          alt="airplane icon"
+        />
+        <div>민박</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/airplane.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/airplane_black.svg"
+          alt="airplane icon"
+        />
+        <div>한옥</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/armchair.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/armchair_black.svg"
+          alt="airplane icon"
+        />
+        <div>민박</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/airplane.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/airplane_black.svg"
+          alt="airplane icon"
+        />
+        <div>한옥</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/armchair.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/armchair_black.svg"
+          alt="airplane icon"
+        />
+        <div>민박</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/airplane.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/airplane_black.svg"
+          alt="airplane icon"
+        />
+        <div>한옥</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/armchair.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/armchair_black.svg"
+          alt="airplane icon"
+        />
+        <div>민박</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/airplane.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/airplane_black.svg"
+          alt="airplane icon"
+        />
+        <div>한옥</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/armchair.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/armchair_black.svg"
+          alt="airplane icon"
+        />
+        <div>민박</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/airplane.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/airplane_black.svg"
+          alt="airplane icon"
+        />
+        <div>한옥</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/armchair.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/armchair_black.svg"
+          alt="airplane icon"
+        />
+        <div>민박</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/airplane.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/airplane_black.svg"
+          alt="airplane icon"
+        />
+        <div>한옥</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/armchair.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/armchair_black.svg"
+          alt="airplane icon"
+        />
+        <div>민박</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/airplane.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/airplane_black.svg"
+          alt="airplane icon"
+        />
+        <div>한옥</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/armchair.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/armchair_black.svg"
+          alt="airplane icon"
+        />
+        <div>민박</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/airplane.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/airplane_black.svg"
+          alt="airplane icon"
+        />
+        <div>한옥</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/armchair.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/armchair_black.svg"
+          alt="airplane icon"
+        />
+        <div>민박</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/airplane.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/airplane_black.svg"
+          alt="airplane icon"
+        />
+        <div>한옥</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/armchair.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/armchair_black.svg"
+          alt="airplane icon"
+        />
+        <div>민박</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/airplane.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/airplane_black.svg"
+          alt="airplane icon"
+        />
+        <div>한옥</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/armchair.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/armchair_black.svg"
+          alt="airplane icon"
+        />
+        <div>민박</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/airplane.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/airplane_black.svg"
+          alt="airplane icon"
+        />
+        <div>한옥</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/armchair.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/armchair_black.svg"
+          alt="airplane icon"
+        />
+        <div>민박</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/airplane.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/airplane_black.svg"
+          alt="airplane icon"
+        />
+        <div>한옥</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/armchair.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/armchair_black.svg"
+          alt="airplane icon"
+        />
+        <div>민박</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/airplane.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/airplane_black.svg"
+          alt="airplane icon"
+        />
+        <div>한옥</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/armchair.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/armchair_black.svg"
+          alt="airplane icon"
+        />
+        <div>민박</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/airplane.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/airplane_black.svg"
+          alt="airplane icon"
+        />
+        <div>한옥</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/armchair.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/armchair_black.svg"
+          alt="airplane icon"
+        />
+        <div>민박</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/airplane.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/airplane_black.svg"
+          alt="airplane icon"
+        />
+        <div>한옥</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/armchair.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/armchair_black.svg"
+          alt="airplane icon"
+        />
+        <div>민박</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/airplane.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/airplane_black.svg"
+          alt="airplane icon"
+        />
+        <div>한옥</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/armchair.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/armchair_black.svg"
+          alt="airplane icon"
+        />
+        <div>민박</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/airplane.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/airplane_black.svg"
+          alt="airplane icon"
+        />
+        <div>한옥</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/armchair.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/armchair_black.svg"
+          alt="airplane icon"
+        />
+        <div>민박</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/airplane.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/airplane_black.svg"
+          alt="airplane icon"
+        />
+        <div>한옥</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/armchair.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/armchair_black.svg"
+          alt="airplane icon"
+        />
+        <div>민박</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/airplane.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/airplane_black.svg"
+          alt="airplane icon"
+        />
+        <div>한옥</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/armchair.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/armchair_black.svg"
+          alt="airplane icon"
+        />
+        <div>민박</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/airplane.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/airplane_black.svg"
+          alt="airplane icon"
+        />
+        <div>한옥</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/armchair.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/armchair_black.svg"
+          alt="airplane icon"
+        />
+        <div>민박</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/airplane.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/airplane_black.svg"
+          alt="airplane icon"
+        />
+        <div>한옥</div>
+      </button>
+      <button class="category-button">
+        <img
+          class="inactive-image"
+          src="images/armchair.svg"
+          alt="airplane icon"
+        />
+        <img
+          class="active-image"
+          src="images/armchair_black.svg"
+          alt="airplane icon"
+        />
+        <div>민박</div>
+      </button>
+    </div>
+    <main>
+      <div id="place-items-wrapper">
+        <div class="place-list-item">
+          <div class="place-image-wrapper">
+            <img src="https://picsum.photos/1000/1000" alt="place image" />
+            <img class="heart-icon" src="images/heart.svg" alt="heart icon" />
+          </div>
+          <div class="description-section">
+            <div class="description-section_title">lorem ipsum</div>
+            <div>lorem ipsum 2</div>
+            <div>lorem ipsum 3</div>
+          </div>
+        </div>
+        <div class="place-list-item">
+          <div class="place-image-wrapper">
+            <img src="https://picsum.photos/1000/1000" alt="place image" />
+            <img class="heart-icon" src="images/heart.svg" alt="heart icon" />
+          </div>
+          <div class="description-section">
+            <div class="description-section_title">lorem ipsum</div>
+            <div>lorem ipsum 2</div>
+            <div>lorem ipsum 3</div>
+          </div>
+        </div>
+        <div class="place-list-item">
+          <div class="place-image-wrapper">
+            <img src="https://picsum.photos/1000/1000" alt="place image" />
+            <img class="heart-icon" src="images/heart.svg" alt="heart icon" />
+          </div>
+          <div class="description-section">
+            <div class="description-section_title">lorem ipsum</div>
+            <div>lorem ipsum 2</div>
+            <div>lorem ipsum 3</div>
+          </div>
+        </div>
+        <div class="place-list-item">
+          <div class="place-image-wrapper">
+            <img src="https://picsum.photos/1000/1000" alt="place image" />
+            <img class="heart-icon" src="images/heart.svg" alt="heart icon" />
+          </div>
+          <div class="description-section">
+            <div class="description-section_title">lorem ipsum</div>
+            <div>lorem ipsum 2</div>
+            <div>lorem ipsum 3</div>
+          </div>
+        </div>
+        <div class="place-list-item">
+          <div class="place-image-wrapper">
+            <img src="https://picsum.photos/1000/1000" alt="place image" />
+            <img class="heart-icon" src="images/heart.svg" alt="heart icon" />
+          </div>
+          <div class="description-section">
+            <div class="description-section_title">lorem ipsum</div>
+            <div>lorem ipsum 2</div>
+            <div>lorem ipsum 3</div>
+          </div>
+        </div>
+        <div class="place-list-item">
+          <div class="place-image-wrapper">
+            <img src="https://picsum.photos/1000/1000" alt="place image" />
+            <img class="heart-icon" src="images/heart.svg" alt="heart icon" />
+          </div>
+          <div class="description-section">
+            <div class="description-section_title">lorem ipsum</div>
+            <div>lorem ipsum 2</div>
+            <div>lorem ipsum 3</div>
+          </div>
+        </div>
+        <div class="place-list-item">
+          <div class="place-image-wrapper">
+            <img src="https://picsum.photos/1000/1000" alt="place image" />
+            <img class="heart-icon" src="images/heart.svg" alt="heart icon" />
+          </div>
+          <div class="description-section">
+            <div class="description-section_title">lorem ipsum</div>
+            <div>lorem ipsum 2</div>
+            <div>lorem ipsum 3</div>
+          </div>
+        </div>
+        <div class="place-list-item">
+          <div class="place-image-wrapper">
+            <img src="https://picsum.photos/1000/1000" alt="place image" />
+            <img class="heart-icon" src="images/heart.svg" alt="heart icon" />
+          </div>
+          <div class="description-section">
+            <div class="description-section_title">lorem ipsum</div>
+            <div>lorem ipsum 2</div>
+            <div>lorem ipsum 3</div>
+          </div>
+        </div>
+        <div class="place-list-item">
+          <div class="place-image-wrapper">
+            <img src="https://picsum.photos/1000/1000" alt="place image" />
+            <img class="heart-icon" src="images/heart.svg" alt="heart icon" />
+          </div>
+          <div class="description-section">
+            <div class="description-section_title">lorem ipsum</div>
+            <div>lorem ipsum 2</div>
+            <div>lorem ipsum 3</div>
+          </div>
+        </div>
+        <div class="place-list-item">
+          <div class="place-image-wrapper">
+            <img src="https://picsum.photos/1000/1000" alt="place image" />
+            <img class="heart-icon" src="images/heart.svg" alt="heart icon" />
+          </div>
+          <div class="description-section">
+            <div class="description-section_title">lorem ipsum</div>
+            <div>lorem ipsum 2</div>
+            <div>lorem ipsum 3</div>
+          </div>
+        </div>
+        <div class="place-list-item">
+          <div class="place-image-wrapper">
+            <img src="https://picsum.photos/1000/1000" alt="place image" />
+            <img class="heart-icon" src="images/heart.svg" alt="heart icon" />
+          </div>
+          <div class="description-section">
+            <div class="description-section_title">lorem ipsum</div>
+            <div>lorem ipsum 2</div>
+            <div>lorem ipsum 3</div>
+          </div>
+        </div>
+        <div class="place-list-item">
+          <div class="place-image-wrapper">
+            <img src="https://picsum.photos/1000/1000" alt="place image" />
+            <img class="heart-icon" src="images/heart.svg" alt="heart icon" />
+          </div>
+          <div class="description-section">
+            <div class="description-section_title">lorem ipsum</div>
+            <div>lorem ipsum 2</div>
+            <div>lorem ipsum 3</div>
+          </div>
+        </div>
+        <div class="place-list-item">
+          <div class="place-image-wrapper">
+            <img src="https://picsum.photos/1000/1000" alt="place image" />
+            <img class="heart-icon" src="images/heart.svg" alt="heart icon" />
+          </div>
+          <div class="description-section">
+            <div class="description-section_title">lorem ipsum</div>
+            <div>lorem ipsum 2</div>
+            <div>lorem ipsum 3</div>
+          </div>
+        </div>
+        <div class="place-list-item">
+          <div class="place-image-wrapper">
+            <img src="https://picsum.photos/1000/1000" alt="place image" />
+            <img class="heart-icon" src="images/heart.svg" alt="heart icon" />
+          </div>
+          <div class="description-section">
+            <div class="description-section_title">lorem ipsum</div>
+            <div>lorem ipsum 2</div>
+            <div>lorem ipsum 3</div>
+          </div>
+        </div>
+        <div class="place-list-item">
+          <div class="place-image-wrapper">
+            <img src="https://picsum.photos/1000/1000" alt="place image" />
+            <img class="heart-icon" src="images/heart.svg" alt="heart icon" />
+          </div>
+          <div class="description-section">
+            <div class="description-section_title">lorem ipsum</div>
+            <div>lorem ipsum 2</div>
+            <div>lorem ipsum 3</div>
+          </div>
+        </div>
+      </div>
+      <button id="floating-map-button">
+        <span>지도 표시하기</span>
+        <img
+          width="16px"
+          height="16px"
+          src="images/map-trifold.svg"
+          alt="map icon"
+        />
+      </button>
+    </main>
+  </body>
+
+  <script>
+    document.querySelectorAll(".category-button").forEach(function (button) {
+      button.addEventListener("click", function () {
+        document
+          .querySelector(".category-button.active")
+          ?.classList.toggle("active");
+        button.classList.toggle("active");
+      });
+    });
+  </script>
+</html>

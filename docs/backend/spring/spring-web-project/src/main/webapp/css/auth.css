@@ -1,0 +1,89 @@
+.center-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  position: relative;
+  justify-content: center;
+
+}
+
+.login_box {
+  position: absolute;
+  top: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 20%;
+  height: 40%;
+  min-width:20%;
+}
+
+.social_login {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.email_login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 60%;
+}
+
+#loginForm {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.email_login__input {
+	font-size:1em;
+  margin-top: 1em;
+  width: 100%;
+  height: 2.5em;
+}
+
+.login_btn {
+  margin-top: 1em;
+  background-color: #ff0000;
+  color: white;
+  font-weight: 700;
+  font-size: 1em;
+  border: 0;
+}
+ 
+.join > a {
+	color: #0101DF;
+	font-weight: bold;
+	font-size: medium;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

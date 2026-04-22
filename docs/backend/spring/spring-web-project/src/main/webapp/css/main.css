@@ -1,0 +1,92 @@
+ 
+  .main_list {
+    margin-top: 7em;
+    padding-left: 3em;    
+    width:90%;
+    height:auto;
+    display:flex;
+    flex-wrap: wrap;
+    min-width:500px;
+    justify-content: flex-start;
+    }
+    
+  .main_card {
+    width: 18em;
+    height: 18em;
+    border: thin solid rgba(0, 0, 0, 0.1);
+    margin: 0.5em;
+    border-radius: 1em;
+  }
+  .main_name{
+    padding: 1em;
+    border: thin solid rgba(0, 0, 0, 0.1);
+    border-radius: 1em 1em 0% 0%;
+    height:6em;
+  }
+
+  .main_name>div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .main_name_title {
+    font-size: 1.3em;
+  }
+  .main_name>span {
+    font-size: small;
+  }
+  .main_name>* {
+    text-decoration: none;
+    color: white;
+  }
+
+  .description {
+    padding: 1em;
+  }
+  
+   .main_header>div:first-child {
+    margin-left:2em;
+    width: 50%;
+    display: flex;
+    align-items: center;
+  }
+  .main_header>div:last-child {
+    margin-right:2em;
+    width: 50%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .clazz-detail-box {
+    display:none;
+    width:5em; 
+    height:100%; 
+    z-index:9999; 
+    color:black; 
+    position:absolute; 
+    margin-left:11em; 
+    margin-top:2em;
+    text-align:center;
+    user-select:none;
+    }
+    
+    .clazz-detail-box>div {
+      cursor:pointer;
+      height:2em;
+      border:thin solid rgba(0,0,0,0.1);
+      background-color:white; 
+    }
+    
+    #updateForm>input, #createForm>input {
+        width:100%;
+        height:2.5em;
+        margin-top: 0.5em;
+    }
+    
+    #class_createForm >input {
+     margin-bottom:0.5em;
+    }
+
+  

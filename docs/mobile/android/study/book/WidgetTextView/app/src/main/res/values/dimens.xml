@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 텍스트 크기는 sp를 사용한다. 사람마다 폰트 크기를 달리할 수 있기 때문 -->
+    <dimen name="text_dimen">24sp</dimen>
+    <dimen name="size_dimen">24dp</dimen>
+</resources>

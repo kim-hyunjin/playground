@@ -1,0 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap');
+@import 'header.css';
+@import 'main.css';
+@import 'room.css';
+@import 'auth.css';
+@import 'user.css';
+@import 'board.css';
+@import 'grade.css';
+@import 'calendar.css';
+@import 'lesson.css';
+@import 'question.css';
+@import 'assignmentSubmit.css';
+@import 'index.css';
+@import 'post.css';
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:hover {
+	color: inherit;
+	text-decoration: none;
+}
+
+.inputGroup {
+  display:flex;
+  flex-direction:column;
+}
+
+.inputGroup input {
+	border:none;
+  border-bottom:thin solid #0073e6;
+  width:80%;
+  height:2em;
+  font-size:1.3em;
+  margin-bottom:1em;
+}
+
+.inputGroupText {
+  color:#66ccff;
+  font-weight: bold;
+	font-size:1.3em;
+	margin-right:0.5em;
+}
+
+.inputGroupSpan {
+	font-size:1em; 
+	width:40%;
+}
+
+input::-ms-clear,
+
+input::-ms-reveal {display: none; width : 0; height: 0;}
+
+input::-webkit-search-decoration,
+
+input::-webkit-search-cancel-button,
+
+input::-webkit-search-results-button,
+
+input::-webkit-search-results-decoration { display: none; }
+
+

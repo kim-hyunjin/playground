@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password: "{cipher}AQAqEG/v8AxEHqQ2X4syA05bfQ9Nw++v1VrtYxbnIy8NvlBUYKjRFLN0pgdCypWmK1u39Lqks8r2nz2LuXM/j7/x346WIyqGpv6mKBFQyWhWMPtQ3zrlzDLH2cOfjYvJIo+8fxyHCDFF+Ce/DrFFyY3o1SQBw93G4LR3bCIg2WR4zSnrSCUjU9AAQNRyRqWXN4sIBYpPDh/QOKk579Wp5MmbPcLtfeNYSaXDURl5UUGgj4ndTVoeHWwQ+2phEUssPj3LCJ/U3DmK9T0rjAvdjvccMifjYJqm5KgE9QPB7rYxlorKC8DyMi/z/11Ft77wN+PQq/LRfdlmUgT1k805ud0vlcCBRcTc1nLxIRbmMXR5RuLMpL2w5LYO3nWjGwF+4G0="
+
+gateway:
+  ip: 172.18.0.6
+  
+order_service:
+  url: http://order-service/order-service/%s/orders # eureka에 등록된 application name 사용
+  exception:
+    orders_is_empty: User's orders is empty

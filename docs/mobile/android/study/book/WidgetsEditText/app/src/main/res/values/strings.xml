@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">WidgetsEditText</string>
+    <string name="textViewMsg">8자 이상 입력해주세요</string>
+    <string name="editTextHint">여기에 입력하세요</string>
+</resources>

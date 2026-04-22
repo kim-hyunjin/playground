@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport"
+		  content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+	<style>
+		.container {
+			width: 100%;
+			overflow: hidden;
+			white-space: nowrap;
+		}
+
+		.content {
+			display: inline-block;
+			padding: 10px;
+			width: 100%;
+			animation: roll 10s linear infinite;
+			/* Additional styling */
+		}
+
+		@keyframes roll {
+			0% {
+				transform: translateX(0);
+			}
+			100% {
+				transform: translateX(-100%);
+			}
+		}
+	</style>
+</head>
+<body>
+<div class="container">
+	<div class="content">Content 1 Content 2 Content 3 Content 4 Content 5</div>
+	<div class="content">Content 1 Content 2 Content 3 Content 4 Content 5</div>
+	<!-- Add more contents as needed -->
+</div>
+<script>
+</script>
+</body>
+</html>

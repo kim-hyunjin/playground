@@ -1,0 +1,21 @@
+html {
+  height: 100vh;
+}
+
+body {
+  background: #000;
+  height: 500vh;
+}
+
+/* 
+    이미지를 그릴 canvas를 정중앙에 위치시키고,
+    이미지가 뷰포트를 넘어서지 못하게 max를 설정
+  */
+canvas {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  max-height: 100vh;
+  max-width: 100vw;
+  transform: translate(-50%, -50%);
+}

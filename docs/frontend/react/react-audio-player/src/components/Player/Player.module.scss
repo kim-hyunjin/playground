@@ -1,0 +1,27 @@
+.player {
+  position: fixed;
+  bottom: 0;
+  width: 100vw;
+  min-width: 768px;
+  height: 10vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4rem;
+
+  background-color: rgba(178, 163, 163, 0.443);
+
+  .title {
+    font-weight: 600;
+    font-size: 1.2rem;
+  }
+
+  .bar {
+    width: 25vw;
+  }
+
+  audio {
+    width: 50%;
+  }
+}

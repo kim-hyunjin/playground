@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="reset.css" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Next Level Fairs</title>
+  </head>
+  <body>
+    <div class="cursor">
+      <div class="cursor-default">
+        <span class="cursor-default__inner"></span>
+      </div>
+      <div class="cursor-trace">
+        <span class="cursor-trace__inner"></span>
+      </div>
+    </div>
+    <section class="preloader">
+      <button class="preloader__btn">
+        <span class="preloader__btn_hold">Hold</span>
+      </button>
+    </section>
+    <section class="header hidden-area">
+      <span class="circle" id="circle-1"></span>
+      <span class="circle" id="circle-2"></span>
+      <img
+        id="cube__image_1"
+        src="Lovepik_com-401467010-cube.png"
+        alt="cube image"
+        class="cube__image"
+      />
+      <img
+        id="cube__image_2"
+        src="Lovepik_com-401467010-cube.png"
+        alt="cube image"
+        class="cube__image"
+      />
+      <img
+        id="cube__image_3"
+        src="Lovepik_com-401467010-cube.png"
+        alt="cube image"
+        class="cube__image"
+      />
+      <img
+        id="cube__image_4"
+        src="Lovepik_com-401467010-cube.png"
+        alt="cube image"
+        class="cube__image"
+      />
+      <h1 class="header__title">
+        <div>LAST ART</div>
+        <div>PROJECTS</div>
+      </h1>
+    </section>
+    <section class="poster hidden-area">
+      <div class="poster__parallax">
+        <div id="poster-image_wrapper_1" class="poster-image_wrapper">
+          <img
+            id="poster-image_1"
+            src="./posterImages/poster_image_1.png"
+            alt=""
+            class="poster-image"
+          />
+        </div>
+        <div id="poster-image_wrapper_2" class="poster-image_wrapper">
+          <img
+            id="poster-image_2"
+            src="./posterImages/poster_image_2.png"
+            alt=""
+            class="poster-image"
+          />
+        </div>
+        <div id="poster-image_wrapper_3" class="poster-image_wrapper">
+          <img
+            id="poster-image_3"
+            src="./posterImages/poster_image_3.png"
+            alt=""
+            class="poster-image"
+          />
+        </div>
+      </div>
+    </section>
+  </body>
+  <script>
+    document.addEventListener("mousemove", (e) => {
+      requestAnimationFrame(() => {
+        document.querySelector(".cursor-default__inner").style.top = e.clientY + "px";
+        document.querySelector(".cursor-default__inner").style.left = e.clientX + "px";
+
+        document.querySelector(".cursor-trace__inner").style.top = e.clientY + "px";
+        document.querySelector(".cursor-trace__inner").style.left = e.clientX + "px";
+      });
+    });
+    document.addEventListener("touchmove", (e) => {
+      requestAnimationFrame(() => {
+        document.querySelector(".cursor-default__inner").style.top = e.touches[0].clientY + "px";
+        document.querySelector(".cursor-default__inner").style.left = e.touches[0].clientX + "px";
+
+        document.querySelector(".cursor-trace__inner").style.top = e.touches[0].clientY + "px";
+        document.querySelector(".cursor-trace__inner").style.left = e.touches[0].clientX + "px";
+      });
+    });
+    const cursor = document.querySelector(".cursor");
+    document.addEventListener("mousedown", () => {
+      cursor.classList.add("cursor--active");
+    });
+    document.addEventListener("touchstart", () => {
+      cursor.classList.add("cursor--active");
+    });
+    document.addEventListener("mouseup", () => {
+      cursor.classList.remove("cursor--active");
+    });
+    document.addEventListener("touchend", () => {
+      cursor.classList.remove("cursor--active");
+    });
+
+    function createRipple(e) {
+      const ripple = document.createElement("span");
+      ripple.classList.add("ripple");
+      ripple.style.top = e.clientY + "px";
+      ripple.style.left = e.clientX + "px";
+      cursor.appendChild(ripple);
+
+      ripple.addEventListener("animationend", () => {
+        ripple.remove();
+      });
+    }
+
+    document.addEventListener("click", (e) => {
+      createRipple(e);
+    });
+    document.addEventListener("touchstart", (e) => {
+      createRipple(e.touches[0]);
+    });
+
+    const preloaderSection = document.querySelector(".preloader");
+    const preloaderBtn = document.querySelector(".preloader__btn");
+    const preloaderBtnHold = document.querySelector(".preloader__btn_hold");
+    const headerSection = document.querySelector(".header");
+    const preloaderHideThreshold = 18;
+
+    const poster = document.querySelector(".poster");
+
+    function hideElement(element) {
+      element.classList.add("hidden-area");
+    }
+    function showElement(element) {
+      element.classList.remove("hidden-area");
+      element.classList.add("shown-area");
+    }
+    function setPreloaderStyle(scale) {
+      preloaderBtn.style.transform = `scale(${scale})`;
+      preloaderBtnHold.style.opacity = `${1 - (scale - 1) / preloaderHideThreshold}`;
+    }
+
+    let intervalId = null;
+    let scale = 1;
+    preloaderBtn.addEventListener("mousedown", () => {
+      intervalId = setInterval(() => {
+        scale += 0.175;
+        setPreloaderStyle(scale);
+
+        if (scale >= 1 + preloaderHideThreshold) {
+          hideElement(preloaderSection);
+          showElement(headerSection);
+          showElement(poster);
+
+          clearInterval(intervalId);
+        }
+      }, 10);
+    });
+    preloaderBtn.addEventListener("touchstart", () => {
+      intervalId = setInterval(() => {
+        scale += 0.175;
+        setPreloaderStyle(scale);
+
+        if (scale >= 1 + preloaderHideThreshold) {
+          hideElement(preloaderSection);
+          showElement(headerSection);
+          showElement(poster);
+
+          clearInterval(intervalId);
+        }
+      }, 10);
+    });
+    preloaderBtn.addEventListener("mouseup", () => {
+      clearInterval(intervalId);
+      intervalId = setInterval(() => {
+        scale -= 0.075;
+        setPreloaderStyle(scale);
+        if (scale <= 1) {
+          clearInterval(intervalId);
+          scale = 1;
+          setPreloaderStyle(scale);
+        }
+      }, 1);
+    });
+    preloaderBtn.addEventListener("touchend", () => {
+      clearInterval(intervalId);
+      intervalId = setInterval(() => {
+        scale -= 0.075;
+        setPreloaderStyle(scale);
+        if (scale <= 1) {
+          clearInterval(intervalId);
+          scale = 1;
+          setPreloaderStyle(scale);
+        }
+      }, 1);
+    });
+
+    const headerTitle = document.querySelector(".header__title");
+    const circle1 = document.querySelector("#circle-1");
+    const circle2 = document.querySelector("#circle-2");
+    const cubeImage1 = document.querySelector("#cube__image_1");
+    const cubeImage2 = document.querySelector("#cube__image_2");
+    const cubeImage3 = document.querySelector("#cube__image_3");
+    const cubeImage4 = document.querySelector("#cube__image_4");
+
+    function translateElement(element, x, y) {
+      element.style.transform = `translate(${x}px, ${y}px)`;
+    }
+    headerSection.addEventListener("mousemove", (e) => {
+      const x = e.clientX / headerSection.clientWidth;
+      const y = e.clientY / headerSection.clientHeight;
+      translateElement(headerTitle, x * -50, y * -50);
+      translateElement(circle1, x * -25, y * -25);
+      translateElement(circle2, x * 25, y * 25);
+      translateElement(cubeImage1, x * -15, y * -15);
+      translateElement(cubeImage2, x * -8, y * -8);
+      translateElement(cubeImage3, x * -20, y * -20);
+      translateElement(cubeImage4, x * 5, y * 5);
+    });
+    headerSection.addEventListener("touchmove", (e) => {
+      const x = e.touches[0].clientX / headerSection.clientWidth;
+      const y = e.touches[0].clientY / headerSection.clientHeight;
+      translateElement(headerTitle, x * -50, y * -50);
+      translateElement(circle1, x * -25, y * -25);
+      translateElement(circle2, x * 25, y * 25);
+      translateElement(cubeImage1, x * -15, y * -15);
+      translateElement(cubeImage2, x * -8, y * -8);
+      translateElement(cubeImage3, x * -20, y * -20);
+      translateElement(cubeImage4, x * 5, y * 5);
+    });
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("poster-image_state_visible");
+          }
+        });
+      },
+      { threshold: 0.2 }
+    ); // 20% of the element is visible
+
+    document.querySelectorAll(".poster-image_wrapper").forEach((poster) => {
+      observer.observe(poster);
+    });
+
+    const posterParallax = document.querySelector(".poster__parallax");
+    const posterImageWrapper1 = document.querySelector("#poster-image_wrapper_1");
+    const posterImageWrapper2 = document.querySelector("#poster-image_wrapper_2");
+    const posterImageWrapper3 = document.querySelector("#poster-image_wrapper_3");
+
+    posterParallax.addEventListener("mousemove", (e) => {
+      const xRelativeToPosterParallax = e.clientX / posterParallax.clientWidth;
+      const yRelativeToPosterParallax = e.clientY / posterParallax.clientHeight;
+
+      translateElement(
+        posterImageWrapper1,
+        xRelativeToPosterParallax * -20,
+        yRelativeToPosterParallax * -20
+      );
+      translateElement(
+        posterImageWrapper2,
+        xRelativeToPosterParallax * -40,
+        yRelativeToPosterParallax * -40
+      );
+      translateElement(
+        posterImageWrapper3,
+        xRelativeToPosterParallax * 40,
+        yRelativeToPosterParallax * 40
+      );
+    });
+
+    posterParallax.addEventListener("touchmove", (e) => {
+      const xRelativeToPosterParallax = e.touches[0].clientX / posterParallax.clientWidth;
+      const yRelativeToPosterParallax = e.touches[0].clientY / posterParallax.clientHeight;
+
+      translateElement(
+        posterImageWrapper1,
+        xRelativeToPosterParallax * -20,
+        yRelativeToPosterParallax * -20
+      );
+      translateElement(
+        posterImageWrapper2,
+        xRelativeToPosterParallax * -40,
+        yRelativeToPosterParallax * -40
+      );
+      translateElement(
+        posterImageWrapper3,
+        xRelativeToPosterParallax * 40,
+        yRelativeToPosterParallax * 40
+      );
+    });
+  </script>
+</html>

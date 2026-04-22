@@ -1,0 +1,25 @@
+{
+    "name": "common dialog component exam",
+    "version": "1.0.0",
+    "description": "",
+    "scripts": {
+        "start": "lite-server",
+        "test": "jest",
+        "build": "webpack"
+    },
+    "author": "kim hyunjin",
+    "license": "ISC",
+    "devDependencies": {
+        "@babel/core": "^7.16.7",
+        "@babel/preset-env": "^7.16.8",
+        "@babel/preset-typescript": "^7.16.7",
+        "@types/jest": "^27.4.0",
+        "babel-jest": "^27.4.6",
+        "jest": "^27.4.7",
+        "lite-server": "^2.6.1",
+        "ts-loader": "^9.2.6",
+        "typescript": "^4.5.4",
+        "webpack": "^5.66.0",
+        "webpack-cli": "^4.9.1"
+    }
+}
