@@ -47,6 +47,7 @@ theme:
 
 plugins:
   - search
+  - roamlinks
   - mermaid2
   - jupyter:
       execute: false
