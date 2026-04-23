@@ -1,10 +1,12 @@
 ---
 title: "Java 기초: 리터럴의 이해와 종류"
 date: 2019-12-06 18:10:00 -0400
-categories: jekyll update
+categories: Language
+tags:
+  - java
 ---
 
-## 191206
+## Java 기초: 리터럴의 이해와 종류
 
 #### 학습 이정표
 

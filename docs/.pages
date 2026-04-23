@@ -1,6 +1,4 @@
 nav:
-  - Home: README.md
-  - Blog: blog/
   - Backend: backend
   - AI & LangChain: ai
   - Algorithms: algorithms

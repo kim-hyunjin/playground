@@ -1,10 +1,12 @@
 ---
 title: "Java 심화: 다양한 리터럴 표현식"
 date: 2019-12-09 18:10:00 -0400
-categories: jekyll update
+categories: Language
+tags:
+  - java
 ---
 
-20191209
+# Java 심화: 다양한 리터럴 표현식
 ========
 
 문자 리터럴

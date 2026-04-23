@@ -1,10 +1,12 @@
 ---
 title: "Gradle을 활용한 Java 프로젝트 빌드 가이드"
 date: 2019-12-05 18:10:00 -0400
-categories: jekyll update
+categories: Language
+tags:
+  - java
 ---
 
-## 191205
+# Gradle을 활용한 Java 프로젝트 빌드 가이드
 
 #### compiler vs interpreter 비교 복습
 

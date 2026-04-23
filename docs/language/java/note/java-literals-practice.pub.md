@@ -1,10 +1,12 @@
 ---
 title: "Java 실습: 리터럴 활용 예제"
 date: 2019-12-10 18:10:00 -0400
-categories: jekyll update
+categories: Language
+tags:
+  - java
 ---
 
-## 191210
+## Java 실습: 리터럴 활용 예제
 
 ## 문자 리터럴 - 작은 따옴표(')의 역할
 

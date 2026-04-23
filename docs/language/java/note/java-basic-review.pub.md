@@ -1,10 +1,12 @@
 ---
 title: "Java 기초 복습: 리터럴, 변수, 배열, 비트연산"
 date: 2019-12-16 18:10:00 -0400
-categories: jekyll update
+categories: Language
+tags:
+  - java
 ---
 
-# 191216
+# Java 기초 복습: 리터럴, 변수, 배열, 비트연산
 
 복습
 

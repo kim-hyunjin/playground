@@ -1,10 +1,12 @@
 ---
 title: "소프트웨어 개발과 Git 기초"
 date: 2019-12-03 18:10:00 -0400
-categories: jekyll update
+categories: Language
+tags:
+  - java
 ---
 
-# 2019.12.03
+# 소프트웨어 개발과 Git 기초
 
 ## 용어정리
 

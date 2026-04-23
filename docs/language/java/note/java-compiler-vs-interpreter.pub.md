@@ -1,10 +1,12 @@
 ---
 title: "자바 컴파일러와 인터프리터의 동작 방식"
 date: 2019-12-04 18:10:00 -0400
-categories: jekyll update
+categories: Language
+tags:
+  - java
 ---
 
-## 191204
+# 자바 컴파일러와 인터프리터의 동작 방식
 
 #### JIT & AOT
 

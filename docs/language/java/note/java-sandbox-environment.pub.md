@@ -1,10 +1,12 @@
 ---
 title: "Java 샌드박스 보안 환경 이해하기"
 date: 2019-12-12 18:10:00 -0400
-categories: jekyll update
+categories: Language
+tags:
+  - java
 ---
 
-# 191212
+# Java 샌드박스 보안 환경 이해하기
 
 **Sandbox** : 샌드박스(sandbox)란 외부로부터 들어온 프로그램이 보호된 영역에서 동작해 시스템이 부정하게 조작되는 것을 막는 보안 형태이다
 

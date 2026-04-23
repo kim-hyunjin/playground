@@ -3,40 +3,15 @@ site_description: 학습한 내용을 기록하고 공유하는 기술 블로그
 site_author: kim-hyunjin
 site_url: https://kim-hyunjin.github.io/study/
 
-# docs_dir: docs (default)
 exclude_docs: |
-  .git/*
-  .github/*
-  node_modules/*
-  venv/*
-  build/*
-  site/*
-  *.exe
-  *.lock
-  Pipfile*
-  package-lock.json
-  uv.lock
-  **/*.py
-  **/*.kt
-  **/*.rs
-  **/*.go
-  **/*.js
-  **/*.ts
-  **/*.java
-  **/*.sql
-  **/*.gradle
-  **/*.xml
-  **/*.md
-  **/*.ipynb
+  **/*
   !**/*.pub.md
   !**/*.pub.ipynb
+  !assets/**
 
 theme:
   name: material
   language: ko
-  # ... (기타 설정)
-  validation:
-    omitted: warn
   palette:
     - scheme: default
       primary: indigo
@@ -63,7 +38,6 @@ theme:
 plugins:
   - search
   - roamlinks
-  - mermaid2
   - awesome-pages:
       collapse_single_pages: true
   - blog:
@@ -87,7 +61,7 @@ markdown_extensions:
       custom_fences:
         - name: mermaid
           class: mermaid
-          format: !!python/name:mermaid2.fence_mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.tabbed:
       alternate_style: true
   - pymdownx.highlight:
