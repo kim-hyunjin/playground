@@ -1,3 +1,0 @@
-myhost2.ddns.net {
-  proxy / 127.0.0.1 8080
-}

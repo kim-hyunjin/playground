@@ -1,0 +1,5294 @@
+
+<!doctype html>
+<html lang="ko" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="학습한 내용을 기록하고 공유하는 기술 블로그입니다.">
+      
+      
+        <meta name="author" content="kim-hyunjin">
+      
+      
+        <link rel="canonical" href="https://kim-hyunjin.github.io/study/backend/database-engineering/resources/repeatable%20read%20isolation%20and%20snapshot.pub/">
+      
+      
+        <link rel="prev" href="../offset%EC%9D%80%20%EB%8A%90%EB%A6%AC%EB%8B%A4.pub/">
+      
+      
+        <link rel="next" href="../select%20for%20update%EC%99%80%20serializable%20%EA%B2%A9%EB%A6%AC%EC%88%98%EC%A4%80.pub/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>PostgresSQL의 MVCC 구현 - Study Log & Blog</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#1" class="md-skip">
+          콘텐츠로 이동
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="상단/헤더">
+    <a href="../../../.." title="Study Log &amp; Blog" class="md-header__button md-logo" aria-label="Study Log & Blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Study Log & Blog
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              PostgresSQL의 MVCC 구현
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="검색" placeholder="검색" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="검색">
+        
+        <button type="reset" class="md-search__icon md-icon" title="지우기" aria-label="지우기" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            검색 초기화
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="탭" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../../backend-engineering/resources/A%20Client-Side%20Argument%20for%20Changing%20TCP%20Slow%20Start.pub/" class="md-tabs__link">
+          
+  
+  
+  Backend
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../ai/deeplearning-from-scratch/deep-learning-from-scratch.pub/" class="md-tabs__link">
+          
+  
+  
+  AI & LangChain
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../algorithms" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Algorithms
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../frontend" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Frontend
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../language/java/note/java-basic-review.pub/" class="md-tabs__link">
+          
+  
+  
+  Language
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../blockchain" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Blockchain
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../mobile" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Mobile
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../design-architecture/design-pattern-intro.pub/" class="md-tabs__link">
+          
+  
+  
+  Design & Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../security" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Security
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="네비게이션" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="Study Log &amp; Blog" class="md-nav__button md-logo" aria-label="Study Log & Blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Study Log & Blog
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Backend
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Backend
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_1" id="__nav_1_1_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resources
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Resources
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../backend-engineering/resources/A%20Client-Side%20Argument%20for%20Changing%20TCP%20Slow%20Start.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TCP Slow Start 변경에 대한 클라이언트 측 주장
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../backend-engineering/resources/Apache-kafka-long-polling.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Apache Kafka Long Polling 완전 가이드
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../backend-engineering/resources/Fundamentals%2Bof%2BBackend%2BCommunications%2Band%2BProtocols.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    📡 백엔드 통신 및 프로토콜 완전 정리
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../backend-engineering/resources/IP-TCP-UDP-TLS-Slides.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IP / TCP / UDP / TLS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../backend-engineering/resources/Postgres-Pipelining.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    34.5. 파이프라인 모드 (Pipeline Mode)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../backend-engineering/resources/The_Journey_of_a_Request_to_the_Backend.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Journey of a Request to the Backend
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../backend-engineering/resources/asynchronous-commits-postgres.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PostgreSQL Asynchronous Commit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../backend-engineering/resources/asynchronous-io-linux-thread.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Re [PATCH 09/13] aio add support for async openat()
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../backend-engineering/resources/asynchronous-replication-postgres.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    27.2. 로그 전송 스탠바이 서버 (PostgreSQL 비동기 복제)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../backend-engineering/resources/rabbitMQ-pushAPI.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RabbitMQ Push API (Consumer/구독자) 가이드
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_1_2" id="__nav_1_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Database engineering
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_1_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Database engineering
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_2_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_1_2_1" id="__nav_1_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resources
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_1_2_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_1_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Resources
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ACID.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACID 트랜잭션 정리
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../B-trees-vs-B%2Btrees.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    B-Trees vs B+Trees
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Database-Engines.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Database Engines
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Eventual-Consistency.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Eventual Consistency
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../How-tables-and-indexes-are-stored-on-disk.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How Tables and Indexes Are Stored on Disk
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../IF%20NOT%20EXISTS%20%EA%B5%AC%EB%AC%B8%20%EC%82%AC%EC%9A%A9%EC%8B%9C%20%EC%A3%BC%EC%9D%98%EC%A0%90.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IF NOT EXISTS 구문 사용시 주의점
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../MongoDB%20architecture.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MongoDB architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Partitioning.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Partitioning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Replication.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Replication
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Row-Based-vs-Column-Based-Databases.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Row vs Column Oriented Databases
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Sharding.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sharding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bloom-filter.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bloom Filters
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../non-key%20column%20index%EC%9D%98%20%EC%9D%B4%ED%95%B4.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    non-key column index의 이해
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../offset%EC%9D%80%20%EB%8A%90%EB%A6%AC%EB%8B%A4.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OFFSET/LIMIT가 느린 이유와 대안 전략 (예제 포함)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PostgresSQL의 MVCC 구현
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PostgresSQL의 MVCC 구현
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 고립 수준별 특징
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-write-skew" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Write Skew 예시
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-write-skew-vs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Write Skew 해결책: 비관적 제어 vs 낙관적 제어
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#postgressql-mvcc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PostgresSQL의 MVCC 구현
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="PostgresSQL의 MVCC 구현">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-tuple" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 데이터 저장 구조: Tuple의 숨겨진 컬럼
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-snapshot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 스냅샷(Snapshot)의 정체
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-visibility-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 가시성 판단 로직 (Visibility Check)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-copy-on-write" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 업데이트 과정: Copy-on-Write
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-vacuum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. 정리를 돕는 도구: VACUUM
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mysql-innodb-mvcc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MySQL InnoDB의 MVCC 구현
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="MySQL InnoDB의 MVCC 구현">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-undo-log" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Undo Log (언두 로그)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-read-view" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Read View (리드 뷰)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-mvcc-undo-log-read-view" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. MVCC의 작동 원리 (Undo Log + Read View)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. MVCC의 작동 원리 (Undo Log + Read View)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        요약 및 차이점
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#read-view" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        격리 수준에 따른 Read View 생성 시점
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../select%20for%20update%EC%99%80%20serializable%20%EA%B2%A9%EB%A6%AC%EC%88%98%EC%A4%80.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    select for update와 serializable 격리수준
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xmin%EA%B3%BC%20xmax.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    인덱스 스캔 vs 비트맵 스캔 xmin/xmax의 역할
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%EA%B8%B0%EB%B3%B8%ED%82%A4%20uuid%20vs%20serial%20id.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    기본키 uuid vs serial id
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4%EA%B0%80%20%ED%96%89%20%EB%8C%80%EC%8B%A0%EC%97%90%20%ED%8E%98%EC%9D%B4%EC%A7%80%EB%A5%BC%20%EC%9D%BD%EB%8A%94%20%EC%9D%B4%EC%9C%A0.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    📝 데이터베이스 강의 노트 인덱스와 데이터 저장 구조의 이해
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%EB%8F%99%ED%98%95%20%EC%95%94%ED%98%B8%ED%99%94.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    동형 암호화
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%EB%B3%B5%ED%95%A9%EC%9D%B8%EB%8D%B1%EC%8A%A4%2C%20%ED%9A%A8%EC%9C%A8%EC%A0%81%EC%9D%B8%20%EC%BF%BC%EB%A6%AC.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    복합인덱스 (Composite Indexes)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%EB%B9%84%ED%8A%B8%EB%A7%B5%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%20%EC%8A%A4%EC%BA%94%20vs%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%20%EC%8A%A4%EC%BA%94%20vs%20%ED%85%8C%EC%9D%B4%EB%B8%94%20%EC%8A%A4%EC%BA%94.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    비트맵 인덱스 스캔 vs 인덱스 스캔 vs 테이블 스캔
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%EC%8B%9D%EB%B3%84%EC%9E%90%EC%99%80%20%EB%B9%84%EC%8B%9D%EB%B3%84%EC%9E%90%20%EC%9D%B8%EB%8D%B1%EC%8B%B1%2C%20Index%20%EC%8A%A4%EC%BA%94%EA%B3%BC%20Index%20Only%20%EC%8A%A4%EC%BA%94.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    식별자와 비식별자 인덱싱, Index 스캔과 Index Only 스캔
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%EC%9B%B9%EC%95%B1%EC%97%90%EC%84%9C%20%EB%B3%B4%EC%95%88%EA%B3%BC%20%EC%84%B1%EB%8A%A5%EC%9D%84%20%EB%86%92%EC%9D%B4%EA%B8%B0%20%EC%9C%84%ED%95%9C%20best%20practice.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    웹앱에서 보안과 성능을 높이기 위한 best practice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%EC%9D%B8%EB%8D%B1%EC%8A%A4%EA%B0%80%20%EC%9E%88%EB%8A%94%EB%8D%B0%20%EC%99%9C%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4%EC%97%90%EC%84%9C%20%EC%A0%84%EC%B2%B4%20%ED%85%8C%EC%9D%B4%EB%B8%94%20%EC%8A%A4%EC%BA%94%EC%9D%84%20%ED%95%98%EB%82%98%EC%9A%94.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    인덱스가 있는데 왜 데이터베이스에서 전체 테이블 스캔을 하나요
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%EC%9D%BD%EA%B8%B0%20%EC%A0%84%EC%9A%A9%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    읽기 전용 트랜잭션
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%EC%A4%91%EB%B3%B5%EB%90%9C%20%EA%B0%92%EC%9D%B4%20%EC%9E%88%EB%8A%94%20%EC%97%B4%EC%97%90%20%EC%9D%B8%EB%8D%B1%EC%8B%B1%ED%95%98%EB%8A%94%20%EB%B0%A9%EB%B2%95.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    중복된 값이 있는 열에 인덱싱하는 방법
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_2_2" id="__nav_1_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tune
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_1_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tune
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tune/README.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQL 튜닝 실무 가이드
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tune/info.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Database Table & Index Information
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tune/%EA%B8%B0%EB%B3%B8%20%ED%82%A4%EB%A5%BC%20%EB%B3%80%ED%98%95%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQL Tuning Report 인덱스 컬럼 가공 개선
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tune/%EB%8B%A4%EC%88%98%20%EC%BF%BC%EB%A6%AC%EB%A5%BC%20UNION%20%EC%97%B0%EC%82%B0%EC%9E%90%EB%A1%9C%EB%A7%8C%20%ED%95%A9%EC%B9%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    불필요한 UNION 연산 제거
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tune/%EB%8C%80%EB%9F%89%EC%9D%98%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC%20%EA%B0%80%EC%A0%B8%EC%99%80%20%EC%A1%B0%EC%9D%B8%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    대량의 데이터를 가져와 조인하는 나쁜 SQL문 튜닝 보고서
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tune/%EB%8C%80%EC%86%8C%EB%AC%B8%EC%9E%90%EA%B0%80%20%EC%84%9E%EC%9D%B8%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EC%99%80%20%EB%B9%84%EA%B5%90%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQL Performance Tuning Report
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tune/%EB%A9%94%EC%9D%B8%20%ED%85%8C%EC%9D%B4%EB%B8%94%EC%97%90%20%EA%B3%84%EC%86%8D%20%EC%9D%98%EC%A1%B4%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQL Tuning Report 서브쿼리 조인 변환 개선
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tune/%EB%B6%84%EC%82%B0%20%EC%97%86%EC%9D%B4%20%ED%81%B0%20%EA%B7%9C%EB%AA%A8%EC%9D%98%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC%20%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQL 튜닝 리포트 파티셔닝을 이용한 급여 조회 최적화
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tune/%EB%B6%88%ED%95%84%EC%9A%94%ED%95%9C%20%EC%A1%B0%EC%9D%B8%EC%9D%84%20%EC%88%98%ED%96%89%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    불필요한 조인 제거를 통한 성능 개선
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tune/%EB%B9%84%ED%9A%A8%EC%9C%A8%EC%A0%81%EC%9D%B8%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%EB%A5%BC%20%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQL Performance Tuning Report 사원 정보 조회 쿼리
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tune/%EB%B9%84%ED%9A%A8%EC%9C%A8%EC%A0%81%EC%9D%B8%20%ED%8E%98%EC%9D%B4%EC%A7%95%EC%9D%84%20%EC%88%98%ED%96%89%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    튜닝 보고서 집계 쿼리 내 인라인 뷰를 통한 조인 최적화
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tune/%EC%82%AC%EC%9A%A9%ED%95%98%EC%A7%80%20%EC%95%8A%EB%8A%94%20%ED%95%A8%EC%88%98%EB%A5%BC%20%ED%8F%AC%ED%95%A8%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GROUP BY 절의 컬럼 가공 개선 보고서
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tune/%EC%8A%B5%EA%B4%80%EC%A0%81%EC%9C%BC%EB%A1%9C%20%EC%A4%91%EB%B3%B5%EC%9D%84%20%EC%A0%9C%EA%B1%B0%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    습관적인 중복 제거(DISTINCT) 개선
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tune/%EC%97%89%EB%9A%B1%ED%95%9C%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%EB%A5%BC%20%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    묵시적 형변환 제거를 통한 인덱스 범위 스캔 유도
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tune/%EC%97%B4%EC%9D%84%20%EA%B2%B0%ED%95%A9%ED%95%98%EC%97%AC%20%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    인덱스 컬럼 가공 개선 (Composite Index)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tune/%EC%9D%B8%EB%8D%B1%EC%8A%A4%20%EA%B3%A0%EB%A0%A4%20%EC%97%86%EC%9D%B4%20%EC%97%B4%EC%9D%84%20%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GROUP BY 순서 불일치에 의한 정렬 부하 개선
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tune/%EC%9D%B8%EB%8D%B1%EC%8A%A4%20%EC%97%86%EC%9D%B4%20%EC%9E%91%EC%9D%80%20%EA%B7%9C%EB%AA%A8%EC%9D%98%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC%20%EC%A1%B0%ED%9A%8C%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQL Performance Tuning Report
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tune/%EC%9D%B8%EB%8D%B1%EC%8A%A4%EB%A5%BC%20%ED%95%98%EB%82%98%EB%A7%8C%20%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQL Performance Tuning Report
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tune/%EC%9E%91%EC%9D%80%20%ED%85%8C%EC%9D%B4%EB%B8%94%EC%9D%B4%20%EB%A8%BC%EC%A0%80%20%EC%A1%B0%EC%9D%B8%EC%97%90%20%EC%B0%B8%EC%97%AC%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQL Tuning Report 조인 순서 및 인덱스 활용 개선
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tune/%EC%9E%98%EB%AA%BB%EB%90%9C%20%EC%97%B4%20%EC%86%8D%EC%84%B1%EC%9C%BC%EB%A1%9C%20%EB%B9%84%ED%9A%A8%EC%9C%A8%EC%A0%81%EC%9C%BC%EB%A1%9C%20%EC%9E%91%EC%84%B1%ED%95%9C%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQL Performance Tuning Report (V3) 부서 상태 조회 쿼리
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tune/%EC%B2%98%EC%9D%8C%EB%B6%80%ED%84%B0%20%EB%AA%A8%EB%93%A0%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC%20%EA%B0%80%EC%A0%B8%EC%98%A4%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    서브쿼리 조인 변환을 통한 집계 최적화
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tune/%ED%81%B0%20%EA%B7%9C%EB%AA%A8%EC%9D%98%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EB%B3%80%EA%B2%BD%EC%9C%BC%EB%A1%9C%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%EC%97%90%20%EC%98%81%ED%96%A5%EC%9D%84%20%EC%A3%BC%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQL Performance Tuning Report 인덱스 제거를 통한 대량 업데이트 성능 개선
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tune/%ED%95%84%EC%9A%94%20%EC%9D%B4%EC%83%81%EC%9C%BC%EB%A1%9C%20%EB%A7%8E%EC%9D%80%20%EC%A0%95%EB%B3%B4%EB%A5%BC%20%EA%B0%80%EC%A0%B8%EC%98%A4%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQL Performance Tuning Report
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tune/%ED%98%95%EB%B3%80%ED%99%98%EC%9C%BC%EB%A1%9C%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%EB%A5%BC%20%ED%99%9C%EC%9A%A9%ED%95%98%EC%A7%80%20%EB%AA%BB%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    묵시적 형변환에 의한 인덱스 무력화 개선
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tune/.agents/skills/sql-optimizer/SKILL.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQL Performance Optimizer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tune/sql/%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EC%84%A4%EC%A0%95%EB%B2%95.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker MariaDB 데이터 설정 방법
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_3" id="__nav_1_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Distributed system
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Distributed system
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../distributed-system/%EB%B6%84%EC%82%B0%20%EC%8B%9C%EC%8A%A4%ED%85%9C%EC%9D%B4%EB%9E%80%20%EB%AC%B4%EC%97%87%EC%9D%B8%EA%B0%80.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    분산 시스템이란 무엇인가
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../distributed-system/coordination/%EB%B6%84%EC%82%B0%20%EC%8B%9C%EC%8A%A4%ED%85%9C%EA%B3%BC%20%EC%A3%BC%ED%82%A4%ED%8D%BC.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    분산 시스템과 주키퍼
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../distributed-system/document-search-service/TF-IDF.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TF-IDF
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_3_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_3_4" id="__nav_1_3_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Httpserver
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_1_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Httpserver
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../distributed-system/httpserver/%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EC%A7%81%EB%A0%AC%ED%99%94%20%EB%B0%A9%EC%8B%9D.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    데이터 직렬화 방식
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../distributed-system/httpserver/%EB%B6%84%EC%82%B0%20%EC%8B%9C%EC%8A%A4%ED%85%9C%EC%9D%98%20%EB%A9%94%EC%8B%9C%EC%A7%80%20%EC%A0%84%EB%8B%AC%20%EA%B8%B0%EB%B2%95%EA%B3%BC%20%EC%8B%A4%ED%8C%A8%20%EB%8C%80%EC%9D%91%20%EC%A0%84%EB%9E%B5.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    분산 시스템의 메시지 전달 기법과 실패 대응 전략
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_3_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_3_5" id="__nav_1_3_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Load balancing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_1_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Load balancing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../distributed-system/load-balancing/%EB%B6%80%ED%95%98%20%EB%B6%84%EC%82%B0%20%EA%B0%9C%EC%9A%94.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    부하 분산 개요
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../distributed-system/load-balancing/%EB%B6%80%ED%95%98%20%EB%B6%84%EC%82%B0%20%EB%B0%A9%EC%8B%9D%20%EB%B0%8F%20%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    부하 분산 방식 및 알고리즘
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../distributed-system/load-balancing/%EB%B6%80%ED%95%98%20%EB%B6%84%EC%82%B0%EA%B3%BC%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC%20%EA%B3%84%EC%B8%B5.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    부하 분산과 네트워크 계층
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_3_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_3_6" id="__nav_1_3_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Message broker
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_1_3_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_3_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Message broker
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../distributed-system/message-broker/%EB%A9%94%EC%8B%9C%EC%A7%80%20%EB%B8%8C%EB%A1%9C%EC%BB%A4%20%EA%B0%9C%EC%9A%94.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    연쇄적 종속성은 해결하면서 트랜잭션의 원자성을 지켜야 한다면?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../distributed-system/message-broker/%EC%B9%B4%ED%94%84%EC%B9%B4%20%EA%B0%9C%EC%9A%94.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    KRaft(Kafka Raft)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI & LangChain
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AI & LangChain
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ai/deeplearning-from-scratch/deep-learning-from-scratch.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    밑바닥부터 시작하는 딥러닝 딥러닝의 근본 원리 이해
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deeplearning master
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deeplearning master
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ai/deeplearning-master/ch02%20%EB%94%A5%EB%9F%AC%EB%8B%9D%EC%9D%98%20%ED%95%B5%EC%8B%AC%20%EB%AF%B8%EB%A6%AC%EB%B3%B4%EA%B8%B0.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2장. 딥러닝 핵심 미리보기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ai/deeplearning-master/ch04%20%EA%B0%80%EC%9E%A5%20%ED%9B%8C%EB%A5%AD%ED%95%9C%20%EC%98%88%EC%B8%A1%EC%84%A0.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4장. 가장 훌륭한 예측선
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ai/deeplearning-master/ch05%20%EC%84%A0%ED%98%95%ED%9A%8C%EA%B7%80%20%EB%AA%A8%EB%8D%B8.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5장. 선형 회귀 모델: 먼저 긋고 수정하기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ai/deeplearning-master/ch06%20%EB%A1%9C%EC%A7%80%EC%8A%A4%ED%8B%B1%20%ED%9A%8C%EA%B7%80%20%EB%AA%A8%EB%8D%B8.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6장. 로지스틱 회귀 모델: 참 거짓 판단하기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ai/deeplearning-master/ch08%20%EB%8B%A4%EC%B8%B5%20%ED%8D%BC%EC%85%89%ED%8A%B8%EB%A1%A0.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8장 다층 퍼셉트론
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ai/deeplearning-master/ch10%20%EB%94%A5%EB%9F%AC%EB%8B%9D%20%EB%AA%A8%EB%8D%B8%20%EC%84%A4%EA%B3%84%ED%95%98%EA%B8%B0.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10장 딥러닝 모델 설계하기 (2장 딥러닝의 핵심 미리 보기)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ai/deeplearning-master/ch11%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EB%8B%A4%EB%A3%A8%EA%B8%B0.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11장 데이터 다루기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ai/deeplearning-master/ch12%20%EB%8B%A4%EC%A4%91%20%EB%B6%84%EB%A5%98%20%EB%AC%B8%EC%A0%9C%20%ED%95%B4%EA%B2%B0%ED%95%98%EA%B8%B0.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12장 다중 분류 문제 해결하기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ai/deeplearning-master/ch13%20%EB%AA%A8%EB%8D%B8%20%EC%84%B1%EB%8A%A5%20%EA%B2%80%EC%A6%9D%ED%95%98%EA%B8%B0.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13장 모델의 성능 검증하기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ai/deeplearning-master/ch14%20%EB%AA%A8%EB%8D%B8%20%EC%84%B1%EB%8A%A5%20%ED%96%A5%EC%83%81%EC%8B%9C%ED%82%A4%EA%B8%B0.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14장 모델의 성능 향상시키기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ai/deeplearning-master/ch15%20%EC%8B%A4%EC%A0%9C%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A1%9C%20%EB%A7%8C%EB%93%A4%EC%96%B4%20%EB%B3%B4%EB%8A%94%20%EB%AA%A8%EB%8D%B8.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    15장 실제 데이터로 만들어 보는 모델
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ai/deeplearning-master/ch16%20%EC%9D%B4%EB%AF%B8%EC%A7%80%20%EC%9D%B8%EC%8B%9D%20%EC%BB%A8%EB%B3%BC%EB%A3%A8%EC%85%98%20%EC%8B%A0%EA%B2%BD%EB%A7%9D%20CNN.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    16장 이미지 인식의 꽃, 컨볼루션 신경망(CNN)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ai/deeplearning-master/ch17%20%EC%9E%90%EC%97%B0%EC%96%B4%20%EC%B2%98%EB%A6%AC%EC%99%80%20%EB%8B%A8%EC%96%B4%20%EC%9E%84%EB%B2%A0%EB%94%A9.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    17장 딥러닝을 이용한 자연어 처리
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ai/deeplearning-master/ch18%20%EC%8B%9C%ED%80%80%EC%8A%A4%20%EB%B0%B0%EC%97%B4%EB%A1%9C%20%EB%8B%A4%EB%A3%A8%EB%8A%94%20%EC%88%9C%ED%99%98%20%EC%8B%A0%EA%B2%BD%EB%A7%9D%20RNN.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    18장 시퀀스 배열로 다루는 순환 신경망(RNN)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ai/deeplearning-master/ch19%20GAN%20%EC%98%A4%ED%86%A0%EC%9D%B8%EC%BD%94%EB%8D%94.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    19장 세상에 없는 얼굴 GAN, 오토인코더
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ai/deeplearning-master/ch20%20%EC%A0%84%EC%9D%B4%ED%95%99%EC%8A%B5%EC%9D%84%20%ED%86%B5%ED%95%B4%20%EC%84%B1%EB%8A%A5%20%EA%B7%B9%EB%8C%80%ED%99%94%ED%95%98%EA%B8%B0.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    20장 전이 학습을 통해 딥러닝의 성능 극대화하기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ai/deeplearning-master/ch21%20%EC%84%A4%EB%AA%85%20%EA%B0%80%EB%8A%A5%ED%95%9C%20%EB%94%A5%EB%9F%AC%EB%8B%9D%20%EB%AA%A8%EB%8D%B8%20%EB%A7%8C%EB%93%A4%EA%B8%B0.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    21장 설명 가능한 딥러닝 모델 만들기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ai/deeplearning-master/ch22%20%EC%BA%90%EA%B8%80%EB%A1%9C%20%EC%8B%9C%EC%9E%91%ED%95%98%EB%8A%94%20%EC%83%88%EB%A1%9C%EC%9A%B4%20%EB%8F%84%EC%A0%84.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    22장 캐글로 시작하는 새로운 도전
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ai/deeplearning-master/post_ml_top10.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    가장 많이 쓰이는 머신러닝 알고리즘 TOP 10 총정리
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ai/deeplearning-master/post_model_design.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    딥러닝 모델 설계와 데이터 전처리 파이프라인
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ai/deeplearning-master/post_nlp.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    자연어 처리(NLP)와 단어 임베딩의 이해
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ai/deeplearning-master/post_regression.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    딥러닝의 기초 선형 회귀와 로지스틱 회귀 모델
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ai/deeplearning-master/post_rnn.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    순환 신경망(RNN)과 어텐션(Attention)의 이해
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ai/deeplearning-master/%EA%B0%80%EC%9E%A5%20%EB%A7%8E%EC%9D%B4%20%EC%93%B0%EC%9D%B4%EB%8A%94%20%EB%A8%B8%EC%8B%A0%20%EB%9F%AC%EB%8B%9D%20%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98%20TOP%2010.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    가장 많이 쓰이는 머신 러닝 알고리즘 TOP 10
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ai/deeplearning-master/%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B6%84%EC%84%9D%EC%9D%84%20%EC%9C%84%ED%95%9C%20%ED%8C%90%EB%8B%A4%EC%8A%A4.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    데이터 분석을 위한 판다스
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ai/deeplearning-master/%ED%8C%8C%EC%9D%B4%EC%8D%AC%EC%BD%94%EB%94%A9%EC%9C%BC%EB%A1%9C%20%EC%A7%9C%EB%B3%B4%EB%8A%94%20%EC%8B%A0%EA%B2%BD%EB%A7%9D.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    심화학습 2. 파이썬 코딩으로 짜는 신경망
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../algorithms" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Algorithms
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../frontend" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Frontend
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Language
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Language
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Note
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Note
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../language/java/note/java-basic-review.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Java 기초 복습 리터럴, 변수, 배열, 비트연산
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../language/java/note/java-compiler-vs-interpreter.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    자바 컴파일러와 인터프리터의 동작 방식
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../language/java/note/java-git-and-software.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    소프트웨어 개발과 Git 기초
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../language/java/note/java-gradle-build-guide.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gradle을 활용한 Java 프로젝트 빌드 가이드
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../language/java/note/java-literals-advanced.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Java 심화 다양한 리터럴 표현식
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../language/java/note/java-literals-basic.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Java 기초 리터럴의 이해와 종류
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../language/java/note/java-literals-practice.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Java 실습 리터럴 활용 예제
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../language/java/note/java-reference-type.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Java 참조 자료형(Reference Type)의 특징
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../language/java/note/java-sandbox-environment.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Java 샌드박스 보안 환경 이해하기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../language/kotlin/kotlin-in-action/kotlin-in-action-summary.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kotlin In Action 코틀린 핵심 개념 요약
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../blockchain" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Blockchain
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../mobile" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mobile
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design & Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Design & Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../design-architecture/design-pattern-intro.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    디자인 패턴의 정석 실무 적용 가이드
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../design-architecture/post_principles.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SOLID를 넘어선 유연한 설계 원칙 디자인 패턴의 근간
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../design-architecture/design-pattern-and-refactoring/note/%EB%A6%AC%ED%8C%A9%ED%86%A0%EB%A7%81/refactoring-strategy.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    코드의 구린내(Code Smell)와 리팩토링 전략
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../security" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 고립 수준별 특징
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-write-skew" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Write Skew 예시
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-write-skew-vs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Write Skew 해결책: 비관적 제어 vs 낙관적 제어
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#postgressql-mvcc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PostgresSQL의 MVCC 구현
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="PostgresSQL의 MVCC 구현">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-tuple" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 데이터 저장 구조: Tuple의 숨겨진 컬럼
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-snapshot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 스냅샷(Snapshot)의 정체
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-visibility-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 가시성 판단 로직 (Visibility Check)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-copy-on-write" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 업데이트 과정: Copy-on-Write
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-vacuum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. 정리를 돕는 도구: VACUUM
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mysql-innodb-mvcc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MySQL InnoDB의 MVCC 구현
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="MySQL InnoDB의 MVCC 구현">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-undo-log" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Undo Log (언두 로그)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-read-view" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Read View (리드 뷰)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-mvcc-undo-log-read-view" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. MVCC의 작동 원리 (Undo Log + Read View)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. MVCC의 작동 원리 (Undo Log + Read View)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        요약 및 차이점
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#read-view" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        격리 수준에 따른 Read View 생성 시점
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<p>현대적인 DB는 Repeatable Read를 구현할 때 내부적으로 스냅샷(Snapshot) 방식을 사용. -&gt; <code>Repeatable Read</code>를 선택하면 자동으로 유령 행 문제까지 해결</p>
+<h2 id="1">1. 고립 수준별 특징<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>고립 수준</th>
+<th>정의 및 특징</th>
+<th>문제점 (이론적 관점)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Read Committed</strong></td>
+<td>각 쿼리가 실행되는 시점의 커밋된 데이터만 읽음.</td>
+<td><strong>반복 불가능한 읽기:</strong> 한 트랜잭션 내에서 같은 쿼리를 두 번 실행했을 때 결과가 다를 수 있음.</td>
+</tr>
+<tr>
+<td><strong>Repeatable Read</strong></td>
+<td>트랜잭션 내에서 한 번 읽은 행은 값이 바뀌지 않도록 보장함.</td>
+<td><strong>팬텀 리드(Phantom Read):</strong> 기존 행은 보호되지만, 새로 삽입된 행(유령 행)이 나타날 수 있음.</td>
+</tr>
+<tr>
+<td><strong>Snapshot Isolation</strong></td>
+<td>트랜잭션 시작 시점의 데이터 '스냅샷'을 기반으로 작업함.</td>
+<td>이론적으로는 팬텀 리드까지 해결하지만, <strong>Write Skew(쓰기 왜곡)</strong> 문제는 발생 가능.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-write-skew">2. Write Skew 예시<a class="headerlink" href="#2-write-skew" title="Permanent link">&para;</a></h2>
+<p>전제 조건: 병원에는 최소 1명의 의사가 상주해야 함. (현재 아담, 밥 2명 근무 중)</p>
+<p>트랜잭션 A (아담): 현재 의사 수를 조회함 (2명 확인). → "내가 퇴근해도 1명(밥)이 남네?" → 퇴근 처리(Update).</p>
+<p>트랜잭션 B (밥): 동시에 의사 수를 조회함 (2명 확인). → "내가 퇴근해도 1명(아담)이 남네?" → 퇴근 처리(Update).</p>
+<p>최종 결과: 두 트랜잭션 모두 성공적으로 커밋됨. 결과적으로 병원에는 의사가 0명이 남는 정합성 오류 발생.</p>
+<p>이는 각 행에 대한 직접적인 수정 충돌이 아니라, "조회 결과(조건)"에 근거한 결정이 서로를 무효화하기 때문에 발생합니다.</p>
+<h2 id="3-write-skew-vs">3. Write Skew 해결책: 비관적 제어 vs 낙관적 제어<a class="headerlink" href="#3-write-skew-vs" title="Permanent link">&para;</a></h2>
+<p>강연자는 실무 경험을 바탕으로 <strong>비관적 동시성 제어</strong>를 선호한다고 밝힙니다.</p>
+<ul>
+<li><strong>비관적 제어 (강연자 추천):</strong> <code>SELECT ... FOR UPDATE</code>를 사용하여 읽는 순간 행에 잠금(Lock)을 겁니다. 다른 사람이 기다리게 하더라도 데이터가 꼬여서 나중에 트랜잭션을 재시도(Retry)하는 비용보다 낫다고 판단합니다.</li>
+<li><strong>낙관적 제어 (Serializable):</strong> 일단 진행하고 마지막에 충돌을 감지합니다. 충돌 시 에러를 뱉고 애플리케이션이 다시 시도하게 만듭니다.</li>
+</ul>
+<hr />
+<p></br></br></p>
+<h1 id="postgressql-mvcc">PostgresSQL의 MVCC 구현<a class="headerlink" href="#postgressql-mvcc" title="Permanent link">&para;</a></h1>
+<p>PostgreSQL의 <strong>MVCC(Multi-Version Concurrency Control)</strong>와 <strong>스냅샷</strong>은 데이터의 가시성을 관리하여 읽기 작업이 쓰기 작업을 방해하지 않도록 설계되었습니다. 핵심은 데이터를 덮어쓰지 않고 새로운 버전을 생성하는 방식에 있습니다.</p>
+<h2 id="1-tuple">1. 데이터 저장 구조: Tuple의 숨겨진 컬럼<a class="headerlink" href="#1-tuple" title="Permanent link">&para;</a></h2>
+<p>Postgres의 모든 테이블 행(Tuple)에는 MVCC 제어를 위한 메타데이터 필드가 숨겨져 있습니다.</p>
+<ul>
+<li><strong><code>xmin</code></strong>: 해당 튜플을 삽입한 트랜잭션의 ID (<strong>XID</strong>).</li>
+<li><strong><code>xmax</code></strong>: 해당 튜플을 삭제하거나 업데이트한 트랜잭션의 ID. (삭제되지 않았다면 <code>0</code>)</li>
+<li><strong><code>ctid</code></strong>: 해당 튜플의 물리적 위치 정보. 업데이트 시 새로운 위치를 가리키는 포인터 역할을 합니다.</li>
+</ul>
+<h2 id="2-snapshot">2. 스냅샷(Snapshot)의 정체<a class="headerlink" href="#2-snapshot" title="Permanent link">&para;</a></h2>
+<p>스냅샷은 특정 시점에 "어떤 트랜잭션이 활성 상태인가"를 기록한 데이터 구조체입니다. <code>pg_snapshot</code> 데이터 타입으로 표현되며, 다음과 같은 정보를 포함합니다.</p>
+<ul>
+<li><strong><code>xmin</code></strong>: 아직 실행 중인 가장 오래된 트랜잭션의 ID. 이보다 작은 XID를 가진 트랜잭션은 모두 종료(커밋/롤백)된 것으로 간주합니다.</li>
+<li><strong><code>xmax</code></strong>: 아직 할당되지 않은 다음 트랜잭션 ID. 이보다 크거나 같은 XID를 가진 트랜잭션은 스냅샷 시점에 시작조차 하지 않은 상태입니다.</li>
+<li><strong><code>xip_list</code></strong>: <code>xmin</code>과 <code>xmax</code> 사이에서 현재 활성(Running) 상태인 트랜잭션 목록입니다.</li>
+</ul>
+<h2 id="3-visibility-check">3. 가시성 판단 로직 (Visibility Check)<a class="headerlink" href="#3-visibility-check" title="Permanent link">&para;</a></h2>
+<p>쿼리가 실행될 때, Postgres는 현재 스냅샷을 기준으로 각 튜플을 보여줄지 말지 결정합니다.</p>
+<ol>
+<li>
+<p><strong><code>xmin</code> 확인</strong>:</p>
+</li>
+<li>
+<p><code>xmin</code>이 아직 커밋되지 않았다면? <strong>보이지 않음.</strong></p>
+</li>
+<li><code>xmin</code>이 현재 스냅샷의 <code>xip_list</code>에 있다면? <strong>보이지 않음.</strong></li>
+<li>
+<p><code>xmin</code>이 커밋되었고 스냅샷 범위 밖(이미 완료됨)이라면? <strong>다음 단계로.</strong></p>
+</li>
+<li>
+<p><strong><code>xmax</code> 확인</strong>:</p>
+</li>
+<li>
+<p><code>xmax</code>가 <code>0</code>이거나 롤백되었다면? <strong>보임 (유효한 데이터).</strong></p>
+</li>
+<li><code>xmax</code>가 커밋되었다면? <strong>보이지 않음 (이미 삭제된 데이터).</strong></li>
+<li><code>xmax</code>가 현재 스냅샷 시점에 아직 활성 상태라면? <strong>보임 (아직 삭제 확정이 아님).</strong></li>
+</ol>
+<h2 id="4-copy-on-write">4. 업데이트 과정: Copy-on-Write<a class="headerlink" href="#4-copy-on-write" title="Permanent link">&para;</a></h2>
+<p>Postgres에서 <code>UPDATE</code>는 내부적으로 <strong><code>DELETE</code> + <code>INSERT</code></strong>로 작동합니다.</p>
+<ul>
+<li><strong>기존 행</strong>: <code>xmax</code>를 현재 트랜잭션 ID로 설정하여 "삭제 예정"으로 마킹합니다.</li>
+<li><strong>새로운 행</strong>: 새로운 <code>ctid</code>에 데이터를 복사하고 <code>xmin</code>을 현재 트랜잭션 ID로 설정합니다.</li>
+<li>결과적으로 한 데이터에 대해 여러 버전이 디스크에 공존하게 되며, 스냅샷에 따라 각기 다른 버전을 보게 됩니다.</li>
+</ul>
+<h2 id="5-vacuum">5. 정리를 돕는 도구: VACUUM<a class="headerlink" href="#5-vacuum" title="Permanent link">&para;</a></h2>
+<p>MVCC의 부작용은 더 이상 아무도 참조하지 않는 <strong>과거 버전(Dead Tuple)</strong>이 쌓인다는 점입니다.</p>
+<ul>
+<li><strong>VACUUM</strong>은 <code>xmax</code>가 커밋되고, 현재 실행 중인 가장 오래된 스냅샷보다 더 과거의 트랜잭션에 의해 삭제된 튜플을 찾아 공간을 재사용할 수 있게 비워줍니다.</li>
+</ul>
+<hr />
+<p></br></br></p>
+<h1 id="mysql-innodb-mvcc">MySQL InnoDB의 MVCC 구현<a class="headerlink" href="#mysql-innodb-mvcc" title="Permanent link">&para;</a></h1>
+<p>MySQL의 InnoDB 스토리지 엔진에서 <strong>Undo Log</strong>와 <strong>Read View</strong>는 트랜잭션의 격리 수준(Isolation Level)을 보장하고, <strong>MVCC(Multi-Version Concurrency Control)</strong>를 구현하는 핵심 요소입니다.</p>
+<h2 id="1-undo-log">1. Undo Log (언두 로그)<a class="headerlink" href="#1-undo-log" title="Permanent link">&para;</a></h2>
+<p>Undo Log는 데이터가 변경되었을 때 <strong>변경 전의 이전 데이터</strong>를 보관하는 영역입니다.</p>
+<ul>
+<li>
+<p><strong>주요 목적:</strong></p>
+</li>
+<li>
+<p><strong>트랜잭션 롤백:</strong> 사용자가 <code>ROLLBACK</code>을 수행하면 Undo Log에 저장된 데이터를 사용하여 변경 전 상태로 복구합니다.</p>
+</li>
+<li>
+<p><strong>MVCC 구현:</strong> 특정 트랜잭션이 데이터를 수정 중이더라도, 다른 트랜잭션이 격리 수준에 따라 변경 전의 데이터를 읽을 수 있게 해줍니다.</p>
+</li>
+<li>
+<p><strong>작동 방식:</strong> 데이터를 수정(UPDATE/DELETE)할 때마다 InnoDB는 기존 레코드를 복사하여 Undo Log에 기록하고, 현재 레코드의 시스템 컬럼인 <code>ROLL_PTR</code>(Rollback Pointer)이 해당 Undo Log를 가리키게 합니다. 이를 통해 여러 버전의 데이터가 체인 형태로 연결됩니다.</p>
+</li>
+</ul>
+<h2 id="2-read-view">2. Read View (리드 뷰)<a class="headerlink" href="#2-read-view" title="Permanent link">&para;</a></h2>
+<p>Read View는 특정 시점에 <strong>실행 중인 트랜잭션들의 목록을 찍은 스냅샷</strong>입니다. <code>REPEATABLE READ</code>나 <code>READ COMMITTED</code> 격리 수준에서 "어떤 버전의 데이터를 보여줄 것인가"를 결정하는 기준이 됩니다.</p>
+<p>Read View에는 다음과 같은 중요한 정보들이 포함됩니다:</p>
+<ul>
+<li><strong>m_ids:</strong> Read View 생성 당시 활성 상태(커밋되지 않은)인 트랜잭션 ID 목록.</li>
+<li><strong>min_trx_id:</strong> <code>m_ids</code> 중 가장 작은 트랜잭션 ID. (이보다 작은 ID는 모두 커밋된 상태)</li>
+<li><strong>max_trx_id:</strong> Read View 생성 당시 아직 시작되지 않은 다음 트랜잭션에 할당될 ID. (이보다 크거나 같은 ID는 모두 "미래"의 트랜잭션)</li>
+</ul>
+<h2 id="3-mvcc-undo-log-read-view">3. MVCC의 작동 원리 (Undo Log + Read View)<a class="headerlink" href="#3-mvcc-undo-log-read-view" title="Permanent link">&para;</a></h2>
+<p>InnoDB는 데이터를 읽을 때, 해당 레코드의 <code>DB_TRX_ID</code>(수정한 트랜잭션 ID)와 현재 트랜잭션의 <strong>Read View</strong>를 비교하여 어떤 데이터를 보여줄지 결정합니다.</p>
+<ol>
+<li><strong>자신이 수정한 데이터:</strong> 레코드의 <code>TRX_ID</code>가 현재 내 ID와 같다면 즉시 읽습니다.</li>
+<li><strong>이미 커밋된 데이터:</strong> <code>TRX_ID</code>가 <code>min_trx_id</code>보다 작다면, Read View 생성 전에 이미 커밋된 것이므로 읽습니다.</li>
+<li><strong>아직 커밋되지 않았거나 미래의 데이터:</strong> <code>TRX_ID</code>가 <code>m_ids</code>에 포함되어 있거나 <code>max_trx_id</code>보다 크다면, 현재 트랜잭션 입장에서는 볼 수 없는 데이터입니다.</li>
+<li><strong>Undo Log 추적:</strong> 볼 수 없는 데이터인 경우, 레코드의 <code>ROLL_PTR</code>을 따라 <strong>Undo Log</strong>로 거슬러 올라가며 조건에 맞는(볼 수 있는) 과거 버전의 데이터를 찾아 읽습니다.</li>
+</ol>
+<h3 id="_1">요약 및 차이점<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>Undo Log</th>
+<th>Read View</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>역할</strong></td>
+<td>변경 전의 <strong>데이터 그 자체</strong>를 저장</td>
+<td>데이터를 읽는 <strong>판단 기준(스냅샷)</strong> 제공</td>
+</tr>
+<tr>
+<td><strong>위치</strong></td>
+<td>시스템 테이블스페이스 / Undo 테이블스페이스</td>
+<td>트랜잭션 내부 메모리</td>
+</tr>
+<tr>
+<td><strong>핵심 기능</strong></td>
+<td>롤백 및 과거 데이터 복원</td>
+<td>트랜잭션 간의 가시성(Visibility) 제어</td>
+</tr>
+</tbody>
+</table>
+<h3 id="read-view">격리 수준에 따른 Read View 생성 시점<a class="headerlink" href="#read-view" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>READ COMMITTED:</strong> 매 <code>SELECT</code> 쿼리마다 새로운 Read View를 생성합니다. 따라서 쿼리 실행 사이에 커밋된 데이터를 볼 수 있습니다.</li>
+<li><strong>REPEATABLE READ:</strong> 트랜잭션의 첫 번째 <code>SELECT</code> 시점에 Read View를 생성하고 이를 트랜잭션 종료 시까지 유지합니다. 이로 인해 동일 트랜잭션 내에서는 항상 같은 데이터를 보게 됩니다.</li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  맨위로
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\ud074\ub9bd\ubcf4\ub4dc\uc5d0 \ubcf5\uc0ac\ub428", "clipboard.copy": "\ud074\ub9bd\ubcf4\ub4dc\ub85c \ubcf5\uc0ac", "search.result.more.one": "\uc774 \ubb38\uc11c\uc5d0\uc11c 1\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.more.other": "\uc774 \ubb38\uc11c\uc5d0\uc11c #\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.none": "\uac80\uc0c9\uc5b4\uc640 \uc77c\uce58\ud558\ub294 \ubb38\uc11c\uac00 \uc5c6\uc2b5\ub2c8\ub2e4", "search.result.one": "1\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.other": "#\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.placeholder": "\uac80\uc0c9\uc5b4\ub97c \uc785\ub825\ud558\uc138\uc694", "search.result.term.missing": "\ud3ec\ud568\ub418\uc9c0 \uc54a\uc740 \uac80\uc0c9\uc5b4", "select.version": "\ubc84\uc804 \uc120\ud0dd"}, "version": null}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
