@@ -3,3 +3,5 @@ content/backend/database-engineering/tune/sql/** linguist-documentation
 
 *.yml linguist-documentation
 *.yaml linguist-documentation
+*.ipynb linguist-documentation
+*.md linguist-documentation
