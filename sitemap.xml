@@ -1,459 +1,559 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
+         <loc>https://kim-hyunjin.github.io/study/</loc>
+         <lastmod>2026-04-24</lastmod>
+    </url>
+    <url>
          <loc>https://kim-hyunjin.github.io/study/ai/deeplearning-from-scratch/deep-learning-from-scratch.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/ai/deeplearning-master/ch02%20%EB%94%A5%EB%9F%AC%EB%8B%9D%EC%9D%98%20%ED%95%B5%EC%8B%AC%20%EB%AF%B8%EB%A6%AC%EB%B3%B4%EA%B8%B0.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/ai/deeplearning-master/ch04%20%EA%B0%80%EC%9E%A5%20%ED%9B%8C%EB%A5%AD%ED%95%9C%20%EC%98%88%EC%B8%A1%EC%84%A0.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/ai/deeplearning-master/ch05%20%EC%84%A0%ED%98%95%ED%9A%8C%EA%B7%80%20%EB%AA%A8%EB%8D%B8.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/ai/deeplearning-master/ch06%20%EB%A1%9C%EC%A7%80%EC%8A%A4%ED%8B%B1%20%ED%9A%8C%EA%B7%80%20%EB%AA%A8%EB%8D%B8.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/ai/deeplearning-master/ch08%20%EB%8B%A4%EC%B8%B5%20%ED%8D%BC%EC%85%89%ED%8A%B8%EB%A1%A0.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/ai/deeplearning-master/ch10%20%EB%94%A5%EB%9F%AC%EB%8B%9D%20%EB%AA%A8%EB%8D%B8%20%EC%84%A4%EA%B3%84%ED%95%98%EA%B8%B0.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/ai/deeplearning-master/ch11%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EB%8B%A4%EB%A3%A8%EA%B8%B0.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/ai/deeplearning-master/ch12%20%EB%8B%A4%EC%A4%91%20%EB%B6%84%EB%A5%98%20%EB%AC%B8%EC%A0%9C%20%ED%95%B4%EA%B2%B0%ED%95%98%EA%B8%B0.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/ai/deeplearning-master/ch13%20%EB%AA%A8%EB%8D%B8%20%EC%84%B1%EB%8A%A5%20%EA%B2%80%EC%A6%9D%ED%95%98%EA%B8%B0.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/ai/deeplearning-master/ch14%20%EB%AA%A8%EB%8D%B8%20%EC%84%B1%EB%8A%A5%20%ED%96%A5%EC%83%81%EC%8B%9C%ED%82%A4%EA%B8%B0.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/ai/deeplearning-master/ch15%20%EC%8B%A4%EC%A0%9C%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A1%9C%20%EB%A7%8C%EB%93%A4%EC%96%B4%20%EB%B3%B4%EB%8A%94%20%EB%AA%A8%EB%8D%B8.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/ai/deeplearning-master/ch16%20%EC%9D%B4%EB%AF%B8%EC%A7%80%20%EC%9D%B8%EC%8B%9D%20%EC%BB%A8%EB%B3%BC%EB%A3%A8%EC%85%98%20%EC%8B%A0%EA%B2%BD%EB%A7%9D%20CNN.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/ai/deeplearning-master/ch17%20%EC%9E%90%EC%97%B0%EC%96%B4%20%EC%B2%98%EB%A6%AC%EC%99%80%20%EB%8B%A8%EC%96%B4%20%EC%9E%84%EB%B2%A0%EB%94%A9.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/ai/deeplearning-master/ch18%20%EC%8B%9C%ED%80%80%EC%8A%A4%20%EB%B0%B0%EC%97%B4%EB%A1%9C%20%EB%8B%A4%EB%A3%A8%EB%8A%94%20%EC%88%9C%ED%99%98%20%EC%8B%A0%EA%B2%BD%EB%A7%9D%20RNN.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/ai/deeplearning-master/ch19%20GAN%20%EC%98%A4%ED%86%A0%EC%9D%B8%EC%BD%94%EB%8D%94.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/ai/deeplearning-master/ch20%20%EC%A0%84%EC%9D%B4%ED%95%99%EC%8A%B5%EC%9D%84%20%ED%86%B5%ED%95%B4%20%EC%84%B1%EB%8A%A5%20%EA%B7%B9%EB%8C%80%ED%99%94%ED%95%98%EA%B8%B0.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/ai/deeplearning-master/ch21%20%EC%84%A4%EB%AA%85%20%EA%B0%80%EB%8A%A5%ED%95%9C%20%EB%94%A5%EB%9F%AC%EB%8B%9D%20%EB%AA%A8%EB%8D%B8%20%EB%A7%8C%EB%93%A4%EA%B8%B0.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/ai/deeplearning-master/ch22%20%EC%BA%90%EA%B8%80%EB%A1%9C%20%EC%8B%9C%EC%9E%91%ED%95%98%EB%8A%94%20%EC%83%88%EB%A1%9C%EC%9A%B4%20%EB%8F%84%EC%A0%84.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/ai/deeplearning-master/post_ml_top10.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/ai/deeplearning-master/post_model_design.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/ai/deeplearning-master/post_nlp.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/ai/deeplearning-master/post_regression.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/ai/deeplearning-master/post_rnn.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/ai/deeplearning-master/%EA%B0%80%EC%9E%A5%20%EB%A7%8E%EC%9D%B4%20%EC%93%B0%EC%9D%B4%EB%8A%94%20%EB%A8%B8%EC%8B%A0%20%EB%9F%AC%EB%8B%9D%20%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98%20TOP%2010.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/ai/deeplearning-master/%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B6%84%EC%84%9D%EC%9D%84%20%EC%9C%84%ED%95%9C%20%ED%8C%90%EB%8B%A4%EC%8A%A4.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/ai/deeplearning-master/%ED%8C%8C%EC%9D%B4%EC%8D%AC%EC%BD%94%EB%94%A9%EC%9C%BC%EB%A1%9C%20%EC%A7%9C%EB%B3%B4%EB%8A%94%20%EC%8B%A0%EA%B2%BD%EB%A7%9D.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
+    </url>
+    <url>
+         <loc>https://kim-hyunjin.github.io/study/algorithms/algorithm-core-concepts.pub/</loc>
+         <lastmod>2026-04-24</lastmod>
+    </url>
+    <url>
+         <loc>https://kim-hyunjin.github.io/study/algorithms/coding-and-debugging-principles.pub/</loc>
+         <lastmod>2026-04-24</lastmod>
+    </url>
+    <url>
+         <loc>https://kim-hyunjin.github.io/study/algorithms/problem-solving-guide.pub/</loc>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/backend-engineering/resources/A%20Client-Side%20Argument%20for%20Changing%20TCP%20Slow%20Start.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/backend-engineering/resources/Apache-kafka-long-polling.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/backend-engineering/resources/Fundamentals%2Bof%2BBackend%2BCommunications%2Band%2BProtocols.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/backend-engineering/resources/IP-TCP-UDP-TLS-Slides.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/backend-engineering/resources/Postgres-Pipelining.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/backend-engineering/resources/The_Journey_of_a_Request_to_the_Backend.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/backend-engineering/resources/asynchronous-commits-postgres.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/backend-engineering/resources/asynchronous-io-linux-thread.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/backend-engineering/resources/asynchronous-replication-postgres.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/backend-engineering/resources/rabbitMQ-pushAPI.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/resources/ACID.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/resources/B-trees-vs-B%2Btrees.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/resources/Database-Engines.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/resources/Eventual-Consistency.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/resources/How-tables-and-indexes-are-stored-on-disk.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/resources/IF%20NOT%20EXISTS%20%EA%B5%AC%EB%AC%B8%20%EC%82%AC%EC%9A%A9%EC%8B%9C%20%EC%A3%BC%EC%9D%98%EC%A0%90.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/resources/MongoDB%20architecture.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/resources/Partitioning.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/resources/Replication.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/resources/Row-Based-vs-Column-Based-Databases.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/resources/Sharding.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/resources/bloom-filter.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/resources/non-key%20column%20index%EC%9D%98%20%EC%9D%B4%ED%95%B4.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/resources/offset%EC%9D%80%20%EB%8A%90%EB%A6%AC%EB%8B%A4.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/resources/repeatable%20read%20isolation%20and%20snapshot.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/resources/select%20for%20update%EC%99%80%20serializable%20%EA%B2%A9%EB%A6%AC%EC%88%98%EC%A4%80.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/resources/xmin%EA%B3%BC%20xmax.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/resources/%EA%B8%B0%EB%B3%B8%ED%82%A4%20uuid%20vs%20serial%20id.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/resources/%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4%EA%B0%80%20%ED%96%89%20%EB%8C%80%EC%8B%A0%EC%97%90%20%ED%8E%98%EC%9D%B4%EC%A7%80%EB%A5%BC%20%EC%9D%BD%EB%8A%94%20%EC%9D%B4%EC%9C%A0.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/resources/%EB%8F%99%ED%98%95%20%EC%95%94%ED%98%B8%ED%99%94.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/resources/%EB%B3%B5%ED%95%A9%EC%9D%B8%EB%8D%B1%EC%8A%A4%2C%20%ED%9A%A8%EC%9C%A8%EC%A0%81%EC%9D%B8%20%EC%BF%BC%EB%A6%AC.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/resources/%EB%B9%84%ED%8A%B8%EB%A7%B5%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%20%EC%8A%A4%EC%BA%94%20vs%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%20%EC%8A%A4%EC%BA%94%20vs%20%ED%85%8C%EC%9D%B4%EB%B8%94%20%EC%8A%A4%EC%BA%94.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/resources/%EC%8B%9D%EB%B3%84%EC%9E%90%EC%99%80%20%EB%B9%84%EC%8B%9D%EB%B3%84%EC%9E%90%20%EC%9D%B8%EB%8D%B1%EC%8B%B1%2C%20Index%20%EC%8A%A4%EC%BA%94%EA%B3%BC%20Index%20Only%20%EC%8A%A4%EC%BA%94.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/resources/%EC%9B%B9%EC%95%B1%EC%97%90%EC%84%9C%20%EB%B3%B4%EC%95%88%EA%B3%BC%20%EC%84%B1%EB%8A%A5%EC%9D%84%20%EB%86%92%EC%9D%B4%EA%B8%B0%20%EC%9C%84%ED%95%9C%20best%20practice.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/resources/%EC%9D%B8%EB%8D%B1%EC%8A%A4%EA%B0%80%20%EC%9E%88%EB%8A%94%EB%8D%B0%20%EC%99%9C%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4%EC%97%90%EC%84%9C%20%EC%A0%84%EC%B2%B4%20%ED%85%8C%EC%9D%B4%EB%B8%94%20%EC%8A%A4%EC%BA%94%EC%9D%84%20%ED%95%98%EB%82%98%EC%9A%94.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/resources/%EC%9D%BD%EA%B8%B0%20%EC%A0%84%EC%9A%A9%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/resources/%EC%A4%91%EB%B3%B5%EB%90%9C%20%EA%B0%92%EC%9D%B4%20%EC%9E%88%EB%8A%94%20%EC%97%B4%EC%97%90%20%EC%9D%B8%EB%8D%B1%EC%8B%B1%ED%95%98%EB%8A%94%20%EB%B0%A9%EB%B2%95.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/tune/README.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/tune/info.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/tune/%EA%B8%B0%EB%B3%B8%20%ED%82%A4%EB%A5%BC%20%EB%B3%80%ED%98%95%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/tune/%EB%8B%A4%EC%88%98%20%EC%BF%BC%EB%A6%AC%EB%A5%BC%20UNION%20%EC%97%B0%EC%82%B0%EC%9E%90%EB%A1%9C%EB%A7%8C%20%ED%95%A9%EC%B9%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/tune/%EB%8C%80%EB%9F%89%EC%9D%98%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC%20%EA%B0%80%EC%A0%B8%EC%99%80%20%EC%A1%B0%EC%9D%B8%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/tune/%EB%8C%80%EC%86%8C%EB%AC%B8%EC%9E%90%EA%B0%80%20%EC%84%9E%EC%9D%B8%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EC%99%80%20%EB%B9%84%EA%B5%90%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/tune/%EB%A9%94%EC%9D%B8%20%ED%85%8C%EC%9D%B4%EB%B8%94%EC%97%90%20%EA%B3%84%EC%86%8D%20%EC%9D%98%EC%A1%B4%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/tune/%EB%B6%84%EC%82%B0%20%EC%97%86%EC%9D%B4%20%ED%81%B0%20%EA%B7%9C%EB%AA%A8%EC%9D%98%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC%20%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/tune/%EB%B6%88%ED%95%84%EC%9A%94%ED%95%9C%20%EC%A1%B0%EC%9D%B8%EC%9D%84%20%EC%88%98%ED%96%89%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/tune/%EB%B9%84%ED%9A%A8%EC%9C%A8%EC%A0%81%EC%9D%B8%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%EB%A5%BC%20%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/tune/%EB%B9%84%ED%9A%A8%EC%9C%A8%EC%A0%81%EC%9D%B8%20%ED%8E%98%EC%9D%B4%EC%A7%95%EC%9D%84%20%EC%88%98%ED%96%89%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/tune/%EC%82%AC%EC%9A%A9%ED%95%98%EC%A7%80%20%EC%95%8A%EB%8A%94%20%ED%95%A8%EC%88%98%EB%A5%BC%20%ED%8F%AC%ED%95%A8%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/tune/%EC%8A%B5%EA%B4%80%EC%A0%81%EC%9C%BC%EB%A1%9C%20%EC%A4%91%EB%B3%B5%EC%9D%84%20%EC%A0%9C%EA%B1%B0%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/tune/%EC%97%89%EB%9A%B1%ED%95%9C%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%EB%A5%BC%20%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/tune/%EC%97%B4%EC%9D%84%20%EA%B2%B0%ED%95%A9%ED%95%98%EC%97%AC%20%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/tune/%EC%9D%B8%EB%8D%B1%EC%8A%A4%20%EA%B3%A0%EB%A0%A4%20%EC%97%86%EC%9D%B4%20%EC%97%B4%EC%9D%84%20%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/tune/%EC%9D%B8%EB%8D%B1%EC%8A%A4%20%EC%97%86%EC%9D%B4%20%EC%9E%91%EC%9D%80%20%EA%B7%9C%EB%AA%A8%EC%9D%98%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC%20%EC%A1%B0%ED%9A%8C%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/tune/%EC%9D%B8%EB%8D%B1%EC%8A%A4%EB%A5%BC%20%ED%95%98%EB%82%98%EB%A7%8C%20%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/tune/%EC%9E%91%EC%9D%80%20%ED%85%8C%EC%9D%B4%EB%B8%94%EC%9D%B4%20%EB%A8%BC%EC%A0%80%20%EC%A1%B0%EC%9D%B8%EC%97%90%20%EC%B0%B8%EC%97%AC%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/tune/%EC%9E%98%EB%AA%BB%EB%90%9C%20%EC%97%B4%20%EC%86%8D%EC%84%B1%EC%9C%BC%EB%A1%9C%20%EB%B9%84%ED%9A%A8%EC%9C%A8%EC%A0%81%EC%9C%BC%EB%A1%9C%20%EC%9E%91%EC%84%B1%ED%95%9C%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/tune/%EC%B2%98%EC%9D%8C%EB%B6%80%ED%84%B0%20%EB%AA%A8%EB%93%A0%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC%20%EA%B0%80%EC%A0%B8%EC%98%A4%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/tune/%ED%81%B0%20%EA%B7%9C%EB%AA%A8%EC%9D%98%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EB%B3%80%EA%B2%BD%EC%9C%BC%EB%A1%9C%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%EC%97%90%20%EC%98%81%ED%96%A5%EC%9D%84%20%EC%A3%BC%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/tune/%ED%95%84%EC%9A%94%20%EC%9D%B4%EC%83%81%EC%9C%BC%EB%A1%9C%20%EB%A7%8E%EC%9D%80%20%EC%A0%95%EB%B3%B4%EB%A5%BC%20%EA%B0%80%EC%A0%B8%EC%98%A4%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/tune/%ED%98%95%EB%B3%80%ED%99%98%EC%9C%BC%EB%A1%9C%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%EB%A5%BC%20%ED%99%9C%EC%9A%A9%ED%95%98%EC%A7%80%20%EB%AA%BB%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/tune/.agents/skills/sql-optimizer/SKILL.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/database-engineering/tune/sql/%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EC%84%A4%EC%A0%95%EB%B2%95.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/distributed-system/%EB%B6%84%EC%82%B0%20%EC%8B%9C%EC%8A%A4%ED%85%9C%EC%9D%B4%EB%9E%80%20%EB%AC%B4%EC%97%87%EC%9D%B8%EA%B0%80.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/distributed-system/coordination/%EB%B6%84%EC%82%B0%20%EC%8B%9C%EC%8A%A4%ED%85%9C%EA%B3%BC%20%EC%A3%BC%ED%82%A4%ED%8D%BC.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/distributed-system/document-search-service/TF-IDF.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/distributed-system/httpserver/%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EC%A7%81%EB%A0%AC%ED%99%94%20%EB%B0%A9%EC%8B%9D.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/distributed-system/httpserver/%EB%B6%84%EC%82%B0%20%EC%8B%9C%EC%8A%A4%ED%85%9C%EC%9D%98%20%EB%A9%94%EC%8B%9C%EC%A7%80%20%EC%A0%84%EB%8B%AC%20%EA%B8%B0%EB%B2%95%EA%B3%BC%20%EC%8B%A4%ED%8C%A8%20%EB%8C%80%EC%9D%91%20%EC%A0%84%EB%9E%B5.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/distributed-system/load-balancing/%EB%B6%80%ED%95%98%20%EB%B6%84%EC%82%B0%20%EA%B0%9C%EC%9A%94.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/distributed-system/load-balancing/%EB%B6%80%ED%95%98%20%EB%B6%84%EC%82%B0%20%EB%B0%A9%EC%8B%9D%20%EB%B0%8F%20%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/distributed-system/load-balancing/%EB%B6%80%ED%95%98%20%EB%B6%84%EC%82%B0%EA%B3%BC%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC%20%EA%B3%84%EC%B8%B5.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/distributed-system/message-broker/%EB%A9%94%EC%8B%9C%EC%A7%80%20%EB%B8%8C%EB%A1%9C%EC%BB%A4%20%EA%B0%9C%EC%9A%94.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/backend/distributed-system/message-broker/%EC%B9%B4%ED%94%84%EC%B9%B4%20%EA%B0%9C%EC%9A%94.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
-         <loc>https://kim-hyunjin.github.io/study/blog/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <loc>https://kim-hyunjin.github.io/study/blockchain/hello-blockchain/hjcoin-blockchain-from-scratch.pub/</loc>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
-         <loc>https://kim-hyunjin.github.io/study/design-architecture/design-pattern-intro.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <loc>https://kim-hyunjin.github.io/study/blockchain/lottery-dapp/truffle-react-lottery-dapp.pub/</loc>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
-         <loc>https://kim-hyunjin.github.io/study/design-architecture/post_principles.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <loc>https://kim-hyunjin.github.io/study/design-architecture/design-pattern-and-refactoring/%EB%94%94%EC%9E%90%EC%9D%B8%20%EC%9B%90%EC%B9%99.pub/</loc>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
-         <loc>https://kim-hyunjin.github.io/study/design-architecture/design-pattern-and-refactoring/note/%EB%A6%AC%ED%8C%A9%ED%86%A0%EB%A7%81/refactoring-strategy.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <loc>https://kim-hyunjin.github.io/study/design-architecture/design-pattern-and-refactoring/%EB%94%94%EC%9E%90%EC%9D%B8%ED%8C%A8%ED%84%B4.pub/</loc>
+         <lastmod>2026-04-24</lastmod>
+    </url>
+    <url>
+         <loc>https://kim-hyunjin.github.io/study/design-architecture/design-pattern-and-refactoring/%EC%BD%94%EB%93%9C%EC%9D%98%20%EA%B5%AC%EB%A6%B0%EB%82%B4.pub/</loc>
+         <lastmod>2026-04-24</lastmod>
+    </url>
+    <url>
+         <loc>https://kim-hyunjin.github.io/study/design-architecture/ooad/ooad.pub/</loc>
+         <lastmod>2026-04-24</lastmod>
+    </url>
+    <url>
+         <loc>https://kim-hyunjin.github.io/study/frontend/react/redux/vanilla-react-redux-basics.pub/</loc>
+         <lastmod>2026-04-24</lastmod>
+    </url>
+    <url>
+         <loc>https://kim-hyunjin.github.io/study/frontend/react/%EB%A6%AC%EC%95%A1%ED%8A%B8%EB%A5%BC%20%EB%8B%A4%EB%A3%A8%EB%8A%94%20%EA%B8%B0%EC%88%A0/03_component/03-component-basics.pub/</loc>
+         <lastmod>2026-04-24</lastmod>
+    </url>
+    <url>
+         <loc>https://kim-hyunjin.github.io/study/frontend/react/%EB%A6%AC%EC%95%A1%ED%8A%B8%EB%A5%BC%20%EB%8B%A4%EB%A3%A8%EB%8A%94%20%EA%B8%B0%EC%88%A0/04_eventHandling/04-event-handling.pub/</loc>
+         <lastmod>2026-04-24</lastmod>
+    </url>
+    <url>
+         <loc>https://kim-hyunjin.github.io/study/frontend/react/%EB%A6%AC%EC%95%A1%ED%8A%B8%EB%A5%BC%20%EB%8B%A4%EB%A3%A8%EB%8A%94%20%EA%B8%B0%EC%88%A0/05_ref/05-ref-dom-naming.pub/</loc>
+         <lastmod>2026-04-24</lastmod>
+    </url>
+    <url>
+         <loc>https://kim-hyunjin.github.io/study/frontend/react/%EB%A6%AC%EC%95%A1%ED%8A%B8%EB%A5%BC%20%EB%8B%A4%EB%A3%A8%EB%8A%94%20%EA%B8%B0%EC%88%A0/06_map_key_filter/06-component-iteration.pub/</loc>
+         <lastmod>2026-04-24</lastmod>
+    </url>
+    <url>
+         <loc>https://kim-hyunjin.github.io/study/frontend/react/%EB%A6%AC%EC%95%A1%ED%8A%B8%EB%A5%BC%20%EB%8B%A4%EB%A3%A8%EB%8A%94%20%EA%B8%B0%EC%88%A0/07_lifeCycle/07-component-lifecycle.pub/</loc>
+         <lastmod>2026-04-24</lastmod>
+    </url>
+    <url>
+         <loc>https://kim-hyunjin.github.io/study/frontend/react/%EB%A6%AC%EC%95%A1%ED%8A%B8%EB%A5%BC%20%EB%8B%A4%EB%A3%A8%EB%8A%94%20%EA%B8%B0%EC%88%A0/08_Hooks/08-hooks.pub/</loc>
+         <lastmod>2026-04-24</lastmod>
+    </url>
+    <url>
+         <loc>https://kim-hyunjin.github.io/study/frontend/react/%EB%A6%AC%EC%95%A1%ED%8A%B8%EB%A5%BC%20%EB%8B%A4%EB%A3%A8%EB%8A%94%20%EA%B8%B0%EC%88%A0/09_styling/09-component-styling.pub/</loc>
+         <lastmod>2026-04-24</lastmod>
+    </url>
+    <url>
+         <loc>https://kim-hyunjin.github.io/study/frontend/react/%EB%A6%AC%EC%95%A1%ED%8A%B8%EB%A5%BC%20%EB%8B%A4%EB%A3%A8%EB%8A%94%20%EA%B8%B0%EC%88%A0/10_project_todo-app/10-project-todo-app.pub/</loc>
+         <lastmod>2026-04-24</lastmod>
+    </url>
+    <url>
+         <loc>https://kim-hyunjin.github.io/study/frontend/react/%EB%A6%AC%EC%95%A1%ED%8A%B8%EB%A5%BC%20%EB%8B%A4%EB%A3%A8%EB%8A%94%20%EA%B8%B0%EC%88%A0/11_component_optimization/11-component-optimization.pub/</loc>
+         <lastmod>2026-04-24</lastmod>
+    </url>
+    <url>
+         <loc>https://kim-hyunjin.github.io/study/frontend/react/%EB%A6%AC%EC%95%A1%ED%8A%B8%EB%A5%BC%20%EB%8B%A4%EB%A3%A8%EB%8A%94%20%EA%B8%B0%EC%88%A0/12_immer/12-immer-immutability.pub/</loc>
+         <lastmod>2026-04-24</lastmod>
+    </url>
+    <url>
+         <loc>https://kim-hyunjin.github.io/study/frontend/react/%EB%A6%AC%EC%95%A1%ED%8A%B8%EB%A5%BC%20%EB%8B%A4%EB%A3%A8%EB%8A%94%20%EA%B8%B0%EC%88%A0/13_spa/13-spa-react-router.pub/</loc>
+         <lastmod>2026-04-24</lastmod>
+    </url>
+    <url>
+         <loc>https://kim-hyunjin.github.io/study/frontend/react/%EB%A6%AC%EC%95%A1%ED%8A%B8%EB%A5%BC%20%EB%8B%A4%EB%A3%A8%EB%8A%94%20%EA%B8%B0%EC%88%A0/14_news_viewer/14-news-viewer-api.pub/</loc>
+         <lastmod>2026-04-24</lastmod>
+    </url>
+    <url>
+         <loc>https://kim-hyunjin.github.io/study/frontend/react/%EB%A6%AC%EC%95%A1%ED%8A%B8%EB%A5%BC%20%EB%8B%A4%EB%A3%A8%EB%8A%94%20%EA%B8%B0%EC%88%A0/15_context_api/15-context-api.pub/</loc>
+         <lastmod>2026-04-24</lastmod>
+    </url>
+    <url>
+         <loc>https://kim-hyunjin.github.io/study/frontend/react/%EB%A6%AC%EC%95%A1%ED%8A%B8%EB%A5%BC%20%EB%8B%A4%EB%A3%A8%EB%8A%94%20%EA%B8%B0%EC%88%A0/16_redux/16-redux-basics.pub/</loc>
+         <lastmod>2026-04-24</lastmod>
+    </url>
+    <url>
+         <loc>https://kim-hyunjin.github.io/study/frontend/vue/mini-vue/mini-vue-implementation.pub/</loc>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/language/java/note/java-basic-review.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/language/java/note/java-compiler-vs-interpreter.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/language/java/note/java-git-and-software.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/language/java/note/java-gradle-build-guide.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/language/java/note/java-literals-advanced.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/language/java/note/java-literals-basic.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/language/java/note/java-literals-practice.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/language/java/note/java-reference-type.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/language/java/note/java-sandbox-environment.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
     </url>
     <url>
          <loc>https://kim-hyunjin.github.io/study/language/kotlin/kotlin-in-action/kotlin-in-action-summary.pub/</loc>
-         <lastmod>2026-04-23</lastmod>
+         <lastmod>2026-04-24</lastmod>
+    </url>
+    <url>
+         <loc>https://kim-hyunjin.github.io/study/mobile/android/test/qr-scanning-zxing-vs-mlkit.pub/</loc>
+         <lastmod>2026-04-24</lastmod>
+    </url>
+    <url>
+         <loc>https://kim-hyunjin.github.io/study/mobile/ios/udemy/uikit-vs-swiftui-comparison.pub/</loc>
+         <lastmod>2026-04-24</lastmod>
+    </url>
+    <url>
+         <loc>https://kim-hyunjin.github.io/study/security/backdoor/python-backdoor-project.pub/</loc>
+         <lastmod>2026-04-24</lastmod>
     </url>
 </urlset>
