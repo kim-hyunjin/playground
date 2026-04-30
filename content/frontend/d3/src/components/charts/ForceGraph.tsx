@@ -70,10 +70,10 @@ const ForceGraph: React.FC = () => {
     const node = svg.append('g')
       .attr('stroke', '#fff')
       .attr('stroke-width', 1.5)
-      .selectAll('g')
+      .selectAll<SVGGElement, Node>('g')
       .data(nodes)
       .join('g')
-      .call(drag(simulation) as any); // 드래그 이벤트 등록
+      .call(drag(simulation)); // 드래그 이벤트 등록
 
     node.append('circle')
       .attr('r', 12)
@@ -92,18 +92,18 @@ const ForceGraph: React.FC = () => {
     // 시뮬레이션의 매 프레임마다 노드와 링크의 좌표를 업데이트
     simulation.on('tick', () => {
       link
-        .attr('x1', d => (d.source as any).x)
-        .attr('y1', d => (d.source as any).y)
-        .attr('x2', d => (d.target as any).x)
-        .attr('y2', d => (d.target as any).y);
+        .attr('x1', d => (d.source as Node).x ?? 0)
+        .attr('y1', d => (d.source as Node).y ?? 0)
+        .attr('x2', d => (d.target as Node).x ?? 0)
+        .attr('y2', d => (d.target as Node).y ?? 0);
 
       node
-        .attr('transform', d => `translate(${d.x},${d.y})`);
+        .attr('transform', d => `translate(${d.x ?? 0},${d.y ?? 0})`);
     });
 
     // 5. 드래그 이벤트 핸들러 구현
     function drag(simulation: d3.Simulation<Node, Link>) {
-      function dragstarted(event: any) {
+      function dragstarted(event: d3.D3DragEvent<SVGGElement, Node, Node>) {
         // 드래그 시작 시 시뮬레이션 재가동 (alphaTarget을 높여 에너지를 주입)
         if (!event.active) simulation.alphaTarget(0.3).restart();
         // fx, fy는 고정 좌표(fixed x, y)를 의미
@@ -111,20 +111,20 @@ const ForceGraph: React.FC = () => {
         event.subject.fy = event.subject.y;
       }
 
-      function dragged(event: any) {
+      function dragged(event: d3.D3DragEvent<SVGGElement, Node, Node>) {
         // 마우스 위치에 따라 고정 좌표 업데이트
         event.subject.fx = event.x;
         event.subject.fy = event.y;
       }
 
-      function dragended(event: any) {
+      function dragended(event: d3.D3DragEvent<SVGGElement, Node, Node>) {
         // 드래그 종료 시 고정 해제 (null로 설정하면 다시 물리 법칙에 따라 움직임)
         if (!event.active) simulation.alphaTarget(0);
         event.subject.fx = null;
         event.subject.fy = null;
       }
 
-      return d3.drag()
+      return d3.drag<SVGGElement, Node>()
         .on('start', dragstarted)
         .on('drag', dragged)
         .on('end', dragended);

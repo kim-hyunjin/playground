@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 
 interface OHLCData {
@@ -10,48 +10,44 @@ interface OHLCData {
   volume: number;
 }
 
+const MIN_VISIBLE = 10;  // 최대 확대
+const MAX_VISIBLE = 200; // 최대 축소
+const INITIAL_VISIBLE = 40;
+
+// 데이터 생성 함수를 컴포넌트 외부로 이동 (re-render 방지 및 초기화 사용 가능)
+const generateMoreData = (baseDate: Date, count: number, startPrice: number) => {
+  let currentPrice = startPrice;
+  const start = new Date(baseDate);
+  start.setHours(0, 0, 0, 0);
+
+  return Array.from({ length: count }, (_, i) => {
+    const open = currentPrice + (Math.random() - 0.5) * 10;
+    const close = open + (Math.random() - 0.5) * 15;
+    const high = Math.max(open, close) + Math.random() * 5;
+    const low = Math.min(open, close) - Math.random() * 5;
+    const volume = Math.floor(Math.random() * 1000) + 500;
+    currentPrice = close;
+    
+    const date = new Date(start);
+    date.setDate(date.getDate() - (i + 1));
+    return { date, open, high, low, close, volume };
+  }).reverse();
+};
+
 const TradingChart: React.FC = () => {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   
   // 1. 상태 관리
-  const [fullData, setFullData] = useState<OHLCData[]>([]);
-  const [viewOffset, setViewOffset] = useState(0); 
-  const [visibleCount, setVisibleCount] = useState(40); // 줌 레벨 (보이는 봉 개수)
-  const [hoverData, setHoverData] = useState<OHLCData | null>(null);
-  const isLoading = useRef(false);
-
-  const MIN_VISIBLE = 10;  // 최대 확대
-  const MAX_VISIBLE = 200; // 최대 축소
-
-  // 데이터 생성 함수
-  const generateMoreData = useCallback((baseDate: Date, count: number, startPrice: number) => {
-    let currentPrice = startPrice;
-    const start = new Date(baseDate);
-    start.setHours(0, 0, 0, 0);
-
-    return Array.from({ length: count }, (_, i) => {
-      const open = currentPrice + (Math.random() - 0.5) * 10;
-      const close = open + (Math.random() - 0.5) * 15;
-      const high = Math.max(open, close) + Math.random() * 5;
-      const low = Math.min(open, close) - Math.random() * 5;
-      const volume = Math.floor(Math.random() * 1000) + 500;
-      currentPrice = close;
-      
-      const date = new Date(start);
-      date.setDate(date.getDate() - (i + 1));
-      return { date, open, high, low, close, volume };
-    }).reverse();
-  }, []);
-
-  // 초기 데이터 설정
-  useEffect(() => {
+  const [fullData, setFullData] = useState<OHLCData[]>(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const initialData = generateMoreData(today, 100, 150);
-    setFullData(initialData);
-    setViewOffset(initialData.length - visibleCount);
-  }, [generateMoreData]);
+    return generateMoreData(today, 100, 150);
+  });
+  const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE); // 줌 레벨 (보이는 봉 개수)
+  const [viewOffset, setViewOffset] = useState(() => fullData.length - INITIAL_VISIBLE); 
+  const [hoverData, setHoverData] = useState<OHLCData | null>(null);
+  const isLoading = useRef(false);
 
   useEffect(() => {
     if (!svgRef.current || fullData.length === 0) return;
@@ -100,8 +96,8 @@ const TradingChart: React.FC = () => {
 
     // 캔들스틱 렌더링
     const candles = svg.append('g')
-      .selectAll('g')
-      .data(data, (d: any) => d.date.toISOString())
+      .selectAll<SVGGElement, OHLCData>('g')
+      .data(data, (d) => d.date.toISOString())
       .join('g');
 
     candles.append('line')
@@ -120,8 +116,8 @@ const TradingChart: React.FC = () => {
 
     // 거래량 렌더링
     svg.append('g')
-      .selectAll('rect')
-      .data(data, (d: any) => d.date.toISOString())
+      .selectAll<SVGRectElement, OHLCData>('rect')
+      .data(data, (d) => d.date.toISOString())
       .join('rect')
       .attr('x', d => x(d.date.toISOString()) || 0)
       .attr('y', d => yVolume(d.volume))
@@ -218,7 +214,7 @@ const TradingChart: React.FC = () => {
       .attr('height', height)
       .attr('fill', 'transparent')
       .style('cursor', 'crosshair')
-      .call(dragBehavior as any);
+      .call(dragBehavior);
 
     const svgElement = svgRef.current;
     if (svgElement) {
@@ -251,7 +247,7 @@ const TradingChart: React.FC = () => {
         svgElement.removeEventListener('wheel', handleWheel);
       }
     };
-  }, [fullData, viewOffset, visibleCount, generateMoreData]);
+  }, [fullData, viewOffset, visibleCount]);
 
   return (
     <div ref={containerRef} className="p-6 bg-white rounded-2xl shadow-lg border border-gray-100 select-none">

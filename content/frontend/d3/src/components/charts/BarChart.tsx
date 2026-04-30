@@ -52,11 +52,11 @@ const BarChart: React.FC = () => {
       .range([height - margin.bottom, margin.top]);
 
     // 3. 축(Axes) 생성 함수
-    const xAxis = (g: any) => g
+    const xAxis = (g: d3.Selection<SVGGElement, unknown, null, undefined>) => g
       .attr('transform', `translate(0,${height - margin.bottom})`)
       .call(d3.axisBottom(x).tickSizeOuter(0));
 
-    const yAxis = (g: any) => g
+    const yAxis = (g: d3.Selection<SVGGElement, unknown, null, undefined>) => g
       .attr('transform', `translate(${margin.left},0)`)
       .call(d3.axisLeft(y));
 
@@ -68,8 +68,8 @@ const BarChart: React.FC = () => {
 
     // 4. 데이터 바인딩 (Data Join)
     // .selectAll() -> .data() -> .join()의 흐름이 D3의 핵심
-    const bars = svg.selectAll('.bar')
-      .data(data, (d: any) => d.name); // 두 번째 인자는 Key 함수로, 데이터 갱신 시 항목 식별을 도움
+    const bars = svg.selectAll<SVGRectElement, DataItem>('.bar')
+      .data(data, (d) => d.name); // 두 번째 인자는 Key 함수로, 데이터 갱신 시 항목 식별을 도움
 
     // 5. Exit: 데이터에서 사라진 항목 처리 (이 예제에서는 데이터 개수가 고정이라 생략 가능하지만 패턴상 유지)
     bars.exit().remove();
@@ -83,7 +83,7 @@ const BarChart: React.FC = () => {
       .attr('y', y(0)) // 애니메이션 시작점: 바닥에서 시작
       .attr('width', x.bandwidth())
       .attr('height', 0)
-      .merge(bars as any) // Enter와 Update 선택물을 합침
+      .merge(bars) // Enter와 Update 선택물을 합침
       .transition() // 애니메이션 시작
       .duration(750) // 0.75초 동안 진행
       .ease(d3.easeCubicInOut) // 부드러운 가감속 효과
