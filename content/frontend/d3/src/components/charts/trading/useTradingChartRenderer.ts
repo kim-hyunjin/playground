@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { MIN_VISIBLE, MAX_VISIBLE } from './types';
 import type { OHLCData } from './types';
@@ -32,55 +32,56 @@ interface RenderContext {
 }
 
 /**
- * 차트의 X축과 Y축을 렌더링합니다.
- * X축은 날짜를 표시하며, Y축은 가격을 우측에 표시합니다.
- * @param ctx 렌더링 컨텍스트 (svg, scales 등)
- * @param visibleCount 현재 화면에 보이는 데이터 개수 (축 틱 간격 조절용)
+ * 차트의 X축과 Y축을 업데이트합니다.
  */
 const renderAxes = (ctx: RenderContext, visibleCount: number) => {
   const { svg, x, y } = ctx;
   const { height, margin } = CHART_CONFIG;
 
-  svg.append('g')
-    .attr('class', 'x-axis')
+  svg.select<SVGGElement>('.x-axis')
     .attr('transform', `translate(0,${height - margin.bottom})`)
     .call(d3.axisBottom(x)
       .tickFormat(d => d3.timeFormat('%m/%d')(new Date(d)))
       .tickValues(x.domain().filter((_, i) => i % Math.max(1, Math.floor(visibleCount / 8)) === 0)))
     .attr('color', '#94a3b8');
 
-  svg.append('g')
-    .attr('class', 'y-axis')
+  svg.select<SVGGElement>('.y-axis')
     .attr('transform', `translate(${CHART_CONFIG.width - margin.right},0)`)
     .call(d3.axisRight(y))
     .attr('color', '#94a3b8');
 };
 
 /**
- * 캔들스틱(봉 차트)을 렌더링합니다.
- * 시가(Open), 고가(High), 저가(Low), 종가(Close) 데이터를 바탕으로
- * 양봉(Red)과 음봉(Blue)을 구분하여 선(꼬리)과 사각형(몸통)을 그립니다.
- * @param ctx 렌더링 컨텍스트
+ * 캔들스틱을 업데이트합니다.
  */
 const renderCandlesticks = (ctx: RenderContext) => {
   const { svg, data, x, y } = ctx;
 
-  const candles = svg.append('g')
-    .attr('class', 'candles-layer')
-    .selectAll<SVGGElement, OHLCData>('g')
-    .data(data, (d) => d.date.toISOString())
-    .join('g');
+  const layer = svg.select('.chart-content')
+    .selectAll<SVGGElement, string>('g.candles-group')
+    .data(['candles'])
+    .join('g')
+    .attr('class', 'candles-group');
 
-  // 고가-저가 연결선 (꼬리)
-  candles.append('line')
+  const candles = layer.selectAll<SVGGElement, OHLCData>('g.candle')
+    .data(data, (d) => d.date.toISOString())
+    .join(
+      enter => {
+        const g = enter.append('g').attr('class', 'candle');
+        g.append('line').attr('class', 'wick');
+        g.append('rect').attr('class', 'body');
+        return g;
+      }
+    );
+
+  candles.select('line.wick')
     .attr('x1', d => (x(d.date.toISOString()) || 0) + x.bandwidth() / 2)
     .attr('x2', d => (x(d.date.toISOString()) || 0) + x.bandwidth() / 2)
     .attr('y1', d => y(d.high))
     .attr('y2', d => y(d.low))
     .attr('stroke', d => d.close > d.open ? '#ef4444' : '#3b82f6');
 
-  // 시가-종가 몸통 (직사각형)
-  candles.append('rect')
+  candles.select('rect.body')
     .attr('x', d => x(d.date.toISOString()) || 0)
     .attr('y', d => y(Math.max(d.open, d.close)))
     .attr('width', x.bandwidth())
@@ -89,19 +90,22 @@ const renderCandlesticks = (ctx: RenderContext) => {
 };
 
 /**
- * 하단 거래량 막대를 렌더링합니다.
- * 가격 상승/하락 여부에 따라 캔들과 동일한 색상을 적용하되 투명도를 낮춥니다.
- * @param ctx 렌더링 컨텍스트
+ * 거래량 막대를 업데이트합니다.
  */
 const renderVolume = (ctx: RenderContext) => {
   const { svg, data, x, yVolume } = ctx;
   const { height, margin } = CHART_CONFIG;
 
-  svg.append('g')
-    .attr('class', 'volume-layer')
-    .selectAll<SVGRectElement, OHLCData>('rect')
+  const layer = svg.select('.chart-content')
+    .selectAll<SVGGElement, string>('g.volume-group')
+    .data(['volume'])
+    .join('g')
+    .attr('class', 'volume-group');
+
+  layer.selectAll<SVGRectElement, OHLCData>('rect.vol-bar')
     .data(data, (d) => d.date.toISOString())
     .join('rect')
+    .attr('class', 'vol-bar')
     .attr('x', d => x(d.date.toISOString()) || 0)
     .attr('y', d => yVolume(d.volume))
     .attr('width', x.bandwidth())
@@ -111,46 +115,43 @@ const renderVolume = (ctx: RenderContext) => {
 };
 
 /**
- * 차트 위의 크로스헤어(십자선) 가이드를 생성합니다.
- * 초기 상태는 숨겨져 있으며, 마우스 오버 시 상호작용 레이어에서 위치를 업데이트합니다.
- * @param svg SVG 메인 컨테이너
- * @returns 크로스헤어 레이어 Selection 객체
+ * 크로스헤어를 업데이트합니다.
  */
-const createCrosshair = (svg: d3.Selection<SVGSVGElement, unknown, null, undefined>) => {
+const updateCrosshair = (svg: d3.Selection<SVGSVGElement, unknown, null, undefined>) => {
   const { width, height, margin } = CHART_CONFIG;
-  const crosshair = svg.append('g')
-    .attr('class', 'crosshair-layer')
-    .style('display', 'none');
+  const crosshair = svg.select<SVGGElement>('.crosshair-layer');
+  
+  if (crosshair.select('line.h-line').empty()) {
+    crosshair.append('line')
+      .attr('class', 'h-line')
+      .attr('stroke', '#64748b')
+      .attr('stroke-width', 1)
+      .attr('stroke-dasharray', '3,3');
+      
+    crosshair.append('line')
+      .attr('class', 'v-line')
+      .attr('stroke', '#64748b')
+      .attr('stroke-width', 1)
+      .attr('stroke-dasharray', '3,3');
+  }
 
-  crosshair.append('line')
-    .attr('class', 'h-line')
-    .attr('stroke', '#64748b')
-    .attr('stroke-width', 1)
-    .attr('stroke-dasharray', '3,3')
+  crosshair.select('line.h-line')
     .attr('x1', margin.left)
     .attr('x2', width - margin.right);
-
-  crosshair.append('line')
-    .attr('class', 'v-line')
-    .attr('stroke', '#64748b')
-    .attr('stroke-width', 1)
-    .attr('stroke-dasharray', '3,3')
+    
+  crosshair.select('line.v-line')
     .attr('y1', margin.top)
     .attr('y2', height - margin.bottom);
-
+    
   return crosshair;
 };
 
-/**
- * 인터랙션 프로퍼티 타입 정의
- */
 interface InteractionProps {
   svg: d3.Selection<SVGSVGElement, unknown, null, undefined>;
   x: d3.ScaleBand<string>;
   y: d3.ScaleLinear<number, number>;
   data: OHLCData[];
   fullData: OHLCData[];
-  viewOffset: number;
   visibleCount: number;
   setVisibleCount: React.Dispatch<React.SetStateAction<number>>;
   setViewOffset: React.Dispatch<React.SetStateAction<number>>;
@@ -159,54 +160,53 @@ interface InteractionProps {
   crosshair: d3.Selection<SVGGElement, unknown, null, undefined>;
   isLoading: React.RefObject<boolean>;
   svgRef: React.RefObject<SVGSVGElement | null>;
+  dragAccumulatorRef: React.RefObject<number>;
 }
 
 /**
- * 차트의 모든 사용자 상호작용(드래그, 줌, 마우스 오버 등)을 바인딩합니다.
- * 이벤트 감지를 위한 투명 오버레이를 생성하고 관련 리스너를 등록합니다.
- * @param props 상호작용에 필요한 상태와 함수들
- * @returns 정리를 위한 클린업 함수
+ * 인터랙션을 바인딩합니다. Delta(dx) 기반 드래그를 사용하여 점프 현상을 방지합니다.
  */
 const bindInteractions = ({
-  svg, x, y, data, fullData, viewOffset, visibleCount,
-  setVisibleCount, setViewOffset, loadMoreData, setHoverData,
-  crosshair, isLoading, svgRef
+  svg, x, y, data, fullData, visibleCount, 
+  setVisibleCount, setViewOffset, loadMoreData, setHoverData, 
+  crosshair, isLoading, svgRef, dragAccumulatorRef
 }: InteractionProps) => {
   const { width, height, margin } = CHART_CONFIG;
 
-  // 1. 드래그를 통한 차트 좌우 이동 로직
-  let dragStartPos: number | null = null;
-  let initialOffset = viewOffset;
-
+  // 1. Delta(dx) 기반 드래그 핸들러
   const dragBehavior = d3.drag<SVGRectElement, unknown>()
-    .on('start', (event) => {
-      dragStartPos = event.x;
-      initialOffset = viewOffset;
+    .on('start', () => {
       svg.style('cursor', 'grabbing');
+      if (dragAccumulatorRef.current !== null) dragAccumulatorRef.current = 0;
     })
     .on('drag', (event) => {
-      if (dragStartPos === null) return;
-      const dx = event.x - dragStartPos;
+      if (dragAccumulatorRef.current === null) return;
+      
+      dragAccumulatorRef.current += event.dx;
+      
       const bandWidth = x.step();
-      const moveIndex = Math.round(dx / bandWidth);
-      const newOffset = initialOffset - moveIndex;
-      const clampedOffset = Math.max(-10, Math.min(fullData.length - visibleCount, newOffset));
+      const moveCount = Math.round(dragAccumulatorRef.current / bandWidth);
 
-      if (clampedOffset !== viewOffset) {
-        if (clampedOffset <= 0 && !isLoading.current) {
-          loadMoreData(); // 왼쪽 끝 도달 시 과거 데이터 추가 로드
-        } else if (clampedOffset > 0) {
-          setViewOffset(clampedOffset);
-        }
+      if (moveCount !== 0) {
+        setViewOffset((prev: number) => {
+          const next = prev - moveCount;
+          const clamped = Math.max(-1, Math.min(fullData.length - visibleCount, next));
+          
+          if (clamped <= 0 && !isLoading.current) {
+            loadMoreData();
+          }
+          return clamped;
+        });
+        
+        dragAccumulatorRef.current -= moveCount * bandWidth;
       }
     })
     .on('end', () => {
-      dragStartPos = null;
       svg.style('cursor', 'crosshair');
       setViewOffset((prev: number) => Math.max(0, Math.min(fullData.length - visibleCount, prev)));
     });
 
-  // 2. 마우스 휠을 통한 확대/축소 로직
+  // 2. 마우스 휠 줌
   const handleWheel = (event: WheelEvent) => {
     event.preventDefault();
     const delta = event.deltaY;
@@ -227,9 +227,8 @@ const bindInteractions = ({
     });
   };
 
-  // 3. 이벤트 감지용 투명 오버레이 생성 및 이벤트 등록
-  const overlay = svg.append('rect')
-    .attr('class', 'interaction-overlay')
+  // 3. 오버레이 설정
+  const overlay = svg.select<SVGRectElement>('rect.interaction-overlay')
     .attr('width', width)
     .attr('height', height)
     .attr('fill', 'transparent')
@@ -253,7 +252,6 @@ const bindInteractions = ({
       const index = Math.floor((mx - margin.left) / eachBand);
       const d = data[index];
 
-      // 현재 마우스 위치에 해당하는 데이터의 크로스헤어와 툴팁 업데이트
       if (d && mx >= margin.left && mx <= width - margin.right) {
         const cx = (x(d.date.toISOString()) || 0) + x.bandwidth() / 2;
         const cy = y(d.close);
@@ -270,30 +268,33 @@ const bindInteractions = ({
   };
 };
 
-/**
- * 거래소 차트의 D3 렌더링 생명주기를 React와 연결하는 메인 커스텀 훅입니다.
- * 데이터나 뷰 설정이 변경될 때마다 차트를 다시 그립니다.
- */
 export const useTradingChartRenderer = ({
-  svgRef, fullData, viewOffset, visibleCount,
+  svgRef, fullData, viewOffset, visibleCount, 
   setVisibleCount, setViewOffset, loadMoreData, setHoverData, isLoading
 }: RendererProps) => {
+  const dragAccumulatorRef = useRef(0);
+
   useEffect(() => {
     if (!svgRef.current || fullData.length === 0) return;
 
     const { width, height, margin, volumeHeight, pricePadding } = CHART_CONFIG;
-
-    // 1. Prepare Data
+    
     const startIndex = Math.max(0, Math.min(viewOffset, fullData.length - visibleCount));
     const data = fullData.slice(startIndex, startIndex + visibleCount);
 
-    // 2. Initialize SVG
     const svg = d3.select(svgRef.current)
       .attr('viewBox', `0 0 ${width} ${height}`)
       .style('overflow', 'visible');
-    svg.selectAll('*').remove();
+    
+    let chartArea = svg.select<SVGGElement>('g.chart-content');
+    if (chartArea.empty()) {
+      svg.append('g').attr('class', 'chart-content');
+      svg.append('g').attr('class', 'x-axis');
+      svg.append('g').attr('class', 'y-axis');
+      svg.append('g').attr('class', 'crosshair-layer');
+      svg.append('rect').attr('class', 'interaction-overlay');
+    }
 
-    // 3. Create Scales
     const x = d3.scaleBand()
       .domain(data.map(d => d.date.toISOString()))
       .range([margin.left, width - margin.right])
@@ -309,18 +310,17 @@ export const useTradingChartRenderer = ({
 
     const ctx: RenderContext = { svg, data, x, y, yVolume };
 
-    // 4. Run Rendering
     renderAxes(ctx, visibleCount);
     renderCandlesticks(ctx);
     renderVolume(ctx);
-    const crosshair = createCrosshair(svg);
-
-    // 5. Setup Interactions
-    const cleanup = bindInteractions({
-      svg, x, y, data, fullData, viewOffset, visibleCount,
-      setVisibleCount, setViewOffset, loadMoreData, setHoverData,
-      crosshair, isLoading, svgRef
-    });
+    const crosshair = updateCrosshair(svg);
+// 5. Setup Interactions
+const cleanup = bindInteractions({
+  svg, x, y, data, fullData, visibleCount, 
+  setVisibleCount, setViewOffset, loadMoreData, setHoverData, 
+  crosshair, isLoading, svgRef,
+  dragAccumulatorRef
+});
 
     return cleanup;
   }, [fullData, viewOffset, visibleCount, loadMoreData, setVisibleCount, setViewOffset, setHoverData, svgRef, isLoading]);

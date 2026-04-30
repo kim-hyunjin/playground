@@ -37,8 +37,8 @@ describe('TradingChart Component', () => {
     // Check for specific layer classes added during refactoring
     expect(container.querySelector('.x-axis')).toBeInTheDocument();
     expect(container.querySelector('.y-axis')).toBeInTheDocument();
-    expect(container.querySelector('.candles-layer')).toBeInTheDocument();
-    expect(container.querySelector('.volume-layer')).toBeInTheDocument();
+    expect(container.querySelector('.candles-group')).toBeInTheDocument();
+    expect(container.querySelector('.volume-group')).toBeInTheDocument();
     expect(container.querySelector('.crosshair-layer')).toBeInTheDocument();
     expect(container.querySelector('.interaction-overlay')).toBeInTheDocument();
   });
@@ -47,16 +47,16 @@ describe('TradingChart Component', () => {
     const { container } = render(<TradingChart />);
     
     // INITIAL_VISIBLE is 40
-    const candles = container.querySelectorAll('.candles-layer > g');
+    const candles = container.querySelectorAll('.candles-group > g.candle');
     expect(candles.length).toBe(40);
 
-    const volumeBars = container.querySelectorAll('.volume-layer > rect');
+    const volumeBars = container.querySelectorAll('.volume-group > rect.vol-bar');
     expect(volumeBars.length).toBe(40);
   });
 
   it('renders candles with correct colors based on price action', () => {
     const { container } = render(<TradingChart />);
-    const candleGroups = container.querySelectorAll('.candles-layer > g');
+    const candleGroups = container.querySelectorAll('.candles-group > g.candle');
     
     // Check first candle's color (this is random but we can check the logic)
     // We can't easily check the data bound to the element here without more complex D3 testing,
