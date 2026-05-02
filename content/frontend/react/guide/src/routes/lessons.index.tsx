@@ -1,7 +1,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { lessons } from "../data/content";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/lessons/")({
 	beforeLoad: () => {
 		throw redirect({
 			to: "/lessons/$lessonId",
