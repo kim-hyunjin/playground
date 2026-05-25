@@ -3,6 +3,7 @@ import { BookOpen, Code2, PlayCircle } from "lucide-react";
 import { HooksAnimation } from "../components/animations/HooksAnimation";
 import { JSXAnimation } from "../components/animations/JSXAnimation";
 import { RenderCycleAnimation } from "../components/animations/RenderCycleAnimation";
+import { RenderVsCommitAnimation } from "../components/animations/RenderVsCommitAnimation";
 import { StateFlowAnimation } from "../components/animations/StateFlowAnimation";
 import { CodeView } from "../components/CodeView";
 import { lessons } from "../data/content";
@@ -32,6 +33,8 @@ function LessonComponent() {
 				return <StateFlowAnimation />;
 			case "render-cycle":
 				return <RenderCycleAnimation />;
+			case "render-vs-commit":
+				return <RenderVsCommitAnimation />;
 			case "hooks":
 				return <HooksAnimation />;
 			default:

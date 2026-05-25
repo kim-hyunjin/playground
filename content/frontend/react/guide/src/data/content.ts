@@ -3,7 +3,12 @@ export type Lesson = {
 	title: string;
 	content: string;
 	code: string;
-	animationType: "jsx-structure" | "state-flow" | "render-cycle" | "hooks";
+	animationType:
+		| "jsx-structure"
+		| "state-flow"
+		| "render-cycle"
+		| "render-vs-commit"
+		| "hooks";
 };
 
 export const lessons: Lesson[] = [
@@ -112,6 +117,64 @@ function Header() {
 }
 */`,
 		animationType: "render-cycle",
+	},
+	{
+		id: "render-vs-commit",
+		title: "Render vs Commit",
+		content: `
+      # Render vs Commit
+      리액트의 한 번의 업데이트는 크게 **Render 단계**와 **Commit 단계**로 나뉩니다.
+      상태 업데이트 레슨에서 본 Trigger → Render → Commit 흐름을, 엔진 관점에서 더 쪼갠 것입니다.
+
+      **Render 단계 (순수·중단 가능):**
+      - 컴포넌트 함수를 다시 호출하고 JSX로부터 Fiber 트리(Work-in-Progress)를 만듭니다.
+      - 이전 트리와 diff하여 “무엇을 바꿀지”만 계산합니다.
+      - 이 단계에서는 **실제 DOM을 읽거나 쓰지 않습니다.** 그래서 같은 렌더 안에서 여러 번 시도·중단(Concurrent)이 가능합니다.
+
+      **Commit 단계 (동기·DOM 접촉):**
+      - 계산이 끝난 변경 사항을 **한 번에** 실제 DOM에 반영합니다.
+      - 화면에 보이는 Fiber 트리(Current)와 WIP 트리를 교체합니다.
+      - 그다음 **Layout Effects** → 브라우저 **Paint** → **Passive Effects** 순으로 이어집니다.
+
+      **Effect 실행 시점:**
+      - **useLayoutEffect**: DOM 반영 직후, **브라우저가 화면을 그리기 전**에 동기 실행됩니다. 레이아웃 측정·동기 DOM 조정에 씁니다.
+      - **useEffect**: **페인트가 끝난 뒤** 비동기로 스케줄됩니다. fetch, 구독, 로깅 등 “화면에 보이는 변경과 덜 묶인” 작업에 적합합니다.
+
+      Render에서 DOM을 건드리지 않는 이유가, Fiber가 Render를 쪼개고 우선순위를 바꿀 수 있는 근거이기도 합니다.
+    `,
+		code: `function MeasureBox() {
+  const ref = useRef(null);
+  const [height, setHeight] = useState(0);
+
+  // Render: 컴포넌트 함수 실행, JSX 생성 (DOM 미접촉)
+  // ↓ 아래 훅들은 Render 중 "등록"만 되고, 실행은 Commit 이후
+
+  useLayoutEffect(() => {
+    // Commit → Layout: DOM 반영 직후, Paint 전 (동기)
+    // 레이아웃 읽기/쓰기 — 깜빡임 줄이기 좋음
+    if (ref.current) {
+      setHeight(ref.current.getBoundingClientRect().height);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Commit → Passive: Paint 이후 (비동기)
+    console.log('Paint done, height on screen:', height);
+  }, [height]);
+
+  return <div ref={ref}>Content</div>;
+}
+
+/*
+  한 업데이트의 대략적 순서:
+
+  [Render]  App() 실행 → Fiber/diff
+  [Commit]  DOM mutation → tree swap
+  [Layout]  useLayoutEffect 실행
+  [Paint]   브라우저 그리기
+  [Passive] useEffect 실행
+*/`,
+		animationType: "render-vs-commit",
 	},
 	{
 		id: "hooks-internals",
