@@ -81,7 +81,7 @@ const drawLinks = (
         .attr('class', 'links-group')
         .attr('stroke', '#94a3b8')
         .attr('stroke-opacity', 0.6)
-        .selectAll('line')
+        .selectAll<SVGLineElement, ForceLink>('line')
         .data(links)
         .join('line')
         .attr('stroke-width', (d) => Math.sqrt(d.value) * 2)
@@ -175,8 +175,8 @@ const drawNodes = (
  */
 const setupSimulationTick = (
     simulation: d3.Simulation<ForceNode, ForceLink>,
-    link: d3.Selection<any, ForceLink, any, any>,
-    node: d3.Selection<any, ForceNode, any, any>
+    link: d3.Selection<SVGLineElement, ForceLink, SVGGElement, unknown>,
+    node: d3.Selection<SVGGElement, ForceNode, SVGGElement, unknown>
 ) => {
     // 4. 시뮬레이션 틱(Tick) 설정
     // 시뮬레이션의 매 프레임마다 노드와 링크의 좌표를 업데이트
