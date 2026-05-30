@@ -1,4 +1,5 @@
 pub mod post;
+pub mod web;
 
 use axum::{routing::get, Router};
 
@@ -6,6 +7,7 @@ use crate::state::AppState;
 
 pub fn router() -> Router<AppState> {
     Router::new()
+        .merge(web::router())
         .route("/health", get(health))
         .route(
             "/api/posts",

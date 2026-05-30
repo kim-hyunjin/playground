@@ -1,0 +1,23 @@
+services:
+  board-api:
+    build: .
+    container_name: board-api
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3000
+      DATABASE_URL: sqlite:///data/board.db?mode=rwc
+      RUST_LOG: ${RUST_LOG:-board_api=info,tower_http=info,sqlx=warn}
+    volumes:
+      - board-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:3000/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  board-data:
