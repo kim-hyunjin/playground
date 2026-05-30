@@ -3,7 +3,7 @@
 추가 레슨을 하나씩 구현할 때 이 목록을 순서대로 진행하면 됩니다.  
 각 항목은 `src/data/content.ts`에 레슨 추가 + (필요 시) 애니메이션 컴포넌트 + `animationType` 연결을 포함합니다.
 
-**현재 레슨 (5):** Virtual DOM → 상태 업데이트 흐름 → Fiber → **Render vs Commit** → 훅 내부
+**현재 레슨 (6):** Virtual DOM → 상태 업데이트 흐름 → Fiber → Render vs Commit → 훅 내부 → **Reconciliation & key**
 
 ---
 
@@ -45,10 +45,10 @@
 | 선행 레슨 | `virtual-dom` |
 | 구현 메모 | 리스트에 key 없을 때 / 있을 때 DOM 재사용 차이를 시각화 |
 
-- [ ] (선택) `Lesson.animationType`에 `"reconciliation"` 추가
-- [ ] `ReconciliationAnimation.tsx` 신규 또는 `JSXAnimation` 확장
-- [ ] 레슨 본문·코드 예제 작성
-- [ ] `content.ts` 등록 및 라우트 동작 확인
+- [x] `Lesson.animationType`에 `"reconciliation"` 추가
+- [x] `ReconciliationAnimation.tsx` 신규
+- [x] 레슨 본문·코드 예제 작성
+- [x] `content.ts` 등록 및 라우트 동작 확인
 
 ---
 
@@ -183,7 +183,7 @@
 3. `fiber-architecture` *(기존)*
 4. `render-vs-commit` *(완료)*
 5. `hooks-internals` *(기존)*
-6. `reconciliation-and-key`
+6. `reconciliation-and-key` *(완료)*
 7. `batching`
 8. `effect-lifecycle`
 9. `lanes-and-priority`

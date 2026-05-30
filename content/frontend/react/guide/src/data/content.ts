@@ -8,6 +8,7 @@ export type Lesson = {
 		| "state-flow"
 		| "render-cycle"
 		| "render-vs-commit"
+		| "reconciliation"
 		| "hooks";
 };
 
@@ -235,5 +236,73 @@ function MyComponent() {
 }
 `,
 		animationType: "hooks",
+	},
+	{
+		id: "reconciliation-and-key",
+		title: "Reconciliation & key",
+		content: `
+      # Reconciliation (재조정)과 key
+      Virtual DOM 레슨에서 본 **Diffing**을 Fiber가 실제로 어떻게 적용하는지 정리합니다.
+      Reconciliation은 이전 Fiber 트리와 새 트리를 비교해 **최소한의 DOM 변경**만 계산하는 과정입니다.
+
+      **같은 타입 · 다른 props:**
+      - element type(\`div\`, \`button\` 등)이 같으면 리액트는 DOM 노드를 **재사용**합니다.
+      - 변경된 props(className, style, event handler 등)만 patch합니다.
+      - 컴포넌트 type이 같으면 인스턴스를 유지하고 props만 넘깁니다.
+
+      **타입이 다를 때:**
+      - \`div\` → \`span\`, \`ComponentA\` → \`ComponentB\`처럼 type이 바뀌면
+        기존 서브트리를 **언마운트**하고 새로 **마운트**합니다.
+      - 내부 state·effect·ref가 초기화됩니다.
+
+      **자식 리스트와 key:**
+      - 형제 Fiber는 기본적으로 **배열 인덱스** 순으로 이전 트리와 짝을 맞춥니다.
+      - key가 없으면 맨 앞 삽입·순서 변경 시 **같은 DOM 노드에 다른 데이터**가 덮어씌워질 수 있습니다.
+      - \`key={item.id}\`처럼 **안정적인 identity**를 주면, 항목 이동·삽입 시에도 올바른 노드를 재사용하거나 이동합니다.
+      - key가 바뀌면 리액트는 **다른 항목**으로 보고 언마운트/마운트합니다. index를 key로 쓰면 순서 변경 시 같은 문제가 납니다.
+
+      key는 React DOM에만 전달되는 힌트이며, props에는 포함되지 않습니다.
+    `,
+		code: `const items = [
+  { id: 'a', label: 'Apple' },
+  { id: 'b', label: 'Banana' },
+  { id: 'c', label: 'Cherry' },
+];
+
+// ❌ key 없음 — 앞에 삽입하면 인덱스 0·1·2가 새 데이터와 매칭
+// DOM #1(Apple) 노드에 Cherry 텍스트가 patch될 수 있음
+function ListNoKey({ items }) {
+  return (
+    <ul>
+      {items.map(item => (
+        <li>{item.label}</li>
+      ))}
+    </ul>
+  );
+}
+
+// ✅ key — id로 identity 유지, 노드 이동·재사용이 정확
+function ListWithKey({ items }) {
+  return (
+    <ul>
+      {items.map(item => (
+        <li key={item.id}>{item.label}</li>
+      ))}
+    </ul>
+  );
+}
+
+// 같은 type, props만 변경 → DOM 노드 reuse
+function Button({ primary }) {
+  return (
+    <button className={primary ? 'btn-primary' : 'btn'}>
+      Click
+    </button>
+  );
+}
+
+// type 변경 → unmount + mount
+// <div>...</div>  →  <span>...</span>`,
+		animationType: "reconciliation",
 	},
 ];
