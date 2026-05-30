@@ -1,7 +1,7 @@
 [project]
-name = "study"
+name = "playground"
 version = "0.1.0"
-description = "Add your description here"
+description = "Learn in public: multi-stack notes, side projects, and published blog posts."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [

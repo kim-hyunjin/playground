@@ -15,4 +15,4 @@ echo "🚀 Starting MkDocs publication process..."
 echo "📦 Building and deploying to GitHub Pages..."
 uv run mkdocs gh-deploy --force
 
-echo "✅ Publication complete! Check your site at https://kim-hyunjin.github.io/study/"
+echo "✅ Publication complete! Check your site at https://kim-hyunjin.github.io/playground/"
