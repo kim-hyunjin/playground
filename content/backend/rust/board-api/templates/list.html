@@ -1,0 +1,10 @@
+{% if posts.is_empty() %}
+<p class="empty">아직 게시글이 없습니다. 첫 글을 작성해 보세요.</p>
+{% else %}
+{% for post in posts %}
+<article class="card">
+  <h2><a href="/posts/{{ post.id }}">{{ post.title }}</a></h2>
+  <p class="meta">{{ post.author }} · {{ post.created_at }}</p>
+</article>
+{% endfor %}
+{% endif %}

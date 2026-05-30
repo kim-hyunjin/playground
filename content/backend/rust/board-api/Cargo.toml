@@ -5,6 +5,7 @@ edition = "2021"
 description = "SQLite-backed board CRUD REST API (Axum + SeaORM)"
 
 [dependencies]
+askama = "0.12"
 axum = "0.7"
 chrono = { version = "0.4", features = ["serde"] }
 dotenvy = "0.15"

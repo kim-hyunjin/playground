@@ -1,0 +1,19 @@
+<h2 style="margin-top:0">{{ heading }}</h2>
+{% if let Some(message) = error %}
+<div class="alert">{{ message }}</div>
+{% endif %}
+<form method="post" action="{{ action }}">
+  <label for="title">제목</label>
+  <input id="title" name="title" type="text" required maxlength="200" value="{{ title }}">
+
+  <label for="author">작성자</label>
+  <input id="author" name="author" type="text" required maxlength="100" value="{{ author }}">
+
+  <label for="content">내용</label>
+  <textarea id="content" name="content" required>{{ content }}</textarea>
+
+  <div class="actions">
+    <button type="submit" class="btn btn-primary">{{ submit_label }}</button>
+    <a class="btn btn-ghost" href="/">취소</a>
+  </div>
+</form>

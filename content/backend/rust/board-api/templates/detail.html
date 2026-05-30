@@ -1,0 +1,12 @@
+<article class="card">
+  <h2>{{ post.title }}</h2>
+  <p class="meta">{{ post.author }} · 작성 {{ post.created_at }} · 수정 {{ post.updated_at }}</p>
+  <div class="content">{{ post.content }}</div>
+  <div class="actions">
+    <a class="btn btn-ghost" href="/">목록</a>
+    <a class="btn btn-primary" href="/posts/{{ post.id }}/edit">수정</a>
+    <form method="post" action="/posts/{{ post.id }}/delete" style="display:inline" onsubmit="return confirm('이 게시글을 삭제할까요?');">
+      <button type="submit" class="btn btn-danger">삭제</button>
+    </form>
+  </div>
+</article>
