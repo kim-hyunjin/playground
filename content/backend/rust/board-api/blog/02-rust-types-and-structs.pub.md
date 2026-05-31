@@ -6,7 +6,15 @@ tags: [Rust, struct, enum, derive, impl]
 summary: "AppState, SeaORM Model, DTO, PostView에서 struct·enum·#[derive]·impl을 한 줄씩 읽습니다."
 ---
 
-Axum 핸들러를 읽기 전에, `board-api`에 반복 등장하는 **데이터를 담는 타입**부터 익숙해집니다. Java의 class/record, Python의 `@dataclass`에 대응하는 Rust의 **struct**, 그리고 **enum**, **impl**을 프로젝트 코드로 봅니다.
+Axum 핸들러를 읽기 전에, `board-api`에 반복 등장하는 **데이터를 담는 타입**부터 익숙해집니다. Java의 class/record, Python의 `@dataclass`, TypeScript의 `interface`에 대응하는 Rust의 **struct**, 그리고 **enum**, **impl**을 프로젝트 코드로 봅니다.
+
+## Rust를 처음 접한다면 — struct / enum이란
+
+- **struct** — 관련 필드를 한 덩어리로 묶은 **레코드 타입**. “게시글은 id, title, content, …를 가진다”를 타입으로 표현합니다.
+- **enum** — “여러 경우 중 하나”를 표현. `AppError::NotFound` vs `AppError::Validation(...)`처럼 **종류가 다른 실패**를 하나의 타입으로 다룹니다.
+- **`#[derive(...)]`** — 컴파일러가 `Clone`, `Debug`, `Serialize` 같은 **보일러플레이트 코드를 자동 생성**합니다. 직접 손으로 쓰지 않아도 됩니다.
+
+Rust에는 `null`이 없습니다. “없을 수 있음”은 `Option<T>`, “실패할 수 있음”은 `Result<T, E>`로 표현합니다 (03편).
 
 ## struct — 필드 묶음
 
@@ -171,6 +179,22 @@ cargo check
 ```
 
 `CreatePostRequest`에 필드를 빠뜨리면 핸들러의 `Json(payload)` 추출 단계에서 컴파일이 깨집니다. Rust는 스키마를 타입으로 강제합니다.
+
+## 헷갈리기 쉬운 점
+
+- **`Model`이라는 이름** — SeaORM 관례입니다. “도메인 모델”이 아니라 **DB 테이블 한 행**을 뜻합니다. 헷갈리면 `post::Model`을 “PostRow”로 읽어도 됩니다.
+- **`impl From<A> for B`와 메서드** — `from`은 연관 함수(타입에 붙음), `into_create_request(self)`는 인스턴스 메서드입니다.
+- **같은 필드명이 여러 struct에 반복** — 의도적입니다. 각 struct가 **다른 계층의 계약**을 나타냅니다.
+
+## 심화: 왜 Model / DTO / View를 세 개나 두나
+
+| 타입 | 변경 주체 | API 버전·UI와의 결합 |
+|------|-----------|----------------------|
+| `Model` | DB 스키마, 마이그레이션 | 낮음 (내부) |
+| `PostResponse` | REST 클라이언트 계약 | 높음 — 필드 추가 시 API 문서 영향 |
+| `PostView` | HTML 디자인 | 표시 형식(날짜 문자열 등)만 |
+
+한 struct에 JSON·HTML·DB를 모두 넣으면, 날짜를 ISO 문자열로 바꿀 때 DB 레이어까지 흔들립니다. **경계마다 타입을 나누는 것**이 유지보수에 유리합니다. 비용은 `From` 변환 몇 줄입니다.
 
 ## 정리
 

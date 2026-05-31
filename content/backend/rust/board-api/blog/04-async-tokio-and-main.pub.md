@@ -8,6 +8,14 @@ summary: "main.rs에서 #[tokio::main], DB 연결, TcpListener, axum::serve와 t
 
 `board-api`는 네트워크 I/O(DB, HTTP)를 기다리는 동안 스레드를 막지 않기 위해 **비동기**로 작성됩니다. 진입점은 전부 `src/main.rs`에 있습니다.
 
+## Rust를 처음 접한다면 — 동기 vs 비동기
+
+**동기(블로킹):** DB 쿼리가 끝날 때까지 그 스레드는 아무 것도 못 합니다. 스레드 하나당 동시 요청 하나에 가깝게 처리합니다.
+
+**비동기:** `await`로 “DB 응답 올 때까지 이 작업은 잠깐 멈춤”을 표시하고, **런타임(Tokio)**이 그 사이에 다른 요청을 처리합니다. 코드는 순서대로 읽히지만, I/O 대기 중에는 CPU를 낭비하지 않습니다.
+
+`async fn`이 붙은 함수는 호출만 하면 바로 끝나지 않고 **Future**(나중에 완료될 작업)를 반환합니다. **`.await`를 붙여야** 실제로 기다립니다. `.await`를 빼먹으면 컴파일 에러가 나는 경우가 많습니다.
+
 ## main.rs 전체 흐름
 
 ```rust
@@ -156,6 +164,19 @@ RUST_LOG=board_api=info,tower_http=info cargo run
 ```
 
 다른 터미널에서 `curl http://127.0.0.1:3000/health` — `TraceLayer`가 요청 한 줄을 남기는지 확인합니다.
+
+## 헷갈리기 쉬운 점
+
+- **`expect` vs `?`** — `main` 기동 단계는 “DB 없으면 서버를 띄울 이유가 없다”고 보고 **패닉으로 종료**합니다. 요청 처리 중에는 `?`로 `AppError`에 넘깁니다 (08편).
+- **`HOST=127.0.0.1`** — 본인 PC에서만 접속 가능. Docker·원격 접속 시 `0.0.0.0`으로 바인딩해야 합니다.
+- **레이어 순서** — `merge(routes)` 후 `layer` → `with_state` 순서가 Axum 0.7에서 중요합니다. state는 라우터에 붙인 뒤 `serve`에 넘깁니다.
+
+## 심화: Tokio 런타임과 운영
+
+- **`#[tokio::main]`** — 기본적으로 **멀티 스레드** 런타임을 씁니다. CPU 코어를 활용해 여러 Future를 돌립니다.
+- **`CorsLayer::permissive()`** — 모든 출처를 허용합니다. **프로덕션**에서는 특정 origin만 허용하도록 좁혀야 합니다.
+- **`TraceLayer`** — Tower 미들웨어 스택의 일부입니다. 인증·압축·타임아웃도 같은 방식으로 `.layer()`에 추가합니다.
+- **graceful shutdown** — 이 `main`은 단순 `serve`만 호출합니다. SIGTERM 시 연결 drain은 `axum::serve` + `with_graceful_shutdown`으로 확장할 수 있습니다.
 
 ## 정리
 

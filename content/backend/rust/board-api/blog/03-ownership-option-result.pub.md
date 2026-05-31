@@ -6,7 +6,19 @@ tags: [Rust, Option, Result, ownership, error handling]
 summary: "services/post.rs와 routes에서 String, Option, Result, ?와 match가 어떻게 쓰이는지 익힙니다."
 ---
 
-Rust를 처음 읽을 때 가장 막히는 부분이 **소유권**과 **`Option` / `Result`** 입니다. 이 글은 이론 전체가 아니라 `board-api`에 **실제로 나오는 패턴**만 짚습니다.
+Rust를 처음 읽을 때 가장 막히는 부분이 **소유권**과 **`Option` / `Result`** 입니다. 이 글은 이론 전체가 아니라 `board-api`에 **실제로 나오는 패턴**만 짚습니다. 다른 언어와의 대응을 먼저 적어 두면 읽기가 수월합니다.
+
+## Rust를 처음 접한다면 — 다른 언어와 대응
+
+| Rust | Java / Kotlin | Python | 의미 |
+|------|---------------|--------|------|
+| `Option<T>` | `Optional<T>` | `T \| None` | 값이 없을 수 있음 |
+| `Result<T, E>` | 예외 대신 명시적 반환 | try/except 대신 `Ok`/`Err` | 실패가 타입에 포함 |
+| `?` | (없음, throws에 가깝지 않음) | 없음 | `Err`면 현재 함수에서 즉시 return |
+| `&T` | 참조(대략) | 객체 참조 | 소유하지 않고 빌림 |
+| `String` | `String` | `str` (불변) | 소유 문자열 |
+
+**소유권 한 줄:** Rust는 “이 값의 주인이 누구인지”를 컴파일러가 추적합니다. 주인이 사라지면 빌린 참조(`&`)도 쓸 수 없습니다. 그래서 동시에 같은 메모리를 둘이 고치는 버그가 줄어듭니다.
 
 ## String vs &str
 
@@ -133,6 +145,19 @@ curl -X POST http://127.0.0.1:3000/api/posts \
 ```
 
 `validate_create`에서 `title is required` → `400` JSON `error` 필드를 확인합니다. `Result` + `AppError::Validation` 경로를 직접 본 것입니다.
+
+## 헷갈리기 쉬운 점
+
+- **`?`는 `Result`와 `Option` 둘 다**에 쓸 수 있습니다. `find().one().await?`는 DB 에러, `.ok_or(NotFound)?`는 “행 없음”을 `Err`로 바꿉니다.
+- **`return Err(...)` vs `?`** — 검증 함수 안에서는 `return Err`가 명시적이고, 연쇄 호출에서는 `?`가 짧습니다.
+- **`.clone()`이 많아 보여도** — 이 예제는 요청당 게시글 한 건 수준이라 괜찮습니다. 목록 수천 건을 매번 `clone`하면 비용이 커집니다 (심화).
+
+## 심화: 소유권과 API 설계
+
+- **`create_post(..., payload: CreatePostRequest)`** — payload의 **소유권을 서비스로 이동**합니다. 호출 후 라우트에서 `payload`를 다시 쓸 수 없습니다. 다시 쓸 필요가 없으니 안전합니다.
+- **`&AppState`** — 연결 풀은 앱 전체가 공유해야 하므로 빌리기만 합니다. `State` extractor도 내부적으로 `Clone`된 `AppState`를 넘깁니다 (05편).
+- **대안:** `Arc<AppState>`를 명시적으로 쓰는 프로젝트도 많습니다. Axum 0.7 + `Clone` on state로 이 예제는 충분합니다.
+- **부분 수정의 `Option<String>`** — JSON에서 필드를 **아예 안내면** `None`, `"title": null`도 보통 `None`입니다. Serde 기본 동작 (09편).
 
 ## 정리
 

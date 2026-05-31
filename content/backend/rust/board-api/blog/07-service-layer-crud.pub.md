@@ -6,7 +6,18 @@ tags: [Rust, SeaORM, service layer, CRUD]
 summary: "services/post.rs의 list·create·update·delete와 검증, REST·웹 공용 로직을 설명합니다."
 ---
 
-`routes/post.rs`와 `routes/web.rs`는 HTTP 형식만 다르고, **비즈니스 로직은 전부 `services/post.rs`**에 있습니다. Spring의 `@Service` 계층과 같은 위치입니다.
+`routes/post.rs`와 `routes/web.rs`는 HTTP 형식만 다르고, **비즈니스 로직은 전부 `services/post.rs`**에 있습니다. Spring의 `@Service` 계층, Django의 “views에서 분리한 비즈니스 로직”과 같은 위치입니다.
+
+## Rust를 처음 접한다면 — 서비스 레이어가 있는 이유
+
+**라우트(핸들러)**는 “HTTP에서 문자열/JSON을 꺼내고, HTTP로 돌려준다”에 가깝게 두고,  
+**서비스**는 “제목이 비었는지, DB에 넣고, 없으면 NotFound”처럼 **규칙**을 모읍니다.
+
+이렇게 나누면:
+
+- 브라우저 폼과 REST API가 **같은 검증**을 씁니다.
+- 나중에 CLI·배치 job이 생겨도 서비스만 호출하면 됩니다.
+- 테스트는 HTTP 없이 서비스만 검증할 수도 있습니다 (이 프로젝트는 통합 테스트 위주, 12편).
 
 ## list_posts — 최신순 목록
 
@@ -128,6 +139,27 @@ curl -s -X PUT http://127.0.0.1:3000/api/posts/1 \
   -H 'Content-Type: application/json' \
   -d '{"title":"A 수정"}' | jq .title
 ```
+
+## 헷갈리기 쉬운 점
+
+- **`find_post_by_id`는 `pub`이 아님** — crate **내부**에서만 쓰는 헬퍼입니다. 외부 crate(통합 테스트)는 `get_post` 등 public API만 씁니다.
+- **HTML 수정은 항상 세 필드 전송** — `PostForm::into_update_request`가 모두 `Some`으로 넣습니다. REST PUT만 “일부 필드만” 보내는 UX입니다.
+- **삭제 후 `Ok(post)`** — REST에서 삭제된 리소스 본문을 주는 패턴입니다. 204 No Content로 바꾸려면 핸들러·테스트를 함께 수정해야 합니다.
+
+## 심화: 트랜잭션·동시성 (이 코드에 없는 것)
+
+현재 `create_post` / `update_post`는 **트랜잭션 블록 없이** 한 번의 `insert`/`update`만 호출합니다. 게시판 한 테이블 CRUD에는 충분합니다.
+
+실무에서 댓글 수 갱신 + 글 저장을 **한 단위로** 묶으려면:
+
+```rust
+// 개념 예시 (board-api에는 없음)
+let txn = state.db.begin().await?;
+// ... 여러 쿼리 ...
+txn.commit().await?;
+```
+
+동시에 같은 글을 수정하는 **낙관적 락**(`version` 컬럼)은 엔티티 확장 후 서비스에서 처리합니다.
 
 ## 정리
 

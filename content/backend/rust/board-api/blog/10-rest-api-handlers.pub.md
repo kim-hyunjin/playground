@@ -8,6 +8,17 @@ summary: "routes/post.rs의 list·get·create·update·delete 핸들러와 extra
 
 `/api/posts` CRUD는 `src/routes/post.rs` 한 파일에 모여 있습니다. 각 핸들러는 **얇게** 유지하고, 로직은 `services::post`에 위임합니다.
 
+## Rust를 처음 접한다면 — “얇은 핸들러”란
+
+핸들러 안에 SQL이나 `if title.is_empty()`가 길게 있으면, REST와 HTML에서 **같은 규칙을 두 번** 쓰게 됩니다. 이 프로젝트는 핸들러가 대략 다음 네 줄 패턴입니다.
+
+1. extractor로 입력 꺼내기 (`State`, `Path`, `Json`)
+2. `post_service::...(await?)`
+3. `PostResponse::from(...)`
+4. `Ok(Json(...))`
+
+비즈니스 규칙을 바꿀 때는 **`services/post.rs`만** 보면 됩니다.
+
 ## 파일 전체 구조
 
 ```rust
@@ -145,6 +156,18 @@ curl -s -o /dev/null -w "%{http_code}\n" "$BASE/api/posts/$ID"
 | POST /api/posts | `create_post` | `create_post` |
 | PUT /api/posts/:id | `update_post` | `update_post` |
 | DELETE /api/posts/:id | `delete_post` | `delete_post` |
+
+## 헷갈리기 쉬운 점
+
+- **생성 성공 시 200** — 많은 API는 **201 Created** + `Location` 헤더를 씁니다. 이 예제는 단순히 200 + 본문에 `id`를 줍니다. 변경 시 클라이언트·테스트를 함께 맞춰야 합니다.
+- **`Path(id): Path<i32>`** — URL이 숫자가 아니면 400이 아니라 extractor 단계에서 실패할 수 있습니다.
+- **`.collect()`** — 빈 벡터 `[]`도 유효한 목록 응답입니다.
+
+## 심화: REST 설계와 확장
+
+- **Idempotency** — `GET`, `PUT`(같은 body), `DELETE`는 같은 요청을 여러 번 해도 결과가 같다고 기대하기 쉽습니다. `POST` 생성은 매번 새 id가 생깁니다.
+- **페이지네이션** — `list_posts`에 `limit`/`offset` 쿼리 파라미터 extractor(`Query<PageParams>`)를 추가하고, SeaORM `.limit()` `.offset()`을 쓰면 됩니다.
+- **인증** — extractor로 `Extension<User>` 또는 커스텀 `AuthUser`를 넣고, 서비스 호출 전에 `Forbidden`을 반환하는 패턴이 흔합니다.
 
 ## 정리
 

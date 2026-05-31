@@ -8,6 +8,14 @@ summary: "board-api의 Cargo.toml, lib.rs, main.rs와 mod.rs로 crate·모듈·p
 
 Rust 프로젝트를 열면 가장 먼저 보는 파일이 `Cargo.toml`입니다. Maven의 `pom.xml`이나 npm의 `package.json`과 같은 **패키지 매니페스트**입니다. 이 글에서는 `board-api`가 **라이브러리 crate**와 **실행 바이너리 crate**를 어떻게 나누는지, 그리고 `mod.rs`로 디렉터리를 모듈 트리에 연결하는 방법을 봅니다.
 
+## Rust를 처음 접한다면 — Cargo가 하는 일
+
+1. **의존성 다운로드** — `Cargo.toml`에 적은 `axum`, `sea-orm` 등을 crates.io에서 받습니다.
+2. **컴파일** — `rustc`로 Rust 소스를 기계 코드로 바꿉니다. 에러가 있으면 여기서 멈춥니다 (런타임에 “클래스 없음” 같은 surprise가 적음).
+3. **실행** — `[[bin]]`이 가리키는 `main.rs`부터 시작합니다.
+
+`cargo check`는 실행 파일을 만들지 않고 **타입·문법만 검사**해서 빠릅니다. 글을 읽으며 소스를 고쳤다면 `cargo check`로 자주 확인하는 습관이 좋습니다.
+
 ## Cargo.toml — 의존성과 crate 종류
 
 ```toml
@@ -122,6 +130,20 @@ cargo doc --no-deps --open   # 선택: lib 문서 브라우저
 ```
 
 `cargo check`가 통과하면 `mod` 선언과 파일 경로가 일치한다는 뜻입니다. `mod foo`가 있는데 `foo.rs`가 없으면 컴파일 에러가 납니다.
+
+## 헷갈리기 쉬운 점
+
+| 메시지/현상 | 의미 |
+|-------------|------|
+| `board-api` vs `board_api` | 패키지 이름(하이픈)과 **라이브러리 crate 이름**(언더스코어)이 다릅니다. `use board_api::...`는 언더스코어 쪽입니다. |
+| `mod routes;` vs `use crate::routes` | `mod`는 “이 파일을 모듈 트리에 포함”, `use`는 “이름을 짧게 부르기”. |
+| `src/routes/post.rs` | `lib.rs`에 `pub mod routes` + `routes/mod.rs`에 `pub mod post`가 있어야 합니다. **파일만 만들고 `mod` 선언을 빼먹으면** 컴파일러가 모듈을 모릅니다. |
+
+## 심화: lib/bin 분리와 통합 테스트
+
+- **통합 테스트** (`tests/api.rs`)는 `main`을 실행하지 않고 `board_api::routes`를 직접 import합니다. 그래서 비즈니스 로직이 `lib`에 있어야 합니다.
+- **배포** 시 Docker는 보통 `board-api` 바이너리만 복사합니다. 라이브러리는 그 안에 링크된 상태입니다.
+- 의존성 버전은 `Cargo.lock`에 고정됩니다. 팀 repo에는 lock 파일을 커밋하는 것이 일반적입니다 (앱 프로젝트).
 
 ## 정리
 

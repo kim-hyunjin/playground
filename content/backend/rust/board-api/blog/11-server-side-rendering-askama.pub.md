@@ -6,7 +6,14 @@ tags: [Rust, Askama, SSR, HTML]
 summary: "templates, web/templates.rs, PostView, routes/web.rs의 Form·Redirect·검증 실패 시 폼 재표시를 설명합니다."
 ---
 
-브라우저용 게시판은 JSON 대신 **HTML**을 반환합니다. `board-api`는 **Askama**로 Rust struct와 `.html` 템플릿을 컴파일 타임에 묶습니다 (Jinja2/Thymeleaf와 유사).
+브라우저용 게시판은 JSON 대신 **HTML**을 반환합니다. `board-api`는 **Askama**로 Rust struct와 `.html` 템플릿을 컴파일 타임에 묶습니다 (Jinja2/Thymeleaf, Django template과 유사).
+
+## Rust를 처음 접한다면 — SSR이란
+
+**SSR(Server-Side Rendering)** — 서버가 HTML 문자열을 완성해서 브라우저에 보냅니다. React SPA처럼 브라우저가 JSON을 받아 화면을 그리는 방식이 아닙니다.
+
+- **장점** — JavaScript 없이도 동작, SEO·첫 화면이 단순.
+- **이 프로젝트** — 폼 제출 → 서버 검증 → 리다이렉트 또는 에러 HTML. 전형적인 “클래식” 웹 앱 흐름입니다.
 
 ## askama.toml
 
@@ -172,6 +179,22 @@ HTML 폼은 `method="post"`로 `/posts/:id/delete`를 호출합니다 (REST DELE
 1. `cargo run` 후 `http://127.0.0.1:3000` — 빈 목록 문구
 2. 글쓰기 → 등록 → 상세 URL로 리다이렉트
 3. 제목 비우고 등록 → 폼에 에러 메시지·입력값 유지
+
+## 헷갈리기 쉬운 점
+
+- **`{{ body|safe }}`** — 이미 HTML 조각인 본문을 **이스케이프하지 않고** 넣습니다. 사용자 입력을 `body`에 직접 넣으면 XSS 위험이 있습니다. 이 프로젝트는 Askama가 필드 값을 기본 이스케이프하고, `safe`는 **우리가 만든 템플릿 조각**에만 씁니다.
+- **POST-Redirect-GET** — 폼 POST 후 새로고침 시 재전송을 막기 위해 303으로 GET 상세로 보냅니다.
+- **삭제가 `POST /posts/:id/delete`** — HTML form은 예전부터 GET/POST만 쓰는 경우가 많아, RESTful DELETE 대신 POST 라우트를 둔 것입니다.
+
+## 심화: Askama vs 런타임 템플릿
+
+| | Askama (컴파일 타임) | 런타임 템플릿 (파일 로드) |
+|---|---------------------|---------------------------|
+| 오타/필드명 오류 | **컴파일 시** 발견 | 런타임 에러 |
+| 배포 | HTML이 바이너리에 포함 | 템플릿 파일 경로 관리 필요 |
+| 유연성 | 템플릿 변경 시 **재컴파일** | hot reload 가능 |
+
+`LayoutTemplate<'a>`의 **수명 `'a`** — `body`가 렌더된 `String`의 참조를 잠깐 빌려 레이아웃에 넣습니다. 렌더 순서가 `render_page`에 고정되어 있어 안전합니다.
 
 ## 정리
 

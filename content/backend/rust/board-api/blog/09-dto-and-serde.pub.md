@@ -8,6 +8,14 @@ summary: "CreatePostRequest, UpdatePostRequest, PostResponse, PostForm과 Serial
 
 HTTP 본문(JSON·폼)은 바이트 문자열입니다. Axum + **Serde**가 이를 Rust **struct(DTO)**로 바꾸고, 응답은 다시 JSON으로 직렬화합니다.
 
+## Rust를 처음 접한다면 — Serde와 DTO
+
+- **직렬화(Serialize)** — Rust 값 → JSON 문자열 (`PostResponse` → HTTP body).
+- **역직렬화(Deserialize)** — JSON/폼 문자열 → Rust 값 (`CreatePostRequest`).
+- **DTO(Data Transfer Object)** — 계층 사이로 **옮기기 위한** struct. DB `Model`과 필드가 같을 수도, 다를 수도 있습니다.
+
+`#[derive(Deserialize)]`만 있으면 **요청 본문용**, `Serialize`만 있으면 **응답용**입니다. 둘 다 필요하면 둘 다 derive합니다.
+
 ## dto/post.rs — REST API
 
 ### 생성 요청
@@ -122,6 +130,31 @@ curl -s -X POST http://127.0.0.1:3000/api/posts \
 curl -s http://127.0.0.1:3000/api/posts | jq '.[0] | keys'
 # id, title, content, author, created_at, updated_at
 ```
+
+## 헷갈리기 쉬운 점
+
+- **422 vs 400** — JSON 형식이 struct와 안 맞으면 Axum/Serde가 **422**를 내는 경우가 많습니다. 비즈니스 검증 실패(빈 제목)는 우리 코드의 **400** `Validation`입니다.
+- **폼 필드 이름** — HTML `<input name="title">`과 `PostForm.title`이 일치해야 합니다. 테스트의 `title=Hello&...`도 같습니다 (12편).
+- **`UpdatePostRequest`의 `null`** — `{"title": null}`은 보통 `None`으로 들어와 “이 필드는 수정 안 함”과 같습니다.
+
+## 심화: Serde 옵션과 API 진화
+
+필요 시 derive에 옵션을 붙입니다 (이 프로젝트에는 아직 없음):
+
+```rust
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]  // 정의되지 않은 JSON 필드 거부
+pub struct CreatePostRequest { ... }
+```
+
+API v2에서 필드 이름을 바꿀 때:
+
+```rust
+#[serde(rename = "body")]
+pub content: String,
+```
+
+클라이언트는 `body`, Rust 필드는 `content`로 유지할 수 있습니다. **DB `Model`은 마이그레이션**, **DTO는 API 버전**으로 나누어 변경하는 것이 일반적입니다.
 
 ## 정리
 

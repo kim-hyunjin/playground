@@ -6,7 +6,18 @@ tags: [Rust, Axum, SeaORM, SQLite, REST API]
 summary: "board-api 프로젝트의 전체 구조와 HTTP 요청이 라우트·서비스·DB를 거쳐 응답으로 돌아오는 흐름을 소개합니다."
 ---
 
-이 시리즈는 `content/backend/rust/board-api`에 있는 **Rust 게시판 백엔드**를 한 줄씩 읽으며 배우는 글입니다. 프로그래밍 경험은 있지만 Rust는 처음인 분을 대상으로, Java·Python과 비교하는 설명을 곁들입니다.
+이 시리즈는 `content/backend/rust/board-api`에 있는 **Rust 게시판 백엔드**를 한 줄씩 읽으며 배우는 글입니다. **웹·API 개발 경험은 있어도 Rust 문법은 처음**인 분과, **Rust를 알지만 Axum/SeaORM 조합은 처음**인 분 모두를 염두에 두었습니다. Java·Python·TypeScript와 비교하는 설명을 곁들이고, 필요한 곳에는 설계 선택의 이유까지 적습니다.
+
+## Rust를 전혀 모른다면 — 이 시리즈에서 전제하는 것
+
+| 용어 | 한 줄 설명 |
+|------|------------|
+| **Rust** | 컴파일되는 시스템 언어. 실행 전 `cargo build`로 기계어에 가깝게 번역되며, 메모리 안전·동시성 버그를 컴파일러가 많이 막아 줍니다. |
+| **cargo** | Rust의 빌드·패키지 도구 (`npm` + `gcc` 느낌). `cargo run`으로 서버 실행. |
+| **crate** | Rust의 “패키지/모듈 단위”. `board-api` 프로젝트는 라이브러리 crate + 실행 crate로 나뉩니다 (01편). |
+| **HTTP** | 브라우저·`curl`이 서버에 보내는 요청. `GET`(조회), `POST`(생성), `PUT`(수정), `DELETE`(삭제) 등. |
+
+다른 언어에서 백엔드를 만들어 본 적이 있다면 “컨트롤러 → 서비스 → DB” 구조는 그대로이고, **문법과 에러 처리 방식**만 Rust스럽게 바뀐다고 보면 됩니다. Rust 문법은 01~03편에서 프로젝트 코드로 익힙니다.
 
 ## 이 프로젝트가 하는 일
 
@@ -28,6 +39,8 @@ Spring Boot에서 `@RestController`와 `@Controller`를 나눠 쓰는 것과 비
 | DB | SQLite (`board.db`) | 파일 하나로 동작, 학습·로컬에 적합 |
 | 템플릿 | Askama 0.12 | 컴파일 타임 HTML 템플릿 (Jinja2 유사) |
 | 비동기 | Tokio | `async`/`await` 런타임 |
+
+**왜 Rust인가 (짧게):** 게시판 규모에서는 Python/FastAPI나 Node도 충분합니다. 이 예제는 “Rust로 백엔드를 읽고 쓸 수 있다”는 학습 목표에 맞춰, **컴파일 타임 타입 검사**와 **단일 바이너리 배포** 같은 Rust의 강점을 체험하도록 고른 스택입니다.
 
 ## 프로젝트 구조
 
@@ -118,6 +131,24 @@ curl -X POST http://127.0.0.1:3000/api/posts \
 ```
 
 `health`가 `ok`이면 서버·라우팅이 동작하는 것이고, POST 응답에 `id`가 있으면 DB까지 한 바퀴 돈 것입니다.
+
+첫 `cargo run`은 의존성 컴파일 때문에 **수 분** 걸릴 수 있습니다. 이후부터는 훨씬 빠릅니다.
+
+## 헷갈리기 쉬운 점
+
+- **`/api/posts`와 `/posts`는 다른 URL**입니다. 전자는 JSON API, 후자는 브라우저 HTML입니다. 같은 DB를 쓰지만 라우트 파일이 다릅니다 (`routes/post.rs` vs `routes/web.rs`).
+- **`:id`는 “숫자 자리” 표기**입니다. 실제 요청은 `/api/posts/1`처럼 구체적인 id가 들어갑니다.
+- **SQLite 파일 `board.db`**는 `cargo run`을 프로젝트 디렉터리에서 실행했을 때 그 옆에 생깁니다. 경로를 바꾸려면 `DATABASE_URL`을 보면 됩니다 (04편).
+
+## 심화: REST API와 SSR을 한 프로젝트에 둔 이유
+
+| 접근 | 장점 | 이 프로젝트에서 |
+|------|------|------------------|
+| REST만 | SPA·모바일 앱과 연동 쉬움 | `routes/post.rs`, `PostResponse` |
+| SSR(HTML)만 | API 없이도 데모·관리 UI 빠름 | Askama + `routes/web.rs` |
+| 둘 다 | **서비스 레이어 공유**로 규칙 중복 방지 | `services/post.rs` 한 곳 |
+
+실무에서는 보통 팀·제품에 맞게 하나만 선택하거나, BFF를 분리합니다. 여기서는 **같은 `create_post` 서비스**를 REST와 폼이 공유한다는 점을 코드로 보여 주기 위해 둘 다 넣었습니다.
 
 ## 시리즈 읽는 순서
 
