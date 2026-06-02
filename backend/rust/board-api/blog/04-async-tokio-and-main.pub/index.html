@@ -6,19 +6,19 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="학습한 내용을 기록하고 공유하는 기술 블로그입니다.">
+        <meta name="description" content="Learn in public — multi-stack notes, side projects, and published blog posts.">
       
       
         <meta name="author" content="kim-hyunjin">
       
       
-        <link rel="canonical" href="https://kim-hyunjin.github.io/study/backend/database-engineering/tune/sql/%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EC%84%A4%EC%A0%95%EB%B2%95.pub/">
+        <link rel="canonical" href="https://kim-hyunjin.github.io/playground/backend/rust/board-api/blog/04-async-tokio-and-main.pub/">
       
       
-        <link rel="prev" href="../../.agents/skills/sql-optimizer/SKILL.pub/">
+        <link rel="prev" href="../03-ownership-option-result.pub/">
       
       
-        <link rel="next" href="../../../../distributed-system/%EB%B6%84%EC%82%B0%20%EC%8B%9C%EC%8A%A4%ED%85%9C%EC%9D%B4%EB%9E%80%20%EB%AC%B4%EC%97%87%EC%9D%B8%EA%B0%80.pub/">
+        <link rel="next" href="../05-app-state-and-routing.pub/">
       
       
         
@@ -29,7 +29,7 @@
     
     
       
-        <title>Docker MariaDB 데이터 설정 방법 - Study Log & Blog</title>
+        <title>[Rust] async/await와 Tokio — 서버가 시작되는 순간 - Playground</title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#docker-mariadb" class="md-skip">
+        <a href="#rust-vs" class="md-skip">
           콘텐츠로 이동
         </a>
       
@@ -94,7 +94,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="상단/헤더">
-    <a href="../../../../.." title="Study Log &amp; Blog" class="md-header__button md-logo" aria-label="Study Log & Blog" data-md-component="logo">
+    <a href="../../../../.." title="Playground" class="md-header__button md-logo" aria-label="Playground" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -108,13 +108,13 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            Study Log & Blog
+            Playground
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Docker MariaDB 데이터 설정 방법
+              [Rust] async/await와 Tokio — 서버가 시작되는 순간
             
           </span>
         </div>
@@ -297,8 +297,15 @@
   
     
     
+      
+  
+  
+  
+  
+    
+    
       <li class="md-tabs__item">
-        <a href="../../../../../frontend/react/redux/vanilla-react-redux-basics.pub/" class="md-tabs__link">
+        <a href="../../../../../frontend/react/guide/node_modules/h3-v2/dist/docs/0.guide/0.index/" class="md-tabs__link">
           
   
   
@@ -306,6 +313,9 @@
 
         </a>
       </li>
+    
+  
+
     
   
 
@@ -455,13 +465,13 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="네비게이션" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../../.." title="Study Log &amp; Blog" class="md-nav__button md-logo" aria-label="Study Log & Blog" data-md-component="logo">
+    <a href="../../../../.." title="Playground" class="md-nav__button md-logo" aria-label="Playground" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
-    Study Log & Blog
+    Playground
   </label>
   
   <ul class="md-nav__list" data-md-scrollfix>
@@ -872,8 +882,6 @@
                 
   
   
-    
-  
   
   
     
@@ -889,11 +897,13 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_2" checked>
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_2" >
         
           
           <label class="md-nav__link" for="__nav_1_2" id="__nav_1_2_label" tabindex="">
@@ -914,7 +924,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_1_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -986,7 +996,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../resources/ACID.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/resources/ACID.pub/" class="md-nav__link">
         
   
   
@@ -1014,7 +1024,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../resources/B-trees-vs-B%2Btrees.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/resources/B-trees-vs-B%2Btrees.pub/" class="md-nav__link">
         
   
   
@@ -1042,7 +1052,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../resources/Database-Engines.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/resources/Database-Engines.pub/" class="md-nav__link">
         
   
   
@@ -1070,7 +1080,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../resources/Eventual-Consistency.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/resources/Eventual-Consistency.pub/" class="md-nav__link">
         
   
   
@@ -1098,7 +1108,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../resources/How-tables-and-indexes-are-stored-on-disk.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/resources/How-tables-and-indexes-are-stored-on-disk.pub/" class="md-nav__link">
         
   
   
@@ -1126,7 +1136,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../resources/IF%20NOT%20EXISTS%20%EA%B5%AC%EB%AC%B8%20%EC%82%AC%EC%9A%A9%EC%8B%9C%20%EC%A3%BC%EC%9D%98%EC%A0%90.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/resources/IF%20NOT%20EXISTS%20%EA%B5%AC%EB%AC%B8%20%EC%82%AC%EC%9A%A9%EC%8B%9C%20%EC%A3%BC%EC%9D%98%EC%A0%90.pub/" class="md-nav__link">
         
   
   
@@ -1154,7 +1164,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../resources/MongoDB%20architecture.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/resources/MongoDB%20architecture.pub/" class="md-nav__link">
         
   
   
@@ -1182,7 +1192,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../resources/Partitioning.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/resources/Partitioning.pub/" class="md-nav__link">
         
   
   
@@ -1210,7 +1220,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../resources/Replication.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/resources/Replication.pub/" class="md-nav__link">
         
   
   
@@ -1238,7 +1248,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../resources/Row-Based-vs-Column-Based-Databases.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/resources/Row-Based-vs-Column-Based-Databases.pub/" class="md-nav__link">
         
   
   
@@ -1266,7 +1276,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../resources/Sharding.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/resources/Sharding.pub/" class="md-nav__link">
         
   
   
@@ -1294,7 +1304,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../resources/bloom-filter.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/resources/bloom-filter.pub/" class="md-nav__link">
         
   
   
@@ -1322,7 +1332,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../resources/non-key%20column%20index%EC%9D%98%20%EC%9D%B4%ED%95%B4.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/resources/non-key%20column%20index%EC%9D%98%20%EC%9D%B4%ED%95%B4.pub/" class="md-nav__link">
         
   
   
@@ -1350,7 +1360,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../resources/offset%EC%9D%80%20%EB%8A%90%EB%A6%AC%EB%8B%A4.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/resources/offset%EC%9D%80%20%EB%8A%90%EB%A6%AC%EB%8B%A4.pub/" class="md-nav__link">
         
   
   
@@ -1378,7 +1388,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../resources/repeatable%20read%20isolation%20and%20snapshot.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/resources/repeatable%20read%20isolation%20and%20snapshot.pub/" class="md-nav__link">
         
   
   
@@ -1406,7 +1416,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../resources/select%20for%20update%EC%99%80%20serializable%20%EA%B2%A9%EB%A6%AC%EC%88%98%EC%A4%80.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/resources/select%20for%20update%EC%99%80%20serializable%20%EA%B2%A9%EB%A6%AC%EC%88%98%EC%A4%80.pub/" class="md-nav__link">
         
   
   
@@ -1434,7 +1444,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../resources/xmin%EA%B3%BC%20xmax.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/resources/xmin%EA%B3%BC%20xmax.pub/" class="md-nav__link">
         
   
   
@@ -1462,7 +1472,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../resources/%EA%B8%B0%EB%B3%B8%ED%82%A4%20uuid%20vs%20serial%20id.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/resources/%EA%B8%B0%EB%B3%B8%ED%82%A4%20uuid%20vs%20serial%20id.pub/" class="md-nav__link">
         
   
   
@@ -1490,7 +1500,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../resources/%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4%EA%B0%80%20%ED%96%89%20%EB%8C%80%EC%8B%A0%EC%97%90%20%ED%8E%98%EC%9D%B4%EC%A7%80%EB%A5%BC%20%EC%9D%BD%EB%8A%94%20%EC%9D%B4%EC%9C%A0.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/resources/%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4%EA%B0%80%20%ED%96%89%20%EB%8C%80%EC%8B%A0%EC%97%90%20%ED%8E%98%EC%9D%B4%EC%A7%80%EB%A5%BC%20%EC%9D%BD%EB%8A%94%20%EC%9D%B4%EC%9C%A0.pub/" class="md-nav__link">
         
   
   
@@ -1518,7 +1528,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../resources/%EB%8F%99%ED%98%95%20%EC%95%94%ED%98%B8%ED%99%94.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/resources/%EB%8F%99%ED%98%95%20%EC%95%94%ED%98%B8%ED%99%94.pub/" class="md-nav__link">
         
   
   
@@ -1546,7 +1556,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../resources/%EB%B3%B5%ED%95%A9%EC%9D%B8%EB%8D%B1%EC%8A%A4%2C%20%ED%9A%A8%EC%9C%A8%EC%A0%81%EC%9D%B8%20%EC%BF%BC%EB%A6%AC.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/resources/%EB%B3%B5%ED%95%A9%EC%9D%B8%EB%8D%B1%EC%8A%A4%2C%20%ED%9A%A8%EC%9C%A8%EC%A0%81%EC%9D%B8%20%EC%BF%BC%EB%A6%AC.pub/" class="md-nav__link">
         
   
   
@@ -1574,7 +1584,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../resources/%EB%B9%84%ED%8A%B8%EB%A7%B5%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%20%EC%8A%A4%EC%BA%94%20vs%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%20%EC%8A%A4%EC%BA%94%20vs%20%ED%85%8C%EC%9D%B4%EB%B8%94%20%EC%8A%A4%EC%BA%94.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/resources/%EB%B9%84%ED%8A%B8%EB%A7%B5%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%20%EC%8A%A4%EC%BA%94%20vs%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%20%EC%8A%A4%EC%BA%94%20vs%20%ED%85%8C%EC%9D%B4%EB%B8%94%20%EC%8A%A4%EC%BA%94.pub/" class="md-nav__link">
         
   
   
@@ -1602,7 +1612,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../resources/%EC%8B%9D%EB%B3%84%EC%9E%90%EC%99%80%20%EB%B9%84%EC%8B%9D%EB%B3%84%EC%9E%90%20%EC%9D%B8%EB%8D%B1%EC%8B%B1%2C%20Index%20%EC%8A%A4%EC%BA%94%EA%B3%BC%20Index%20Only%20%EC%8A%A4%EC%BA%94.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/resources/%EC%8B%9D%EB%B3%84%EC%9E%90%EC%99%80%20%EB%B9%84%EC%8B%9D%EB%B3%84%EC%9E%90%20%EC%9D%B8%EB%8D%B1%EC%8B%B1%2C%20Index%20%EC%8A%A4%EC%BA%94%EA%B3%BC%20Index%20Only%20%EC%8A%A4%EC%BA%94.pub/" class="md-nav__link">
         
   
   
@@ -1630,7 +1640,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../resources/%EC%9B%B9%EC%95%B1%EC%97%90%EC%84%9C%20%EB%B3%B4%EC%95%88%EA%B3%BC%20%EC%84%B1%EB%8A%A5%EC%9D%84%20%EB%86%92%EC%9D%B4%EA%B8%B0%20%EC%9C%84%ED%95%9C%20best%20practice.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/resources/%EC%9B%B9%EC%95%B1%EC%97%90%EC%84%9C%20%EB%B3%B4%EC%95%88%EA%B3%BC%20%EC%84%B1%EB%8A%A5%EC%9D%84%20%EB%86%92%EC%9D%B4%EA%B8%B0%20%EC%9C%84%ED%95%9C%20best%20practice.pub/" class="md-nav__link">
         
   
   
@@ -1658,7 +1668,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../resources/%EC%9D%B8%EB%8D%B1%EC%8A%A4%EA%B0%80%20%EC%9E%88%EB%8A%94%EB%8D%B0%20%EC%99%9C%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4%EC%97%90%EC%84%9C%20%EC%A0%84%EC%B2%B4%20%ED%85%8C%EC%9D%B4%EB%B8%94%20%EC%8A%A4%EC%BA%94%EC%9D%84%20%ED%95%98%EB%82%98%EC%9A%94.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/resources/%EC%9D%B8%EB%8D%B1%EC%8A%A4%EA%B0%80%20%EC%9E%88%EB%8A%94%EB%8D%B0%20%EC%99%9C%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4%EC%97%90%EC%84%9C%20%EC%A0%84%EC%B2%B4%20%ED%85%8C%EC%9D%B4%EB%B8%94%20%EC%8A%A4%EC%BA%94%EC%9D%84%20%ED%95%98%EB%82%98%EC%9A%94.pub/" class="md-nav__link">
         
   
   
@@ -1686,7 +1696,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../resources/%EC%9D%BD%EA%B8%B0%20%EC%A0%84%EC%9A%A9%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/resources/%EC%9D%BD%EA%B8%B0%20%EC%A0%84%EC%9A%A9%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98.pub/" class="md-nav__link">
         
   
   
@@ -1714,7 +1724,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../resources/%EC%A4%91%EB%B3%B5%EB%90%9C%20%EA%B0%92%EC%9D%B4%20%EC%9E%88%EB%8A%94%20%EC%97%B4%EC%97%90%20%EC%9D%B8%EB%8D%B1%EC%8B%B1%ED%95%98%EB%8A%94%20%EB%B0%A9%EB%B2%95.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/resources/%EC%A4%91%EB%B3%B5%EB%90%9C%20%EA%B0%92%EC%9D%B4%20%EC%9E%88%EB%8A%94%20%EC%97%B4%EC%97%90%20%EC%9D%B8%EB%8D%B1%EC%8B%B1%ED%95%98%EB%8A%94%20%EB%B0%A9%EB%B2%95.pub/" class="md-nav__link">
         
   
   
@@ -1747,8 +1757,6 @@
                 
   
   
-    
-  
   
   
     
@@ -1761,11 +1769,13 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_2_2" checked>
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_2_2" >
         
           
           <label class="md-nav__link" for="__nav_1_2_2" id="__nav_1_2_2_label" tabindex="0">
@@ -1786,7 +1796,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_1_2_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_1_2_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_1_2_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1804,7 +1814,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../README.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/tune/README.pub/" class="md-nav__link">
         
   
   
@@ -1832,7 +1842,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../info.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/tune/info.pub/" class="md-nav__link">
         
   
   
@@ -1860,7 +1870,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../%EA%B8%B0%EB%B3%B8%20%ED%82%A4%EB%A5%BC%20%EB%B3%80%ED%98%95%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/tune/%EA%B8%B0%EB%B3%B8%20%ED%82%A4%EB%A5%BC%20%EB%B3%80%ED%98%95%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
         
   
   
@@ -1888,7 +1898,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../%EB%8B%A4%EC%88%98%20%EC%BF%BC%EB%A6%AC%EB%A5%BC%20UNION%20%EC%97%B0%EC%82%B0%EC%9E%90%EB%A1%9C%EB%A7%8C%20%ED%95%A9%EC%B9%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/tune/%EB%8B%A4%EC%88%98%20%EC%BF%BC%EB%A6%AC%EB%A5%BC%20UNION%20%EC%97%B0%EC%82%B0%EC%9E%90%EB%A1%9C%EB%A7%8C%20%ED%95%A9%EC%B9%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
         
   
   
@@ -1916,7 +1926,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../%EB%8C%80%EB%9F%89%EC%9D%98%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC%20%EA%B0%80%EC%A0%B8%EC%99%80%20%EC%A1%B0%EC%9D%B8%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/tune/%EB%8C%80%EB%9F%89%EC%9D%98%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC%20%EA%B0%80%EC%A0%B8%EC%99%80%20%EC%A1%B0%EC%9D%B8%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
         
   
   
@@ -1944,7 +1954,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../%EB%8C%80%EC%86%8C%EB%AC%B8%EC%9E%90%EA%B0%80%20%EC%84%9E%EC%9D%B8%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EC%99%80%20%EB%B9%84%EA%B5%90%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/tune/%EB%8C%80%EC%86%8C%EB%AC%B8%EC%9E%90%EA%B0%80%20%EC%84%9E%EC%9D%B8%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EC%99%80%20%EB%B9%84%EA%B5%90%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
         
   
   
@@ -1972,7 +1982,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../%EB%A9%94%EC%9D%B8%20%ED%85%8C%EC%9D%B4%EB%B8%94%EC%97%90%20%EA%B3%84%EC%86%8D%20%EC%9D%98%EC%A1%B4%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/tune/%EB%A9%94%EC%9D%B8%20%ED%85%8C%EC%9D%B4%EB%B8%94%EC%97%90%20%EA%B3%84%EC%86%8D%20%EC%9D%98%EC%A1%B4%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
         
   
   
@@ -2000,7 +2010,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../%EB%B6%84%EC%82%B0%20%EC%97%86%EC%9D%B4%20%ED%81%B0%20%EA%B7%9C%EB%AA%A8%EC%9D%98%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC%20%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/tune/%EB%B6%84%EC%82%B0%20%EC%97%86%EC%9D%B4%20%ED%81%B0%20%EA%B7%9C%EB%AA%A8%EC%9D%98%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC%20%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
         
   
   
@@ -2028,7 +2038,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../%EB%B6%88%ED%95%84%EC%9A%94%ED%95%9C%20%EC%A1%B0%EC%9D%B8%EC%9D%84%20%EC%88%98%ED%96%89%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/tune/%EB%B6%88%ED%95%84%EC%9A%94%ED%95%9C%20%EC%A1%B0%EC%9D%B8%EC%9D%84%20%EC%88%98%ED%96%89%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
         
   
   
@@ -2056,7 +2066,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../%EB%B9%84%ED%9A%A8%EC%9C%A8%EC%A0%81%EC%9D%B8%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%EB%A5%BC%20%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/tune/%EB%B9%84%ED%9A%A8%EC%9C%A8%EC%A0%81%EC%9D%B8%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%EB%A5%BC%20%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
         
   
   
@@ -2084,7 +2094,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../%EB%B9%84%ED%9A%A8%EC%9C%A8%EC%A0%81%EC%9D%B8%20%ED%8E%98%EC%9D%B4%EC%A7%95%EC%9D%84%20%EC%88%98%ED%96%89%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/tune/%EB%B9%84%ED%9A%A8%EC%9C%A8%EC%A0%81%EC%9D%B8%20%ED%8E%98%EC%9D%B4%EC%A7%95%EC%9D%84%20%EC%88%98%ED%96%89%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
         
   
   
@@ -2112,7 +2122,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../%EC%82%AC%EC%9A%A9%ED%95%98%EC%A7%80%20%EC%95%8A%EB%8A%94%20%ED%95%A8%EC%88%98%EB%A5%BC%20%ED%8F%AC%ED%95%A8%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/tune/%EC%82%AC%EC%9A%A9%ED%95%98%EC%A7%80%20%EC%95%8A%EB%8A%94%20%ED%95%A8%EC%88%98%EB%A5%BC%20%ED%8F%AC%ED%95%A8%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
         
   
   
@@ -2140,7 +2150,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../%EC%8A%B5%EA%B4%80%EC%A0%81%EC%9C%BC%EB%A1%9C%20%EC%A4%91%EB%B3%B5%EC%9D%84%20%EC%A0%9C%EA%B1%B0%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/tune/%EC%8A%B5%EA%B4%80%EC%A0%81%EC%9C%BC%EB%A1%9C%20%EC%A4%91%EB%B3%B5%EC%9D%84%20%EC%A0%9C%EA%B1%B0%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
         
   
   
@@ -2168,7 +2178,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../%EC%97%89%EB%9A%B1%ED%95%9C%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%EB%A5%BC%20%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/tune/%EC%97%89%EB%9A%B1%ED%95%9C%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%EB%A5%BC%20%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
         
   
   
@@ -2196,7 +2206,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../%EC%97%B4%EC%9D%84%20%EA%B2%B0%ED%95%A9%ED%95%98%EC%97%AC%20%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/tune/%EC%97%B4%EC%9D%84%20%EA%B2%B0%ED%95%A9%ED%95%98%EC%97%AC%20%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
         
   
   
@@ -2224,7 +2234,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../%EC%9D%B8%EB%8D%B1%EC%8A%A4%20%EA%B3%A0%EB%A0%A4%20%EC%97%86%EC%9D%B4%20%EC%97%B4%EC%9D%84%20%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/tune/%EC%9D%B8%EB%8D%B1%EC%8A%A4%20%EA%B3%A0%EB%A0%A4%20%EC%97%86%EC%9D%B4%20%EC%97%B4%EC%9D%84%20%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
         
   
   
@@ -2252,7 +2262,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../%EC%9D%B8%EB%8D%B1%EC%8A%A4%20%EC%97%86%EC%9D%B4%20%EC%9E%91%EC%9D%80%20%EA%B7%9C%EB%AA%A8%EC%9D%98%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC%20%EC%A1%B0%ED%9A%8C%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/tune/%EC%9D%B8%EB%8D%B1%EC%8A%A4%20%EC%97%86%EC%9D%B4%20%EC%9E%91%EC%9D%80%20%EA%B7%9C%EB%AA%A8%EC%9D%98%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC%20%EC%A1%B0%ED%9A%8C%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
         
   
   
@@ -2280,7 +2290,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../%EC%9D%B8%EB%8D%B1%EC%8A%A4%EB%A5%BC%20%ED%95%98%EB%82%98%EB%A7%8C%20%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/tune/%EC%9D%B8%EB%8D%B1%EC%8A%A4%EB%A5%BC%20%ED%95%98%EB%82%98%EB%A7%8C%20%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
         
   
   
@@ -2308,7 +2318,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../%EC%9E%91%EC%9D%80%20%ED%85%8C%EC%9D%B4%EB%B8%94%EC%9D%B4%20%EB%A8%BC%EC%A0%80%20%EC%A1%B0%EC%9D%B8%EC%97%90%20%EC%B0%B8%EC%97%AC%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/tune/%EC%9E%91%EC%9D%80%20%ED%85%8C%EC%9D%B4%EB%B8%94%EC%9D%B4%20%EB%A8%BC%EC%A0%80%20%EC%A1%B0%EC%9D%B8%EC%97%90%20%EC%B0%B8%EC%97%AC%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
         
   
   
@@ -2336,7 +2346,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../%EC%9E%98%EB%AA%BB%EB%90%9C%20%EC%97%B4%20%EC%86%8D%EC%84%B1%EC%9C%BC%EB%A1%9C%20%EB%B9%84%ED%9A%A8%EC%9C%A8%EC%A0%81%EC%9C%BC%EB%A1%9C%20%EC%9E%91%EC%84%B1%ED%95%9C%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/tune/%EC%9E%98%EB%AA%BB%EB%90%9C%20%EC%97%B4%20%EC%86%8D%EC%84%B1%EC%9C%BC%EB%A1%9C%20%EB%B9%84%ED%9A%A8%EC%9C%A8%EC%A0%81%EC%9C%BC%EB%A1%9C%20%EC%9E%91%EC%84%B1%ED%95%9C%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
         
   
   
@@ -2364,7 +2374,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../%EC%B2%98%EC%9D%8C%EB%B6%80%ED%84%B0%20%EB%AA%A8%EB%93%A0%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC%20%EA%B0%80%EC%A0%B8%EC%98%A4%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/tune/%EC%B2%98%EC%9D%8C%EB%B6%80%ED%84%B0%20%EB%AA%A8%EB%93%A0%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC%20%EA%B0%80%EC%A0%B8%EC%98%A4%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
         
   
   
@@ -2392,7 +2402,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../%ED%81%B0%20%EA%B7%9C%EB%AA%A8%EC%9D%98%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EB%B3%80%EA%B2%BD%EC%9C%BC%EB%A1%9C%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%EC%97%90%20%EC%98%81%ED%96%A5%EC%9D%84%20%EC%A3%BC%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/tune/%ED%81%B0%20%EA%B7%9C%EB%AA%A8%EC%9D%98%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EB%B3%80%EA%B2%BD%EC%9C%BC%EB%A1%9C%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%EC%97%90%20%EC%98%81%ED%96%A5%EC%9D%84%20%EC%A3%BC%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
         
   
   
@@ -2420,7 +2430,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../%ED%95%84%EC%9A%94%20%EC%9D%B4%EC%83%81%EC%9C%BC%EB%A1%9C%20%EB%A7%8E%EC%9D%80%20%EC%A0%95%EB%B3%B4%EB%A5%BC%20%EA%B0%80%EC%A0%B8%EC%98%A4%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/tune/%ED%95%84%EC%9A%94%20%EC%9D%B4%EC%83%81%EC%9C%BC%EB%A1%9C%20%EB%A7%8E%EC%9D%80%20%EC%A0%95%EB%B3%B4%EB%A5%BC%20%EA%B0%80%EC%A0%B8%EC%98%A4%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
         
   
   
@@ -2448,7 +2458,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../%ED%98%95%EB%B3%80%ED%99%98%EC%9C%BC%EB%A1%9C%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%EB%A5%BC%20%ED%99%9C%EC%9A%A9%ED%95%98%EC%A7%80%20%EB%AA%BB%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/tune/%ED%98%95%EB%B3%80%ED%99%98%EC%9C%BC%EB%A1%9C%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%EB%A5%BC%20%ED%99%9C%EC%9A%A9%ED%95%98%EC%A7%80%20%EB%AA%BB%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
         
   
   
@@ -2476,7 +2486,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../.agents/skills/sql-optimizer/SKILL.pub/" class="md-nav__link">
+      <a href="../../../../database-engineering/tune/.agents/skills/sql-optimizer/SKILL.pub/" class="md-nav__link">
         
   
   
@@ -2492,153 +2502,6 @@
   
 
       </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-    
-  
-  
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Docker MariaDB 데이터 설정 방법
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Docker MariaDB 데이터 설정 방법
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="목차">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      목차
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. 전제 조건
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. 설정 순서
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="2. 설정 순서">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-sql" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1) SQL 파일을 컨테이너 내부로 복사
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2) 데이터 로드 스크립트 실행
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3) 데이터 확인
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#3_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. 주요 테이블 정보
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -3178,6 +3041,660 @@
           </ul>
         </nav>
       
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_1_4" id="__nav_1_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Blog
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_1_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Blog
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../00-rust-board-overview.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    [Rust] Rust 게시판 백엔드, 무엇을 만들었나
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-cargo-and-module-system.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    [Rust] Cargo.toml과 모듈 시스템: lib vs bin
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-rust-types-and-structs.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    [Rust] struct, enum, impl — 코드에서 만나는 Rust 문법
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-ownership-option-result.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    [Rust] 소유권, Option, Result — ? 연산자까지
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    [Rust] async/await와 Tokio — 서버가 시작되는 순간
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    [Rust] async/await와 Tokio — 서버가 시작되는 순간
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#rust-vs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rust를 처음 접한다면 — 동기 vs 비동기
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mainrs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        main.rs 전체 흐름
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tokiomain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        #[tokio::main]
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dotenvy-env" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dotenvy — .env 로드
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tracing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracing — 구조화 로그
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        환경 변수
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-await" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DB 연결과 스키마 (await)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#router" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Router 조립
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tcplistener-serve" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TcpListener와 serve
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#async-fn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        async fn 핸들러
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        실습: 로그 레벨 바꿔 보기
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        헷갈리기 쉬운 점
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tokio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        심화: Tokio 런타임과 운영
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        정리
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-app-state-and-routing.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    [Rust] AppState와 라우터 — 요청을 어디로 보낼까
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-seaorm-entity-and-db.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    [Rust] SeaORM 엔티티와 DB 연결
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-service-layer-crud.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    [Rust] 서비스 레이어 — CRUD와 검증 로직
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-error-handling-with-thiserror.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    [Rust] thiserror로 만드는 앱 에러
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-dto-and-serde.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    [Rust] DTO와 Serde — JSON/폼 데이터 변환
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-rest-api-handlers.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    [Rust] REST API 핸들러 한 줄씩 읽기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-server-side-rendering-askama.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    [Rust] Askama으로 HTML 게시판 만들기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../12-integration-tests.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    [Rust] 통합 테스트 — 메모리 DB로 CRUD 검증
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../13-putting-it-all-together.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    [Rust] 전체 흐름 정리 — 한 글 작성의 여정
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -4336,6 +4853,180 @@
   
   
   
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_1_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1_1" id="__nav_4_1_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Docs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../frontend/react/guide/node_modules/h3-v2/dist/docs/0.guide/0.index/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../frontend/react/guide/node_modules/h3-v2/dist/docs/1.utils/0.index/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    H3 Utils
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../frontend/react/guide/node_modules/h3-v2/dist/docs/2.examples/0.index/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../frontend/react/guide/node_modules/h3-v2/dist/docs/3.migration/0.index/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migration guide for v1 to v2
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../../../../../frontend/react/redux/vanilla-react-redux-basics.pub/" class="md-nav__link">
         
@@ -4380,10 +5071,10 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_1_2" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_1_3" >
         
           
-          <label class="md-nav__link" for="__nav_4_1_2" id="__nav_4_1_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4_1_3" id="__nav_4_1_3_label" tabindex="0">
             
   
   
@@ -4401,8 +5092,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_1_2">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1_3">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -5895,8 +6586,6 @@
   
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -5905,10 +6594,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1" class="md-nav__link">
+  <a href="#rust-vs" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. 전제 조건
+        Rust를 처음 접한다면 — 동기 vs 비동기
       
     </span>
   </a>
@@ -5916,60 +6605,142 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2" class="md-nav__link">
+  <a href="#mainrs" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. 설정 순서
+        main.rs 전체 흐름
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="2. 설정 순서">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-sql" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1) SQL 파일을 컨테이너 내부로 복사
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2) 데이터 로드 스크립트 실행
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3) 데이터 확인
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#3_1" class="md-nav__link">
+  <a href="#tokiomain" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. 주요 테이블 정보
+        #[tokio::main]
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dotenvy-env" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dotenvy — .env 로드
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tracing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tracing — 구조화 로그
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        환경 변수
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-await" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DB 연결과 스키마 (await)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#router" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Router 조립
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tcplistener-serve" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TcpListener와 serve
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#async-fn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        async fn 핸들러
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        실습: 로그 레벨 바꿔 보기
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        헷갈리기 쉬운 점
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tokio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        심화: Tokio 런타임과 운영
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        정리
       
     </span>
   </a>
@@ -5993,36 +6764,188 @@
 
 
 
-<h1 id="docker-mariadb">Docker MariaDB 데이터 설정 방법<a class="headerlink" href="#docker-mariadb" title="Permanent link">&para;</a></h1>
-<p>이 문서는 Docker로 실행 중인 MariaDB 컨테이너에 <code>tuning</code> 데이터베이스를 구축하고 샘플 데이터를 로드하는 방법을 설명합니다.</p>
-<h2 id="1">1. 전제 조건<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
+  <h1>[Rust] async/await와 Tokio — 서버가 시작되는 순간</h1>
+
+<p><code>board-api</code>는 네트워크 I/O(DB, HTTP)를 기다리는 동안 스레드를 막지 않기 위해 <strong>비동기</strong>로 작성됩니다. 진입점은 전부 <code>src/main.rs</code>에 있습니다.</p>
+<h2 id="rust-vs">Rust를 처음 접한다면 — 동기 vs 비동기<a class="headerlink" href="#rust-vs" title="Permanent link">&para;</a></h2>
+<p><strong>동기(블로킹):</strong> DB 쿼리가 끝날 때까지 그 스레드는 아무 것도 못 합니다. 스레드 하나당 동시 요청 하나에 가깝게 처리합니다.</p>
+<p><strong>비동기:</strong> <code>await</code>로 “DB 응답 올 때까지 이 작업은 잠깐 멈춤”을 표시하고, <strong>런타임(Tokio)</strong>이 그 사이에 다른 요청을 처리합니다. 코드는 순서대로 읽히지만, I/O 대기 중에는 CPU를 낭비하지 않습니다.</p>
+<p><code>async fn</code>이 붙은 함수는 호출만 하면 바로 끝나지 않고 <strong>Future</strong>(나중에 완료될 작업)를 반환합니다. <strong><code>.await</code>를 붙여야</strong> 실제로 기다립니다. <code>.await</code>를 빼먹으면 컴파일 에러가 나는 경우가 많습니다.</p>
+<h2 id="mainrs">main.rs 전체 흐름<a class="headerlink" href="#mainrs" title="Permanent link">&para;</a></h2>
+<div class="language-rust highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">use</span><span class="w"> </span><span class="n">board_api</span><span class="p">::{</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">routes</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">::</span><span class="n">AppState</span><span class="p">};</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">use</span><span class="w"> </span><span class="n">std</span><span class="p">::</span><span class="n">net</span><span class="p">::</span><span class="n">SocketAddr</span><span class="p">;</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="k">use</span><span class="w"> </span><span class="n">axum</span><span class="p">::</span><span class="n">Router</span><span class="p">;</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="k">use</span><span class="w"> </span><span class="n">tower_http</span><span class="p">::{</span><span class="n">cors</span><span class="p">::</span><span class="n">CorsLayer</span><span class="p">,</span><span class="w"> </span><span class="n">trace</span><span class="p">::</span><span class="n">TraceLayer</span><span class="p">};</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="k">use</span><span class="w"> </span><span class="n">tracing_subscriber</span><span class="p">::{</span><span class="n">layer</span><span class="p">::</span><span class="n">SubscriberExt</span><span class="p">,</span><span class="w"> </span><span class="n">util</span><span class="p">::</span><span class="n">SubscriberInitExt</span><span class="p">};</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="cp">#[tokio::main]</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="k">async</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">    </span><span class="n">dotenvy</span><span class="p">::</span><span class="n">dotenv</span><span class="p">().</span><span class="n">ok</span><span class="p">();</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">    </span><span class="c1">// tracing 초기화</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">    </span><span class="c1">// 환경 변수 읽기</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">    </span><span class="c1">// DB connect + init_schema</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">    </span><span class="c1">// Router + AppState</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">    </span><span class="c1">// TcpListener::bind + axum::serve</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="tokiomain">#[tokio::main]<a class="headerlink" href="#tokiomain" title="Permanent link">&para;</a></h2>
+<div class="language-rust highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="cp">#[tokio::main]</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">async</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span></code></pre></div>
 <ul>
-<li>Docker가 설치되어 있고 MariaDB 컨테이너가 실행 중이어야 합니다.</li>
-<li>프로젝트 루트 디렉토리에 <code>sql/</code> 폴더와 관련 <code>.sql</code> 파일들이 존재해야 합니다.</li>
+<li><code>async fn main</code> — 일반 Rust는 <code>main</code>이 동기만 허용하므로, 매크로가 <strong>Tokio 런타임</strong>을 만들고 <code>main</code>을 <code>.await</code>합니다.</li>
+<li>Node.js의 이벤트 루프나 Python <code>asyncio.run()</code> 진입과 같은 역할입니다.</li>
 </ul>
-<h2 id="2">2. 설정 순서<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
-<h3 id="1-sql">1) SQL 파일을 컨테이너 내부로 복사<a class="headerlink" href="#1-sql" title="Permanent link">&para;</a></h3>
-<p>로컬의 <code>sql</code> 디렉토리 전체를 컨테이너의 임시 디렉토리(<code>/tmp/sql_data</code>)로 복사합니다.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>docker<span class="w"> </span>cp<span class="w"> </span>sql<span class="w"> </span>mariadb:/tmp/sql_data
+<h2 id="dotenvy-env">dotenvy — .env 로드<a class="headerlink" href="#dotenvy-env" title="Permanent link">&para;</a></h2>
+<div class="language-rust highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">dotenvy</span><span class="p">::</span><span class="n">dotenv</span><span class="p">().</span><span class="n">ok</span><span class="p">();</span>
 </span></code></pre></div>
-<h3 id="2_1">2) 데이터 로드 스크립트 실행<a class="headerlink" href="#2_1" title="Permanent link">&para;</a></h3>
-<p>컨테이너 내부로 접속하여 <code>data_setting.sql</code>을 실행합니다. 이 스크립트는 <code>tuning</code> DB 생성, 테이블 생성, 그리고 각 테이블별 데이터 파일(<code>.sql</code>)을 <code>source</code> 명령어로 호출합니다.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>mariadb<span class="w"> </span>bash<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;cd /tmp/sql_data &amp;&amp; mariadb -u root -p&#39;xxx&#39; &lt; data_setting.sql&quot;</span>
+<p>프로젝트 루트 <code>.env</code>의 <code>DATABASE_URL</code>, <code>HOST</code>, <code>PORT</code>를 환경 변수로 올립니다. <code>.ok()</code>는 파일이 없어도 무시 (로컬에서 <code>.env</code> 없이도 실행 가능).</p>
+<h2 id="tracing">tracing — 구조화 로그<a class="headerlink" href="#tracing" title="Permanent link">&para;</a></h2>
+<div class="language-rust highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">tracing_subscriber</span><span class="p">::</span><span class="n">registry</span><span class="p">()</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="p">.</span><span class="n">with</span><span class="p">(</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">        </span><span class="n">tracing_subscriber</span><span class="p">::</span><span class="n">EnvFilter</span><span class="p">::</span><span class="n">try_from_default_env</span><span class="p">()</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">            </span><span class="p">.</span><span class="n">unwrap_or_else</span><span class="p">(</span><span class="o">|</span><span class="n">_</span><span class="o">|</span><span class="w"> </span><span class="s">&quot;board_api=debug,tower_http=debug,sqlx=warn&quot;</span><span class="p">.</span><span class="n">into</span><span class="p">()),</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="p">)</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span><span class="p">.</span><span class="n">with</span><span class="p">(</span><span class="n">tracing_subscriber</span><span class="p">::</span><span class="n">fmt</span><span class="p">::</span><span class="n">layer</span><span class="p">())</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span><span class="p">.</span><span class="n">init</span><span class="p">();</span>
 </span></code></pre></div>
-<blockquote>
-<p><strong>참고</strong>: 비밀번호(<code>-p'xxx'</code>)는 컨테이너 설정에 따라 다를 수 있습니다.</p>
-</blockquote>
-<h3 id="3">3) 데이터 확인<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
-<p>설정이 완료되면 테이블과 데이터 건수를 확인하여 정상 로드 여부를 점검합니다.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>mariadb<span class="w"> </span>mariadb<span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>-p<span class="s1">&#39;xxx&#39;</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;USE tuning; SHOW TABLES; SELECT TABLE_NAME, TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = &#39;tuning&#39;;&quot;</span>
+<table>
+<thead>
+<tr>
+<th>부분</th>
+<th>의미</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>EnvFilter</code></td>
+<td><code>RUST_LOG</code>로 레벨 조절 (예: <code>board_api=debug</code>)</td>
+</tr>
+<tr>
+<td><code>fmt::layer()</code></td>
+<td>콘솔에 로그 출력</td>
+</tr>
+</tbody>
+</table>
+<p>실행 시 <code>board-api listening</code> 로그는 <code>tracing::info!(%addr, "...")</code>에서 나옵니다.</p>
+<h2 id="_1">환경 변수<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<div class="language-rust highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kd">let</span><span class="w"> </span><span class="n">database_url</span><span class="w"> </span><span class="o">=</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="n">std</span><span class="p">::</span><span class="n">env</span><span class="p">::</span><span class="n">var</span><span class="p">(</span><span class="s">&quot;DATABASE_URL&quot;</span><span class="p">).</span><span class="n">unwrap_or_else</span><span class="p">(</span><span class="o">|</span><span class="n">_</span><span class="o">|</span><span class="w"> </span><span class="s">&quot;sqlite://board.db?mode=rwc&quot;</span><span class="p">.</span><span class="n">to_string</span><span class="p">());</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="kd">let</span><span class="w"> </span><span class="n">host</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">::</span><span class="n">env</span><span class="p">::</span><span class="n">var</span><span class="p">(</span><span class="s">&quot;HOST&quot;</span><span class="p">).</span><span class="n">unwrap_or_else</span><span class="p">(</span><span class="o">|</span><span class="n">_</span><span class="o">|</span><span class="w"> </span><span class="s">&quot;127.0.0.1&quot;</span><span class="p">.</span><span class="n">to_string</span><span class="p">());</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="kd">let</span><span class="w"> </span><span class="n">port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">::</span><span class="n">env</span><span class="p">::</span><span class="n">var</span><span class="p">(</span><span class="s">&quot;PORT&quot;</span><span class="p">)</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="p">.</span><span class="n">ok</span><span class="p">()</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">    </span><span class="p">.</span><span class="n">and_then</span><span class="p">(</span><span class="o">|</span><span class="n">value</span><span class="o">|</span><span class="w"> </span><span class="n">value</span><span class="p">.</span><span class="n">parse</span><span class="p">().</span><span class="n">ok</span><span class="p">())</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">    </span><span class="p">.</span><span class="n">unwrap_or</span><span class="p">(</span><span class="mi">3000</span><span class="k">u16</span><span class="p">);</span>
 </span></code></pre></div>
-<h2 id="3_1">3. 주요 테이블 정보<a class="headerlink" href="#3_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>사원</strong>: 기본 사원 정보</li>
-<li><strong>급여</strong>: 사원별 연봉 이력 (약 280만 건)</li>
-<li><strong>부서 / 부서사원_매핑</strong>: 부서 정보 및 소속 정보</li>
-<li><strong>사원출입기록</strong>: 건물 출입 로그 (약 65만 건)</li>
+<li><code>unwrap_or_else</code> — 없으면 기본값</li>
+<li><code>parse().ok()</code> — <code>PORT</code>가 숫자가 아니면 <code>None</code> → 3000 사용</li>
 </ul>
+<p>Docker Compose는 <code>HOST=0.0.0.0</code>, <code>DATABASE_URL=sqlite:///data/board.db?mode=rwc</code>를 넘깁니다.</p>
+<h2 id="db-await">DB 연결과 스키마 (await)<a class="headerlink" href="#db-await" title="Permanent link">&para;</a></h2>
+<div class="language-rust highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kd">let</span><span class="w"> </span><span class="n">db</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">db</span><span class="p">::</span><span class="n">connect</span><span class="p">(</span><span class="o">&amp;</span><span class="n">database_url</span><span class="p">)</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="p">.</span><span class="k">await</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="p">.</span><span class="n">expect</span><span class="p">(</span><span class="s">&quot;failed to connect to database&quot;</span><span class="p">);</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">db</span><span class="p">::</span><span class="n">init_schema</span><span class="p">(</span><span class="o">&amp;</span><span class="n">db</span><span class="p">)</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span><span class="p">.</span><span class="k">await</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">    </span><span class="p">.</span><span class="n">expect</span><span class="p">(</span><span class="s">&quot;failed to initialize database schema&quot;</span><span class="p">);</span>
+</span></code></pre></div>
+<ul>
+<li><code>.await</code> — Future가 끝날 때까지 <strong>비동기 대기</strong> (스레드는 다른 작업 가능)</li>
+<li><code>expect</code> — 실패 시 패닉 (서버 기동 단계에서는 치명적이라 흔한 선택)</li>
+</ul>
+<h2 id="router">Router 조립<a class="headerlink" href="#router" title="Permanent link">&para;</a></h2>
+<div class="language-rust highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kd">let</span><span class="w"> </span><span class="n">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AppState</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">db</span><span class="w"> </span><span class="p">};</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kd">let</span><span class="w"> </span><span class="n">app</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Router</span><span class="p">::</span><span class="n">new</span><span class="p">()</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="p">.</span><span class="n">merge</span><span class="p">(</span><span class="n">routes</span><span class="p">::</span><span class="n">router</span><span class="p">())</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="p">.</span><span class="n">layer</span><span class="p">(</span><span class="n">CorsLayer</span><span class="p">::</span><span class="n">permissive</span><span class="p">())</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span><span class="p">.</span><span class="n">layer</span><span class="p">(</span><span class="n">TraceLayer</span><span class="p">::</span><span class="n">new_for_http</span><span class="p">())</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span><span class="p">.</span><span class="n">with_state</span><span class="p">(</span><span class="n">state</span><span class="p">);</span>
+</span></code></pre></div>
+<ul>
+<li><code>merge</code> — 웹·API 라우트 합치기 (05편)</li>
+<li><code>CorsLayer</code> — 브라우저 cross-origin 허용 (개발용 permissive)</li>
+<li><code>TraceLayer</code> — HTTP 요청 로그</li>
+<li><code>with_state</code> — 모든 핸들러에 <code>AppState</code> 주입</li>
+</ul>
+<h2 id="tcplistener-serve">TcpListener와 serve<a class="headerlink" href="#tcplistener-serve" title="Permanent link">&para;</a></h2>
+<div class="language-rust highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kd">let</span><span class="w"> </span><span class="n">addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SocketAddr</span><span class="p">::</span><span class="n">from</span><span class="p">((</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="n">host</span><span class="p">.</span><span class="n">parse</span><span class="p">::</span><span class="o">&lt;</span><span class="n">std</span><span class="p">::</span><span class="n">net</span><span class="p">::</span><span class="n">IpAddr</span><span class="o">&gt;</span><span class="p">().</span><span class="n">expect</span><span class="p">(</span><span class="s">&quot;invalid HOST&quot;</span><span class="p">),</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="n">port</span><span class="p">,</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="p">));</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="n">tracing</span><span class="p">::</span><span class="n">info</span><span class="o">!</span><span class="p">(</span><span class="o">%</span><span class="n">addr</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;board-api listening&quot;</span><span class="p">);</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="kd">let</span><span class="w"> </span><span class="n">listener</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tokio</span><span class="p">::</span><span class="n">net</span><span class="p">::</span><span class="n">TcpListener</span><span class="p">::</span><span class="n">bind</span><span class="p">(</span><span class="n">addr</span><span class="p">)</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">    </span><span class="p">.</span><span class="k">await</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">    </span><span class="p">.</span><span class="n">expect</span><span class="p">(</span><span class="s">&quot;failed to bind address&quot;</span><span class="p">);</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="n">axum</span><span class="p">::</span><span class="n">serve</span><span class="p">(</span><span class="n">listener</span><span class="p">,</span><span class="w"> </span><span class="n">app</span><span class="p">)</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">    </span><span class="p">.</span><span class="k">await</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">    </span><span class="p">.</span><span class="n">expect</span><span class="p">(</span><span class="s">&quot;server error&quot;</span><span class="p">);</span>
+</span></code></pre></div>
+<ol>
+<li><code>bind</code> — 포트 열기</li>
+<li><code>axum::serve</code> — 들어오는 연결마다 <code>app</code> 라우터로 처리 (무한 루프)</li>
+</ol>
+<p>Java Tomcat이 소켓을 받아 서블릿으로 넘기는 것과 같은 단계입니다.</p>
+<h2 id="async-fn">async fn 핸들러<a class="headerlink" href="#async-fn" title="Permanent link">&para;</a></h2>
+<p>라우트 핸들러도 <code>async fn</code>입니다.</p>
+<div class="language-rust highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">pub</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">list_posts</span><span class="p">(</span><span class="n">State</span><span class="p">(</span><span class="n">state</span><span class="p">):</span><span class="w"> </span><span class="nc">State</span><span class="o">&lt;</span><span class="n">AppState</span><span class="o">&gt;</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">AppResult</span><span class="o">&lt;</span><span class="n">Json</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="n">PostResponse</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">posts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">post_service</span><span class="p">::</span><span class="n">list_posts</span><span class="p">(</span><span class="o">&amp;</span><span class="n">state</span><span class="p">).</span><span class="k">await</span><span class="o">?</span><span class="p">;</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="c1">// ...</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>main</code> → <code>serve</code> → 핸들러 → <code>services</code> → SeaORM <code>.await</code>가 한 런타임 안에서 이어집니다.</p>
+<h2 id="_2">실습: 로그 레벨 바꿔 보기<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nb">cd</span><span class="w"> </span>content/backend/rust/board-api
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="nv">RUST_LOG</span><span class="o">=</span><span class="nv">board_api</span><span class="o">=</span>info,tower_http<span class="o">=</span>info<span class="w"> </span>cargo<span class="w"> </span>run
+</span></code></pre></div>
+<p>다른 터미널에서 <code>curl http://127.0.0.1:3000/health</code> — <code>TraceLayer</code>가 요청 한 줄을 남기는지 확인합니다.</p>
+<h2 id="_3">헷갈리기 쉬운 점<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong><code>expect</code> vs <code>?</code></strong> — <code>main</code> 기동 단계는 “DB 없으면 서버를 띄울 이유가 없다”고 보고 <strong>패닉으로 종료</strong>합니다. 요청 처리 중에는 <code>?</code>로 <code>AppError</code>에 넘깁니다 (08편).</li>
+<li><strong><code>HOST=127.0.0.1</code></strong> — 본인 PC에서만 접속 가능. Docker·원격 접속 시 <code>0.0.0.0</code>으로 바인딩해야 합니다.</li>
+<li><strong>레이어 순서</strong> — <code>merge(routes)</code> 후 <code>layer</code> → <code>with_state</code> 순서가 Axum 0.7에서 중요합니다. state는 라우터에 붙인 뒤 <code>serve</code>에 넘깁니다.</li>
+</ul>
+<h2 id="tokio">심화: Tokio 런타임과 운영<a class="headerlink" href="#tokio" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong><code>#[tokio::main]</code></strong> — 기본적으로 <strong>멀티 스레드</strong> 런타임을 씁니다. CPU 코어를 활용해 여러 Future를 돌립니다.</li>
+<li><strong><code>CorsLayer::permissive()</code></strong> — 모든 출처를 허용합니다. <strong>프로덕션</strong>에서는 특정 origin만 허용하도록 좁혀야 합니다.</li>
+<li><strong><code>TraceLayer</code></strong> — Tower 미들웨어 스택의 일부입니다. 인증·압축·타임아웃도 같은 방식으로 <code>.layer()</code>에 추가합니다.</li>
+<li><strong>graceful shutdown</strong> — 이 <code>main</code>은 단순 <code>serve</code>만 호출합니다. SIGTERM 시 연결 drain은 <code>axum::serve</code> + <code>with_graceful_shutdown</code>으로 확장할 수 있습니다.</li>
+</ul>
+<h2 id="_4">정리<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>요소</th>
+<th>역할</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>#[tokio::main]</code></td>
+<td>비동기 런타임</td>
+</tr>
+<tr>
+<td><code>dotenvy</code></td>
+<td><code>.env</code></td>
+</tr>
+<tr>
+<td><code>tracing</code></td>
+<td>로그</td>
+</tr>
+<tr>
+<td><code>.await</code></td>
+<td>DB·HTTP 대기</td>
+</tr>
+<tr>
+<td><code>TcpListener</code> + <code>serve</code></td>
+<td>HTTP 서버</td>
+</tr>
+</tbody>
+</table>
+<p>다음 글에서는 <strong>AppState</strong>와 <strong>Router</strong>가 URL을 어떻게 핸들러에 연결하는지 봅니다.</p>
 
 
 
