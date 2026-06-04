@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+  mail:
+    host: localhost
+    port: 25
+
+jwt:
+  secret: "test-secret-key-at-least-32-characters-long-for-hs256"
+  access-expiry: 3600
+  refresh-expiry: 2592000
+
+ollama:
+  base-url: "http://localhost:11434"
+  model: "llama3.2"
+
+logging:
+  level:
+    org.springframework: INFO
+    com.notequiz: DEBUG
