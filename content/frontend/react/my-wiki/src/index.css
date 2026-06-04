@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #00a495;
+  --color-minju: #B6D7A8;
+  --font-pretendard: "Pretendard Variable", sans-serif;
+}
+
+@custom-variant mobile (@media (max-width: 680px));
+
+@font-face {
+  font-family: 'Pretendard Variable';
+  font-weight: 45 920;
+  font-style: normal;
+  font-display: swap;
+  src: url('/font/woff2/PretendardVariable.woff2') format('woff2-variations');
+}
+
+body {
+  font-family: 'Pretendard Variable', sans-serif;
+  margin: 0;
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+dialog[open] {
+  animation: dialog-in 0.25s ease-out;
+}
