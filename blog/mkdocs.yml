@@ -14,19 +14,25 @@ exclude_docs: |
 theme:
   name: material
   language: ko
+  custom_dir: overrides
+  font:
+    text: "Source Han Serif KR"
+    code: "JetBrains Mono"
   palette:
     - scheme: default
-      primary: indigo
-      accent: indigo
+      primary: custom
+      accent: custom
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
-    - scheme: slate
-      primary: indigo
-      accent: indigo
+    - scheme: kami-dark
+      primary: custom
+      accent: custom
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
+  icon:
+    logo: material/book-open-page-variant
   features:
     - navigation.tabs
     - navigation.sections
@@ -66,3 +72,6 @@ markdown_extensions:
   - pymdownx.snippets
   - toc:
       permalink: true
+
+extra_css:
+  - assets/stylesheets/kami.css
