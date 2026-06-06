@@ -297,15 +297,8 @@
   
     
     
-      
-  
-  
-  
-  
-    
-    
       <li class="md-tabs__item">
-        <a href="../../../../../frontend/react/guide/node_modules/h3-v2/dist/docs/0.guide/0.index/" class="md-tabs__link">
+        <a href="../../../../../frontend/react/redux/vanilla-react-redux-basics.pub/" class="md-tabs__link">
           
   
   
@@ -313,9 +306,6 @@
 
         </a>
       </li>
-    
-  
-
     
   
 
@@ -3089,7 +3079,7 @@
   <span class="md-ellipsis">
     
   
-    Blog
+    rust로 게시판 만들기
   
 
     
@@ -3105,7 +3095,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Blog
+    rust로 게시판 만들기
   
 
           </label>
@@ -4809,180 +4799,6 @@
   
   
   
-    
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_1_1" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_1_1" id="__nav_4_1_1_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Docs
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_1_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_1_1">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Docs
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../../../frontend/react/guide/node_modules/h3-v2/dist/docs/0.guide/0.index/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Getting Started
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../../../frontend/react/guide/node_modules/h3-v2/dist/docs/1.utils/0.index/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    H3 Utils
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../../../frontend/react/guide/node_modules/h3-v2/dist/docs/2.examples/0.index/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Examples
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../../../frontend/react/guide/node_modules/h3-v2/dist/docs/3.migration/0.index/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Migration guide for v1 to v2
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
     <li class="md-nav__item">
       <a href="../../../../../frontend/react/redux/vanilla-react-redux-basics.pub/" class="md-nav__link">
         
@@ -5027,10 +4843,10 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_1_3" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_1_2" >
         
           
-          <label class="md-nav__link" for="__nav_4_1_3" id="__nav_4_1_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4_1_2" id="__nav_4_1_2_label" tabindex="0">
             
   
   
@@ -5048,8 +4864,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_1_3">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1_2">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -6678,7 +6494,7 @@
 
   <h1>[Rust] Rust 게시판 백엔드, 무엇을 만들었나</h1>
 
-<p>이 시리즈는 <code>content/backend/rust/board-api</code>에 있는 <strong>Rust 게시판 백엔드</strong>를 한 줄씩 읽으며 배우는 글입니다. <strong>웹·API 개발 경험은 있어도 Rust 문법은 처음</strong>인 분과, <strong>Rust를 알지만 Axum/SeaORM 조합은 처음</strong>인 분 모두를 염두에 두었습니다. Java·Python·TypeScript와 비교하는 설명을 곁들이고, 필요한 곳에는 설계 선택의 이유까지 적습니다.</p>
+<p>이 시리즈는 <code>backend/rust/board-api</code>에 있는 <strong>Rust 게시판 백엔드</strong>를 한 줄씩 읽으며 배우는 글입니다. <strong>웹·API 개발 경험은 있어도 Rust 문법은 처음</strong>인 분과, <strong>Rust를 알지만 Axum/SeaORM 조합은 처음</strong>인 분 모두를 염두에 두었습니다. Java·Python·TypeScript와 비교하는 설명을 곁들이고, 필요한 곳에는 설계 선택의 이유까지 적습니다.</p>
 <h2 id="rust">Rust를 전혀 모른다면 — 이 시리즈에서 전제하는 것<a class="headerlink" href="#rust" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -6858,7 +6674,7 @@
 </tbody>
 </table>
 <h2 id="_4">실습: 서버 띄우고 흐름 확인하기<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">cd</span><span class="w"> </span>content/backend/rust/board-api
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">cd</span><span class="w"> </span>backend/rust/board-api
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>cp<span class="w"> </span>.env.example<span class="w"> </span>.env<span class="w">   </span><span class="c1"># 선택</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>cargo<span class="w"> </span>run
 </span></code></pre></div>

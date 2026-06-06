@@ -297,15 +297,8 @@
   
     
     
-      
-  
-  
-  
-  
-    
-    
       <li class="md-tabs__item">
-        <a href="../../../../../frontend/react/guide/node_modules/h3-v2/dist/docs/0.guide/0.index/" class="md-tabs__link">
+        <a href="../../../../../frontend/react/redux/vanilla-react-redux-basics.pub/" class="md-tabs__link">
           
   
   
@@ -313,9 +306,6 @@
 
         </a>
       </li>
-    
-  
-
     
   
 
@@ -3089,7 +3079,7 @@
   <span class="md-ellipsis">
     
   
-    Blog
+    rust로 게시판 만들기
   
 
     
@@ -3105,7 +3095,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Blog
+    rust로 게시판 만들기
   
 
           </label>
@@ -5086,180 +5076,6 @@
   
   
   
-    
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_1_1" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_1_1" id="__nav_4_1_1_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Docs
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_1_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_1_1">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Docs
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../../../frontend/react/guide/node_modules/h3-v2/dist/docs/0.guide/0.index/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Getting Started
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../../../frontend/react/guide/node_modules/h3-v2/dist/docs/1.utils/0.index/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    H3 Utils
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../../../frontend/react/guide/node_modules/h3-v2/dist/docs/2.examples/0.index/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Examples
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../../../frontend/react/guide/node_modules/h3-v2/dist/docs/3.migration/0.index/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Migration guide for v1 to v2
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
     <li class="md-nav__item">
       <a href="../../../../../frontend/react/redux/vanilla-react-redux-basics.pub/" class="md-nav__link">
         
@@ -5304,10 +5120,10 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_1_3" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_1_2" >
         
           
-          <label class="md-nav__link" for="__nav_4_1_3" id="__nav_4_1_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4_1_2" id="__nav_4_1_2_label" tabindex="0">
             
   
   
@@ -5325,8 +5141,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_1_3">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1_2">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -7735,7 +7551,7 @@ Rust: <code>struct Post { ... }</code> + <code>impl Post { ... }</code> + 필요
 </table>
 <p>한 struct에 JSON·HTML·DB를 모두 넣으면, 날짜를 ISO 문자열로 바꿀 때 DB 레이어까지 흔들립니다. <strong>경계마다 타입을 나누는 것</strong>이 유지보수에 유리합니다. 비용은 <code>From</code> 변환 몇 줄입니다.</p>
 <h2 id="derive-impl">실습: derive와 impl이 보이는지 확인<a class="headerlink" href="#derive-impl" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nb">cd</span><span class="w"> </span>content/backend/rust/board-api
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nb">cd</span><span class="w"> </span>backend/rust/board-api
 </span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>cargo<span class="w"> </span>check
 </span></code></pre></div>
 <p>선택 — 매크로가 펼친 코드를 보고 싶다면 (도구 설치 필요):</p>
