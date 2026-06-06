@@ -15,7 +15,15 @@ Personal dev archive for experimenting, building, and documenting what I learn. 
 - **language/** — Go, Java (LMS app with 30 versions), JavaScript, TypeScript, Rust, Kotlin, Elixir fundamentals
 - **mobile/** — Android (20+ projects), iOS, React Native (10+ projects), Flutter (8 projects)
 - **security/** — Security study notes and practice projects
+- **toy/** — Small experiments and side projects
 
 ## Blog
 
-Published posts use the `.pub.md` or `.pub.ipynb` extension. The site is built with MkDocs Material and deployed to GitHub Pages.
+Published posts live in [`blog/content/`](blog/content/) as `.pub.md` or `.pub.ipynb` files. The MkDocs site is configured under [`blog/`](blog/).
+
+```bash
+cd blog
+uv run mkdocs serve    # local preview
+./scripts/build.sh     # build site
+./scripts/publish.sh   # deploy to GitHub Pages
+```

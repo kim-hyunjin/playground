@@ -22,7 +22,7 @@ This skill automates the conversion of technical documentation into a blog-ready
     - Ensure a professional and engaging tone.
 4.  **Rename & Save**:
     - Rename the file to a descriptive, hyphen-cased name ending in `.pub.md` (e.g., `03-component-basics.pub.md`).
-    - Overwrite or create the new file in the same directory.
+    - Save under `blog/content/`, preserving the category folder structure (e.g., `blog/content/frontend/react/...`).
 
 ## Guidelines
 
