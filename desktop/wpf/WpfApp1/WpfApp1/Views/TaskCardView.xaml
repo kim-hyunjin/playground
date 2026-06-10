@@ -1,0 +1,61 @@
+<!--
+  UserControl ≈ React 함수형 컴포넌트.
+  DataContext(= props)로 TaskItemViewModel 하나를 받아 카드 UI를 렌더링합니다.
+-->
+<UserControl x:Class="WpfApp1.Views.TaskCardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="120" d:DesignWidth="400">
+    <Border Style="{StaticResource CardBorderStyle}"
+            Margin="0,0,0,8">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="4" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Priority 색상 바 — Converter로 enum → Brush -->
+            <Border Grid.Column="0"
+                    Background="{Binding Priority, Converter={StaticResource PriorityToBrushConverter}}"
+                    CornerRadius="2,0,0,2" />
+
+            <StackPanel Grid.Column="1" Margin="12,10">
+                <TextBlock Text="{Binding Title}"
+                           FontWeight="SemiBold"
+                           FontSize="14"
+                           TextTrimming="CharacterEllipsis" />
+
+                <TextBlock Text="{Binding Description}"
+                           Foreground="{StaticResource MutedForegroundBrush}"
+                           FontSize="12"
+                           Margin="0,4,0,0"
+                           TextTrimming="CharacterEllipsis"
+                           MaxHeight="36" />
+
+                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                    <Border Style="{StaticResource TagStyle}">
+                        <TextBlock Text="{Binding Status, Converter={StaticResource TaskStatusLabelConverter}}"
+                                   FontSize="11" />
+                    </Border>
+
+                    <TextBlock Text="{Binding DueDateLabel}"
+                               Margin="8,0,0,0"
+                               FontSize="11"
+                               VerticalAlignment="Center"
+                               Foreground="{StaticResource MutedForegroundBrush}" />
+
+                    <!-- IsOverdue 계산 속성 → 시각적 강조 -->
+                    <TextBlock Text="기한 초과"
+                               Margin="8,0,0,0"
+                               FontSize="11"
+                               FontWeight="Bold"
+                               Foreground="{StaticResource DangerBrush}"
+                               Visibility="{Binding IsOverdue, Converter={StaticResource BoolToVisibilityConverter}}" />
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

@@ -1,0 +1,286 @@
+﻿<!--
+  MainWindow = React App 루트 + page layout.
+  DataContext="{Binding}"는 code-behind에서 MainViewModel 인스턴스를 할당합니다.
+
+  XAML 문법 요약:
+  - {Binding PropertyName}     : ViewModel 속성 연결 (React props)
+  - Command="{Binding XxxCommand}" : 클릭 핸들러 (React onClick)
+  - ItemsSource + ItemTemplate : .map() + 컴포넌트 렌더링
+  - Grid RowDefinitions/ColumnDefinitions : CSS Grid와 유사
+-->
+<Window x:Class="WpfApp1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="clr-namespace:WpfApp1.Views"
+        mc:Ignorable="d"
+        Title="Task Board — WPF 학습 예제"
+        Height="640"
+        Width="1024"
+        MinHeight="500"
+        MinWidth="800"
+        Background="{StaticResource AppBackgroundBrush}">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- 헤더 + 툴바 -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,16">
+            <TextBlock Text="Task Board"
+                       FontSize="24"
+                       FontWeight="Bold" />
+            <TextBlock Text="MVVM · 데이터 바인딩 · Command · UserControl · Converter · async"
+                       Foreground="{StaticResource MutedForegroundBrush}"
+                       Margin="0,4,0,12" />
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- TwoWay 바인딩: TextBox 입력 → SearchText 즉시 반영 (PropertyChanged) -->
+                <TextBox Grid.Column="0"
+                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                         Padding="10,8"
+                         VerticalContentAlignment="Center"
+                         ToolTip="제목·설명 검색" />
+
+                <ComboBox Grid.Column="1"
+                          Width="120"
+                          Margin="8,0,0,0"
+                          ItemsSource="{Binding StatusFilterOptions}"
+                          SelectedItem="{Binding SelectedStatusFilter}"
+                          DisplayMemberPath="Label" />
+
+                <Button Grid.Column="2"
+                        Content="필터 초기화"
+                        Margin="8,0,0,0"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Command="{Binding ClearFiltersCommand}" />
+
+                <Button Grid.Column="3"
+                        Content="동기화"
+                        Margin="8,0,0,0"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Command="{Binding RefreshCommand}"
+                        IsEnabled="{Binding CanRefresh}" />
+
+                <Button Grid.Column="4"
+                        Content="+ 새 작업"
+                        Margin="8,0,0,0"
+                        Style="{StaticResource PrimaryButtonStyle}"
+                        Command="{Binding AddTaskCommand}" />
+            </Grid>
+        </StackPanel>
+
+        <!-- 통계 카드 — ViewModel의 계산 속성에 OneWay 바인딩 -->
+        <UniformGrid Grid.Row="1"
+                     Columns="4"
+                     Margin="0,0,0,16">
+            <Border Style="{StaticResource StatCardStyle}" Margin="0,0,8,0">
+                <StackPanel>
+                    <TextBlock Text="전체" Foreground="{StaticResource MutedForegroundBrush}" FontSize="11" />
+                    <TextBlock Text="{Binding TotalCount}" FontSize="22" FontWeight="Bold" />
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource StatCardStyle}" Margin="0,0,8,0">
+                <StackPanel>
+                    <TextBlock Text="할 일" Foreground="{StaticResource MutedForegroundBrush}" FontSize="11" />
+                    <TextBlock Text="{Binding TodoCount}" FontSize="22" FontWeight="Bold" />
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource StatCardStyle}" Margin="0,0,8,0">
+                <StackPanel>
+                    <TextBlock Text="진행 중" Foreground="{StaticResource MutedForegroundBrush}" FontSize="11" />
+                    <TextBlock Text="{Binding InProgressCount}" FontSize="22" FontWeight="Bold" />
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource StatCardStyle}">
+                <StackPanel>
+                    <TextBlock Text="완료" Foreground="{StaticResource MutedForegroundBrush}" FontSize="11" />
+                    <TextBlock Text="{Binding DoneCount}" FontSize="22" FontWeight="Bold" Foreground="{StaticResource SuccessBrush}" />
+                </StackPanel>
+            </Border>
+        </UniformGrid>
+
+        <!-- 마스터-디테일: ListBox(선택) + 편집 패널 -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="280" />
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="340" />
+            </Grid.ColumnDefinitions>
+
+            <!-- 작업 목록 -->
+            <Border Grid.Column="0"
+                    Style="{StaticResource CardBorderStyle}"
+                    Padding="12">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0"
+                               Margin="0,0,0,8"
+                               Foreground="{StaticResource MutedForegroundBrush}">
+                        <Run Text="표시 중:" />
+                        <Run Text="{Binding FilteredCount, Mode=OneWay}" FontWeight="SemiBold" />
+                        <Run Text="/" />
+                        <Run Text="{Binding TotalCount, Mode=OneWay}" />
+                    </TextBlock>
+
+                    <!--
+                      ListBox + ItemsSource: React의 tasks.map(task => <TaskCard key={task.id} />)
+                      ItemTemplate 안의 views:TaskCardView = 재사용 컴포넌트
+                      SelectedItem TwoWay: 선택 상태 ↔ SelectedTask
+                    -->
+                    <ListBox Grid.Row="1"
+                             ItemsSource="{Binding TasksView}"
+                             SelectedItem="{Binding SelectedTask, Mode=TwoWay}"
+                             BorderThickness="0"
+                             Background="Transparent"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                <Setter Property="Padding" Value="0" />
+                                <Setter Property="Margin" Value="0" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListBoxItem">
+                                            <Border x:Name="Bd"
+                                                    Background="Transparent"
+                                                    BorderThickness="0"
+                                                    CornerRadius="4"
+                                                    Padding="2">
+                                                <ContentPresenter />
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsSelected" Value="True">
+                                                    <Setter TargetName="Bd" Property="Background" Value="#E7F1FF" />
+                                                </Trigger>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="Bd" Property="Background" Value="#F8F9FA" />
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <views:TaskCardView />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <!-- Empty state -->
+                    <TextBlock Grid.Row="1"
+                               Text="조건에 맞는 작업이 없습니다."
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Foreground="{StaticResource MutedForegroundBrush}"
+                               Visibility="{Binding FilteredCount, Converter={StaticResource NullOrEmptyToVisibilityConverter}}" />
+                </Grid>
+            </Border>
+
+            <!-- 편집 패널 — SelectedTask 하위 속성 바인딩 (점 표기 = nested props) -->
+            <Border Grid.Column="2"
+                    Style="{StaticResource CardBorderStyle}"
+                    Padding="16">
+                <Grid>
+                    <StackPanel DataContext="{Binding SelectedTask}"
+                                Visibility="{Binding SelectedTask, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource NullOrEmptyToVisibilityConverter}, ConverterParameter=Inverse}">
+                        <TextBlock Text="작업 편집"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,12" />
+
+                        <TextBlock Text="제목" FontSize="12" Foreground="{StaticResource MutedForegroundBrush}" />
+                        <TextBox Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,4,0,12"
+                                 Padding="8,6" />
+
+                        <TextBlock Text="설명" FontSize="12" Foreground="{StaticResource MutedForegroundBrush}" />
+                        <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,4,0,12"
+                                 Padding="8,6"
+                                 AcceptsReturn="True"
+                                 TextWrapping="Wrap"
+                                 MinHeight="72"
+                                 VerticalScrollBarVisibility="Auto" />
+
+                        <TextBlock Text="상태" FontSize="12" Foreground="{StaticResource MutedForegroundBrush}" />
+                        <ComboBox ItemsSource="{Binding DataContext.StatusOptions, RelativeSource={RelativeSource AncestorType=Window}}"
+                                  SelectedItem="{Binding Status}"
+                                  Margin="0,4,0,12" />
+
+                        <TextBlock Text="우선순위" FontSize="12" Foreground="{StaticResource MutedForegroundBrush}" />
+                        <ComboBox ItemsSource="{Binding DataContext.PriorityOptions, RelativeSource={RelativeSource AncestorType=Window}}"
+                                  SelectedItem="{Binding Priority}"
+                                  Margin="0,4,0,12" />
+
+                        <TextBlock Text="마감일" FontSize="12" Foreground="{StaticResource MutedForegroundBrush}" />
+                        <DatePicker SelectedDate="{Binding DueDate}"
+                                    Margin="0,4,0,16" />
+
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="저장"
+                                    Style="{StaticResource PrimaryButtonStyle}"
+                                    Command="{Binding DataContext.SaveTaskCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
+                            <Button Content="삭제"
+                                    Margin="8,0,0,0"
+                                    Style="{StaticResource SecondaryButtonStyle}"
+                                    Foreground="{StaticResource DangerBrush}"
+                                    Command="{Binding DataContext.DeleteTaskCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <TextBlock Text="왼쪽 목록에서 작업을 선택하세요."
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Foreground="{StaticResource MutedForegroundBrush}"
+                               Visibility="{Binding SelectedTask, Converter={StaticResource NullOrEmptyToVisibilityConverter}}" />
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- 상태바 + 로딩 -->
+        <Border Grid.Row="3"
+                Margin="0,12,0,0"
+                Padding="8,6"
+                Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="4">
+            <Grid>
+                <TextBlock Text="{Binding StatusMessage}"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource MutedForegroundBrush}" />
+
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <TextBlock Text="동기화 중..."
+                               Foreground="{StaticResource PrimaryBrush}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,8,0" />
+                    <ProgressBar IsIndeterminate="True"
+                                 Width="80"
+                                 Height="8" />
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
