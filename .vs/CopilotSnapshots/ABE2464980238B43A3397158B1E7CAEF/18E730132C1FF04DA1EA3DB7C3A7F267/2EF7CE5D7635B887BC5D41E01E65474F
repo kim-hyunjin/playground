@@ -1,0 +1,336 @@
+﻿using System;
+using System.Drawing;
+using System.Globalization;
+using System.Linq;
+using System.Windows.Forms;
+using WindowsFormsApp1.Models;
+using WindowsFormsApp1.Services;
+
+namespace WindowsFormsApp1
+{
+    /// <summary>
+    /// 지출 관리 앱의 메인 화면입니다.
+    /// 이 폼에서 WinForms의 핵심 패턴을 학습할 수 있습니다:
+    /// - 이벤트 기반 프로그래밍 (버튼 클릭, 메뉴 선택)
+    /// - BindingSource + DataGridView 데이터 바인딩
+    /// - 모달 대화상자 (ExpenseEditForm)
+    /// - OpenFileDialog / SaveFileDialog
+    /// - MenuStrip, StatusStrip, Timer
+    /// </summary>
+    public partial class MainForm : Form
+    {
+        private readonly ExpenseRepository _repository = new ExpenseRepository();
+
+        // BindingSource: WinForms에서 목록 데이터를 컨트롤에 연결하는 표준 방법
+        private readonly BindingSource _bindingSource = new BindingSource();
+
+        // 현재 열린 파일 경로 (저장 시 기본 경로로 사용)
+        private string _currentFilePath;
+
+        public MainForm()
+        {
+            InitializeComponent();
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            // DataGridView와 BindingSource 연결
+            dgvExpenses.AutoGenerateColumns = false;
+            dgvExpenses.DataSource = _bindingSource;
+
+            // 필터용 카테고리 콤보박스 초기화
+            cmbFilterCategory.Items.AddRange(new object[]
+            {
+                "전체", "식비", "교통", "쇼핑", "주거", "의료", "문화", "기타"
+            });
+            cmbFilterCategory.SelectedIndex = 0;
+
+            dtpFilterFrom.Value = DateTime.Today.AddMonths(-1);
+            dtpFilterTo.Value = DateTime.Today;
+
+            // 샘플 데이터 로드 후 그리드 갱신
+            _repository.LoadSampleData();
+            RefreshGrid();
+
+            UpdateStatusBar();
+        }
+
+        /// <summary>
+        /// 저장소 데이터를 필터 조건에 맞게 조회해 DataGridView에 반영합니다.
+        /// </summary>
+        private void RefreshGrid()
+        {
+            var filtered = _repository.Filter(
+                cmbFilterCategory.Text,
+                txtSearch.Text,
+                dtpFilterFrom.Value,
+                dtpFilterTo.Value);
+
+            _bindingSource.DataSource = filtered;
+            _bindingSource.ResetBindings(false);
+
+            // 합계 라벨 갱신
+            decimal total = _repository.GetTotalAmount(filtered);
+            lblSummary.Text = string.Format("표시 {0}건 · 합계 {1:N0}원",
+                filtered.Count, total);
+
+            UpdateStatusBar();
+        }
+
+        private void UpdateStatusBar()
+        {
+            toolStripStatusLabelCount.Text = string.Format("전체 {0}건", _repository.Items.Count);
+            toolStripStatusLabelFile.Text = string.IsNullOrEmpty(_currentFilePath)
+                ? "새 문서"
+                : System.IO.Path.GetFileName(_currentFilePath);
+        }
+
+        /// <summary>현재 그리드에서 선택된 지출 항목 반환 (없으면 null)</summary>
+        private ExpenseItem GetSelectedItem()
+        {
+            return _bindingSource.Current as ExpenseItem;
+        }
+
+        #region 필터 이벤트
+
+        private void btnApplyFilter_Click(object sender, EventArgs e)
+        {
+            RefreshGrid();
+        }
+
+        private void txtSearch_KeyDown(object sender, KeyEventArgs e)
+        {
+            // Enter 키로 검색 — KeyDown 이벤트 활용 예시
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+                RefreshGrid();
+            }
+        }
+
+        #endregion
+
+        #region CRUD 버튼
+
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            using (var dialog = new ExpenseEditForm())
+            {
+                // ShowDialog: 모달 — 닫을 때까지 부모 폼 조작 불가
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    _repository.Add(dialog.ResultItem);
+                    RefreshGrid();
+                }
+            }
+        }
+
+        private void btnEdit_Click(object sender, EventArgs e)
+        {
+            var selected = GetSelectedItem();
+            if (selected == null)
+            {
+                MessageBox.Show(this, "수정할 항목을 선택하세요.", "알림",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            using (var dialog = new ExpenseEditForm(selected))
+            {
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    _repository.Update(dialog.ResultItem);
+                    RefreshGrid();
+                }
+            }
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            var selected = GetSelectedItem();
+            if (selected == null)
+            {
+                MessageBox.Show(this, "삭제할 항목을 선택하세요.", "알림",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            var result = MessageBox.Show(this,
+                string.Format("'{0}' 항목을 삭제하시겠습니까?", selected.Description),
+                "삭제 확인",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                _repository.Remove(selected.Id);
+                RefreshGrid();
+            }
+        }
+
+        #endregion
+
+        #region DataGridView 이벤트
+
+        private void dgvExpenses_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // 더블클릭으로 수정 — 실무에서 자주 쓰는 UX 패턴
+            if (e.RowIndex >= 0)
+                btnEdit_Click(sender, e);
+        }
+
+        private void dgvExpenses_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        {
+            // 바인딩 완료 후 셀 표시 형식 지정 (WinForms는 WPF Converter 대신 코드로 처리)
+            foreach (DataGridViewRow row in dgvExpenses.Rows)
+            {
+                if (row.DataBoundItem is ExpenseItem item)
+                {
+                    row.Cells[colDate.Index].Value = item.Date.ToString("yyyy-MM-dd");
+                    row.Cells[colAmount.Index].Value = item.Amount.ToString("N0", CultureInfo.InvariantCulture);
+                    row.Cells[colAmount.Index].Style.Alignment = DataGridViewContentAlignment.MiddleRight;
+                }
+            }
+        }
+
+        #endregion
+
+        #region 메뉴 — 파일
+
+        private void menuNew_Click(object sender, EventArgs e)
+        {
+            if (!ConfirmDiscardChanges()) return;
+
+            _repository.Clear();
+            _currentFilePath = null;
+            RefreshGrid();
+        }
+
+        private void menuOpen_Click(object sender, EventArgs e)
+        {
+            if (!ConfirmDiscardChanges()) return;
+
+            using (var dialog = new OpenFileDialog())
+            {
+                dialog.Filter = "지출 파일 (*.xml)|*.xml|모든 파일 (*.*)|*.*";
+                dialog.Title = "지출 목록 열기";
+
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    try
+                    {
+                        _repository.LoadFromFile(dialog.FileName);
+                        _currentFilePath = dialog.FileName;
+                        RefreshGrid();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(this, "파일을 열 수 없습니다.\n" + ex.Message,
+                            "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
+
+        private void menuSave_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(_currentFilePath))
+            {
+                menuSaveAs_Click(sender, e);
+                return;
+            }
+
+            SaveToPath(_currentFilePath);
+        }
+
+        private void menuSaveAs_Click(object sender, EventArgs e)
+        {
+            using (var dialog = new SaveFileDialog())
+            {
+                dialog.Filter = "지출 파일 (*.xml)|*.xml";
+                dialog.Title = "지출 목록 저장";
+                dialog.FileName = "expenses.xml";
+
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    _currentFilePath = dialog.FileName;
+                    SaveToPath(_currentFilePath);
+                }
+            }
+        }
+
+        private void SaveToPath(string path)
+        {
+            try
+            {
+                _repository.SaveToFile(path);
+                UpdateStatusBar();
+                toolStripStatusLabelMessage.Text = "저장 완료";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, "저장에 실패했습니다.\n" + ex.Message,
+                    "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void menuExit_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private bool ConfirmDiscardChanges()
+        {
+            // 간단한 "저장하지 않은 변경" 확인 (실무에서는 변경 추적 플래그 사용)
+            if (_repository.Items.Count == 0)
+                return true;
+
+            var result = MessageBox.Show(this,
+                "현재 목록을 버리고 계속하시겠습니까?",
+                "확인",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            return result == DialogResult.Yes;
+        }
+
+        #endregion
+
+        #region 메뉴 — 도움말
+
+        private void menuAbout_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(this,
+                "WinForms 학습용 지출 관리 예제\n\n" +
+                "• DataGridView + BindingSource\n" +
+                "• 이벤트 핸들러 / 모달 대화상자\n" +
+                "• 파일 저장·불러오기 (XML)\n\n" +
+                "자세한 내용은 docs/WINFORMS_GUIDE.md 를 참고하세요.",
+                "정보",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+        }
+
+        #endregion
+
+        #region 폼 종료
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            // FormClosing: 닫기 버튼, Alt+F4 등 모든 종료 시도에서 호출됨
+            // e.Cancel = true 로 닫기를 취소할 수 있음
+        }
+
+        #endregion
+
+        #region StatusStrip Timer
+
+        private void statusTimer_Tick(object sender, EventArgs e)
+        {
+            // Timer 컴포넌트: 주기적으로 상태 표시줄 시각 갱신
+            toolStripStatusLabelTime.Text = DateTime.Now.ToString("HH:mm:ss");
+        }
+
+        #endregion
+    }
+}
