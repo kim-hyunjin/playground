@@ -1,4 +1,4 @@
-{# Remove the default Material logo anchor from the drawer title. #}
+{# Drawer title is tap-to-close only; branding lives in the header. #}
 {% import "partials/nav-item.html" as item with context %}
 {% set class = "md-nav md-nav--primary" %}
 {% if "navigation.tabs" in features %}
@@ -8,11 +8,7 @@
   {% set class = class ~ " md-nav--integrated" %}
 {% endif %}
 <nav class="{{ class }}" aria-label="{{ lang.t('nav') }}" data-md-level="0">
-  <label class="md-nav__title" for="__drawer">
-    <span class="md-ellipsis">
-      {{ config.site_name }}
-    </span>
-  </label>
+  <label class="md-nav__title" for="__drawer" aria-label="{{ lang.t('header') }}"></label>
   {% if config.repo_url %}
     <div class="md-nav__source">
       {% include "partials/source.html" %}
