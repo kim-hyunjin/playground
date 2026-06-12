@@ -210,10 +210,6 @@ body {
   color: var(--kami-brand);
 }
 
-.md-header__button.md-logo {
-  display: none;
-}
-
 .md-header__title {
   margin-left: 0;
 }
@@ -401,34 +397,17 @@ body {
   border-bottom-color: #454542;
 }
 
-/* Site logo — drawer */
-.md-nav--primary .md-nav__title[for="__drawer"] .md-nav__button.md-logo,
-.md-header__button.md-logo {
-  color: var(--kami-brand);
-  opacity: 1;
-  transition: color 0.15s ease;
-}
-
-.md-nav--primary .md-nav__title[for="__drawer"] .md-nav__button.md-logo:hover,
-.md-header__button.md-logo:hover {
-  color: var(--kami-brand-light);
-}
-
-.md-nav--primary .md-nav__title[for="__drawer"] .md-nav__button.md-logo svg,
-.md-header__button.md-logo svg {
-  fill: currentColor;
-  height: 2rem;
-  width: auto;
-}
-
-.md-nav--primary .md-nav__title[for="__drawer"] .md-nav__button.md-logo {
-  display: none;
-}
-
 .md-nav--primary .md-nav__title[for="__drawer"] .md-ellipsis {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
+  max-width: none;
+  padding: 0.25rem 0.7rem 0.25rem 0.3rem;
+  background-color: rgba(238, 242, 247, 0.72);
+  border: 1px solid var(--kami-border);
+  border-radius: 999px;
+  color: var(--kami-brand);
+  line-height: 1.4;
 }
 
 .md-nav--primary .md-nav__title[for="__drawer"] .md-ellipsis::before {
@@ -446,19 +425,15 @@ body {
   letter-spacing: 0;
 }
 
-[data-md-color-scheme="kami-dark"] .md-nav--primary .md-nav__title[for="__drawer"] .md-nav__button.md-logo,
-[data-md-color-scheme="kami-dark"] .md-header__button.md-logo {
-  color: #f0efe8;
-}
-
-[data-md-color-scheme="kami-dark"] .md-nav--primary .md-nav__title[for="__drawer"] .md-nav__button.md-logo:hover,
-[data-md-color-scheme="kami-dark"] .md-header__button.md-logo:hover {
-  color: var(--kami-brand-light);
-}
-
 [data-md-color-scheme="kami-dark"] .md-nav--primary .md-nav__title[for="__drawer"] .md-ellipsis::before {
   background-color: #d6e1ee;
   color: var(--kami-deep-dark);
+}
+
+[data-md-color-scheme="kami-dark"] .md-nav--primary .md-nav__title[for="__drawer"] .md-ellipsis {
+  background-color: rgba(27, 54, 93, 0.24);
+  border-color: #454542;
+  color: #f0efe8;
 }
 
 /* Sticky section titles inside sidebar */
