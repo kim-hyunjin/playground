@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
+import { findPlayerInLeague } from '../engine/playerLookup'
+import { PlayerNameButton } from '../components/PlayerNameButton'
 import { useGame } from '../store/gameStore'
 
 export function MatchPage() {
@@ -126,15 +128,38 @@ export function MatchPage() {
           <div className="bm-card max-h-96 overflow-y-auto p-4">
             <h2 className="mb-3 font-semibold text-[var(--text-h)]">플레이-by-플레이</h2>
             <ul className="space-y-1 font-mono text-sm">
-              {result.logs.slice(0, visibleLogs || result.logs.length).map((log, i) => (
-                <li key={i} className={log.runsScored > 0 ? 'text-[var(--accent)]' : 'text-[var(--text)]'}>
-                  <span className="text-[var(--text-muted)]">
-                    {log.inning}회 {log.half === 'top' ? '초' : '말'}
-                  </span>
-                  {' · '}
-                  {log.text}
-                </li>
-              ))}
+              {result.logs.slice(0, visibleLogs || result.logs.length).map((log, i) => {
+                const batter = log.batterId
+                  ? findPlayerInLeague(state.teams, log.batterId)?.player
+                  : null
+                const runsSuffix = log.runsScored > 0 ? ` (${log.runsScored}득점)` : ''
+
+                return (
+                  <li
+                    key={i}
+                    className={log.runsScored > 0 ? 'text-[var(--accent)]' : 'text-[var(--text)]'}
+                  >
+                    <span className="text-[var(--text-muted)]">
+                      {log.inning}회 {log.half === 'top' ? '초' : '말'}
+                    </span>
+                    {' · '}
+                    {log.batterId && batter ? (
+                      <>
+                        <PlayerNameButton playerId={log.batterId} name={batter.name} className="font-mono" />
+                        {log.text.replace(batter.name, '').trim()}
+                        {runsSuffix}
+                      </>
+                    ) : (
+                      log.text
+                    )}
+                    {log.pitcherId ? (
+                      <span className="ml-2 text-xs text-[var(--text-muted)]">
+                        (투: <PlayerNameButton playerId={log.pitcherId} className="text-xs font-normal" />)
+                      </span>
+                    ) : null}
+                  </li>
+                )
+              })}
             </ul>
           </div>
 

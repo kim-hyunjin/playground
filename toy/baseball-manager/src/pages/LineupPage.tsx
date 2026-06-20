@@ -1,5 +1,6 @@
 import { isBatter } from '../engine/generator'
 import { OvrBadge } from '../components/PlayerCard'
+import { PlayerNameButton } from '../components/PlayerNameButton'
 import { useGame } from '../store/gameStore'
 import { FIELD_POSITIONS, POSITION_LABEL, type FieldPosition } from '../types/game'
 
@@ -45,7 +46,7 @@ export function LineupPage() {
               </select>
               {player && (
                 <div className="mt-2 flex items-center justify-between text-sm">
-                  <span className="text-[var(--text-muted)]">{POSITION_LABEL[player.role]}</span>
+                  <PlayerNameButton playerId={player.id} name={player.name} className="text-sm" />
                   <OvrBadge player={player} />
                 </div>
               )}
@@ -62,7 +63,7 @@ export function LineupPage() {
             return (
               <li key={pos} className="flex items-center gap-3 text-sm">
                 <span className="w-6 text-[var(--text-muted)]">{i + 1}</span>
-                <span className="font-medium text-[var(--text-h)]">{p?.name ?? '-'}</span>
+                <PlayerNameButton playerId={p!.id} name={p?.name ?? '-'} />
                 <span className="text-[var(--text-muted)]">{pos}</span>
               </li>
             )

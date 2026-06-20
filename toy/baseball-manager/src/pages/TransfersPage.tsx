@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { formatSalary, isPitcher, overallRating } from '../engine/generator'
 import { OvrBadge } from '../components/PlayerCard'
+import { PlayerNameButton } from '../components/PlayerNameButton'
 import { useGame } from '../store/gameStore'
 import { POSITION_LABEL } from '../types/game'
 
@@ -83,7 +84,7 @@ export function TransfersPage() {
           <tbody>
             {market.map((p) => (
               <tr key={p.id}>
-                <td className="font-medium">{p.name}</td>
+                <td><PlayerNameButton playerId={p.id} name={p.name} /></td>
                 <td className="text-[var(--text-muted)]">
                   {p.fromTeam.city} {p.fromTeam.name}
                 </td>

@@ -1,5 +1,6 @@
 import { calcFip, calcOps, calcWoba, calcWrcPlus, calcXFip, leagueBattingRates, leaguePitchingRates, ipFromOuts } from '../engine/sabermetrics'
 import { isBatter, isPitcher } from '../engine/generator'
+import { PlayerNameButton } from '../components/PlayerNameButton'
 import { useGame } from '../store/gameStore'
 import { POSITION_LABEL } from '../types/game'
 
@@ -69,7 +70,7 @@ export function StatsPage() {
               const bbPct = s.pa > 0 ? ((s.bb / s.pa) * 100).toFixed(1) : '0.0'
               return (
                 <tr key={p.id}>
-                  <td className="font-medium">{p.name}</td>
+                  <td><PlayerNameButton playerId={p.id} name={p.name} /></td>
                   <td>{POSITION_LABEL[p.role]}</td>
                   <td>{s.pa}</td>
                   <td className="text-[var(--accent)]">{woba.toFixed(3)}</td>
@@ -120,7 +121,7 @@ export function StatsPage() {
               const xfip = calcXFip(s, lgPit)
               return (
                 <tr key={p.id}>
-                  <td className="font-medium">{p.name}</td>
+                  <td><PlayerNameButton playerId={p.id} name={p.name} /></td>
                   <td>{POSITION_LABEL[p.role]}</td>
                   <td>{s.wins}-{s.losses}</td>
                   <td>{ip}</td>

@@ -26,13 +26,19 @@ export function OvrBadge({ player }: { player: Player }) {
   return <span className={`bm-badge ${color}`}>{ovr}</span>
 }
 
-export function PlayerCard({ player, onClick }: { player: Player; onClick?: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="bm-card w-full p-4 text-left transition hover:border-emerald-500/40"
-    >
+export function PlayerCard({
+  player,
+  onClick,
+  interactive = true,
+}: {
+  player: Player
+  onClick?: () => void
+  interactive?: boolean
+}) {
+  const className = `bm-card w-full p-4 text-left transition ${interactive ? 'hover:border-emerald-500/40' : ''}`
+
+  const content = (
+    <>
       <div className="flex items-start justify-between gap-2">
         <div>
           <div className="font-semibold text-[var(--text-h)]">{player.name}</div>
@@ -51,12 +57,22 @@ export function PlayerCard({ player, onClick }: { player: Player; onClick?: () =
         </div>
       ) : (
         <div className="mt-3 grid grid-cols-2 gap-2">
-          <StatBar label=".contact" value={player.contact} />
+          <StatBar label="contact" value={player.contact} />
           <StatBar label="파워" value={player.power} />
           <StatBar label="선구" value={player.eye} />
           <StatBar label="주루" value={player.speed} />
         </div>
       )}
+    </>
+  )
+
+  if (!interactive) {
+    return <div className={className}>{content}</div>
+  }
+
+  return (
+    <button type="button" onClick={onClick} className={className}>
+      {content}
     </button>
   )
 }

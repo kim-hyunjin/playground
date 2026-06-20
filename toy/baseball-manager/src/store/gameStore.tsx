@@ -38,6 +38,9 @@ interface GameContextValue {
   upcomingGame: ScheduledGame | null
   buyPlayer: (player: Player, fromTeamId: string) => boolean
   releasePlayer: (playerId: string) => void
+  focusedPlayerId: string | null
+  openPlayer: (playerId: string) => void
+  closePlayer: () => void
 }
 
 const GameContext = createContext<GameContextValue | null>(null)
@@ -120,6 +123,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<GameState | null>(null)
   const [view, setView] = useState<View>('dashboard')
   const [lastResult, setLastResult] = useState<GameResult | null>(null)
+  const [focusedPlayerId, setFocusedPlayerId] = useState<string | null>(null)
 
   useEffect(() => {
     const loaded = loadState()
@@ -145,6 +149,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setState(initial)
     setView('dashboard')
     setLastResult(null)
+    setFocusedPlayerId(null)
   }, [])
 
   const loadGame = useCallback(() => {
@@ -163,6 +168,15 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setState(null)
     setView('dashboard')
     setLastResult(null)
+    setFocusedPlayerId(null)
+  }, [])
+
+  const openPlayer = useCallback((playerId: string) => {
+    setFocusedPlayerId(playerId)
+  }, [])
+
+  const closePlayer = useCallback(() => {
+    setFocusedPlayerId(null)
   }, [])
 
   const setLineup = useCallback((lineup: Record<FieldPosition, string>) => {
@@ -294,6 +308,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       })
       return { ...s, teams: newTeams }
     })
+    setFocusedPlayerId((id) => (id === playerId ? null : id))
   }, [])
 
   const clearLastResult = useCallback(() => setLastResult(null), [])
@@ -316,6 +331,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
     upcomingGame,
     buyPlayer,
     releasePlayer,
+    focusedPlayerId,
+    openPlayer,
+    closePlayer,
   }
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>
