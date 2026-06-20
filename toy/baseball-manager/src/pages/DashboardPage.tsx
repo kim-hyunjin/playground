@@ -1,0 +1,128 @@
+import { formatSalary, isPitcher, overallRating, teamPayroll } from '../engine/generator'
+import { sortedStandings } from '../engine/schedule'
+import { MiniStat } from '../components/PlayerCard'
+import { useGame } from '../store/gameStore'
+
+export function DashboardPage() {
+  const { state, userTeam, upcomingGame, setView, advanceWeek, playUserGame } = useGame()
+  if (!state || !userTeam) return null
+
+  const opponent = upcomingGame
+    ? state.teams.find(
+        (t) => t.id === (upcomingGame.homeId === userTeam.id ? upcomingGame.awayId : upcomingGame.homeId),
+      )
+    : null
+
+  const standings = sortedStandings(state.teams)
+  const rank = standings.findIndex((t) => t.id === userTeam.id) + 1
+  const seasonOver = state.currentWeek > state.totalWeeks
+
+  return (
+    <div className="bm-animate-in space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-[var(--text-h)]">대시보드</h1>
+        <p className="text-sm text-[var(--text-muted)]">
+          {state.currentWeek}주차 · {userTeam.wins}승 {userTeam.losses}패 · {rank}위
+        </p>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <MiniStat label="승" value={userTeam.wins} />
+        <MiniStat label="패" value={userTeam.losses} />
+        <MiniStat label="득점" value={userTeam.runsScored} />
+        <MiniStat label="예산" value={formatSalary(userTeam.budget)} />
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <div className="bm-card p-5">
+          <h2 className="mb-3 font-semibold text-[var(--text-h)]">다음 경기</h2>
+          {seasonOver ? (
+            <p className="text-[var(--text-muted)]">시즌이 종료되었습니다.</p>
+          ) : upcomingGame && opponent ? (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-[var(--text-muted)]">
+                  {upcomingGame.homeId === userTeam.id ? '홈' : '원정'} · {upcomingGame.week}주차
+                </span>
+                <span className="font-bold text-[var(--text-h)]">
+                  vs {opponent.city} {opponent.name}
+                </span>
+              </div>
+              <div className="flex gap-2">
+                <button type="button" className="bm-btn bm-btn-primary flex-1" onClick={() => { playUserGame(); setView('match') }}>
+                  경기 시작
+                </button>
+                <button type="button" className="bm-btn bm-btn-ghost" onClick={() => setView('lineup')}>
+                  라인업
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <p className="text-[var(--text-muted)]">이번 주 경기가 없습니다.</p>
+              <button
+                type="button"
+                className="bm-btn bm-btn-primary"
+                disabled={state.currentWeek >= state.totalWeeks}
+                onClick={advanceWeek}
+              >
+                다음 주 진행
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div className="bm-card p-5">
+          <h2 className="mb-3 font-semibold text-[var(--text-h)]">팀 현황</h2>
+          <dl className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <dt className="text-[var(--text-muted)]">총 연봉</dt>
+              <dd className="text-[var(--text-h)]">{formatSalary(teamPayroll(userTeam))}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-[var(--text-muted)]">선수단</dt>
+              <dd className="text-[var(--text-h)]">{userTeam.players.length}명</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-[var(--text-muted)]">팀 OVR (타선)</dt>
+              <dd className="text-[var(--text-h)]">
+                {Math.round(
+                  userTeam.players.filter((p) => !isPitcher(p)).slice(0, 9)
+                    .reduce((s, p) => s + overallRating(p), 0) / 9,
+                )}
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+
+      <div className="bm-card p-5">
+        <h2 className="mb-3 font-semibold text-[var(--text-h)]">리그 순위 (상위 5)</h2>
+        <table className="bm-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>팀</th>
+              <th>승</th>
+              <th>패</th>
+              <th>승률</th>
+            </tr>
+          </thead>
+          <tbody>
+            {standings.slice(0, 5).map((t, i) => (
+              <tr key={t.id} className={t.id === userTeam.id ? 'bg-[var(--accent-dim)]' : ''}>
+                <td>{i + 1}</td>
+                <td style={{ color: t.id === userTeam.id ? userTeam.color : undefined }}>
+                  {t.city} {t.name}
+                </td>
+                <td>{t.wins}</td>
+                <td>{t.losses}</td>
+                <td>{(t.wins / Math.max(1, t.wins + t.losses)).toFixed(3)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
