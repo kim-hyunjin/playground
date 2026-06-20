@@ -21,24 +21,78 @@ export interface Player {
   seasonStats: BatterStats | PitcherStats
 }
 
+/** 시즌 누적 타격 기록 (파생 스탯은 sabermetrics.ts에서 계산) */
 export interface BatterStats {
   type: 'batter'
   games: number
+  pa: number
   ab: number
   hits: number
+  singles: number
+  doubles: number
+  triples: number
   hr: number
+  bb: number
+  hbp: number
+  k: number
   rbi: number
-  avg: number
+  runs: number
+  sb: number
 }
 
+/** 시즌 누적 투구 기록 — ip는 아웃카운트/3 으로 표시 */
 export interface PitcherStats {
   type: 'pitcher'
   games: number
-  ip: number
+  gs: number
+  outs: number
   wins: number
   losses: number
-  era: number
-  strikeouts: number
+  saves: number
+  h: number
+  r: number
+  er: number
+  bb: number
+  hbp: number
+  k: number
+  hr: number
+  bf: number
+}
+
+export interface BatterGameLine {
+  pa: number
+  ab: number
+  hits: number
+  singles: number
+  doubles: number
+  triples: number
+  hr: number
+  bb: number
+  hbp: number
+  k: number
+  rbi: number
+  runs: number
+  sb: number
+}
+
+export interface PitcherGameLine {
+  outs: number
+  gs: boolean
+  h: number
+  r: number
+  er: number
+  bb: number
+  hbp: number
+  k: number
+  hr: number
+  bf: number
+}
+
+export interface GameBoxScore {
+  batters: Record<string, BatterGameLine>
+  pitchers: Record<string, PitcherGameLine>
+  awayStarterId: string
+  homeStarterId: string
 }
 
 export interface Team {
@@ -82,6 +136,9 @@ export interface PlayLog {
   text: string
   outcome?: AtBatOutcome
   runsScored: number
+  batterId?: string
+  pitcherId?: string
+  rbi?: number
 }
 
 export interface InningScore {
@@ -98,6 +155,7 @@ export interface GameResult {
   innings: InningScore[]
   logs: PlayLog[]
   week: number
+  boxScore: GameBoxScore
 }
 
 export type View =
@@ -108,9 +166,10 @@ export type View =
   | 'match'
   | 'standings'
   | 'transfers'
+  | 'stats'
 
 export interface GameState {
-  version: 1
+  version: 2
   userTeamId: string
   teams: Team[]
   schedule: ScheduledGame[]
@@ -139,4 +198,33 @@ export const POSITION_LABEL: Record<PlayerRole, string> = {
   DH: '지명',
   SP: '선발',
   RP: '불펜',
+}
+
+export function emptyBatterGameLine(): BatterGameLine {
+  return {
+    pa: 0, ab: 0, hits: 0, singles: 0, doubles: 0, triples: 0, hr: 0,
+    bb: 0, hbp: 0, k: 0, rbi: 0, runs: 0, sb: 0,
+  }
+}
+
+export function emptyPitcherGameLine(gs = false): PitcherGameLine {
+  return {
+    outs: 0, gs, h: 0, r: 0, er: 0, bb: 0, hbp: 0, k: 0, hr: 0, bf: 0,
+  }
+}
+
+export function emptyBatterStats(): BatterStats {
+  return {
+    type: 'batter', games: 0, pa: 0, ab: 0, hits: 0,
+    singles: 0, doubles: 0, triples: 0, hr: 0,
+    bb: 0, hbp: 0, k: 0, rbi: 0, runs: 0, sb: 0,
+  }
+}
+
+export function emptyPitcherStats(): PitcherStats {
+  return {
+    type: 'pitcher', games: 0, gs: 0, outs: 0,
+    wins: 0, losses: 0, saves: 0,
+    h: 0, r: 0, er: 0, bb: 0, hbp: 0, k: 0, hr: 0, bf: 0,
+  }
 }

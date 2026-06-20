@@ -1,6 +1,7 @@
 import type {
   AtBatOutcome,
   FieldPosition,
+  GameBoxScore,
   GameResult,
   InningScore,
   PlayLog,
@@ -10,6 +11,12 @@ import type {
 } from '../types/game'
 import { FIELD_POSITIONS } from '../types/game'
 import { isPitcher } from './generator'
+import {
+  recordPitcherRuns,
+  recordPlateAppearance,
+  recordRunsScored,
+  applyBoxScoreToPlayers,
+} from './statsAccumulator'
 
 function rand() {
   return Math.random()
@@ -26,6 +33,14 @@ function pickPitcher(team: Team, rotationIndex: number, inning: number): Player 
     return relievers[Math.min(inning - 7, relievers.length - 1)] ?? relievers[0]!
   }
   return starters[0]!
+}
+
+function isStarterPitcher(team: Team, pitcher: Player, rotationIndex: number, inning: number) {
+  const starters = team.players.filter((p) => p.role === 'SP')
+  if (inning <= 6 && starters.length > 0) {
+    return pitcher.id === starters[rotationIndex % starters.length]!.id
+  }
+  return false
 }
 
 function battingOrder(team: Team, lineup?: Record<FieldPosition, string>): Player[] {
@@ -129,7 +144,6 @@ function advanceRunners(state: RunnerState, outcome: AtBatOutcome): { runs: numb
     return { runs, state: next }
   }
 
-  // outs — small chance to advance
   if (outcome === 'out' && rand() < 0.12 && state.third) {
     runs++
     next.second = state.second
@@ -138,6 +152,12 @@ function advanceRunners(state: RunnerState, outcome: AtBatOutcome): { runs: numb
   }
 
   return { runs, state }
+}
+
+function calcRbi(outcome: AtBatOutcome, runs: number): number {
+  if (outcome === 'homerun') return runs
+  if (['single', 'double', 'triple', 'walk', 'out', 'sacrifice'].includes(outcome)) return runs
+  return 0
 }
 
 const OUTCOME_TEXT: Record<AtBatOutcome, (b: string) => string> = {
@@ -159,6 +179,53 @@ export interface SimOptions {
   awayRotationIndex?: number
 }
 
+function playHalfInning(
+  inning: number,
+  half: 'top' | 'bottom',
+  battingTeam: Player[],
+  pitchingTeam: Team,
+  rotIndex: number,
+  box: GameBoxScore,
+  logs: PlayLog[],
+): number {
+  let outs = 0
+  let runners: RunnerState = { first: false, second: false, third: false }
+  let runs = 0
+  let idx = 0
+  const pitcher = pickPitcher(pitchingTeam, rotIndex, inning)
+  const pitcherGs = isStarterPitcher(pitchingTeam, pitcher, rotIndex, inning)
+
+  while (outs < 3) {
+    const batter = battingTeam[idx % battingTeam.length]!
+    const outcome = resolveAtBat(batter, pitcher)
+    if (outcome === 'out' || outcome === 'strikeout') outs++
+
+    const { runs: scored, state } = advanceRunners(runners, outcome)
+    const rbi = calcRbi(outcome, scored)
+
+    recordPlateAppearance(box, batter.id, pitcher.id, outcome, rbi, pitcherGs)
+    recordRunsScored(box, batter.id, scored, outcome)
+    if (scored > 0) recordPitcherRuns(box, pitcher.id, scored)
+
+    runs += scored
+    runners = state
+
+    logs.push({
+      inning,
+      half,
+      text: OUTCOME_TEXT[outcome](batter.name) + (scored > 0 ? ` (${scored}득점)` : ''),
+      outcome,
+      runsScored: scored,
+      batterId: batter.id,
+      pitcherId: pitcher.id,
+      rbi,
+    })
+    idx++
+  }
+
+  return runs
+}
+
 export function simulateGame(
   game: ScheduledGame,
   home: Team,
@@ -169,62 +236,28 @@ export function simulateGame(
   const innings: InningScore[] = Array.from({ length: 9 }, () => ({}))
   let homeTotal = 0
   let awayTotal = 0
-  let homeRot = options.homeRotationIndex ?? 0
-  let awayRot = options.awayRotationIndex ?? 0
+  const homeRot = options.homeRotationIndex ?? 0
+  const awayRot = options.awayRotationIndex ?? 0
 
   const homeOrder = battingOrder(home, options.homeLineup)
   const awayOrder = battingOrder(away, options.awayLineup)
 
-  for (let inning = 1; inning <= 9; inning++) {
-    // Top half — away bats
-    let outs = 0
-    let runners: RunnerState = { first: false, second: false, third: false }
-    let awayRuns = 0
-    let idx = 0
-    const awayPitcher = pickPitcher(home, homeRot, inning)
+  const awayStarter = pickPitcher(home, homeRot, 1)
+  const homeStarter = pickPitcher(away, awayRot, 1)
 
-    while (outs < 3) {
-      const batter = awayOrder[idx % awayOrder.length]!
-      const outcome = resolveAtBat(batter, awayPitcher)
-      if (outcome === 'out' || outcome === 'strikeout') outs++
-      const { runs, state } = advanceRunners(runners, outcome)
-      awayRuns += runs
-      runners = state
-      logs.push({
-        inning,
-        half: 'top',
-        text: OUTCOME_TEXT[outcome](batter.name) + (runs > 0 ? ` (${runs}득점)` : ''),
-        outcome,
-        runsScored: runs,
-      })
-      idx++
-    }
+  const box: GameBoxScore = {
+    batters: {},
+    pitchers: {},
+    awayStarterId: awayStarter.id,
+    homeStarterId: homeStarter.id,
+  }
+
+  for (let inning = 1; inning <= 9; inning++) {
+    const awayRuns = playHalfInning(inning, 'top', awayOrder, home, homeRot, box, logs)
     innings[inning - 1]!.top = awayRuns
     awayTotal += awayRuns
 
-    // Bottom half — home bats
-    outs = 0
-    runners = { first: false, second: false, third: false }
-    let homeRuns = 0
-    idx = 0
-    const homePitcher = pickPitcher(away, awayRot, inning)
-
-    while (outs < 3) {
-      const batter = homeOrder[idx % homeOrder.length]!
-      const outcome = resolveAtBat(batter, homePitcher)
-      if (outcome === 'out' || outcome === 'strikeout') outs++
-      const { runs, state } = advanceRunners(runners, outcome)
-      homeRuns += runs
-      runners = state
-      logs.push({
-        inning,
-        half: 'bottom',
-        text: OUTCOME_TEXT[outcome](batter.name) + (runs > 0 ? ` (${runs}득점)` : ''),
-        outcome,
-        runsScored: runs,
-      })
-      idx++
-    }
+    const homeRuns = playHalfInning(inning, 'bottom', homeOrder, away, awayRot, box, logs)
     innings[inning - 1]!.bottom = homeRuns
     homeTotal += homeRuns
   }
@@ -238,6 +271,7 @@ export function simulateGame(
     innings,
     logs,
     week: game.week,
+    boxScore: box,
   }
 }
 
@@ -246,6 +280,8 @@ export function applyResult(
   schedule: ScheduledGame[],
   result: GameResult,
 ): { teams: Team[]; schedule: ScheduledGame[] } {
+  const { boxScore } = result
+
   const newTeams = teams.map((t) => {
     const isHome = t.id === result.homeId
     const isAway = t.id === result.awayId
@@ -255,12 +291,15 @@ export function applyResult(
     const allowed = isHome ? result.awayScore : result.homeScore
     const win = scored > allowed
 
+    const starterId = isHome ? boxScore.homeStarterId : boxScore.awayStarterId
+
     return {
       ...t,
       wins: t.wins + (win ? 1 : 0),
       losses: t.losses + (win ? 0 : 1),
       runsScored: t.runsScored + scored,
       runsAllowed: t.runsAllowed + allowed,
+      players: applyBoxScoreToPlayers(t.players, boxScore, win, !win, starterId),
     }
   })
 

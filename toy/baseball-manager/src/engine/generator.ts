@@ -1,4 +1,5 @@
-import type { BatterStats, FieldPosition, PitcherStats, Player, PlayerRole, Team } from '../types/game'
+import type { FieldPosition, Player, PlayerRole, Team } from '../types/game'
+import { emptyBatterStats, emptyPitcherStats } from '../types/game'
 
 const LAST_NAMES = [
   '김', '이', '박', '최', '정', '강', '조', '윤', '장', '임',
@@ -22,13 +23,6 @@ function clamp(n: number, min = 1, max = 99) {
   return Math.max(min, Math.min(max, n))
 }
 
-function emptyBatterStats(): BatterStats {
-  return { type: 'batter', games: 0, ab: 0, hits: 0, hr: 0, rbi: 0, avg: 0 }
-}
-
-function emptyPitcherStats(): PitcherStats {
-  return { type: 'pitcher', games: 0, ip: 0, wins: 0, losses: 0, era: 0, strikeouts: 0 }
-}
 
 export function generateName(): string {
   return `${pick(LAST_NAMES)}${pick(FIRST_NAMES)}`

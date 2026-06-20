@@ -4,6 +4,7 @@ import type { View } from '../types/game'
 const NAV: { id: View; label: string; icon: string }[] = [
   { id: 'dashboard', label: '대시보드', icon: '📊' },
   { id: 'squad', label: '스쿼드', icon: '👥' },
+  { id: 'stats', label: '스탯', icon: '📈' },
   { id: 'lineup', label: '라인업', icon: '📋' },
   { id: 'rotation', label: '로테이션', icon: '⚾' },
   { id: 'match', label: '경기', icon: '🏟️' },

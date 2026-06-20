@@ -15,8 +15,10 @@ import {
 } from '../engine/generator'
 import { generateSchedule, nextUserGame } from '../engine/schedule'
 import { applyResult, simulateCpuGames, simulateGame } from '../engine/simulation'
+import { migratePlayerStats } from '../engine/statsAccumulator'
 
-const STORAGE_KEY = 'baseball-manager:v1'
+const STORAGE_KEY = 'baseball-manager:v2'
+const LEGACY_KEY = 'baseball-manager:v1'
 
 interface GameContextValue {
   state: GameState | null
@@ -46,7 +48,7 @@ function createInitialState(teamIndex: number, managerName: string): GameState {
   const totalWeeks = 18
 
   return {
-    version: 1,
+    version: 2,
     userTeamId: userTeam.id,
     teams,
     schedule: generateSchedule(teams, totalWeeks),
@@ -68,11 +70,47 @@ function saveState(state: GameState) {
   }
 }
 
+function migrateResult(r: GameResult & { boxScore?: GameResult['boxScore'] }): GameResult {
+  if (r.boxScore) return r
+  return {
+    ...r,
+    boxScore: {
+      batters: {},
+      pitchers: {},
+      awayStarterId: '',
+      homeStarterId: '',
+    },
+  }
+}
+
+function migrateState(raw: unknown): GameState | null {
+  if (!raw || typeof raw !== 'object') return null
+  const s = raw as GameState & { version?: number }
+
+  const teams = (s.teams ?? []).map((t) => ({
+    ...t,
+    players: t.players.map(migratePlayerStats),
+  }))
+
+  const results = (s.results ?? []).map(migrateResult)
+
+  return {
+    ...s,
+    version: 2,
+    teams,
+    results,
+  } as GameState
+}
+
 function loadState(): GameState | null {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
+    const raw = localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem(LEGACY_KEY)
     if (!raw) return null
-    return JSON.parse(raw) as GameState
+    const migrated = migrateState(JSON.parse(raw))
+    if (migrated && !localStorage.getItem(STORAGE_KEY)) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated))
+    }
+    return migrated
   } catch {
     return null
   }
@@ -121,6 +159,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
   const resetGame = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY)
+    localStorage.removeItem(LEGACY_KEY)
     setState(null)
     setView('dashboard')
     setLastResult(null)
