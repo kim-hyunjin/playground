@@ -53,6 +53,10 @@ export function MatchPage() {
     ? result.homeId === userTeam.id ? result.awayScore : result.homeScore
     : 0
 
+  const homeTeam = upcomingGame
+    ? state.teams.find((t) => t.id === upcomingGame.homeId)
+    : null
+
   return (
     <div className="bm-animate-in space-y-6">
       <div>
@@ -64,6 +68,7 @@ export function MatchPage() {
         <div className="bm-card p-6 text-center">
           <div className="mb-4 text-sm text-[var(--text-muted)]">
             {upcomingGame.homeId === userTeam.id ? '홈 경기' : '원정 경기'}
+            {homeTeam ? ` · ${homeTeam.stadium}` : null}
           </div>
           <div className="flex items-center justify-center gap-6">
             <div>

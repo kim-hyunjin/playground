@@ -101,6 +101,7 @@ export interface Team {
   city: string
   abbr: string
   color: string
+  stadium: string
   budget: number
   players: Player[]
   wins: number

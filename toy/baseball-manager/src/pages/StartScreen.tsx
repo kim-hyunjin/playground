@@ -53,10 +53,10 @@ export function StartScreen() {
                   }`}
                 >
                   <div className="font-bold" style={{ color: team.color }}>
-                    {team.abbr}
+                    {team.name}
                   </div>
-                  <div className="text-sm text-[var(--text-h)]">{team.city}</div>
-                  <div className="text-xs text-[var(--text-muted)]">{team.name}</div>
+                  <div className="text-xs text-[var(--text-muted)]">{team.city}</div>
+                  <div className="text-xs text-[var(--text-muted)]">{team.stadium}</div>
                 </button>
               ))}
             </div>
