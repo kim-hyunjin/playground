@@ -101,7 +101,10 @@ export function StartScreen() {
         </div>
 
         <p className="mt-4 text-center text-xs text-[var(--text-muted)]">
-          10개 구단 · 18주 정규시즌 · 라인업/로테이션/이적 관리
+          10개 구단 · 18주 정규시즌 · {DATA_SEASON} KBO 실명 로스터 기반
+        </p>
+        <p className="mt-1 text-center text-[10px] text-[var(--text-muted)]">
+          비공식 팬메이드 프로젝트 · 실제 KBO와 무관 · 데이터는 추정치 포함
         </p>
       </div>
     </div>

@@ -40,6 +40,8 @@ export interface PlayerRecord {
   /** 직접 지정 시 sourceStats 무시 */
   ratings?: Partial<PlayerRatings>
   potential?: number
+  /** 로더에서 OVR 맞춤용 (sourceStats 형태 유지) */
+  targetOvr?: number
   /** 프로시저럴 보충 선수 표시 */
   generated?: boolean
 }

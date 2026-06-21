@@ -23,10 +23,6 @@ function rand(min: number, max: number) {
 }
 
 function resolveRatings(record: PlayerRecord): PlayerRatings {
-  if (record.ratings) {
-    const base = ratingsFromOvr(record.role, 55)
-    return { ...base, ...record.ratings }
-  }
   if (record.sourceStats) {
     if ('pa' in record.sourceStats) {
       return batterRatingsFromStats(record.sourceStats as BatterSourceStats)
@@ -36,11 +32,53 @@ function resolveRatings(record: PlayerRecord): PlayerRatings {
       record.role === 'SP' ? 'SP' : 'RP',
     )
   }
+  if (record.ratings) {
+    const anchor = ratingsFromOvr(record.role, 55)
+    return { ...anchor, ...record.ratings }
+  }
   return ratingsFromOvr(record.role, 55)
 }
 
+export function playerFromRecord(record: PlayerRecord): Player {
+  return recordToPlayer(record)
+}
+
+function clampStat(n: number, min = 1, max = 99) {
+  return Math.max(min, Math.min(max, Math.round(n)))
+}
+
+function alignRatingsToTarget(record: PlayerRecord, ratings: PlayerRatings): PlayerRatings {
+  const target = record.targetOvr
+  if (target == null) return ratings
+
+  const probe = { ...ratings, role: record.role, rosterLevel: record.rosterLevel } as Player
+  const current = overallRating(probe)
+  const delta = target - current
+  if (Math.abs(delta) < 1) return ratings
+
+  const isPitcherRole = record.role === 'SP' || record.role === 'RP'
+  if (isPitcherRole) {
+    return {
+      ...ratings,
+      velocity: clampStat(ratings.velocity + delta),
+      control: clampStat(ratings.control + delta),
+      movement: clampStat(ratings.movement + delta),
+      stamina: clampStat(ratings.stamina + delta),
+    }
+  }
+
+  return {
+    ...ratings,
+    contact: clampStat(ratings.contact + delta),
+    power: clampStat(ratings.power + delta),
+    eye: clampStat(ratings.eye + delta),
+    speed: clampStat(ratings.speed + delta),
+    fielding: clampStat(ratings.fielding + delta),
+  }
+}
+
 function recordToPlayer(record: PlayerRecord): Player {
-  const ratings = resolveRatings(record)
+  const ratings = alignRatingsToTarget(record, resolveRatings(record))
   const partial: Omit<Player, 'potential' | 'developmentXp'> = {
     id: record.id,
     name: record.name,
@@ -63,6 +101,9 @@ function recordToPlayer(record: PlayerRecord): Player {
     farmSeasonStats: isPitcher({ role: record.role } as Player)
       ? emptyPitcherStats()
       : emptyBatterStats(),
+    realPlayerId: record.generated ? undefined : record.id,
+    dataSeason: record.generated ? undefined : DATA_SEASON,
+    isGenerated: record.generated ?? false,
   }
 
   const player = {
@@ -87,6 +128,9 @@ function fillFarmGaps(teamAbbr: TeamAbbr, players: Player[]): Player[] {
     const gen = generatePlayer(role, tier, { rosterLevel: 'farm', ageMin: 18, ageMax: 24 })
     gen.id = `${teamAbbr}-gen-${i + 1}`
     gen.name = `(퓨처스) ${gen.name}`
+    gen.isGenerated = true
+    gen.realPlayerId = undefined
+    gen.dataSeason = undefined
     filled.push(gen)
   }
   return filled

@@ -24,6 +24,11 @@ export interface Player {
   potential: number
   /** 경기 출전으로 누적 — 주간 육성 확률에 반영 */
   developmentXp: number
+  /** 실데이터 로스터 출처 (2026 JSON) */
+  realPlayerId?: string
+  dataSeason?: number
+  /** fillFarmGaps·드래프트 보충 등 프로시저럴 생성 */
+  isGenerated?: boolean
   seasonStats: BatterStats | PitcherStats
   farmSeasonStats: BatterStats | PitcherStats
 }

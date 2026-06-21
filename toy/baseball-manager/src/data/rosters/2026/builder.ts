@@ -1,8 +1,6 @@
 import type { PlayerRole, RosterLevel } from '../../../types/game'
 import type { BatterSourceStats, PitcherSourceStats, PlayerRecord, TeamAbbr } from '../../types'
-import { batterRatingsFromStats } from '../../ratings/batterFromStats'
-import { pitcherRatingsFromStats } from '../../ratings/pitcherFromStats'
-import { ratingsFromOvr } from '../../ratings/ovrToRatings'
+import { batterSourceForOvr, pitcherSourceForOvr } from '../../ratings/statsProfiles'
 
 function slug(name: string): string {
   return name.replace(/\s+/g, '')
@@ -33,8 +31,9 @@ export function batter(
     rosterLevel: opts.rosterLevel ?? 'first',
     age,
     salaryKrw: opts.salaryKrw,
-    ratings: opts.sourceStats ? batterRatingsFromStats(opts.sourceStats) : ratingsFromOvr(role, ovr),
+    sourceStats: opts.sourceStats ?? batterSourceForOvr(ovr, role),
     potential: opts.potential,
+    targetOvr: ovr,
   }
 }
 
@@ -59,9 +58,8 @@ export function pitcher(
     rosterLevel: opts.rosterLevel ?? 'first',
     age,
     salaryKrw: opts.salaryKrw,
-    ratings: opts.sourceStats
-      ? pitcherRatingsFromStats(opts.sourceStats, role)
-      : ratingsFromOvr(role, ovr),
+    sourceStats: opts.sourceStats ?? pitcherSourceForOvr(ovr, role),
     potential: opts.potential,
+    targetOvr: ovr,
   }
 }

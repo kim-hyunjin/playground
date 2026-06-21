@@ -1,5 +1,6 @@
 import type { TeamRosterFile } from '../../../types'
 import { batter, pitcher } from '../builder'
+import { ltFarmExtended } from '../farm/lt'
 
 const T = 'LT' as const
 
@@ -47,6 +48,7 @@ const farm = [
   batter(T, '장민호', 'LF', 19, 46, { rosterLevel: 'farm', potential: 71 }),
   pitcher(T, '이태우', 'RP', 21, 45, { rosterLevel: 'farm', potential: 69 }),
   batter(T, '김준영', '1B', 20, 44, { rosterLevel: 'farm', potential: 70 }),
+  ...ltFarmExtended,
 ]
 
 export const lt2026: TeamRosterFile = {

@@ -70,6 +70,16 @@ export function PlayerDetailModal() {
             </h2>
             <div className="text-sm text-[var(--text-muted)]">
               {level === 'farm' ? '2군' : '1군'} · {POSITION_LABEL[player.role]} · {player.age}세 · {formatSalary(player.salary)}
+              {player.dataSeason ? (
+                <span className="ml-2 rounded bg-[var(--accent-dim)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--accent)]">
+                  {player.dataSeason} 실명
+                </span>
+              ) : null}
+              {player.isGenerated ? (
+                <span className="ml-1 rounded bg-[var(--border)] px-1.5 py-0.5 text-[10px] text-[var(--text-muted)]">
+                  생성
+                </span>
+              ) : null}
             </div>
             {callUpEval?.eligible && (
               <div className="mt-2 flex flex-wrap items-center gap-2">

@@ -1,4 +1,6 @@
 import type { DraftPick, DraftState, GameState, Player, PlayerRole, Team } from '../types/game'
+import { playerFromRecord } from '../data/rosterLoader'
+import { DRAFT_PROSPECTS_2026 } from '../data/draft/2026'
 import { generatePlayer, overallRating } from './generator'
 import { countByLevel, FARM_TEAM_MAX } from './roster'
 import { sortedStandings } from './schedule'
@@ -24,10 +26,13 @@ function clamp(n: number, min: number, max: number) {
 }
 
 export function generateProspectPool(size = DRAFT_POOL_SIZE): Player[] {
-  const prospects: Player[] = []
+  const fromData = DRAFT_PROSPECTS_2026.slice(0, size).map((r) =>
+    playerFromRecord({ ...r, rosterLevel: 'farm' }),
+  )
 
-  for (let i = 0; i < size; i++) {
-    const role = PROSPECT_ROLES[i % PROSPECT_ROLES.length]!
+  const prospects: Player[] = [...fromData]
+  while (prospects.length < size) {
+    const role = PROSPECT_ROLES[prospects.length % PROSPECT_ROLES.length]!
     const roll = Math.random()
     const tier = roll > 0.9 ? 'star' : roll > 0.5 ? 'avg' : 'weak'
     const player = generatePlayer(role, tier, {
@@ -35,10 +40,10 @@ export function generateProspectPool(size = DRAFT_POOL_SIZE): Player[] {
       ageMin: 18,
       ageMax: 22,
     })
-    const ovr = overallRating(player)
     prospects.push({
       ...player,
-      salary: rookieSigningBonus(ovr, 1),
+      isGenerated: true,
+      salary: rookieSigningBonus(overallRating(player), 1),
       morale: rand(78, 96),
       fatigue: 0,
     })
