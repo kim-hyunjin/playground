@@ -15,7 +15,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { ROSTERS_2026 } from '../src/data/rosters/2026/teams'
+import { ROSTERS_KBO } from '../src/data/rosters/2026/kbo/index'
 import { handednessForPlayerId } from '../src/data/rosters/2026/handednessOverrides'
 import type { PlayerRecord, TeamAbbr } from '../src/data/types'
 import { parseKboPositionLabel } from './kbo/parseHandedness'
@@ -46,7 +46,7 @@ type CacheFile = Record<string, HandednessEntry>
 
 function allRecords(): PlayerRecord[] {
   const out: PlayerRecord[] = []
-  for (const file of ROSTERS_2026) {
+  for (const file of ROSTERS_KBO) {
     out.push(...file.first, ...file.farm)
   }
   return out

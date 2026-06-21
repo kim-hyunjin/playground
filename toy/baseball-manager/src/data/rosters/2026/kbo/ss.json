@@ -32,14 +32,14 @@
       "age": 30,
       "salaryKrw": 13000000000,
       "sourceStats": {
-        "pa": 70,
-        "woba": 14.549999999999999,
-        "iso": 45.708,
-        "bbPct": 0.4714285714285714,
-        "kPct": 0.014285714285714285,
+        "pa": 314,
+        "woba": 0.38265,
+        "iso": 0.185,
+        "bbPct": 0.10509554140127389,
+        "kPct": 0.1464968152866242,
         "sb": 0
       },
-      "targetOvr": 79,
+      "targetOvr": 63,
       "bats": "L",
       "throws": "L"
     },
@@ -72,14 +72,14 @@
       "age": 33,
       "salaryKrw": 500000000,
       "sourceStats": {
-        "pa": 52,
-        "woba": 6.5,
-        "iso": 31.683,
-        "bbPct": 0.5192307692307693,
-        "kPct": 0.057692307692307696,
+        "pa": 223,
+        "woba": 0.42125,
+        "iso": 0.202,
+        "bbPct": 0.1210762331838565,
+        "kPct": 0.14349775784753363,
         "sb": 0
       },
-      "targetOvr": 78,
+      "targetOvr": 70,
       "bats": "L",
       "throws": "R"
     },
@@ -112,15 +112,15 @@
       "age": 25,
       "salaryKrw": 230000000,
       "sourceStats": {
-        "pa": 68,
-        "woba": 4.25,
-        "iso": 16.702,
-        "bbPct": 0.5147058823529411,
-        "kPct": 0.04411764705882353,
+        "pa": 260,
+        "woba": 0.391,
+        "iso": 0.05,
+        "bbPct": 0.1346153846153846,
+        "kPct": 0.06538461538461539,
         "sb": 0
       },
       "potential": 85,
-      "targetOvr": 79,
+      "targetOvr": 64,
       "bats": "L",
       "throws": "R"
     },
@@ -293,15 +293,15 @@
       "age": 30,
       "salaryKrw": 13000000000,
       "sourceStats": {
-        "ip": 0.75,
+        "ip": 88,
         "era": 2.86,
-        "fip": 1639.1,
-        "k9": 36,
-        "bb9": 96,
+        "fip": 3.5318181818181817,
+        "k9": 5.829545454545454,
+        "bb9": 1.6363636363636365,
         "gs": 11,
         "games": 14
       },
-      "targetOvr": 46,
+      "targetOvr": 67,
       "bats": "R",
       "throws": "R"
     },
@@ -479,8 +479,8 @@
       "teamAbbr": "SS",
       "role": "RP",
       "rosterLevel": "first",
-      "age": 44,
-      "salaryKrw": 170000000,
+      "age": 30,
+      "salaryKrw": 36000000,
       "sourceStats": {
         "ip": 47,
         "era": 4.4,
@@ -491,8 +491,8 @@
         "games": 40
       },
       "targetOvr": 54,
-      "bats": "R",
-      "throws": "R"
+      "bats": "L",
+      "throws": "L"
     },
     {
       "id": "SS-윤대경",

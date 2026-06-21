@@ -11,8 +11,7 @@ import { estimateSalaryFromOvr, salaryKrwToGame } from './ratings/salaryScale'
 import { ensureHandedness } from '../engine/sim/handedness'
 import { handednessForPlayerId } from './rosters/2026/handednessOverrides'
 import type { BatterSourceStats, PitcherSourceStats, PlayerRecord, PlayerRatings, TeamAbbr, TeamRosterFile } from './types'
-import { ROSTERS_2026 } from './rosters/2026/teams'
-import { loadKboRosterCache } from './rosters/2026/kbo/loadCache'
+import { ROSTERS_KBO } from './rosters/2026/kbo/index'
 
 export const DATA_SEASON = 2026
 
@@ -179,8 +178,11 @@ export function validateRosterFile(file: TeamRosterFile): string[] {
   return errors
 }
 
-function rosterFiles(): typeof ROSTERS_2026 {
-  return loadKboRosterCache() ?? ROSTERS_2026
+function rosterFiles(): TeamRosterFile[] {
+  if (ROSTERS_KBO.length === 0) {
+    throw new Error('KBO 로스터가 비어 있습니다. npm run kbo:sync-roster 를 실행하세요.')
+  }
+  return ROSTERS_KBO
 }
 
 export function validateAllRosters(): { ok: boolean; errors: string[] } {

@@ -82,9 +82,9 @@ function parseHitterTable(html: string): KboRecordHitter[] {
       name: cells[1]!,
       kboTeam: cells[2]!,
       avg: num(cells[3]!),
-      pa: num(cells[4]!),
-      ab: num(cells[5]!),
-      hr: num(cells[9]!),
+      pa: num(cells[5]!),
+      ab: num(cells[6]!),
+      hr: num(cells[11]!),
     })
   }
   return out
@@ -103,9 +103,9 @@ function parseHitterAdvanced(html: string): Map<string, Partial<KboRecordHitter>
     if (cells.length < 8) continue
     map.set(link[1]!, {
       bb: num(cells[4]!),
-      k: num(cells[6]!),
-      slg: num(cells[7]!),
-      obp: num(cells[8]!),
+      k: num(cells[7]!),
+      slg: num(cells[9]!),
+      obp: num(cells[10]!),
     })
   }
   return map
@@ -124,7 +124,7 @@ function parsePitcherTable(html: string): KboRecordPitcher[] {
     const link = row[1]!.match(/playerId=(\d+)/)
     if (!link) continue
 
-    const ip = parseKboInnings(cells[9] ?? '')
+    const ip = parseKboInnings(cells[10] ?? '')
     const games = num(cells[4]!)
     out.push({
       playerId: link[1]!,
@@ -137,13 +137,12 @@ function parsePitcherTable(html: string): KboRecordPitcher[] {
       saves: num(cells[7]!),
       holds: num(cells[8]!),
       ip,
-      hits: num(cells[10]!),
-      hr: num(cells[11]!),
-      bb: num(cells[12]!),
-      k: num(cells[14]!),
-      er: num(cells[15]!),
-      whip: num(cells[16]!),
-      gs: games != null && num(cells[5]!) != null ? undefined : undefined,
+      hits: num(cells[11]!),
+      hr: num(cells[12]!),
+      bb: num(cells[13]!),
+      k: num(cells[15]!),
+      er: num(cells[17]!),
+      whip: num(cells[18]!),
     })
   }
   return out
@@ -188,10 +187,17 @@ export async function fetchKboPlayerProfile(playerId: string): Promise<KboPlayer
   return { name: '', positionLabel: label }
 }
 
+function saneRate(value: number | undefined, fallback: number): number {
+  if (value == null || !Number.isFinite(value)) return fallback
+  if (value > 0 && value <= 1.5) return value
+  return fallback
+}
+
 export function hitterToSourceStats(h: KboRecordHitter): BatterSourceStats {
   const pa = h.pa ?? 200
-  const obp = h.obp ?? (h.avg != null ? h.avg + 0.05 : 0.33)
-  const slg = h.slg ?? (h.avg != null ? h.avg + 0.08 : 0.42)
+  const avgFallback = h.avg ?? 0.27
+  const obp = saneRate(h.obp, avgFallback + 0.05)
+  const slg = saneRate(h.slg, avgFallback + 0.08)
   const iso = Math.max(0.05, slg - (h.avg ?? 0.27))
   const bbPct = pa > 0 && h.bb != null ? h.bb / pa : 0.08
   const kPct = pa > 0 && h.k != null ? h.k / pa : 0.2

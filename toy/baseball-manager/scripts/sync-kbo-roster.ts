@@ -2,7 +2,7 @@
  * KBO 공식 사이트에서 1군 로스터를 갱신해 JSON 캐시로 덮어씁니다.
  *
  * 파이프라인:
- *   1. 기존 TS 로스터(시드) 1군 명단
+ *   1. 기존 JSON 로스터(시드) 1군 명단
  *   2. KBO 검색 → playerId·현재 팀 확인
  *   3. 기록실 시즌 스탯 + 상세 프로필 → PlayerRecord
  *   4. data/rosters/{season}/ + src/data/rosters/{season}/kbo/*.json 저장
@@ -21,7 +21,6 @@ import { overallRating } from '../src/engine/generator'
 import { FIRST_TEAM_MAX } from '../src/engine/roster'
 import { batterRatingsFromStats } from '../src/data/ratings/batterFromStats'
 import { pitcherRatingsFromStats } from '../src/data/ratings/pitcherFromStats'
-import { ROSTERS_2026 } from '../src/data/rosters/2026/teams'
 import type { PlayerRecord, TeamAbbr, TeamRosterFile } from '../src/data/types'
 import type { Player, PlayerRole } from '../src/types/game'
 import { searchKboPlayer, sleep } from './kbo/kboClient'
@@ -50,6 +49,8 @@ function slug(name: string): string {
 function pid(team: TeamAbbr, name: string): string {
   return `${team}-${slug(name)}`
 }
+
+const ALL_TEAM_ABBRS: TeamAbbr[] = ['KIA', 'NC', 'SSG', 'WO', 'KT', 'DS', 'LG', 'LT', 'HH', 'SS']
 
 function parseArgs() {
   const args = process.argv.slice(2)
@@ -228,16 +229,29 @@ function readExistingKboFiles(outSrc: string): Map<TeamAbbr, TeamRosterFile> {
   return map
 }
 
+function loadSeedFiles(
+  existingKbo: Map<TeamAbbr, TeamRosterFile>,
+  team?: TeamAbbr,
+): TeamRosterFile[] {
+  const abbrs = team ? [team] : ALL_TEAM_ABBRS
+  return abbrs.map((abbr) => {
+    const file = existingKbo.get(abbr)
+    if (!file) {
+      throw new Error(
+        `${abbr} 로스터 JSON이 없습니다. 먼저 전체 sync를 실행하거나 --discover 로 보충하세요.`,
+      )
+    }
+    return file
+  })
+}
+
 function mergeAllSources(
   updated: TeamRosterFile[],
   existingKbo: Map<TeamAbbr, TeamRosterFile>,
 ): TeamRosterFile[] {
-  const map = new Map<TeamAbbr, TeamRosterFile>(
-    ROSTERS_2026.map((f) => [f.teamAbbr, f]),
-  )
-  for (const [abbr, file] of existingKbo) map.set(abbr, file)
+  const map = new Map<TeamAbbr, TeamRosterFile>(existingKbo)
   for (const file of updated) map.set(file.teamAbbr, file)
-  return ROSTERS_2026.map((f) => map.get(f.teamAbbr)!)
+  return ALL_TEAM_ABBRS.map((abbr) => map.get(abbr)!)
 }
 
 function writeTeamJson(dir: string, file: TeamRosterFile) {
@@ -278,19 +292,16 @@ async function main() {
     `기록실 풀: 타자 ${pool.hitters.size}명, 투수 ${pool.pitchers.size}명\n`,
   )
 
-  const seedFiles = team
-    ? ROSTERS_2026.filter((f) => f.teamAbbr === team)
-    : ROSTERS_2026
+  const outData = path.join(ROOT, 'data/rosters', String(season))
+  const outSrc = path.join(ROOT, 'src/data/rosters', String(season), 'kbo')
+  const manifestPath = path.join(outData, 'manifest.json')
+  const existingKbo = readExistingKboFiles(outSrc)
+  const seedFiles = loadSeedFiles(existingKbo, team)
 
   if (seedFiles.length === 0) {
     console.error(`팀을 찾을 수 없음: ${team}`)
     process.exit(1)
   }
-
-  const outData = path.join(ROOT, 'data/rosters', String(season))
-  const outSrc = path.join(ROOT, 'src/data/rosters', String(season), 'kbo')
-  const manifestPath = path.join(outData, 'manifest.json')
-  const existingKbo = readExistingKboFiles(outSrc)
 
   const updatedPartial: TeamRosterFile[] = []
   let processed = 0
@@ -376,7 +387,7 @@ async function main() {
 
   console.log(`\n저장: ${outData}/`)
   console.log(`번들: ${outSrc}/`)
-  console.log(`\n게임에서 사용: VITE_ROSTER_SOURCE=kbo npm run dev`)
+  console.log(`\n게임에서 사용: npm run dev`)
 }
 
 main().catch((err) => {
