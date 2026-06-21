@@ -233,6 +233,219 @@ interface FarmStanding {
 - **유망주 풀** — 18~22세, 2군 등록·계약금 지급
 - **UI** — `DraftPage`, 내 차례까지 / 자동 진행
 
-- [ ] 3. 2026 실제 선수들로 선수 데이터베이스 구성
+- [x] 3. 2026 실제 선수들로 선수 데이터베이스 구성 *(P1~P5 1차 완료 — 드래프트/FA 실데이터는 2차)*
+
+> 프로시저럴 생성(`generatePlayer`) 대신 **KBO 10개 구단 실명·실제 포지션·(가능하면) 실제 스탯 기반** 로스터로 게임을 시작한다.
+
+### 3.1 목표
+
+- **1군 등록 명단** — 2026 시즌 기준 각 구단 **26명** (현재 게임 규칙과 동일)
+- **2군 등록 명단** — 퓨처스/2군 등록 선수 위주 **최대 28명** (데이터 부족 시 **부분 실데이터 + 생성 보충**)
+- **능력치** — 2025 시즌(또는 최근 1~2년) 성적을 게임 속성(`contact`, `power`, `velocity` 등)으로 **환산**
+- **연봉·나이** — 공개 정보 기반 추정치 (게임 예산 스케일에 맞게 **정규화**)
+- **신규 게임** — `generateLeague()` 대신 `loadRoster2026()` 로 10팀 초기화
+- **오프시즌 연동** — 드래프트 유망주·FA는 **실데이터 풀 확장** 또는 기존 생성 혼합 (1차는 생성 유지 가능)
+
+### 3.2 현재 상태 (as-is)
+
+| 영역 | 현재 |
+|------|------|
+| 선수 생성 | `generator.ts` — 랜덤 한국식 이름, `ROSTER_TEMPLATE` 포지션 고정 |
+| 구단 | `TEAM_DEFS` 10팀 — 실제 구단명·색·구장은 일치 |
+| 선수 ID | `crypto.randomUUID()` — 세이브 간 동일 선수 추적 불가 |
+| 2군 | `FARM_ROSTER_TEMPLATE` 전량 프로시저럴 |
+| 스탯 출처 | 없음 — tier(`star/avg/weak`) + 랜덤 분산 |
+| 드래프트/FA | 프로시저럴 유망주·가상 FA |
+
+### 3.3 설계 방향
+
+**데이터 소스 (권장: 정적 JSON + 수동 큐레이션)**
+
+| 우선순위 | 소스 | 용도 |
+|----------|------|------|
+| 1 | 수동 작성 JSON (`src/data/rosters/2026/`) | 1군 엔트리, 핵심 2군 |
+| 2 | 공개 기록 참고 (KBO 기록실, Statiz, 위키 등) | 능력치 환산 입력값 |
+| 3 | `generatePlayer()` | 2군 잔여 슬롯·드래프트·FA 보충 |
+
+> 자동 크롤링은 1차 범위 **제외** (법적 이슈·유지보수·파서 깨짐). 대신 **시즌별 JSON 갱신** 워크플로를 문서화.
+
+**능력치 환산 (개념)**
+
+```
+타자: wOBA/OPS, ISO, BB%, K%, SB  → contact, power, eye, speed (+ fielding은 포지션·골드글러브 보정)
+투수: ERA, FIP, K/9, BB/9, IP   → velocity, control, movement, stamina (SP/RP 역할 분리)
+```
+
+- 리그 평균 = OVR 55~60 앵커, MVP급 = 80+, 2군 유망주 = 45~65
+- **단일 시즌 소样本** 보정: PA/IP minimum 미달 시 regressed stats (SHRINK)
+
+**연봉 스케일**
+
+- 실제 KBO 연봉(원) → 게임 `$` 로 **선형 스케일** (예: 1억원 ≈ $100K, 팀 예산 $8~15M 유지)
+- 데이터 없으면 OVR·나이 기반 `estimateSalary()`
+
+**선수 ID**
+
+- 안정 ID: `{teamAbbr}-{slug}` 또는 `{teamAbbr}-{backNumber}` (예: `KIA-김도영`)
+- 런타임 `Player.id`는 데이터 ID 그대로 사용 → 트레이드·기록·세이브 일관성
+
+### 3.4 데이터 모델
+
+#### 원본 스키마 (JSON, `PlayerRecord`)
+
+```ts
+/** src/data/types.ts — 런타임 Player와 분리 */
+export interface PlayerRecord {
+  id: string                    // 안정 식별자
+  name: string
+  teamAbbr: keyof typeof TEAM_MAP
+  role: PlayerRole              // 게임 포지션 (SP/RP/SS 등)
+  rosterLevel: 'first' | 'farm'
+  age: number
+  /** 원화 연봉(선택) — 로더에서 게임 salary로 변환 */
+  salaryKrw?: number
+  /** 환산 입력용 (선택, 로더-only) */
+  sourceStats?: BatterSource | PitcherSource
+  /** 직접 지정 시 sourceStats 무시 */
+  ratings?: Partial<Pick<Player, 'contact' | 'power' | 'eye' | 'speed' | 'fielding' | 'velocity' | 'control' | 'movement' | 'stamina'>>
+  potential?: number            // 미지정 시 rollPotential
+}
+```
+
+#### 디렉터리 구조 (안)
+
+```
+src/data/
+  types.ts
+  ratings/
+    batterFromStats.ts      # wOBA 등 → contact/power/eye
+    pitcherFromStats.ts
+    salaryScale.ts
+  rosters/
+    2026/
+      index.ts              # re-export + validate
+      kia.json
+      lg.json
+      ... (10 files)
+      farm/                 # (선택) 2군만 별도
+        kia-farm.json
+```
+
+#### GameState / Player 확장 (선택)
+
+```ts
+interface Player {
+  // ... 기존
+  realPlayerId?: string       // = id from JSON, 디버그·출처 표시
+  dataSeason?: number         // 2026
+}
+```
+
+- **세이브 버전:** v7 (`baseball-manager:v6`)
+- **마이그레이션:** v6 → v7 시 기존 세이브는 **프로시저럴 유지** 또는 “실데이터로 새 게임 권장” (출시 전 결정)
+
+### 3.5 엔진 작업
+
+#### `rosterLoader.ts` (신규)
+
+- [x] `loadTeamRoster(abbr): Player[]` — JSON → `Player` (stats·potential·morale 초기화)
+- [x] `loadLeague2026(userTeamIndex): Team[]` — 10팀 + `generateDefaultStaff`
+- [x] `validateRoster(records)` — 1군 26 / 2군 28, 포지션 중복 허용 범위, 필수 SP/RP/C
+- [x] `fillFarmGaps(team)` — 2군 미달 시 `generatePlayer`로 **이름만 가상** 보충 (표시: `(퓨처스)` 접두?)
+
+#### `ratings/batterFromStats.ts` / `pitcherFromStats.ts` (신규)
+
+- [x] 리그 평균 상수 테이블 (2025 KBO 기준, 추후 `data/constants/league2025.json`)
+- [x] z-score 또는 percentile → 1~99 스케일
+- [x] SP/RP 분류: GS%, IP/G
+
+#### `generator.ts` 수정
+
+- [ ] `generateLeague()` — `USE_REAL_ROSTERS` 플래그 또는 `createInitialState`에서 분기
+- [ ] `generateTeam()` — 실데이터 모드에서는 **사용 안 함** (fallback만)
+- [ ] `TEAM_DEFS` — `abbr`를 JSON `teamAbbr`와 **단일 소스**로 통합
+
+#### 오프시즌 연동 (2차)
+
+- [ ] **드래프트** — `generateProspectPool()` 일부를 `2026-draft-class.json` 실명 후보로 교체
+- [ ] **FA** — `collectContractExpirations` 시 실명 유지, `formerTeamName` 정확도 향상
+- [ ] **스토브** — 실제 FA 예상 명단 시즌별 JSON (선택)
+
+#### 검증 스크립트 (신규, `scripts/`)
+
+- [x] `npm run validate:rosters` — JSON 스키마·인원·중복 ID·팀별 payroll 합계
+- [ ] (선택) `npm run roster:report` — 팀별 OVR 분포 출력 (밸런스 튜닝용)
+
+### 3.6 UI 작업
+
+#### `StartScreen`
+
+- [x] 구단 선택 시 **1군 핵심 선수 3~5명** 프리뷰 (OVR·포지션)
+- [x] “2026 실제 명단 기반” 배지
+
+#### `SquadPage` / `FarmSquadPage` / `PlayerDetailModal`
+
+- [ ] 실명 표시 (이미 name 필드)
+- [ ] (선택) `dataSeason` / 프로시저럴 보충 선수 구분 배지
+
+#### `StatsPage`
+
+- [ ] (선택) 실제 등번호·포지션 표기 확장
+
+### 3.7 gameStore 변경
+
+- [x] `createInitialState()` → `loadLeague2026(teamIndex)` 호출 *(generateLeague 대체)*
+- [ ] `migrateState` v7 필드 (`realPlayerId`, `dataSeason`)
+- [ ] 개발 플래그: `localStorage` 또는 `.env` `VITE_USE_REAL_ROSTERS=true` 로 A/B 테스트
+
+### 3.8 구현 단계 (권장 순서)
+
+| Phase | 내용 | 산출물 | 예상 규모 |
+|-------|------|--------|-----------|
+| **P1** | 스키마·로더·환산기 골격 | `PlayerRecord`, `rosterLoader`, 1팀 POC (KIA 1군 26) | 2~3일 |
+| **P2** | 능력치 환산 + 연봉 스케일 | `batterFromStats`, `pitcherFromStats`, `salaryScale` | 2~3일 |
+| **P3** | 10팀 1군 JSON 완성 | `rosters/2026/*.json`, `validate:rosters` | 3~5일 (데이터 입력 병목) |
+| **P4** | 2군 데이터 (부분) + gap fill | `farm/*.json` 또는 팀 JSON에 `farm` 배열 | 2~4일 |
+| **P5** | 게임 통합·밸런스 | `createInitialState` 전환, 시뮬 1시즌 플레이테스트, OVR 분포 튜닝 | 2~3일 |
+| **P6** | 오프시즌·문서 | 드래프트/FA 실데이터(선택), README·데이터 갱신 가이드 | 1~2일 |
+
+**POC 완료 기준 (P1+P2):** KIA 한 팀만 실데이터로 새 게임 시작 → 라인업·경기 시뮬·OVR 체감 OK
+
+### 3.9 수용 기준 (Definition of Done)
+
+- [x] 새 게임 시 10팀 **1군 26명 실명** (2군은 최소 50% 실데이터 또는 문서화된 보충 규칙)
+- [ ] 각 팀 OVR 분포가 **비현실적 편차 없음** (1팀 전원 90+ / 전원 40- 금지)
+- [x] `validate:rosters` CI 통과
+- [ ] 기존 기능 회귀 없음: 승하향, 라인업, 시뮬, 스토브, 드래프트, FA
+- [x] `npm run build` 통과
+- [ ] README에 데이터 출처·갱신 방법·비공식 팬메이드 고지
+
+### 3.10 이후 연계
+
+| TODO | 연계 |
+|------|------|
+| **5. 시뮬 고도화** | 실제 투타 플atoon, 구종, park factor |
+| **스토브/FA** | 실제 FA 명단 JSON, 멀티-year contract |
+| **2군** | 퓨처스 실제 순위·팀명 (현재는 1군 구단명 공유) |
+
+### 3.11 오픈 이슈 (구현 전 결정)
+
+- [ ] **기준 시점:** 2026 시즌 개막 엔트리 vs 2025 종료 rosters + 트레이드 반영
+- [ ] **2군 커버리지:** 전원 수동 vs 1군만 실데이터 + 2군 프로시저럴
+- [ ] **등번호·사진:** 1차 범위 포함 여부 (권장: **제외**, 이름·포지션·스탯만)
+- [ ] **저작권/고지:** 팬메이드 비영리 고지 문구 위치 (StartScreen footer)
+- [ ] **세이브 호환:** v6 세이브 강제 마이그레이션 vs 새 게임만 v7
+- [ ] **데이터 언어:** 선수명 한글만 vs `nameEn` 병기
+
+### 3.12 데이터 입력 워크플로 (운영)
+
+1. KBO 1군 엔트리 스프링캠프/개막 기준 스프레드시트 작성 (팀·이름·포지션·나이·연봉·2025 기록)
+2. `scripts/csv-to-roster.ts` (선택)로 JSON 변환
+3. `npm run validate:rosters` → OVR 리포트 확인
+4. 게임 내 5~10경기 플레이 → 팀 강세/열세 조정 (ratings 직접 override 또는 sourceStats 수정)
+5. 시즌 중: JSON patch 버전 (`2026.1`, `2026.2`)
+
+---
+
 - [ ] 4. 경기 시뮬레이션시 그래픽 적용
 - [ ] 5. 시뮬레이션 고도화

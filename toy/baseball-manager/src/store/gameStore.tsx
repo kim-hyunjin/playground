@@ -8,12 +8,8 @@ import {
   type ReactNode,
 } from 'react'
 import type { FieldPosition, GameResult, GameState, Player, ScheduledGame, Team, View } from '../types/game'
-import {
-  defaultLineup,
-  defaultRotation,
-  generateFarmRosterPlayers,
-  generateLeague,
-} from '../engine/generator'
+import { loadLeague2026 } from '../data/rosterLoader'
+import { defaultLineup, defaultRotation, generateFarmRosterPlayers } from '../engine/generator'
 import { generateSchedule, generateFarmSchedule, nextUserGame } from '../engine/schedule'
 import { applyResult, simulateCpuGames, simulateGame } from '../engine/simulation'
 import { simulateFarmWeek } from '../engine/farmSimulation'
@@ -44,8 +40,13 @@ import {
   simulateRemainingDraft,
 } from '../engine/draft'
 
-const STORAGE_KEY = 'baseball-manager:v5'
-const LEGACY_KEYS = ['baseball-manager:v3', 'baseball-manager:v2', 'baseball-manager:v1']
+const STORAGE_KEY = 'baseball-manager:v6'
+const LEGACY_KEYS = [
+  'baseball-manager:v5',
+  'baseball-manager:v3',
+  'baseball-manager:v2',
+  'baseball-manager:v1',
+]
 
 interface GameContextValue {
   state: GameState | null
@@ -86,12 +87,12 @@ interface GameContextValue {
 const GameContext = createContext<GameContextValue | null>(null)
 
 function createInitialState(teamIndex: number, managerName: string): GameState {
-  const teams = generateLeague(teamIndex)
+  const teams = loadLeague2026(teamIndex)
   const userTeam = teams[teamIndex]!
   const totalWeeks = 18
 
   return {
-    version: 6,
+    version: 7,
     userTeamId: userTeam.id,
     teams,
     schedule: generateSchedule(teams, totalWeeks),
@@ -159,7 +160,7 @@ function migrateState(raw: unknown): GameState | null {
 
   return {
     ...s,
-    version: 6,
+    version: 7,
     teams,
     results,
     seasonYear: s.seasonYear ?? 2026,

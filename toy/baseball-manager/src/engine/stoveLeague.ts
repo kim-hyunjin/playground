@@ -260,7 +260,7 @@ export function startNextSeasonState(state: GameState): GameState {
 
   return {
     ...state,
-    version: 6,
+    version: 7,
     seasonYear,
     phase: 'regular',
     teams: teamsWithBudget,
