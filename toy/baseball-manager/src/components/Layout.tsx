@@ -1,8 +1,9 @@
 import { useGame } from '../store/gameStore'
 import type { View } from '../types/game'
+import { stoveWeekLabel } from '../engine/stoveLeague'
 import { PlayerDetailModal } from './PlayerDetailModal'
 
-const NAV: { id: View; label: string; icon: string }[] = [
+const REGULAR_NAV: { id: View; label: string; icon: string }[] = [
   { id: 'dashboard', label: '대시보드', icon: '📊' },
   { id: 'squad', label: '1군', icon: '👥' },
   { id: 'farm', label: '2군', icon: '🌱' },
@@ -15,10 +16,27 @@ const NAV: { id: View; label: string; icon: string }[] = [
   { id: 'transfers', label: '이적시장', icon: '💰' },
 ]
 
+const STOVE_NAV: { id: View; label: string; icon: string }[] = [
+  { id: 'dashboard', label: '대시보드', icon: '📊' },
+  { id: 'draft', label: '드래프트', icon: '📝' },
+  { id: 'stove', label: 'FA 영입', icon: '🔥' },
+  { id: 'squad', label: '1군', icon: '👥' },
+  { id: 'farm', label: '2군', icon: '🌱' },
+  { id: 'coaches', label: '코치', icon: '🎯' },
+  { id: 'stats', label: '스탯', icon: '📈' },
+  { id: 'standings', label: '시즌 기록', icon: '🏆' },
+]
+
 export function Layout({ children }: { children: React.ReactNode }) {
   const { view, setView, userTeam, state, resetGame } = useGame()
 
   if (!state || !userTeam) return null
+
+  const inStove = state.phase === 'stove'
+  const nav = inStove ? STOVE_NAV : REGULAR_NAV
+  const subLabel = inStove
+    ? `${state.seasonYear} · ${stoveWeekLabel(state)}`
+    : `${state.seasonYear} 시즌 · ${state.currentWeek}/${state.totalWeeks}주차`
 
   return (
     <div className="flex min-h-screen">
@@ -31,12 +49,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
             {userTeam.city} {userTeam.name}
           </div>
           <div className="text-xs text-[var(--text-muted)]">
-            {state.managerName} 감독 · {state.currentWeek}/{state.totalWeeks}주차
+            {state.managerName} 감독 · {subLabel}
           </div>
         </div>
 
         <nav className="flex flex-1 flex-col gap-1">
-          {NAV.map((item) => (
+          {nav.map((item) => (
             <button
               key={item.id}
               type="button"

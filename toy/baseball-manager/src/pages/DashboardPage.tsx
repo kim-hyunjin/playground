@@ -4,6 +4,8 @@ import { countByLevel, firstTeamPlayers } from '../engine/roster'
 import { sortedStandings, sortedFarmStandings } from '../engine/schedule'
 import { MiniStat } from '../components/PlayerCard'
 import { PlayerNameButton } from '../components/PlayerNameButton'
+import { isDraftComplete, draftProgressLabel } from '../engine/draft'
+import { isSeasonComplete, isStoveLeague, stoveWeekLabel } from '../engine/stoveLeague'
 import { useGame } from '../store/gameStore'
 
 export function DashboardPage() {
@@ -11,6 +13,7 @@ export function DashboardPage() {
     state,
     userTeam,
     upcomingGame,
+    enterStoveLeague,
     setView,
     advanceWeek,
     playUserGame,
@@ -29,14 +32,56 @@ export function DashboardPage() {
   const farmStandings = sortedFarmStandings(state.teams)
   const rank = standings.findIndex((t) => t.id === userTeam.id) + 1
   const farmRank = farmStandings.findIndex((t) => t.id === userTeam.id) + 1
-  const seasonOver = state.currentWeek > state.totalWeeks
+  const seasonComplete = isSeasonComplete(state)
+  const inStove = isStoveLeague(state)
+
+  if (inStove) {
+    return (
+      <div className="bm-animate-in space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold text-[var(--text-h)]">스토브리그</h1>
+          <p className="text-sm text-[var(--text-muted)]">
+            {state.seasonYear} 시즌 종료 · {stoveWeekLabel(state)} · FA {state.freeAgents.length}명
+          </p>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <MiniStat label="1군 승" value={userTeam.wins} />
+          <MiniStat label="1군 패" value={userTeam.losses} />
+          <MiniStat label="2군 승" value={userTeam.farmWins} />
+          <MiniStat label="예산" value={formatSalary(userTeam.budget)} />
+        </div>
+
+        <div className="bm-card p-5">
+          <h2 className="mb-3 font-semibold text-[var(--text-h)]">오프시즌</h2>
+          <p className="mb-4 text-sm text-[var(--text-muted)]">
+            {isDraftComplete(state.draft)
+              ? '드래프트가 끝났습니다. FA 영입으로 팀을 보강하세요.'
+              : `${draftProgressLabel(state.draft)} — 신인 드래프트를 먼저 진행하세요.`}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {!isDraftComplete(state.draft) && (
+              <button type="button" className="bm-btn bm-btn-primary" onClick={() => setView('draft')}>
+                드래프트 진행
+              </button>
+            )}
+            <button type="button" className="bm-btn bm-btn-ghost" onClick={() => setView('stove')}>
+              FA 영입
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const seasonOver = seasonComplete
 
   return (
     <div className="bm-animate-in space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-[var(--text-h)]">대시보드</h1>
         <p className="text-sm text-[var(--text-muted)]">
-          {state.currentWeek}주차 · 1군 {userTeam.wins}승 {userTeam.losses}패 ({rank}위) · 2군 {userTeam.farmWins}승 {userTeam.farmLosses}패 ({farmRank}위)
+          {state.seasonYear} 시즌 · {state.currentWeek}주차 · 1군 {userTeam.wins}승 {userTeam.losses}패 ({rank}위) · 2군 {userTeam.farmWins}승 {userTeam.farmLosses}패 ({farmRank}위)
         </p>
       </div>
 
@@ -98,7 +143,12 @@ export function DashboardPage() {
         <div className="bm-card p-5">
           <h2 className="mb-3 font-semibold text-[var(--text-h)]">다음 경기</h2>
           {seasonOver ? (
-            <p className="text-[var(--text-muted)]">시즌이 종료되었습니다.</p>
+            <div className="space-y-3">
+              <p className="text-[var(--text-muted)]">정규시즌이 종료되었습니다.</p>
+              <button type="button" className="bm-btn bm-btn-primary" onClick={enterStoveLeague}>
+                스토브리그 진입
+              </button>
+            </div>
           ) : upcomingGame && opponent ? (
             <div className="space-y-3">
               <div className="flex items-center justify-between">

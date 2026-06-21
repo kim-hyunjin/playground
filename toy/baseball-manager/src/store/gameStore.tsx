@@ -29,8 +29,22 @@ import { ensurePlayerRosterFields } from '../engine/statsAccumulator'
 import { generateCoachMarket, generateDefaultStaff, refreshCoachMarket } from '../engine/coachGenerator'
 import { developTeam } from '../engine/development'
 import { generateCallUpSuggestions, mergeCallUpSuggestions } from '../engine/callUpSuggestions'
+import {
+  advanceStoveWeekState,
+  buildStoveLeagueState,
+  initialSeasonMeta,
+  isStoveLeague,
+  signFreeAgentForTeam,
+  startNextSeasonState,
+} from '../engine/stoveLeague'
+import {
+  draftProspect,
+  initializeDraft,
+  simulateDraftUntilUser,
+  simulateRemainingDraft,
+} from '../engine/draft'
 
-const STORAGE_KEY = 'baseball-manager:v4'
+const STORAGE_KEY = 'baseball-manager:v5'
 const LEGACY_KEYS = ['baseball-manager:v3', 'baseball-manager:v2', 'baseball-manager:v1']
 
 interface GameContextValue {
@@ -57,6 +71,13 @@ interface GameContextValue {
   fireCoach: (coachId: string) => boolean
   acceptCallUp: (suggestionId: string) => boolean
   dismissCallUp: (suggestionId: string) => void
+  enterStoveLeague: () => void
+  signFreeAgent: (playerId: string) => boolean
+  advanceStoveWeek: () => void
+  startNextSeason: () => void
+  draftPlayer: (playerId: string) => boolean
+  simulateDraftToUser: () => void
+  simulateRemainingDraft: () => void
   focusedPlayerId: string | null
   openPlayer: (playerId: string) => void
   closePlayer: () => void
@@ -70,13 +91,14 @@ function createInitialState(teamIndex: number, managerName: string): GameState {
   const totalWeeks = 18
 
   return {
-    version: 5,
+    version: 6,
     userTeamId: userTeam.id,
     teams,
     schedule: generateSchedule(teams, totalWeeks),
     farmSchedule: generateFarmSchedule(teams, totalWeeks),
     coachMarket: generateCoachMarket(),
     callUpSuggestions: [],
+    ...initialSeasonMeta(),
     currentWeek: 1,
     totalWeeks,
     lineup: defaultLineup(userTeam),
@@ -132,12 +154,20 @@ function migrateState(raw: unknown): GameState | null {
   const teams = (s.teams ?? []).map(migrateTeam)
   const results = (s.results ?? []).map(migrateResult)
   const totalWeeks = s.totalWeeks ?? 18
+  const draft =
+    s.draft ?? (s.phase === 'stove' ? initializeDraft(teams) : undefined)
 
   return {
     ...s,
-    version: 5,
+    version: 6,
     teams,
     results,
+    seasonYear: s.seasonYear ?? 2026,
+    phase: s.phase ?? 'regular',
+    freeAgents: s.freeAgents ?? [],
+    draft,
+    stoveWeek: s.stoveWeek,
+    stoveTotalWeeks: s.stoveTotalWeeks,
     farmSchedule: s.farmSchedule ?? generateFarmSchedule(teams, totalWeeks),
     farmResults: s.farmResults ?? [],
     coachMarket: s.coachMarket?.length ? s.coachMarket : generateCoachMarket(),
@@ -239,7 +269,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const playUserGame = useCallback((): GameResult | null => {
-    if (!state) return null
+    if (!state || state.phase !== 'regular') return null
     const game = nextUserGame(state.schedule, state.userTeamId, state.currentWeek)
     if (!game) return null
 
@@ -279,7 +309,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
   const advanceWeek = useCallback(() => {
     setState((s) => {
-      if (!s || s.currentWeek >= s.totalWeeks) return s
+      if (!s || s.phase !== 'regular' || s.currentWeek >= s.totalWeeks) return s
 
       const cpu = simulateCpuGames(s.schedule, s.teams, s.currentWeek, s.userTeamId)
       const farm = simulateFarmWeek(s.farmSchedule, cpu.teams, s.currentWeek)
@@ -318,7 +348,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const buyPlayer = useCallback((player: Player, fromTeamId: string): boolean => {
-    if (!state || !userTeam) return false
+    if (!state || !userTeam || state.phase !== 'regular') return false
     if (userTeam.budget < player.salary) return false
 
     const firstFull = countByLevel(userTeam, 'first') >= FIRST_TEAM_MAX
@@ -484,6 +514,82 @@ export function GameProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
+  const enterStoveLeague = useCallback(() => {
+    setState((s) => {
+      if (!s || s.phase !== 'regular' || s.currentWeek < s.totalWeeks) return s
+      return buildStoveLeagueState(s)
+    })
+    setView('draft')
+  }, [])
+
+  const draftPlayer = useCallback((playerId: string): boolean => {
+    let ok = false
+    setState((s) => {
+      if (!s) return s
+      const next = draftProspect(s, playerId)
+      if (!next) return s
+      ok = true
+      return next
+    })
+    return ok
+  }, [])
+
+  const simulateDraftToUser = useCallback(() => {
+    setState((s) => {
+      if (!s || s.phase !== 'stove' || !s.draft) return s
+      return simulateDraftUntilUser(s)
+    })
+  }, [])
+
+  const simulateRemainingDraftFn = useCallback(() => {
+    setState((s) => {
+      if (!s || s.phase !== 'stove' || !s.draft) return s
+      return simulateRemainingDraft(s)
+    })
+  }, [])
+
+  const signFreeAgent = useCallback((playerId: string): boolean => {
+    let ok = false
+    setState((s) => {
+      if (!s || s.phase !== 'stove') return s
+      const listing = s.freeAgents.find((l) => l.player.id === playerId)
+      if (!listing) return s
+
+      const teamIdx = s.teams.findIndex((t) => t.id === s.userTeamId)
+      if (teamIdx < 0) return s
+
+      const signed = signFreeAgentForTeam(s.teams[teamIdx]!, listing)
+      if (!signed) return s
+
+      ok = true
+      const teams = [...s.teams]
+      teams[teamIdx] = signed.team
+      return {
+        ...s,
+        teams,
+        freeAgents: s.freeAgents.filter((l) => l.player.id !== playerId),
+      }
+    })
+    return ok
+  }, [])
+
+  const advanceStoveWeek = useCallback(() => {
+    setState((s) => {
+      if (!s || !isStoveLeague(s)) return s
+      const maxWeek = s.stoveTotalWeeks ?? 4
+      if ((s.stoveWeek ?? 1) >= maxWeek) return s
+      return advanceStoveWeekState(s)
+    })
+  }, [])
+
+  const startNextSeason = useCallback(() => {
+    setState((s) => {
+      if (!s || s.phase !== 'stove') return s
+      return startNextSeasonState(s)
+    })
+    setView('dashboard')
+  }, [])
+
   const clearLastResult = useCallback(() => setLastResult(null), [])
 
   const value: GameContextValue = {
@@ -510,6 +616,13 @@ export function GameProvider({ children }: { children: ReactNode }) {
     fireCoach,
     acceptCallUp,
     dismissCallUp,
+    enterStoveLeague,
+    signFreeAgent,
+    advanceStoveWeek,
+    startNextSeason,
+    draftPlayer,
+    simulateDraftToUser,
+    simulateRemainingDraft: simulateRemainingDraftFn,
     focusedPlayerId,
     openPlayer,
     closePlayer,

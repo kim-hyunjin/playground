@@ -11,6 +11,8 @@ import { StandingsPage } from './pages/StandingsPage'
 import { TransfersPage } from './pages/TransfersPage'
 import { CoachesPage } from './pages/CoachesPage'
 import { StatsPage } from './pages/StatsPage'
+import { StoveLeaguePage } from './pages/StoveLeaguePage'
+import { DraftPage } from './pages/DraftPage'
 
 function GameShell() {
   const { state, view } = useGame()
@@ -28,6 +30,8 @@ function GameShell() {
     transfers: <TransfersPage />,
     coaches: <CoachesPage />,
     stats: <StatsPage />,
+    stove: <StoveLeaguePage />,
+    draft: <DraftPage />,
   }
 
   return (

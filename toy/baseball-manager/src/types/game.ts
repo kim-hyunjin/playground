@@ -194,6 +194,32 @@ export interface GameResult {
   boxScore: GameBoxScore
 }
 
+export type SeasonPhase = 'regular' | 'stove'
+
+export interface FreeAgentListing {
+  player: Player
+  askingSalary: number
+  formerTeamName?: string
+}
+
+export interface DraftPick {
+  round: number
+  overall: number
+  teamId: string
+  playerId: string
+}
+
+export interface DraftState {
+  pool: Player[]
+  /** 역순 순위 (최하위 → 최상위) */
+  order: string[]
+  pickSequence: string[]
+  currentPick: number
+  totalPicks: number
+  picks: DraftPick[]
+  complete: boolean
+}
+
 export type View =
   | 'dashboard'
   | 'squad'
@@ -205,15 +231,23 @@ export type View =
   | 'transfers'
   | 'coaches'
   | 'stats'
+  | 'stove'
+  | 'draft'
 
 export interface GameState {
-  version: 5
+  version: 6
   userTeamId: string
   teams: Team[]
   schedule: ScheduledGame[]
   farmSchedule: ScheduledGame[]
   coachMarket: Coach[]
   callUpSuggestions: CallUpSuggestion[]
+  seasonYear: number
+  phase: SeasonPhase
+  freeAgents: FreeAgentListing[]
+  draft?: DraftState
+  stoveWeek?: number
+  stoveTotalWeeks?: number
   currentWeek: number
   totalWeeks: number
   lineup: Record<FieldPosition, string>

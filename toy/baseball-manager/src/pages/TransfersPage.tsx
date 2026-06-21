@@ -29,6 +29,17 @@ export function TransfersPage() {
 
   if (!state || !userTeam) return null
 
+  if (state.phase !== 'regular') {
+    return (
+      <div className="bm-animate-in space-y-4">
+        <h1 className="text-2xl font-bold text-[var(--text-h)]">이적시장</h1>
+        <p className="text-[var(--text-muted)]">
+          정규시즌 중에만 다른 구단 선수를 영입할 수 있습니다. FA 영입은 스토브리그 메뉴를 이용하세요.
+        </p>
+      </div>
+    )
+  }
+
   const firstCount = countByLevel(userTeam, 'first')
   const farmCount = countByLevel(userTeam, 'farm')
   const firstFull = firstCount >= FIRST_TEAM_MAX
