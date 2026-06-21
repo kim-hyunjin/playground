@@ -20,6 +20,10 @@ export interface Player {
   salary: number
   morale: number
   fatigue: number
+  /** OVR 성장 상한 (1~99) */
+  potential: number
+  /** 경기 출전으로 누적 — 주간 육성 확률에 반영 */
+  developmentXp: number
   seasonStats: BatterStats | PitcherStats
   farmSeasonStats: BatterStats | PitcherStats
 }
@@ -107,6 +111,7 @@ export interface Team {
   stadium: string
   budget: number
   players: Player[]
+  coaches: Coach[]
   wins: number
   losses: number
   runsScored: number
@@ -115,6 +120,29 @@ export interface Team {
   farmLosses: number
   farmRunsScored: number
   farmRunsAllowed: number
+}
+
+export type CoachRole = 'farm' | 'hitting' | 'pitching' | 'fielding'
+
+/** 코치 능력: teaching=육성, motivation=사기, scouting=콜업/스카우팅 */
+export interface Coach {
+  id: string
+  name: string
+  role: CoachRole
+  age: number
+  teaching: number
+  motivation: number
+  scouting: number
+  salary: number
+}
+
+export interface CallUpSuggestion {
+  id: string
+  week: number
+  playerId: string
+  coachId: string
+  coachName: string
+  reason: string
 }
 
 export interface ScheduledGame {
@@ -175,14 +203,17 @@ export type View =
   | 'match'
   | 'standings'
   | 'transfers'
+  | 'coaches'
   | 'stats'
 
 export interface GameState {
-  version: 3
+  version: 5
   userTeamId: string
   teams: Team[]
   schedule: ScheduledGame[]
   farmSchedule: ScheduledGame[]
+  coachMarket: Coach[]
+  callUpSuggestions: CallUpSuggestion[]
   currentWeek: number
   totalWeeks: number
   lineup: Record<FieldPosition, string>
@@ -192,6 +223,15 @@ export interface GameState {
   farmResults: GameResult[]
   managerName: string
 }
+
+export const COACH_ROLE_LABEL: Record<CoachRole, string> = {
+  farm: '2군 감독',
+  hitting: '타격 코치',
+  pitching: '투수 코치',
+  fielding: '수비 코치',
+}
+
+export const COACH_ROLES: CoachRole[] = ['farm', 'hitting', 'pitching', 'fielding']
 
 export const FIELD_POSITIONS: FieldPosition[] = [
   'C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'DH',

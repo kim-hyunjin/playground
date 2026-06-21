@@ -1,11 +1,22 @@
 import { formatSalary, isPitcher, overallRating, teamPayroll } from '../engine/generator'
+import { teamCoachPayroll } from '../engine/coachGenerator'
 import { countByLevel, firstTeamPlayers } from '../engine/roster'
 import { sortedStandings, sortedFarmStandings } from '../engine/schedule'
 import { MiniStat } from '../components/PlayerCard'
+import { PlayerNameButton } from '../components/PlayerNameButton'
 import { useGame } from '../store/gameStore'
 
 export function DashboardPage() {
-  const { state, userTeam, upcomingGame, setView, advanceWeek, playUserGame } = useGame()
+  const {
+    state,
+    userTeam,
+    upcomingGame,
+    setView,
+    advanceWeek,
+    playUserGame,
+    acceptCallUp,
+    dismissCallUp,
+  } = useGame()
   if (!state || !userTeam) return null
 
   const opponent = upcomingGame
@@ -35,6 +46,53 @@ export function DashboardPage() {
         <MiniStat label="득점" value={userTeam.runsScored} />
         <MiniStat label="예산" value={formatSalary(userTeam.budget)} />
       </div>
+
+      {state.callUpSuggestions.length > 0 && (
+        <div className="bm-card p-5">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="font-semibold text-[var(--text-h)]">2군 감독 콜업 제안</h2>
+            <button type="button" className="bm-btn bm-btn-ghost text-xs" onClick={() => setView('coaches')}>
+              코치진 보기
+            </button>
+          </div>
+          <ul className="space-y-3">
+            {state.callUpSuggestions.map((s) => {
+              const player = userTeam.players.find((p) => p.id === s.playerId)
+              return (
+                <li
+                  key={s.id}
+                  className="rounded-lg border border-[var(--border)] bg-[var(--panel)] p-4"
+                >
+                  <p className="text-sm text-[var(--text-h)]">{s.reason}</p>
+                  {player && (
+                    <p className="mt-1 text-xs text-[var(--text-muted)]">
+                      <PlayerNameButton playerId={player.id} name={player.name} />
+                      {' · '}
+                      OVR {overallRating(player)} · 2군
+                    </p>
+                  )}
+                  <div className="mt-3 flex gap-2">
+                    <button
+                      type="button"
+                      className="bm-btn bm-btn-primary text-xs"
+                      onClick={() => acceptCallUp(s.id)}
+                    >
+                      콜업 승인
+                    </button>
+                    <button
+                      type="button"
+                      className="bm-btn bm-btn-ghost text-xs"
+                      onClick={() => dismissCallUp(s.id)}
+                    >
+                      보류
+                    </button>
+                  </div>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+      )}
 
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="bm-card p-5">
@@ -79,8 +137,12 @@ export function DashboardPage() {
           <h2 className="mb-3 font-semibold text-[var(--text-h)]">팀 현황</h2>
           <dl className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <dt className="text-[var(--text-muted)]">총 연봉</dt>
+              <dt className="text-[var(--text-muted)]">총 연봉 (선수)</dt>
               <dd className="text-[var(--text-h)]">{formatSalary(teamPayroll(userTeam))}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-[var(--text-muted)]">코치 연봉</dt>
+              <dd className="text-[var(--text-h)]">{formatSalary(teamCoachPayroll(userTeam))}</dd>
             </div>
             <div className="flex justify-between">
               <dt className="text-[var(--text-muted)]">1군 등록</dt>

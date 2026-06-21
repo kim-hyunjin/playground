@@ -1,5 +1,7 @@
 import type { FieldPosition, Player, PlayerRole, RosterLevel, Team } from '../types/game'
 import { emptyBatterStats, emptyPitcherStats } from '../types/game'
+import { generateDefaultStaff } from './coachGenerator'
+import { rollPotential } from './playerDevelopment'
 
 const LAST_NAMES = [
   '김', '이', '박', '최', '정', '강', '조', '윤', '장', '임',
@@ -41,28 +43,35 @@ export function generatePlayer(
   const effectiveBase = rosterLevel === 'farm' ? farmBase : base
   const variance = () => clamp(effectiveBase + rand(-8, 8))
 
-  const isPitcher = role === 'SP' || role === 'RP'
+  const isPitcherRole = role === 'SP' || role === 'RP'
 
-  return {
+  const attrs = {
     id: crypto.randomUUID(),
     name: generateName(),
     age: rand(ageMin, ageMax),
     role,
     rosterLevel,
-    contact: isPitcher ? rand(25, 45) : variance(),
-    power: isPitcher ? rand(20, 40) : variance(),
-    eye: isPitcher ? rand(25, 45) : variance(),
-    speed: isPitcher ? rand(30, 55) : variance(),
-    fielding: isPitcher ? rand(40, 60) : variance(),
-    velocity: isPitcher ? variance() : rand(20, 40),
-    control: isPitcher ? variance() : rand(20, 40),
-    movement: isPitcher ? variance() : rand(20, 40),
-    stamina: isPitcher ? (role === 'SP' ? variance() : rand(45, 70)) : rand(50, 80),
-    salary: isPitcher ? rand(80, 350) * 10000 : rand(30, 200) * 10000,
+    contact: isPitcherRole ? rand(25, 45) : variance(),
+    power: isPitcherRole ? rand(20, 40) : variance(),
+    eye: isPitcherRole ? rand(25, 45) : variance(),
+    speed: isPitcherRole ? rand(30, 55) : variance(),
+    fielding: isPitcherRole ? rand(40, 60) : variance(),
+    velocity: isPitcherRole ? variance() : rand(20, 40),
+    control: isPitcherRole ? variance() : rand(20, 40),
+    movement: isPitcherRole ? variance() : rand(20, 40),
+    stamina: isPitcherRole ? (role === 'SP' ? variance() : rand(45, 70)) : rand(50, 80),
+    salary: isPitcherRole ? rand(80, 350) * 10000 : rand(30, 200) * 10000,
     morale: rand(65, 95),
     fatigue: rand(0, 15),
-    seasonStats: isPitcher ? emptyPitcherStats() : emptyBatterStats(),
-    farmSeasonStats: isPitcher ? emptyPitcherStats() : emptyBatterStats(),
+    seasonStats: isPitcherRole ? emptyPitcherStats() : emptyBatterStats(),
+    farmSeasonStats: isPitcherRole ? emptyPitcherStats() : emptyBatterStats(),
+  } satisfies Omit<Player, 'potential' | 'developmentXp'>
+
+  const ovr = overallRating(attrs as Player)
+  return {
+    ...attrs,
+    potential: rollPotential(tier, attrs.age, rosterLevel, ovr),
+    developmentXp: 0,
   }
 }
 
@@ -134,6 +143,7 @@ export function generateTeam(def: (typeof TEAM_DEFS)[number], starBoost = false)
     farmLosses: 0,
     farmRunsScored: 0,
     farmRunsAllowed: 0,
+    coaches: generateDefaultStaff(starBoost),
   }
 }
 

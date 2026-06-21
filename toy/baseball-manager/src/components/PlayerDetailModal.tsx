@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react'
 import { formatSalary, isPitcher } from '../engine/generator'
 import { rosterLevelOf } from '../engine/roster'
+import { evaluateCallUpCandidate } from '../engine/callUpEvaluation'
 import { findPlayerInLeague } from '../engine/playerLookup'
 import { PlayerCard, StatBar } from './PlayerCard'
 import { SabermetricsPanel } from './SabermetricsPanel'
+import { CallUpBadge } from './RosterBadges'
+import { DevelopmentPanel } from './DevelopmentPanel'
 import { useGame } from '../store/gameStore'
 import { POSITION_LABEL } from '../types/game'
 
 export function PlayerDetailModal() {
   const { state, userTeam, focusedPlayerId, closePlayer, releasePlayer, promotePlayer, demotePlayer } = useGame()
-  const [tab, setTab] = useState<'stats' | 'attrs'>('stats')
+  const [tab, setTab] = useState<'stats' | 'attrs' | 'dev'>('stats')
 
   useEffect(() => {
     if (!focusedPlayerId) return
@@ -30,6 +33,13 @@ export function PlayerDetailModal() {
   const isOwnPlayer = userTeam?.id === team.id
   const level = rosterLevelOf(player)
   const statsSource = level === 'farm' ? 'farm' : 'season'
+  const callUpEval =
+    isOwnPlayer && level === 'farm' && userTeam
+      ? evaluateCallUpCandidate(userTeam, player)
+      : null
+  const isSuggested =
+    callUpEval?.eligible &&
+    state.callUpSuggestions.some((s) => s.playerId === player.id)
 
   const handleRelease = () => {
     if (!isOwnPlayer) return
@@ -61,6 +71,17 @@ export function PlayerDetailModal() {
             <div className="text-sm text-[var(--text-muted)]">
               {level === 'farm' ? '2군' : '1군'} · {POSITION_LABEL[player.role]} · {player.age}세 · {formatSalary(player.salary)}
             </div>
+            {callUpEval?.eligible && (
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <CallUpBadge />
+                {isSuggested && (
+                  <span className="text-xs text-amber-400">2군 감독 제안 중</span>
+                )}
+                {callUpEval.reason && (
+                  <span className="text-xs text-[var(--text-muted)]">{callUpEval.reason}</span>
+                )}
+              </div>
+            )}
           </div>
           <button type="button" className="bm-btn bm-btn-ghost px-3 py-2" onClick={closePlayer} aria-label="닫기">
             ✕
@@ -80,6 +101,13 @@ export function PlayerDetailModal() {
             </button>
             <button
               type="button"
+              className={`bm-btn flex-1 text-xs ${tab === 'dev' ? 'bm-btn-primary' : 'bm-btn-ghost'}`}
+              onClick={() => setTab('dev')}
+            >
+              육성
+            </button>
+            <button
+              type="button"
               className={`bm-btn flex-1 text-xs ${tab === 'attrs' ? 'bm-btn-primary' : 'bm-btn-ghost'}`}
               onClick={() => setTab('attrs')}
             >
@@ -89,6 +117,8 @@ export function PlayerDetailModal() {
 
           {tab === 'stats' ? (
             <SabermetricsPanel player={player} statsSource={statsSource} />
+          ) : tab === 'dev' ? (
+            <DevelopmentPanel player={player} />
           ) : (
             <div className="bm-card space-y-3 p-4">
               <StatBar label="사기" value={player.morale} />

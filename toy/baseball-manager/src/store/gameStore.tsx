@@ -20,13 +20,18 @@ import { simulateFarmWeek } from '../engine/farmSimulation'
 import {
   countByLevel,
   demoteWithLineup,
+  autoAdjustLeagueRosters,
   FIRST_TEAM_MAX,
+  FARM_TEAM_MAX,
   promoteInLeague,
 } from '../engine/roster'
 import { ensurePlayerRosterFields } from '../engine/statsAccumulator'
+import { generateCoachMarket, generateDefaultStaff, refreshCoachMarket } from '../engine/coachGenerator'
+import { developTeam } from '../engine/development'
+import { generateCallUpSuggestions, mergeCallUpSuggestions } from '../engine/callUpSuggestions'
 
-const STORAGE_KEY = 'baseball-manager:v3'
-const LEGACY_KEYS = ['baseball-manager:v2', 'baseball-manager:v1']
+const STORAGE_KEY = 'baseball-manager:v4'
+const LEGACY_KEYS = ['baseball-manager:v3', 'baseball-manager:v2', 'baseball-manager:v1']
 
 interface GameContextValue {
   state: GameState | null
@@ -48,6 +53,10 @@ interface GameContextValue {
   releasePlayer: (playerId: string) => void
   promotePlayer: (playerId: string) => boolean
   demotePlayer: (playerId: string) => boolean
+  hireCoach: (coachId: string) => boolean
+  fireCoach: (coachId: string) => boolean
+  acceptCallUp: (suggestionId: string) => boolean
+  dismissCallUp: (suggestionId: string) => void
   focusedPlayerId: string | null
   openPlayer: (playerId: string) => void
   closePlayer: () => void
@@ -61,11 +70,13 @@ function createInitialState(teamIndex: number, managerName: string): GameState {
   const totalWeeks = 18
 
   return {
-    version: 3,
+    version: 5,
     userTeamId: userTeam.id,
     teams,
     schedule: generateSchedule(teams, totalWeeks),
     farmSchedule: generateFarmSchedule(teams, totalWeeks),
+    coachMarket: generateCoachMarket(),
+    callUpSuggestions: [],
     currentWeek: 1,
     totalWeeks,
     lineup: defaultLineup(userTeam),
@@ -105,6 +116,7 @@ function migrateTeam(team: Team): Team {
   return {
     ...team,
     stadium: team.stadium ?? '',
+    coaches: team.coaches?.length ? team.coaches : generateDefaultStaff(false),
     players: hasFarm ? players : [...players, ...generateFarmRosterPlayers()],
     farmWins: team.farmWins ?? 0,
     farmLosses: team.farmLosses ?? 0,
@@ -123,11 +135,13 @@ function migrateState(raw: unknown): GameState | null {
 
   return {
     ...s,
-    version: 3,
+    version: 5,
     teams,
     results,
     farmSchedule: s.farmSchedule ?? generateFarmSchedule(teams, totalWeeks),
     farmResults: s.farmResults ?? [],
+    coachMarket: s.coachMarket?.length ? s.coachMarket : generateCoachMarket(),
+    callUpSuggestions: s.callUpSuggestions ?? [],
   } as GameState
 }
 
@@ -270,7 +284,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
       const cpu = simulateCpuGames(s.schedule, s.teams, s.currentWeek, s.userTeamId)
       const farm = simulateFarmWeek(s.farmSchedule, cpu.teams, s.currentWeek)
 
-      const recovered = farm.teams.map((t) => ({
+      const developed = farm.teams.map(developTeam)
+      const adjusted = autoAdjustLeagueRosters(developed, s.userTeamId)
+
+      const recovered = adjusted.map((t) => ({
         ...t,
         players: t.players.map((p) => ({
           ...p,
@@ -278,14 +295,24 @@ export function GameProvider({ children }: { children: ReactNode }) {
         })),
       }))
 
-      return {
+      const nextWeek = s.currentWeek + 1
+      const interim: GameState = {
         ...s,
         teams: recovered,
         schedule: cpu.schedule,
         farmSchedule: farm.schedule,
         results: [...s.results, ...cpu.results],
         farmResults: [...s.farmResults, ...farm.results],
-        currentWeek: s.currentWeek + 1,
+        currentWeek: nextWeek,
+      }
+
+      const suggestions = generateCallUpSuggestions(interim)
+      const coachMarket = refreshCoachMarket(s.coachMarket ?? [])
+
+      return {
+        ...interim,
+        callUpSuggestions: mergeCallUpSuggestions(s.callUpSuggestions ?? [], suggestions),
+        coachMarket,
       }
     })
   }, [])
@@ -293,7 +320,15 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const buyPlayer = useCallback((player: Player, fromTeamId: string): boolean => {
     if (!state || !userTeam) return false
     if (userTeam.budget < player.salary) return false
-    if (countByLevel(userTeam, 'first') >= FIRST_TEAM_MAX) return false
+
+    const firstFull = countByLevel(userTeam, 'first') >= FIRST_TEAM_MAX
+    const farmFull = countByLevel(userTeam, 'farm') >= FARM_TEAM_MAX
+
+    let rosterLevel: 'first' | 'farm' = 'first'
+    if (firstFull) {
+      if (farmFull) return false
+      rosterLevel = 'farm'
+    }
 
     const newTeams = state.teams.map((t) => {
       if (t.id === fromTeamId) {
@@ -308,7 +343,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
           ...t,
           players: [
             ...t.players,
-            { ...player, rosterLevel: 'first' as const, morale: Math.min(99, player.morale + 5) },
+            {
+              ...player,
+              rosterLevel,
+              morale: Math.min(99, player.morale + 5),
+            },
           ],
           budget: t.budget - player.salary,
         }
@@ -364,6 +403,87 @@ export function GameProvider({ children }: { children: ReactNode }) {
     return ok
   }, [])
 
+  const hireCoach = useCallback((coachId: string): boolean => {
+    let ok = false
+    setState((s) => {
+      if (!s) return s
+      const coach = s.coachMarket.find((c) => c.id === coachId)
+      if (!coach) return s
+
+      const team = s.teams.find((t) => t.id === s.userTeamId)
+      if (!team || team.budget < coach.salary) return s
+      if (team.coaches.some((c) => c.role === coach.role)) return s
+
+      ok = true
+      return {
+        ...s,
+        coachMarket: s.coachMarket.filter((c) => c.id !== coachId),
+        teams: s.teams.map((t) =>
+          t.id === s.userTeamId
+            ? {
+                ...t,
+                budget: t.budget - coach.salary,
+                coaches: [...t.coaches, coach],
+              }
+            : t,
+        ),
+      }
+    })
+    return ok
+  }, [])
+
+  const fireCoach = useCallback((coachId: string): boolean => {
+    let ok = false
+    setState((s) => {
+      if (!s) return s
+      const team = s.teams.find((t) => t.id === s.userTeamId)
+      const coach = team?.coaches.find((c) => c.id === coachId)
+      if (!coach) return s
+
+      ok = true
+      return {
+        ...s,
+        coachMarket: [...(s.coachMarket ?? []), coach],
+        teams: s.teams.map((t) =>
+          t.id === s.userTeamId
+            ? { ...t, coaches: t.coaches.filter((c) => c.id !== coachId) }
+            : t,
+        ),
+      }
+    })
+    return ok
+  }, [])
+
+  const acceptCallUp = useCallback((suggestionId: string): boolean => {
+    let ok = false
+    setState((s) => {
+      if (!s) return s
+      const suggestion = s.callUpSuggestions.find((x) => x.id === suggestionId)
+      if (!suggestion) return s
+
+      const teams = promoteInLeague(s.teams, s.userTeamId, suggestion.playerId)
+      if (!teams) return s
+
+      ok = true
+      return {
+        ...s,
+        teams,
+        callUpSuggestions: s.callUpSuggestions.filter((x) => x.id !== suggestionId),
+      }
+    })
+    return ok
+  }, [])
+
+  const dismissCallUp = useCallback((suggestionId: string) => {
+    setState((s) => {
+      if (!s) return s
+      return {
+        ...s,
+        callUpSuggestions: s.callUpSuggestions.filter((x) => x.id !== suggestionId),
+      }
+    })
+  }, [])
+
   const clearLastResult = useCallback(() => setLastResult(null), [])
 
   const value: GameContextValue = {
@@ -386,6 +506,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
     releasePlayer,
     promotePlayer,
     demotePlayer,
+    hireCoach,
+    fireCoach,
+    acceptCallUp,
+    dismissCallUp,
     focusedPlayerId,
     openPlayer,
     closePlayer,

@@ -1,22 +1,48 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { calcOps, calcWoba, calcFip, calcWhip } from '../engine/sabermetrics'
 import { farmPlayers, countByLevel, FIRST_TEAM_MAX } from '../engine/roster'
+import {
+  callUpCandidateIds,
+  evaluateCallUpCandidate,
+  isProspect,
+  isRehabCandidate,
+} from '../engine/callUpEvaluation'
 import { isBatter, isPitcher, overallRating } from '../engine/generator'
 import { OvrBadge } from '../components/PlayerCard'
 import { PlayerNameButton } from '../components/PlayerNameButton'
+import { CallUpBadge } from '../components/RosterBadges'
+import { PotentialBadge } from '../components/DevelopmentPanel'
 import { useGame } from '../store/gameStore'
 import { POSITION_LABEL } from '../types/game'
 import type { Player } from '../types/game'
 
+type RoleFilter = 'all' | 'batter' | 'pitcher'
+type SquadFilter = 'all' | 'prospect' | 'rehab' | 'callup'
+
 export function FarmSquadPage() {
   const { userTeam, state, openPlayer, focusedPlayerId, promotePlayer } = useGame()
-  const [filter, setFilter] = useState<'all' | 'batter' | 'pitcher'>('all')
+  const [roleFilter, setRoleFilter] = useState<RoleFilter>('all')
+  const [squadFilter, setSquadFilter] = useState<SquadFilter>('all')
   const [message, setMessage] = useState('')
+
+  const callUpIds = useMemo(() => {
+    if (!userTeam || !state) return new Set<string>()
+    return callUpCandidateIds(
+      userTeam,
+      state.callUpSuggestions.map((s) => s.playerId),
+    )
+  }, [userTeam, state])
 
   if (!userTeam || !state) return null
 
   const players = farmPlayers(userTeam)
-    .filter((p) => filter === 'all' || (filter === 'batter' ? isBatter(p) : isPitcher(p)))
+    .filter((p) => roleFilter === 'all' || (roleFilter === 'batter' ? isBatter(p) : isPitcher(p)))
+    .filter((p) => {
+      if (squadFilter === 'prospect') return isProspect(p)
+      if (squadFilter === 'rehab') return isRehabCandidate(p)
+      if (squadFilter === 'callup') return callUpIds.has(p.id)
+      return true
+    })
     .sort((a, b) => overallRating(b) - overallRating(a))
 
   function keyStat(p: Player): string {
@@ -41,8 +67,8 @@ export function FarmSquadPage() {
     return '-'
   }
 
-  const statCol1 = filter === 'pitcher' ? 'FIP' : filter === 'batter' ? 'wOBA' : 'wOBA/FIP'
-  const statCol2 = filter === 'pitcher' ? 'WHIP' : filter === 'batter' ? 'OPS' : 'OPS/WHIP'
+  const statCol1 = roleFilter === 'pitcher' ? 'FIP' : roleFilter === 'batter' ? 'wOBA' : 'wOBA/FIP'
+  const statCol2 = roleFilter === 'pitcher' ? 'WHIP' : roleFilter === 'batter' ? 'OPS' : 'OPS/WHIP'
   const firstCount = countByLevel(userTeam, 'first')
 
   const handlePromote = (playerId: string, e: React.MouseEvent) => {
@@ -61,22 +87,42 @@ export function FarmSquadPage() {
         <div>
           <h1 className="text-2xl font-bold text-[var(--text-h)]">2군 스쿼드</h1>
           <p className="text-sm text-[var(--text-muted)]">
-            {players.length}명 · 1군 {firstCount}/{FIRST_TEAM_MAX} · 2군 시즌 기록
+            {players.length}명 표시 · 1군 {firstCount}/{FIRST_TEAM_MAX} · 2군 시즌 기록
           </p>
           {message && <p className="mt-1 text-xs text-[var(--accent)]">{message}</p>}
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {(['all', 'batter', 'pitcher'] as const).map((f) => (
             <button
               key={f}
               type="button"
-              className={`bm-btn text-xs ${filter === f ? 'bm-btn-primary' : 'bm-btn-ghost'}`}
-              onClick={() => setFilter(f)}
+              className={`bm-btn text-xs ${roleFilter === f ? 'bm-btn-primary' : 'bm-btn-ghost'}`}
+              onClick={() => setRoleFilter(f)}
             >
               {f === 'all' ? '전체' : f === 'batter' ? '타자' : '투수'}
             </button>
           ))}
         </div>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        {(
+          [
+            ['all', '전체'],
+            ['prospect', '유망주(24↓)'],
+            ['rehab', '재활(피로↑)'],
+            ['callup', '콜업 후보'],
+          ] as const
+        ).map(([id, label]) => (
+          <button
+            key={id}
+            type="button"
+            className={`bm-btn text-xs ${squadFilter === id ? 'bm-btn-primary' : 'bm-btn-ghost'}`}
+            onClick={() => setSquadFilter(id)}
+          >
+            {label}
+          </button>
+        ))}
       </div>
 
       <div className="bm-card overflow-hidden">
@@ -87,37 +133,58 @@ export function FarmSquadPage() {
               <th>Pos</th>
               <th>나이</th>
               <th>OVR</th>
+              <th>잠재</th>
               <th>{statCol1}</th>
               <th>{statCol2}</th>
               <th />
             </tr>
           </thead>
           <tbody>
-            {players.map((p) => (
-              <tr
-                key={p.id}
-                className={`cursor-pointer ${focusedPlayerId === p.id ? 'bg-[var(--accent-dim)]' : ''}`}
-                onClick={() => openPlayer(p.id)}
-              >
-                <td>
-                  <PlayerNameButton playerId={p.id} name={p.name} />
-                </td>
-                <td>{POSITION_LABEL[p.role]}</td>
-                <td className="text-[var(--text-muted)]">{p.age}</td>
-                <td><OvrBadge player={p} /></td>
-                <td className="font-mono text-[var(--accent)]">{keyStat(p)}</td>
-                <td className="font-mono text-[var(--text-muted)]">{keyStat2(p)}</td>
-                <td>
-                  <button
-                    type="button"
-                    className="bm-btn bm-btn-ghost text-xs"
-                    onClick={(e) => handlePromote(p.id, e)}
-                  >
-                    1군 승격
-                  </button>
+            {players.length === 0 ? (
+              <tr>
+                <td colSpan={8} className="py-8 text-center text-sm text-[var(--text-muted)]">
+                  조건에 맞는 2군 선수가 없습니다.
                 </td>
               </tr>
-            ))}
+            ) : (
+              players.map((p) => {
+                const isCallUp = callUpIds.has(p.id)
+                const evalHint = evaluateCallUpCandidate(userTeam, p)
+                return (
+                  <tr
+                    key={p.id}
+                    className={`cursor-pointer ${focusedPlayerId === p.id ? 'bg-[var(--accent-dim)]' : ''}`}
+                    onClick={() => openPlayer(p.id)}
+                  >
+                    <td>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <PlayerNameButton playerId={p.id} name={p.name} />
+                        {isCallUp && <CallUpBadge compact />}
+                        <PotentialBadge player={p} compact />
+                      </div>
+                      {isCallUp && evalHint.reason && (
+                        <div className="mt-0.5 text-[10px] text-amber-400/80">{evalHint.reason}</div>
+                      )}
+                    </td>
+                    <td>{POSITION_LABEL[p.role]}</td>
+                    <td className="text-[var(--text-muted)]">{p.age}</td>
+                    <td><OvrBadge player={p} /></td>
+                    <td className="font-mono text-emerald-400/90">{p.potential ?? '—'}</td>
+                    <td className="font-mono text-[var(--accent)]">{keyStat(p)}</td>
+                    <td className="font-mono text-[var(--text-muted)]">{keyStat2(p)}</td>
+                    <td>
+                      <button
+                        type="button"
+                        className="bm-btn bm-btn-ghost text-xs"
+                        onClick={(e) => handlePromote(p.id, e)}
+                      >
+                        1군 승격
+                      </button>
+                    </td>
+                  </tr>
+                )
+              })
+            )}
           </tbody>
         </table>
       </div>

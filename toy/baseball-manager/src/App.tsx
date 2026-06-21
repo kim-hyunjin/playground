@@ -9,6 +9,7 @@ import { RotationPage } from './pages/RotationPage'
 import { MatchPage } from './pages/MatchPage'
 import { StandingsPage } from './pages/StandingsPage'
 import { TransfersPage } from './pages/TransfersPage'
+import { CoachesPage } from './pages/CoachesPage'
 import { StatsPage } from './pages/StatsPage'
 
 function GameShell() {
@@ -25,6 +26,7 @@ function GameShell() {
     match: <MatchPage />,
     standings: <StandingsPage />,
     transfers: <TransfersPage />,
+    coaches: <CoachesPage />,
     stats: <StatsPage />,
   }
 

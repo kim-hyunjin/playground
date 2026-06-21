@@ -8,6 +8,7 @@ import type {
   Player,
 } from '../types/game'
 import { emptyBatterGameLine, emptyBatterStats, emptyPitcherGameLine, emptyPitcherStats } from '../types/game'
+import { awardXpFromGameLine, defaultPotentialForPlayer } from './playerDevelopment'
 
 function getBatterLine(box: GameBoxScore, id: string): BatterGameLine {
   if (!box.batters[id]) box.batters[id] = emptyBatterGameLine()
@@ -149,17 +150,19 @@ function applyBoxScoreToPlayersInternal(
     const seasonStats = p[statsKey]
 
     if (bat && seasonStats.type === 'batter') {
-      return {
+      const withStats = {
         ...p,
         [statsKey]: mergeBatterLine(seasonStats, bat, bat.pa > 0),
       }
+      return awardXpFromGameLine(withStats, bat, undefined, target)
     }
 
     if (pit && seasonStats.type === 'pitcher') {
       let stats = mergePitcherLine(seasonStats, pit, pit.bf > 0)
       if (p.id === starterId && starterW) stats = { ...stats, wins: stats.wins + 1 }
       if (p.id === starterId && starterL) stats = { ...stats, losses: stats.losses + 1 }
-      return { ...p, [statsKey]: stats }
+      const withStats = { ...p, [statsKey]: stats }
+      return awardXpFromGameLine(withStats, undefined, pit, target)
     }
 
     return p
@@ -236,6 +239,8 @@ export function ensurePlayerRosterFields(player: Player): Player {
   return {
     ...migrated,
     rosterLevel: migrated.rosterLevel ?? 'first',
+    potential: migrated.potential ?? defaultPotentialForPlayer(migrated),
+    developmentXp: migrated.developmentXp ?? 0,
     farmSeasonStats:
       migrated.farmSeasonStats ??
       (isPitcherRole ? emptyPitcherStats() : emptyBatterStats()),

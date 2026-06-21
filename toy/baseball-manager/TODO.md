@@ -1,6 +1,6 @@
 # TODO
 
-## 1. 2군 기능 추가
+## 1. 2군 기능 추가 ✅ 완료
 
 > FM 스타일로 1군·2군 로스터를 분리하고, 승격·하향·2군 시즌을 운영할 수 있게 한다.
 
@@ -101,72 +101,71 @@ interface FarmStanding {
 
 #### `generator.ts`
 
-- [ ] `FARM_ROSTER_TEMPLATE` — 2군 포지션 구성 (年輕 tier 위주, age 18~24 비율 높게)
-- [ ] `generateFarmRoster(team)` — 구단당 2군 25~30명 생성
-- [ ] `generateLeague()` — 1군 생성 후 각 팀에 2군 로스터 부여
-- [ ] 1군/2군 **등록 인원 검증** (`validateFirstTeamRoster`, `validateFarmRoster`)
+- [x] `FARM_ROSTER_TEMPLATE` — 2군 포지션 구성 (年輕 tier 위주, age 18~24 비율 높게)
+- [x] `generateFarmRoster(team)` — 구단당 2군 25~30명 생성
+- [x] `generateLeague()` — 1군 생성 후 각 팀에 2군 로스터 부여
+- [x] 1군/2군 **등록 인원 검증** (`validateFirstTeamRoster`, `validateFarmRoster`)
 
 #### `schedule.ts`
 
-- [ ] `generateFarmSchedule(teams, totalWeeks)` — 10팀 라운드로빈 (1군과 주차 동기)
+- [x] `generateFarmSchedule(teams, totalWeeks)` — 10팀 라운드로빈 (1군과 주차 동기)
 - [ ] 홈/원정 균형, 주당 5경기 또는 3경기(경량 모드) 선택 가능
 
 #### `simulation.ts`
 
-- [ ] `simulateFarmWeek(state)` — 해당 주 2군 CPU 경기 일괄 처리
-- [ ] `simulateFarmGame(home, away)` — 1군 sim 재사용, 로그 생략 옵션
-- [ ] `advanceWeek()` 에 2군 sim hook 추가 (1군 CPU 경기와 병렬)
-- [ ] 2군 stats 누적: `seasonStats` vs `farmStats` 분리 여부 결정  
-  - **권장:** `farmSeasonStats` 필드 추가 (1군 기록과 분리)
+- [x] `simulateFarmWeek(state)` — 해당 주 2군 CPU 경기 일괄 처리
+- [x] `simulateFarmGame(home, away)` — 1군 sim 재사용, 로그 생략 옵션
+- [x] `advanceWeek()` 에 2군 sim hook 추가 (1군 CPU 경기와 병렬)
+- [x] 2군 stats 누적: `farmSeasonStats` 필드 (1군 기록과 분리)
 
 #### `roster.ts` (신규 모듈)
 
-- [ ] `promotePlayer(team, playerId)` — 2군 → 1군 (1군 정원 초과 시 거부)
-- [ ] `demotePlayer(team, playerId)` — 1군 → 2군 (라인업/로테이션에서 자동 제거)
-- [ ] `canPromote / canDemote` — 포지션·정원·필수 포지션 검사
-- [ ] AI `autoAdjustRoster(team)` — 주차마다 CPU 구단 승하향
+- [x] `promotePlayer(team, playerId)` — 2군 → 1군 (1군 정원 초과 시 거부)
+- [x] `demotePlayer(team, playerId)` — 1군 → 2군 (라인업/로테이션에서 자동 제거)
+- [x] `canPromote / canDemote` — 포지션·정원·필수 포지션 검사
+- [x] AI `autoAdjustRoster(team)` — 주차마다 CPU 구단 승하향
 
 ### 1.6 UI 작업
 
 #### 네비게이션
 
-- [ ] `View` 에 `'farm'` 또는 `'squad-farm'` 추가
-- [ ] `Layout` 사이드바: **2군** 메뉴 (스쿼드 하위 탭도 가능)
+- [x] `View` 에 `'farm'` 추가
+- [x] `Layout` 사이드바: **2군** 메뉴
 
 #### `FarmSquadPage` (신규)
 
-- [ ] 2군 선수 목록 (나이, OVR, 포지션, 2군 wOBA/FIP)
-- [ ] **승격** 버튼 → 1군 정원 확인 후 이동
-- [ ] 필터: 유망주(24세 이하), 재활, 승격 후보
+- [x] 2군 선수 목록 (나이, OVR, 포지션, 2군 wOBA/FIP)
+- [x] **승격** 버튼 → 1군 정원 확인 후 이동
+- [x] 필터: 유망주(24세 이하), 재활(피로↑), 콜업 후보
 
 #### `SquadPage` (1군) 수정
 
-- [ ] 1군 등록 선수만 표시 (`rosterLevel === 'first'`)
-- [ ] **하향** 버튼
-- [ ] 1군 등록 인원 카운터 (예: `26/26`)
+- [x] 1군 등록 선수만 표시 (`rosterLevel === 'first'`)
+- [x] **하향** 버튼
+- [x] 1군 등록 인원 카운터 (예: `26/26`)
 
 #### `FarmStandingsPage` 또는 Standings 탭
 
-- [ ] 2군 리그 순위표 (승·패·득실)
-- [ ] 유저 2군 팀 순위 하이라이트
+- [x] 2군 리그 순위표 (승·패·득실) — Standings 1군/2군 탭
+- [x] 유저 2군 팀 순위 하이라이트
 
 #### `PlayerDetailModal` 확장
 
-- [ ] 1군 / 2군 배지
-- [ ] 2군 시즌 기록 탭 (farmStats)
-- [ ] 승격 / 하향 액션 (유저 소속 선수만)
+- [x] 1군 / 2군 표시
+- [x] 2군 시즌 기록 (SabermetricsPanel farm 소스)
+- [x] 승격 / 하향 액션 + 콜업 후보 배지
 
 #### `DashboardPage`
 
-- [ ] 2군 순위 요약 (예: `2군 3위 (12승 8패)`)
-- [ ] 콜업 제안 카드: 「2군 OVR 72 CF 김○○ — 1군 CF 부상, 승격하시겠습니까?」
+- [x] 2군 순위 요약
+- [x] 콜업 제안 카드 (2군 감독)
 
 ### 1.7 gameStore 액션
 
-- [ ] `promotePlayer(playerId: string)`
-- [ ] `demotePlayer(playerId: string)`
-- [ ] `advanceWeek()` — 2군 sim + AI roster adjust 포함
-- [ ] `openPlayer()` — 2군 선수도 league 전체 lookup 유지
+- [x] `promotePlayer(playerId: string)`
+- [x] `demotePlayer(playerId: string)`
+- [x] `advanceWeek()` — 2군 sim + AI roster adjust 포함
+- [x] `openPlayer()` — 2군 선수도 league 전체 lookup 유지
 
 ### 1.8 구현 단계 (권장 순서)
 
@@ -181,13 +180,13 @@ interface FarmStanding {
 
 ### 1.9 수용 기준 (Definition of Done)
 
-- [ ] 새 게임 시작 시 각 구단 1군 26명 + 2군 25명 이상 생성
-- [ ] 유저가 2군 선수를 1군으로 승격·하향 가능, 1군 정원 초과 불가
-- [ ] 주차 진행 시 2군 경기 자동 시뮬 + 순위 반영
-- [ ] 1군 라인업/로테이션에 2군 선수 배치 불가
-- [ ] 2군 선수 시즌 기록 조회 가능
-- [ ] v2 세이브 로드 시 v3로 마이그레이션 (2군 자동 생성)
-- [ ] `npm run build` 통과
+- [x] 새 게임 시작 시 각 구단 1군 26명 + 2군 28명 생성
+- [x] 유저가 2군 선수를 1군으로 승격·하향 가능, 1군 정원 초과 불가
+- [x] 주차 진행 시 2군 경기 자동 시뮬 + 순위 반영
+- [x] 1군 라인업/로테이션에 2군 선수 배치 불가
+- [x] 2군 선수 시즌 기록 조회 가능
+- [x] 세이브 마이그레이션 (v2→v4, 출시 전 정리 예정)
+- [x] `npm run build` 통과
 
 ### 1.10 이후 연계 (TODO 2·3번)
 
@@ -199,14 +198,22 @@ interface FarmStanding {
 
 ### 1.11 오픈 이슈 (구현 전 결정)
 
-- [ ] 2군 경기 텍스트 로그를 유저 팀만 제공할지, 전부 생략할지
-- [ ] `farmStats` vs `seasonStats` 통합 표시 방식
-- [ ] 트레이드(`TransfersPage`) 시 1군/2군 선수 모두 대상인지, 1군만인지
-- [ ] 2군 일정 밀도: 주 5경기 vs 주 3경기 (시즌 길이·성능)
+- [x] 2군 경기 텍스트 로그: **전부 생략** (결과·기록만)
+- [x] `farmSeasonStats` vs `seasonStats` **분리 표시**
+- [x] 트레이드: **1군·2군 모두 대상**, 영입 시 1군 우선·마감 시 2군
+- [ ] 2군 일정 밀도: 주 5경기 vs 주 3경기 (시즌 길이·성능) — 추후 튜닝
 
 ---
 
-- [ ] 2. 선수 육성 기능 추가
+- [x] 2. 선수 육성 기능 추가 ✅
+
+### 2.1 구현 요약
+
+- **potential** — 선수별 OVR 성장 상한 (티어·나이·2군 반영)
+- **developmentXp** — 1군/2군 경기 출전 시 누적 (2군·젊을수록 많음)
+- **주간 육성** — 코치 teaching + XP + 2군 보너스 → 능력치 +1 시도
+- **UI** — PlayerDetail 「육성」탭, FarmSquad 잠재력 컬럼·POT 배지
+
 - [ ] 3. 2026 실제 선수들로 선수 데이터베이스 구성
 - [ ] 4. 경기 시뮬레이션시 그래픽 적용
 - [ ] 5. 시뮬레이션 고도화
