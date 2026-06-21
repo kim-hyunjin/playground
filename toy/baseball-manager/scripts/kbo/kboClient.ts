@@ -10,7 +10,7 @@ export interface KboSearchHit {
   role: string
 }
 
-function extractHidden(html: string, name: string): string {
+export function extractHidden(html: string, name: string): string {
   const escaped = name.replace(/\$/g, '\\$')
   const re = new RegExp(`name="${escaped}"[^>]*value="([^"]*)"`, 'i')
   return html.match(re)?.[1] ?? ''

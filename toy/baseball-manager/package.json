@@ -14,7 +14,8 @@
     "sim:sanity": "npx tsx scripts/sim-sanity.ts",
     "sim:outcomes": "npx tsx scripts/sim-outcomes.ts",
     "kbo:handedness": "npx tsx scripts/fetch-kbo-handedness.ts",
-    "kbo:sync-roster": "npx tsx scripts/sync-kbo-roster.ts"
+    "kbo:sync-roster": "npx tsx scripts/sync-kbo-roster.ts",
+    "kbo:audit-match": "npx tsx scripts/audit-kbo-match.ts"
   },
   "dependencies": {
     "react": "^19.2.5",

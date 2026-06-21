@@ -13,6 +13,7 @@
  *   npm run kbo:sync-roster -- --dry-run
  *   npm run kbo:sync-roster -- --limit=3
  *   npm run kbo:sync-roster -- --discover   # 기록실 풀에서 부족분 보충
+ *   npm run kbo:sync-roster -- --rebuild-first  # 기록실 팀별 상위 26명으로 1군 재구성
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -23,7 +24,12 @@ import { batterRatingsFromStats } from '../src/data/ratings/batterFromStats'
 import { pitcherRatingsFromStats } from '../src/data/ratings/pitcherFromStats'
 import type { PlayerRecord, TeamAbbr, TeamRosterFile } from '../src/data/types'
 import type { Player, PlayerRole } from '../src/types/game'
-import { searchKboPlayer, sleep } from './kbo/kboClient'
+import { searchKboPlayer, sleep, type KboSearchHit } from './kbo/kboClient'
+import {
+  KBO_PLAYER_OVERRIDES,
+  KBO_SEARCH_ALIASES,
+  isActiveKboTeam,
+} from './kbo/kboPlayerOverrides'
 import { abbrFromKboTeam } from './kbo/kboTeamAbbr'
 import {
   fetchKboPlayerProfile,
@@ -58,6 +64,7 @@ function parseArgs() {
   return {
     dryRun: set.has('--dry-run'),
     discover: set.has('--discover'),
+    rebuildFirst: set.has('--rebuild-first'),
     season: Number(args.find((a) => a.startsWith('--season='))?.split('=')[1] ?? 2026),
     team: args.find((a) => a.startsWith('--team='))?.split('=')[1] as TeamAbbr | undefined,
     limit: args.find((a) => a.startsWith('--limit='))
@@ -75,6 +82,96 @@ function ovrFromRecord(record: PlayerRecord): number {
   return overallRating(probe)
 }
 
+function searchNames(name: string): string[] {
+  const names = [name, ...(KBO_SEARCH_ALIASES[name] ?? [])]
+  return [...new Set(names)]
+}
+
+async function searchAllNames(name: string): Promise<KboSearchHit[]> {
+  const byId = new Map<string, KboSearchHit>()
+  for (const q of searchNames(name)) {
+    for (const hit of await searchKboPlayer(q)) {
+      if (isActiveKboTeam(hit.team)) byId.set(hit.playerId, hit)
+    }
+    await sleep(DELAY_MS)
+  }
+  return [...byId.values()]
+}
+
+function pickSearchHit(record: PlayerRecord, hits: KboSearchHit[]): KboSearchHit | undefined {
+  const teamHits = hits.filter((h) => teamLabelMatches(record.teamAbbr, h.team))
+  if (teamHits.length === 1) return teamHits[0]
+
+  if (teamHits.length > 1) {
+    const wantPitcher = record.role === 'SP' || record.role === 'RP'
+    const roleHits = teamHits.filter((h) => wantPitcher === h.role.includes('투수'))
+    return roleHits[0] ?? teamHits[0]
+  }
+
+  if (hits.length === 1) return hits[0]
+  return undefined
+}
+
+async function buildRecordFromHit(
+  seed: PlayerRecord,
+  match: KboSearchHit,
+  pool: {
+    hitters: Map<string, KboRecordHitter>
+    pitchers: Map<string, KboRecordPitcher>
+  },
+  season: number,
+): Promise<PlayerRecord> {
+  const profile = await fetchKboPlayerProfile(match.playerId)
+  await sleep(DELAY_MS)
+
+  const positionLabel = profile.positionLabel || match.role
+  const hand = parseKboPositionLabel(positionLabel)
+  const hitterRow = pool.hitters.get(match.playerId)
+  const pitcherRow = pool.pitchers.get(match.playerId)
+
+  let role: PlayerRole = seed.role
+  let sourceStats = seed.sourceStats
+
+  if (
+    match.role.includes('투수') ||
+    positionLabel.includes('투수') ||
+    seed.role === 'SP' ||
+    seed.role === 'RP'
+  ) {
+    const pStats = pitcherRow
+      ? pitcherToSourceStats(pitcherRow, seed.role === 'SP' ? 'SP' : 'RP')
+      : undefined
+    role = mapKboRole(match.role, positionLabel, pStats, seed.role)
+    sourceStats = pStats ?? (seed.role === 'SP' || seed.role === 'RP' ? seed.sourceStats : undefined)
+  } else if (hitterRow) {
+    role = mapKboRole(match.role, positionLabel, undefined, seed.role)
+    sourceStats = hitterToSourceStats(hitterRow)
+  } else {
+    role = mapKboRole(match.role, positionLabel, undefined, seed.role)
+  }
+
+  const updated: PlayerRecord = {
+    ...seed,
+    id: pid(seed.teamAbbr, profile.name || seed.name),
+    name: profile.name || seed.name,
+    role,
+    age: profile.birthday ? ageFromKboBirthday(profile.birthday, season) : seed.age,
+    sourceStats,
+    salaryKrw: profile.salaryKrw ?? seed.salaryKrw,
+    potential: seed.potential,
+    bats: hand.bats ?? seed.bats,
+    throws: hand.throws ?? seed.throws,
+    targetOvr: undefined,
+  }
+
+  updated.targetOvr = ovrFromRecord(updated)
+  if (!Number.isFinite(updated.targetOvr)) {
+    updated.targetOvr = seed.targetOvr ?? 55
+  }
+
+  return updated
+}
+
 async function resolveKboPlayer(
   record: PlayerRecord,
   pool: {
@@ -85,17 +182,26 @@ async function resolveKboPlayer(
 ): Promise<{ record: PlayerRecord; kboPlayerId: string; warnings: string[] } | null> {
   const warnings: string[] = []
 
-  const hits = await searchKboPlayer(record.name)
-  await sleep(DELAY_MS)
+  const overrideId = KBO_PLAYER_OVERRIDES[record.id]
+  if (overrideId) {
+    const hit: KboSearchHit = {
+      playerId: overrideId,
+      name: record.name,
+      team: record.teamAbbr,
+      role: record.role === 'SP' || record.role === 'RP' ? '투수' : '내야수',
+    }
+    const built = await buildRecordFromHit(record, hit, pool, season)
+    return { record: built, kboPlayerId: overrideId, warnings }
+  }
+
+  const hits = await searchAllNames(record.name)
 
   if (hits.length === 0) {
     warnings.push(`검색 결과 없음: ${record.name}`)
     return null
   }
 
-  const match =
-    hits.find((h) => teamLabelMatches(record.teamAbbr, h.team)) ??
-    (hits.length === 1 ? hits[0] : undefined)
+  const match = pickSearchHit(record, hits)
 
   if (!match) {
     warnings.push(
@@ -104,61 +210,124 @@ async function resolveKboPlayer(
     return null
   }
 
-  const kboAbbr = abbrFromKboTeam(match.team)
-  if (kboAbbr && kboAbbr !== record.teamAbbr) {
-    warnings.push(`이적 감지: ${record.name} ${record.teamAbbr} → ${kboAbbr}`)
-    return null
+  const built = await buildRecordFromHit(record, match, pool, season)
+  return { record: built, kboPlayerId: match.playerId, warnings }
+}
+
+function selectFirstTeam26(candidates: PlayerRecord[]): PlayerRecord[] {
+  const byOvr = (a: PlayerRecord, b: PlayerRecord) => (b.targetOvr ?? 0) - (a.targetOvr ?? 0)
+  const sp = candidates.filter((c) => c.role === 'SP').toSorted(byOvr)
+  const rp = candidates.filter((c) => c.role === 'RP').toSorted(byOvr)
+  const catchers = candidates.filter((c) => c.role === 'C').toSorted(byOvr)
+  const batters = candidates
+    .filter((c) => c.role !== 'SP' && c.role !== 'RP' && c.role !== 'C')
+    .toSorted(byOvr)
+
+  const picked: PlayerRecord[] = []
+  const used = new Set<string>()
+  const take = (list: PlayerRecord[], n: number) => {
+    for (const p of list) {
+      if (picked.length >= FIRST_TEAM_MAX || n <= 0) break
+      if (used.has(p.id)) continue
+      picked.push(p)
+      used.add(p.id)
+      n--
+    }
   }
 
-  const profile = await fetchKboPlayerProfile(match.playerId)
-  await sleep(DELAY_MS)
+  take(sp, 5)
+  take(rp, 8)
+  take(catchers, 1)
+  take(batters, FIRST_TEAM_MAX - picked.length)
 
-  const positionLabel = profile.positionLabel || match.role
-  const hand = parseKboPositionLabel(positionLabel)
-
-  const hitterRow = pool.hitters.get(match.playerId)
-  const pitcherRow = pool.pitchers.get(match.playerId)
-
-  let role: PlayerRole = record.role
-  let sourceStats = record.sourceStats
-
-  if (match.role.includes('투수') || positionLabel.includes('투수') || record.role === 'SP' || record.role === 'RP') {
-    const pStats = pitcherRow
-      ? pitcherToSourceStats(pitcherRow, record.role === 'SP' ? 'SP' : 'RP')
-      : undefined
-    role = mapKboRole(match.role, positionLabel, pStats, record.role)
-    sourceStats = pStats ?? (record.role === 'SP' || record.role === 'RP' ? record.sourceStats : undefined)
-  } else if (hitterRow) {
-    role = mapKboRole(match.role, positionLabel, undefined, record.role)
-    sourceStats = hitterToSourceStats(hitterRow)
-  } else {
-    role = mapKboRole(match.role, positionLabel, undefined, record.role)
+  if (picked.length < FIRST_TEAM_MAX) {
+    take(candidates.toSorted(byOvr), FIRST_TEAM_MAX - picked.length)
   }
 
-  const age = profile.birthday
-    ? ageFromKboBirthday(profile.birthday, season)
-    : record.age
+  return picked.slice(0, FIRST_TEAM_MAX)
+}
 
-  const updated: PlayerRecord = {
-    ...record,
-    id: pid(record.teamAbbr, record.name),
-    name: profile.name || record.name,
-    role,
-    age,
-    sourceStats,
-    salaryKrw: profile.salaryKrw ?? record.salaryKrw,
-    potential: record.potential,
-    bats: hand.bats ?? record.bats,
-    throws: hand.throws ?? record.throws,
-    targetOvr: undefined,
+async function rebuildFirstForTeam(
+  teamAbbr: TeamAbbr,
+  pool: {
+    hitters: Map<string, KboRecordHitter>
+    pitchers: Map<string, KboRecordPitcher>
+  },
+  season: number,
+  farm: PlayerRecord[],
+): Promise<PlayerRecord[]> {
+  const candidates: PlayerRecord[] = []
+
+  for (const h of pool.hitters.values()) {
+    if (abbrFromKboTeam(h.kboTeam) !== teamAbbr) continue
+    const sourceStats = hitterToSourceStats(h)
+    const role = mapKboRole('외야수', '', undefined)
+    const rec: PlayerRecord = {
+      id: pid(teamAbbr, h.name),
+      name: h.name,
+      teamAbbr,
+      role,
+      rosterLevel: 'first',
+      age: 27,
+      sourceStats,
+    }
+    rec.targetOvr = ovrFromRecord(rec)
+    candidates.push(rec)
   }
 
-  updated.targetOvr = ovrFromRecord(updated)
-  if (!Number.isFinite(updated.targetOvr)) {
-    updated.targetOvr = record.targetOvr ?? 55
+  for (const p of pool.pitchers.values()) {
+    if (abbrFromKboTeam(p.kboTeam) !== teamAbbr) continue
+    const role =
+      p.games && p.games > 0 && (p.wins ?? 0) + (p.saves ?? 0) > 0 && (p.ip ?? 0) >= 40
+        ? 'SP'
+        : 'RP'
+    const pStats = pitcherToSourceStats(p, role)
+    const rec: PlayerRecord = {
+      id: pid(teamAbbr, p.name),
+      name: p.name,
+      teamAbbr,
+      role: mapKboRole('투수', '', pStats),
+      rosterLevel: 'first',
+      age: 28,
+      sourceStats: pStats,
+    }
+    rec.targetOvr = ovrFromRecord(rec)
+    candidates.push(rec)
   }
 
-  return { record: updated, kboPlayerId: match.playerId, warnings }
+  const selected = selectFirstTeam26(candidates)
+  const enriched: PlayerRecord[] = []
+
+  for (const rec of selected) {
+    const hit =
+      [...pool.hitters.values()].find(
+        (h) => h.name === rec.name && abbrFromKboTeam(h.kboTeam) === teamAbbr,
+      ) ??
+      [...pool.pitchers.values()].find(
+        (p) => p.name === rec.name && abbrFromKboTeam(p.kboTeam) === teamAbbr,
+      )
+
+    if (!hit) {
+      enriched.push(rec)
+      continue
+    }
+
+    const match: KboSearchHit = {
+      playerId: hit.playerId,
+      name: hit.name,
+      team: hit.kboTeam,
+      role: 'era' in hit ? '투수' : '외야수',
+    }
+
+    try {
+      enriched.push(await buildRecordFromHit(rec, match, pool, season))
+    } catch {
+      enriched.push(rec)
+    }
+  }
+
+  void farm
+  return enriched
 }
 
 function discoverForTeam(
@@ -283,9 +452,11 @@ export const ROSTERS_KBO: TeamRosterFile[] = [
 }
 
 async function main() {
-  const { dryRun, discover, season, team, limit } = parseArgs()
+  const { dryRun, discover, rebuildFirst, season, team, limit } = parseArgs()
 
-  console.log(`=== KBO 로스터 동기화 (season=${season}) ===\n`)
+  console.log(`=== KBO 로스터 동기화 (season=${season}) ===`)
+  if (rebuildFirst) console.log('모드: --rebuild-first (기록실 풀 → 1군 26명 재구성)')
+  console.log()
 
   const pool = await fetchKboRecordPool(season)
   console.log(
@@ -310,6 +481,35 @@ async function main() {
 
   for (const seed of seedFiles) {
     console.log(`▶ ${seed.teamAbbr}`)
+
+    if (rebuildFirst) {
+      try {
+        const finalFirst = await rebuildFirstForTeam(
+          seed.teamAbbr,
+          pool,
+          season,
+          seed.farm,
+        )
+        processed += finalFirst.length
+        ok += finalFirst.length
+        console.log(`  rebuild → ${finalFirst.length}명`)
+        if (finalFirst.length !== FIRST_TEAM_MAX) {
+          console.warn(`  ⚠ 1군 ${finalFirst.length}명 (목표 ${FIRST_TEAM_MAX})`)
+        }
+        updatedPartial.push({
+          teamAbbr: seed.teamAbbr,
+          season,
+          first: finalFirst,
+          farm: seed.farm,
+        })
+      } catch (err) {
+        console.error(`  rebuild error: ${err instanceof Error ? err.message : err}`)
+        failed += seed.first.length
+        updatedPartial.push(seed)
+      }
+      continue
+    }
+
     const first: PlayerRecord[] = []
 
     for (const player of seed.first) {

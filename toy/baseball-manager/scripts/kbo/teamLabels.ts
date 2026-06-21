@@ -14,7 +14,9 @@ export const TEAM_TO_KBO_LABEL: Record<TeamAbbr, string[]> = {
   SS: ['삼성', 'SS'],
 }
 
+/** KBO 검색·기록실 팀명 — 정확히 일치할 때만 매칭 (SS ⊂ SSG 오매칭 방지) */
 export function teamLabelMatches(abbr: TeamAbbr, kboTeam: string): boolean {
   const labels = TEAM_TO_KBO_LABEL[abbr]
-  return labels.some((l) => kboTeam.trim() === l || kboTeam.includes(l))
+  const t = kboTeam.trim()
+  return labels.some((l) => t === l)
 }
