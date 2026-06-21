@@ -3,6 +3,7 @@ import { emptyBatterStats, emptyPitcherStats } from '../types/game'
 import { generateDefaultStaff } from './coachGenerator'
 import { rollPotential } from './playerDevelopment'
 import { ensureHandedness } from './sim/handedness'
+import { isPlayerAvailable } from './injury'
 
 const LAST_NAMES = [
   '김', '이', '박', '최', '정', '강', '조', '윤', '장', '임',
@@ -155,7 +156,7 @@ export function generateLeague(userTeamIndex: number): Team[] {
 export function defaultLineup(team: Team): Record<FieldPosition, string> {
   const positions: FieldPosition[] = ['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'DH']
   const lineup = {} as Record<FieldPosition, string>
-  const pool = team.players.filter((p) => p.rosterLevel !== 'farm')
+  const pool = team.players.filter((p) => p.rosterLevel !== 'farm' && isPlayerAvailable(p))
 
   for (const pos of positions) {
     const player = pool.find((p) => p.role === pos)
@@ -166,7 +167,9 @@ export function defaultLineup(team: Team): Record<FieldPosition, string> {
 }
 
 export function defaultRotation(team: Team): string[] {
-  return team.players.filter((p) => p.role === 'SP' && p.rosterLevel !== 'farm').map((p) => p.id)
+  return team.players
+    .filter((p) => p.role === 'SP' && p.rosterLevel !== 'farm' && isPlayerAvailable(p))
+    .map((p) => p.id)
 }
 
 export function isPitcher(p: Player) {

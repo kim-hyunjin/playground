@@ -1,0 +1,11 @@
+{
+  "season": 2026,
+  "source": "kbo-official",
+  "fetchedAt": "2026-06-21T12:16:02.402Z",
+  "teams": 10,
+  "stats": {
+    "ok": 193,
+    "failed": 67,
+    "processed": 260
+  }
+}

@@ -1,0 +1,229 @@
+import type { BatterSourceStats, PitcherSourceStats } from '../../src/data/types'
+import { fetchKboPositionLabel, fetchText, HITTER_DETAIL, PITCHER_DETAIL } from './kboClient'
+import { parseKboProfileHtml, type KboPlayerProfile } from './parseProfile'
+
+export interface KboRecordHitter {
+  playerId: string
+  name: string
+  kboTeam: string
+  avg?: number
+  pa?: number
+  ab?: number
+  hr?: number
+  sb?: number
+  obp?: number
+  slg?: number
+  bb?: number
+  k?: number
+}
+
+export interface KboRecordPitcher {
+  playerId: string
+  name: string
+  kboTeam: string
+  era?: number
+  games?: number
+  wins?: number
+  losses?: number
+  saves?: number
+  holds?: number
+  ip?: number
+  hits?: number
+  hr?: number
+  bb?: number
+  k?: number
+  er?: number
+  whip?: number
+  gs?: number
+}
+
+const HITTER_BASIC = 'https://www.koreabaseball.com/Record/Player/HitterBasic'
+const PITCHER_BASIC = 'https://www.koreabaseball.com/Record/Player/PitcherBasic'
+
+function stripTags(s: string): string {
+  return s.replace(/<[^>]+>/g, '').trim()
+}
+
+function num(raw: string): number | undefined {
+  const v = raw.replace(/,/g, '').trim()
+  if (!v || v === '-') return undefined
+  const n = Number(v)
+  return Number.isFinite(n) ? n : undefined
+}
+
+/** `87 1/3` → 87.333… */
+export function parseKboInnings(raw: string): number | undefined {
+  const t = raw.trim()
+  if (!t || t === '-') return undefined
+  const m = t.match(/^(\d+)\s+(\d+)\/(\d+)$/)
+  if (m) {
+    return Number(m[1]) + Number(m[2]) / Number(m[3])
+  }
+  const n = Number(t)
+  return Number.isFinite(n) ? n : undefined
+}
+
+function parseHitterTable(html: string): KboRecordHitter[] {
+  const table = html.match(/class="tData01 tt"[\s\S]*?<\/table>/)
+  if (!table) return []
+
+  const rows = [...table[0].matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/g)]
+  const out: KboRecordHitter[] = []
+
+  for (const row of rows.slice(1)) {
+    const cells = [...row[1]!.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/g)].map((c) => stripTags(c[1]!))
+    if (cells.length < 4) continue
+
+    const link = row[1]!.match(/playerId=(\d+)/)
+    if (!link) continue
+
+    out.push({
+      playerId: link[1]!,
+      name: cells[1]!,
+      kboTeam: cells[2]!,
+      avg: num(cells[3]!),
+      pa: num(cells[4]!),
+      ab: num(cells[5]!),
+      hr: num(cells[9]!),
+    })
+  }
+  return out
+}
+
+function parseHitterAdvanced(html: string): Map<string, Partial<KboRecordHitter>> {
+  const table = html.match(/class="tData01 tt"[\s\S]*?<\/table>/)
+  const map = new Map<string, Partial<KboRecordHitter>>()
+  if (!table) return map
+
+  const rows = [...table[0].matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/g)]
+  for (const row of rows.slice(1)) {
+    const link = row[1]!.match(/playerId=(\d+)/)
+    if (!link) continue
+    const cells = [...row[1]!.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/g)].map((c) => stripTags(c[1]!))
+    if (cells.length < 8) continue
+    map.set(link[1]!, {
+      bb: num(cells[4]!),
+      k: num(cells[6]!),
+      slg: num(cells[7]!),
+      obp: num(cells[8]!),
+    })
+  }
+  return map
+}
+
+function parsePitcherTable(html: string): KboRecordPitcher[] {
+  const table = html.match(/class="tData01 tt"[\s\S]*?<\/table>/)
+  if (!table) return []
+
+  const rows = [...table[0].matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/g)]
+  const out: KboRecordPitcher[] = []
+
+  for (const row of rows.slice(1)) {
+    const cells = [...row[1]!.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/g)].map((c) => stripTags(c[1]!))
+    if (cells.length < 4) continue
+    const link = row[1]!.match(/playerId=(\d+)/)
+    if (!link) continue
+
+    const ip = parseKboInnings(cells[9] ?? '')
+    const games = num(cells[4]!)
+    out.push({
+      playerId: link[1]!,
+      name: cells[1]!,
+      kboTeam: cells[2]!,
+      era: num(cells[3]!),
+      games,
+      wins: num(cells[5]!),
+      losses: num(cells[6]!),
+      saves: num(cells[7]!),
+      holds: num(cells[8]!),
+      ip,
+      hits: num(cells[10]!),
+      hr: num(cells[11]!),
+      bb: num(cells[12]!),
+      k: num(cells[14]!),
+      er: num(cells[15]!),
+      whip: num(cells[16]!),
+      gs: games != null && num(cells[5]!) != null ? undefined : undefined,
+    })
+  }
+  return out
+}
+
+export async function fetchKboRecordPool(season = 2026): Promise<{
+  hitters: Map<string, KboRecordHitter>
+  pitchers: Map<string, KboRecordPitcher>
+}> {
+  void season // 시즌 셀렉터 POST 미지원 — KBO 기본 노출 시즌 사용
+
+  const hitters = new Map<string, KboRecordHitter>()
+  const pitchers = new Map<string, KboRecordPitcher>()
+
+  const h1 = await fetchText(`${HITTER_BASIC}/Basic1.aspx`)
+  for (const h of parseHitterTable(h1)) hitters.set(h.playerId, h)
+
+  try {
+    const h2 = await fetchText(`${HITTER_BASIC}/Basic2.aspx`)
+    const adv = parseHitterAdvanced(h2)
+    for (const [id, extra] of adv) {
+      const base = hitters.get(id)
+      if (base) hitters.set(id, { ...base, ...extra })
+    }
+  } catch {
+    /* Basic2 optional */
+  }
+
+  const p1 = await fetchText(`${PITCHER_BASIC}/Basic1.aspx`)
+  for (const p of parsePitcherTable(p1)) pitchers.set(p.playerId, p)
+
+  return { hitters, pitchers }
+}
+
+export async function fetchKboPlayerProfile(playerId: string): Promise<KboPlayerProfile> {
+  for (const base of [HITTER_DETAIL, PITCHER_DETAIL]) {
+    const html = await fetchText(`${base}?playerId=${playerId}`)
+    const profile = parseKboProfileHtml(html)
+    if (profile.name) return profile
+  }
+  const label = await fetchKboPositionLabel(playerId)
+  return { name: '', positionLabel: label }
+}
+
+export function hitterToSourceStats(h: KboRecordHitter): BatterSourceStats {
+  const pa = h.pa ?? 200
+  const obp = h.obp ?? (h.avg != null ? h.avg + 0.05 : 0.33)
+  const slg = h.slg ?? (h.avg != null ? h.avg + 0.08 : 0.42)
+  const iso = Math.max(0.05, slg - (h.avg ?? 0.27))
+  const bbPct = pa > 0 && h.bb != null ? h.bb / pa : 0.08
+  const kPct = pa > 0 && h.k != null ? h.k / pa : 0.2
+  const woba = obp * 0.85 + slg * 0.15
+
+  return {
+    pa,
+    woba,
+    iso,
+    bbPct,
+    kPct,
+    sb: h.sb ?? 0,
+  }
+}
+
+export function pitcherToSourceStats(p: KboRecordPitcher, role: 'SP' | 'RP'): PitcherSourceStats {
+  const ip = p.ip ?? (role === 'SP' ? 80 : 45)
+  const games = p.games ?? (role === 'SP' ? 25 : 40)
+  const bb9 = ip > 0 && p.bb != null ? (p.bb * 9) / ip : 3.4
+  const k9 = ip > 0 && p.k != null ? (p.k * 9) / ip : 7.5
+  const era = p.era ?? 4.5
+  const fip = ip > 0 && p.er != null && p.hr != null && p.bb != null && p.k != null
+    ? ((13 * p.hr + 3 * p.bb - 2 * p.k) / ip) + 3.1
+    : era
+
+  return {
+    ip,
+    era,
+    fip,
+    k9,
+    bb9,
+    gs: role === 'SP' ? Math.round(games * 0.75) : 0,
+    games,
+  }
+}

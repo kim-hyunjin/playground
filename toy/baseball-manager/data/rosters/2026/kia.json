@@ -1,0 +1,1051 @@
+{
+  "teamAbbr": "KIA",
+  "season": 2026,
+  "first": [
+    {
+      "id": "KIA-김도영",
+      "name": "김도영",
+      "teamAbbr": "KIA",
+      "role": "SS",
+      "rosterLevel": "first",
+      "age": 23,
+      "salaryKrw": 250000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.41607142857142854,
+        "iso": 0.2042857142857143,
+        "bbPct": 0.11125000000000002,
+        "kPct": 0.16107142857142856,
+        "sb": 34
+      },
+      "potential": 94,
+      "targetOvr": 76,
+      "bats": "R",
+      "throws": "R"
+    },
+    {
+      "id": "KIA-나성범",
+      "name": "나성범",
+      "teamAbbr": "KIA",
+      "role": "LF",
+      "rosterLevel": "first",
+      "age": 37,
+      "salaryKrw": 800000000,
+      "sourceStats": {
+        "pa": 68,
+        "woba": 14.35,
+        "iso": 72.709,
+        "bbPct": 0.45588235294117646,
+        "kPct": 0.07352941176470588,
+        "sb": 0
+      },
+      "targetOvr": 78,
+      "bats": "L",
+      "throws": "L"
+    },
+    {
+      "id": "KIA-최원준",
+      "name": "최원준",
+      "teamAbbr": "KIA",
+      "role": "CF",
+      "rosterLevel": "first",
+      "age": 36,
+      "salaryKrw": 550000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.3967857142857143,
+        "iso": 0.18714285714285717,
+        "bbPct": 0.10375000000000001,
+        "kPct": 0.1717857142857143,
+        "sb": 29
+      },
+      "targetOvr": 71,
+      "bats": "L",
+      "throws": "R"
+    },
+    {
+      "id": "KIA-변우혁",
+      "name": "변우혁",
+      "teamAbbr": "KIA",
+      "role": "1B",
+      "rosterLevel": "first",
+      "age": 26,
+      "salaryKrw": 65000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.39035714285714285,
+        "iso": 0.18142857142857144,
+        "bbPct": 0.10125,
+        "kPct": 0.17535714285714285,
+        "sb": 11
+      },
+      "potential": 88,
+      "targetOvr": 66,
+      "bats": "R",
+      "throws": "R"
+    },
+    {
+      "id": "KIA-김석환",
+      "name": "김석환",
+      "teamAbbr": "KIA",
+      "role": "DH",
+      "rosterLevel": "first",
+      "age": 27,
+      "salaryKrw": 55000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.3871428571428571,
+        "iso": 0.17857142857142858,
+        "bbPct": 0.1,
+        "kPct": 0.17714285714285716,
+        "sb": 11
+      },
+      "targetOvr": 65,
+      "bats": "L",
+      "throws": "L"
+    },
+    {
+      "id": "KIA-김선빈",
+      "name": "김선빈",
+      "teamAbbr": "KIA",
+      "role": "2B",
+      "rosterLevel": "first",
+      "age": 37,
+      "salaryKrw": 600000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.3839285714285714,
+        "iso": 0.1757142857142857,
+        "bbPct": 0.09875,
+        "kPct": 0.17892857142857144,
+        "sb": 26
+      },
+      "targetOvr": 68,
+      "bats": "R",
+      "throws": "R"
+    },
+    {
+      "id": "KIA-김태군",
+      "name": "김태군",
+      "teamAbbr": "KIA",
+      "role": "C",
+      "rosterLevel": "first",
+      "age": 37,
+      "salaryKrw": 600000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.3775,
+        "iso": 0.16999999999999998,
+        "bbPct": 0.09625,
+        "kPct": 0.1825,
+        "sb": 10
+      },
+      "targetOvr": 63,
+      "bats": "R",
+      "throws": "R"
+    },
+    {
+      "id": "KIA-최정용",
+      "name": "최정용",
+      "teamAbbr": "KIA",
+      "role": "3B",
+      "rosterLevel": "first",
+      "age": 30,
+      "salaryKrw": 45000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.37107142857142855,
+        "iso": 0.16428571428571428,
+        "bbPct": 0.09375000000000001,
+        "kPct": 0.18607142857142855,
+        "sb": 9
+      },
+      "targetOvr": 62,
+      "bats": "L",
+      "throws": "R"
+    },
+    {
+      "id": "KIA-박찬호",
+      "name": "박찬호",
+      "teamAbbr": "KIA",
+      "role": "SS",
+      "rosterLevel": "first",
+      "age": 32,
+      "salaryKrw": 250000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.36464285714285716,
+        "iso": 0.15857142857142859,
+        "bbPct": 0.09125000000000001,
+        "kPct": 0.18964285714285714,
+        "sb": 21
+      },
+      "targetOvr": 72
+    },
+    {
+      "id": "KIA-윤도현",
+      "name": "윤도현",
+      "teamAbbr": "KIA",
+      "role": "RF",
+      "rosterLevel": "first",
+      "age": 23,
+      "salaryKrw": 55000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.36142857142857143,
+        "iso": 0.15571428571428572,
+        "bbPct": 0.09000000000000001,
+        "kPct": 0.19142857142857142,
+        "sb": 8
+      },
+      "potential": 82,
+      "targetOvr": 59,
+      "bats": "R",
+      "throws": "R"
+    },
+    {
+      "id": "KIA-한승택",
+      "name": "한승택",
+      "teamAbbr": "KIA",
+      "role": "C",
+      "rosterLevel": "first",
+      "age": 30,
+      "salaryKrw": 160000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.3582142857142857,
+        "iso": 0.15285714285714286,
+        "bbPct": 0.08875000000000001,
+        "kPct": 0.19321428571428573,
+        "sb": 7
+      },
+      "targetOvr": 70
+    },
+    {
+      "id": "KIA-오선진",
+      "name": "오선진",
+      "teamAbbr": "KIA",
+      "role": "3B",
+      "rosterLevel": "first",
+      "age": 34,
+      "salaryKrw": 140000000,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.355,
+        "iso": 0.15,
+        "bbPct": 0.08750000000000001,
+        "kPct": 0.195,
+        "sb": 7
+      },
+      "targetOvr": 69
+    },
+    {
+      "id": "KIA-김규성",
+      "name": "김규성",
+      "teamAbbr": "KIA",
+      "role": "2B",
+      "rosterLevel": "first",
+      "age": 29,
+      "salaryKrw": 90000000,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.35178571428571426,
+        "iso": 0.14714285714285713,
+        "bbPct": 0.08625000000000001,
+        "kPct": 0.19678571428571429,
+        "sb": 18
+      },
+      "targetOvr": 60,
+      "bats": "L",
+      "throws": "R"
+    },
+    {
+      "id": "KIA-양현종",
+      "name": "양현종",
+      "teamAbbr": "KIA",
+      "role": "SP",
+      "rosterLevel": "first",
+      "age": 38,
+      "salaryKrw": 800000000,
+      "sourceStats": {
+        "ip": 151,
+        "era": 3.75,
+        "fip": 3.757142857142857,
+        "k9": 11.160714285714286,
+        "bb9": 2.8607142857142858,
+        "gs": 24,
+        "games": 26
+      },
+      "targetOvr": 70,
+      "bats": "L",
+      "throws": "L"
+    },
+    {
+      "id": "KIA-네일",
+      "name": "네일",
+      "teamAbbr": "KIA",
+      "role": "SP",
+      "rosterLevel": "first",
+      "age": 33,
+      "salaryKrw": 16000000000,
+      "sourceStats": {
+        "ip": 0.5,
+        "era": 3.4,
+        "fip": 2067.1,
+        "k9": 180,
+        "bb9": 72,
+        "gs": 11,
+        "games": 15
+      },
+      "targetOvr": 45,
+      "bats": "R",
+      "throws": "R"
+    },
+    {
+      "id": "KIA-윤영철",
+      "name": "윤영철",
+      "teamAbbr": "KIA",
+      "role": "SP",
+      "rosterLevel": "first",
+      "age": 22,
+      "salaryKrw": 100000000,
+      "sourceStats": {
+        "ip": 143,
+        "era": 4.050000000000001,
+        "fip": 4.014285714285714,
+        "k9": 10.196428571428571,
+        "bb9": 3.0964285714285715,
+        "gs": 23,
+        "games": 25
+      },
+      "potential": 86,
+      "targetOvr": 68,
+      "bats": "L",
+      "throws": "L"
+    },
+    {
+      "id": "KIA-황동하",
+      "name": "황동하",
+      "teamAbbr": "KIA",
+      "role": "SP",
+      "rosterLevel": "first",
+      "age": 24,
+      "salaryKrw": 80000000,
+      "sourceStats": {
+        "ip": 140,
+        "era": 4.15,
+        "fip": 4.1,
+        "k9": 9.875,
+        "bb9": 3.175,
+        "gs": 23,
+        "games": 25
+      },
+      "potential": 84,
+      "targetOvr": 67,
+      "bats": "R",
+      "throws": "R"
+    },
+    {
+      "id": "KIA-이준영",
+      "name": "이준영",
+      "teamAbbr": "KIA",
+      "role": "SP",
+      "rosterLevel": "first",
+      "age": 34,
+      "salaryKrw": 200000000,
+      "sourceStats": {
+        "ip": 134,
+        "era": 4.3500000000000005,
+        "fip": 4.271428571428571,
+        "k9": 9.232142857142858,
+        "bb9": 3.3321428571428573,
+        "gs": 22,
+        "games": 24
+      },
+      "targetOvr": 65,
+      "bats": "L",
+      "throws": "L"
+    },
+    {
+      "id": "KIA-정해영",
+      "name": "정해영",
+      "teamAbbr": "KIA",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 25,
+      "salaryKrw": 300000000,
+      "sourceStats": {
+        "ip": 51,
+        "era": 3.95,
+        "fip": 3.928571428571429,
+        "k9": 10.517857142857142,
+        "bb9": 3.017857142857143,
+        "gs": 0,
+        "games": 42
+      },
+      "targetOvr": 57,
+      "bats": "R",
+      "throws": "R"
+    },
+    {
+      "id": "KIA-전상현",
+      "name": "전상현",
+      "teamAbbr": "KIA",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 30,
+      "salaryKrw": 310000000,
+      "sourceStats": {
+        "ip": 50,
+        "era": 4.1000000000000005,
+        "fip": 4.057142857142857,
+        "k9": 10.035714285714285,
+        "bb9": 3.1357142857142857,
+        "gs": 0,
+        "games": 41
+      },
+      "targetOvr": 56,
+      "bats": "R",
+      "throws": "R"
+    },
+    {
+      "id": "KIA-이의욱",
+      "name": "이의욱",
+      "teamAbbr": "KIA",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 28,
+      "salaryKrw": 220000000,
+      "sourceStats": {
+        "ip": 49,
+        "era": 4.2,
+        "fip": 4.142857142857143,
+        "k9": 9.714285714285715,
+        "bb9": 3.2142857142857144,
+        "gs": 0,
+        "games": 41
+      },
+      "targetOvr": 75
+    },
+    {
+      "id": "KIA-김기훈",
+      "name": "김기훈",
+      "teamAbbr": "KIA",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 26,
+      "salaryKrw": 65000000,
+      "sourceStats": {
+        "ip": 48,
+        "era": 4.25,
+        "fip": 4.185714285714286,
+        "k9": 9.553571428571429,
+        "bb9": 3.2535714285714286,
+        "gs": 0,
+        "games": 40
+      },
+      "targetOvr": 54,
+      "bats": "L",
+      "throws": "L"
+    },
+    {
+      "id": "KIA-김대유",
+      "name": "김대유",
+      "teamAbbr": "KIA",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 35,
+      "salaryKrw": 70000000,
+      "sourceStats": {
+        "ip": 48,
+        "era": 4.3,
+        "fip": 4.228571428571429,
+        "k9": 9.392857142857142,
+        "bb9": 3.2928571428571427,
+        "gs": 0,
+        "games": 40
+      },
+      "targetOvr": 54,
+      "bats": "L",
+      "throws": "L"
+    },
+    {
+      "id": "KIA-장현식",
+      "name": "장현식",
+      "teamAbbr": "KIA",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 30,
+      "salaryKrw": 150000000,
+      "sourceStats": {
+        "ip": 47,
+        "era": 4.3500000000000005,
+        "fip": 4.271428571428571,
+        "k9": 9.232142857142858,
+        "bb9": 3.3321428571428573,
+        "gs": 0,
+        "games": 40
+      },
+      "targetOvr": 72
+    },
+    {
+      "id": "KIA-임기영",
+      "name": "임기영",
+      "teamAbbr": "KIA",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 26,
+      "salaryKrw": 130000000,
+      "sourceStats": {
+        "ip": 47,
+        "era": 4.4,
+        "fip": 4.314285714285714,
+        "k9": 9.071428571428571,
+        "bb9": 3.3714285714285714,
+        "gs": 0,
+        "games": 40
+      },
+      "targetOvr": 71
+    },
+    {
+      "id": "KIA-이호민",
+      "name": "이호민",
+      "teamAbbr": "KIA",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 20,
+      "salaryKrw": 55000000,
+      "sourceStats": {
+        "ip": 46,
+        "era": 4.5,
+        "fip": 4.4,
+        "k9": 8.75,
+        "bb9": 3.45,
+        "gs": 0,
+        "games": 39
+      },
+      "potential": 78,
+      "targetOvr": 53,
+      "bats": "R",
+      "throws": "R"
+    }
+  ],
+  "farm": [
+    {
+      "id": "KIA-김정호",
+      "name": "김정호",
+      "teamAbbr": "KIA",
+      "role": "SS",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.3325,
+        "iso": 0.13,
+        "bbPct": 0.07875000000000001,
+        "kPct": 0.2075,
+        "sb": 14
+      },
+      "potential": 80,
+      "targetOvr": 62
+    },
+    {
+      "id": "KIA-박민",
+      "name": "박민",
+      "teamAbbr": "KIA",
+      "role": "CF",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.3196428571428571,
+        "iso": 0.11857142857142858,
+        "bbPct": 0.07375000000000001,
+        "kPct": 0.21464285714285714,
+        "sb": 10
+      },
+      "potential": 78,
+      "targetOvr": 58
+    },
+    {
+      "id": "KIA-이재원",
+      "name": "이재원",
+      "teamAbbr": "KIA",
+      "role": "C",
+      "rosterLevel": "farm",
+      "age": 22,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.3132142857142857,
+        "iso": 0.11285714285714286,
+        "bbPct": 0.07125000000000001,
+        "kPct": 0.21821428571428572,
+        "sb": 2
+      },
+      "potential": 72,
+      "targetOvr": 56
+    },
+    {
+      "id": "KIA-최지민",
+      "name": "최지민",
+      "teamAbbr": "KIA",
+      "role": "3B",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.31,
+        "iso": 0.11,
+        "bbPct": 0.07,
+        "kPct": 0.22,
+        "sb": 2
+      },
+      "potential": 74,
+      "targetOvr": 55
+    },
+    {
+      "id": "KIA-한준수",
+      "name": "한준수",
+      "teamAbbr": "KIA",
+      "role": "RF",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.3067857142857143,
+        "iso": 0.10714285714285714,
+        "bbPct": 0.06875,
+        "kPct": 0.22178571428571428,
+        "sb": 2
+      },
+      "potential": 76,
+      "targetOvr": 54
+    },
+    {
+      "id": "KIA-박시훈",
+      "name": "박시훈",
+      "teamAbbr": "KIA",
+      "role": "SP",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "ip": 117,
+        "era": 4.95,
+        "fip": 4.785714285714286,
+        "k9": 7.303571428571429,
+        "bb9": 3.8035714285714284,
+        "gs": 19,
+        "games": 23
+      },
+      "potential": 82,
+      "targetOvr": 60
+    },
+    {
+      "id": "KIA-김민수",
+      "name": "김민수",
+      "teamAbbr": "KIA",
+      "role": "SP",
+      "rosterLevel": "farm",
+      "age": 22,
+      "sourceStats": {
+        "ip": 113,
+        "era": 5.1000000000000005,
+        "fip": 4.914285714285715,
+        "k9": 6.821428571428571,
+        "bb9": 3.9214285714285713,
+        "gs": 18,
+        "games": 22
+      },
+      "potential": 79,
+      "targetOvr": 57
+    },
+    {
+      "id": "KIA-이태양",
+      "name": "이태양",
+      "teamAbbr": "KIA",
+      "role": "SP",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "ip": 110,
+        "era": 5.2,
+        "fip": 5,
+        "k9": 6.5,
+        "bb9": 4,
+        "gs": 18,
+        "games": 22
+      },
+      "potential": 81,
+      "targetOvr": 55
+    },
+    {
+      "id": "KIA-정우영",
+      "name": "정우영",
+      "teamAbbr": "KIA",
+      "role": "RP",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "ip": 37,
+        "era": 5.3,
+        "fip": 5.085714285714285,
+        "k9": 6.178571428571429,
+        "bb9": 4.078571428571428,
+        "gs": 0,
+        "games": 34
+      },
+      "potential": 75,
+      "targetOvr": 53
+    },
+    {
+      "id": "KIA-오현석",
+      "name": "오현석",
+      "teamAbbr": "KIA",
+      "role": "RP",
+      "rosterLevel": "farm",
+      "age": 22,
+      "sourceStats": {
+        "ip": 36,
+        "era": 5.3500000000000005,
+        "fip": 5.128571428571428,
+        "k9": 6.017857142857143,
+        "bb9": 4.117857142857143,
+        "gs": 0,
+        "games": 34
+      },
+      "potential": 73,
+      "targetOvr": 52
+    },
+    {
+      "id": "KIA-장현민",
+      "name": "장현민",
+      "teamAbbr": "KIA",
+      "role": "2B",
+      "rosterLevel": "farm",
+      "age": 19,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.29714285714285715,
+        "iso": 0.09857142857142857,
+        "bbPct": 0.065,
+        "kPct": 0.22714285714285715,
+        "sb": 5
+      },
+      "potential": 77,
+      "targetOvr": 51
+    },
+    {
+      "id": "KIA-윤재혁",
+      "name": "윤재혁",
+      "teamAbbr": "KIA",
+      "role": "LF",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.29392857142857143,
+        "iso": 0.09571428571428571,
+        "bbPct": 0.06375,
+        "kPct": 0.22892857142857143,
+        "sb": 0
+      },
+      "potential": 74,
+      "targetOvr": 50
+    },
+    {
+      "id": "KIA-서재민",
+      "name": "서재민",
+      "teamAbbr": "KIA",
+      "role": "RP",
+      "rosterLevel": "farm",
+      "age": 19,
+      "sourceStats": {
+        "ip": 35,
+        "era": 5.5,
+        "fip": 5.257142857142857,
+        "k9": 5.535714285714286,
+        "bb9": 4.235714285714286,
+        "gs": 0,
+        "games": 33
+      },
+      "potential": 72,
+      "targetOvr": 49
+    },
+    {
+      "id": "KIA-홍길동",
+      "name": "홍길동",
+      "teamAbbr": "KIA",
+      "role": "1B",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.2875,
+        "iso": 0.09,
+        "bbPct": 0.061250000000000006,
+        "kPct": 0.2325,
+        "sb": 0
+      },
+      "potential": 70,
+      "targetOvr": 48
+    },
+    {
+      "id": "KIA-나승우",
+      "name": "나승우",
+      "teamAbbr": "KIA",
+      "role": "DH",
+      "rosterLevel": "farm",
+      "age": 22,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.32285714285714284,
+        "iso": 0.12142857142857143,
+        "bbPct": 0.07500000000000001,
+        "kPct": 0.21285714285714286,
+        "sb": 3
+      },
+      "potential": 78,
+      "targetOvr": 59
+    },
+    {
+      "id": "KIA-문재윤",
+      "name": "문재윤",
+      "teamAbbr": "KIA",
+      "role": "SS",
+      "rosterLevel": "farm",
+      "age": 19,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.31642857142857145,
+        "iso": 0.11571428571428571,
+        "bbPct": 0.07250000000000001,
+        "kPct": 0.21642857142857144,
+        "sb": 10
+      },
+      "potential": 82,
+      "targetOvr": 57
+    },
+    {
+      "id": "KIA-송민준",
+      "name": "송민준",
+      "teamAbbr": "KIA",
+      "role": "CF",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.3132142857142857,
+        "iso": 0.11285714285714286,
+        "bbPct": 0.07125000000000001,
+        "kPct": 0.21821428571428572,
+        "sb": 9
+      },
+      "potential": 79,
+      "targetOvr": 56
+    },
+    {
+      "id": "KIA-유태오",
+      "name": "유태오",
+      "teamAbbr": "KIA",
+      "role": "C",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.31,
+        "iso": 0.11,
+        "bbPct": 0.07,
+        "kPct": 0.22,
+        "sb": 2
+      },
+      "potential": 74,
+      "targetOvr": 55
+    },
+    {
+      "id": "KIA-배준영",
+      "name": "배준영",
+      "teamAbbr": "KIA",
+      "role": "3B",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.3067857142857143,
+        "iso": 0.10714285714285714,
+        "bbPct": 0.06875,
+        "kPct": 0.22178571428571428,
+        "sb": 2
+      },
+      "potential": 76,
+      "targetOvr": 54
+    },
+    {
+      "id": "KIA-강현수",
+      "name": "강현수",
+      "teamAbbr": "KIA",
+      "role": "RF",
+      "rosterLevel": "farm",
+      "age": 19,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.30357142857142855,
+        "iso": 0.10428571428571429,
+        "bbPct": 0.0675,
+        "kPct": 0.22357142857142856,
+        "sb": 1
+      },
+      "potential": 77,
+      "targetOvr": 53
+    },
+    {
+      "id": "KIA-조윤서",
+      "name": "조윤서",
+      "teamAbbr": "KIA",
+      "role": "2B",
+      "rosterLevel": "farm",
+      "age": 22,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.3003571428571429,
+        "iso": 0.10142857142857142,
+        "bbPct": 0.06625,
+        "kPct": 0.22535714285714287,
+        "sb": 6
+      },
+      "potential": 73,
+      "targetOvr": 52
+    },
+    {
+      "id": "KIA-황지훈",
+      "name": "황지훈",
+      "teamAbbr": "KIA",
+      "role": "SP",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "ip": 114,
+        "era": 5.05,
+        "fip": 4.871428571428572,
+        "k9": 6.982142857142857,
+        "bb9": 3.882142857142857,
+        "gs": 19,
+        "games": 22
+      },
+      "potential": 81,
+      "targetOvr": 58
+    },
+    {
+      "id": "KIA-임도현",
+      "name": "임도현",
+      "teamAbbr": "KIA",
+      "role": "SP",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "ip": 110,
+        "era": 5.2,
+        "fip": 5,
+        "k9": 6.5,
+        "bb9": 4,
+        "gs": 18,
+        "games": 22
+      },
+      "potential": 80,
+      "targetOvr": 55
+    },
+    {
+      "id": "KIA-신우빈",
+      "name": "신우빈",
+      "teamAbbr": "KIA",
+      "role": "RP",
+      "rosterLevel": "farm",
+      "age": 19,
+      "sourceStats": {
+        "ip": 36,
+        "era": 5.4,
+        "fip": 5.171428571428572,
+        "k9": 5.857142857142858,
+        "bb9": 4.1571428571428575,
+        "gs": 0,
+        "games": 34
+      },
+      "potential": 72,
+      "targetOvr": 51
+    },
+    {
+      "id": "KIA-고영민",
+      "name": "고영민",
+      "teamAbbr": "KIA",
+      "role": "RP",
+      "rosterLevel": "farm",
+      "age": 22,
+      "sourceStats": {
+        "ip": 35,
+        "era": 5.45,
+        "fip": 5.214285714285714,
+        "k9": 5.696428571428571,
+        "bb9": 4.196428571428571,
+        "gs": 0,
+        "games": 34
+      },
+      "potential": 71,
+      "targetOvr": 50
+    },
+    {
+      "id": "KIA-류지환",
+      "name": "류지환",
+      "teamAbbr": "KIA",
+      "role": "LF",
+      "rosterLevel": "farm",
+      "age": 18,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.2907142857142857,
+        "iso": 0.09285714285714286,
+        "bbPct": 0.0625,
+        "kPct": 0.2307142857142857,
+        "sb": 0
+      },
+      "potential": 78,
+      "targetOvr": 49
+    },
+    {
+      "id": "KIA-백승호",
+      "name": "백승호",
+      "teamAbbr": "KIA",
+      "role": "RP",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "ip": 34,
+        "era": 5.55,
+        "fip": 5.3,
+        "k9": 5.375,
+        "bb9": 4.275,
+        "gs": 0,
+        "games": 33
+      },
+      "potential": 70,
+      "targetOvr": 48
+    },
+    {
+      "id": "KIA-전민규",
+      "name": "전민규",
+      "teamAbbr": "KIA",
+      "role": "RP",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "ip": 34,
+        "era": 5.6000000000000005,
+        "fip": 5.3428571428571425,
+        "k9": 5.214285714285714,
+        "bb9": 4.314285714285714,
+        "gs": 0,
+        "games": 33
+      },
+      "potential": 69,
+      "targetOvr": 47
+    }
+  ]
+}

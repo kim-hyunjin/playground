@@ -105,6 +105,8 @@ export interface PitcherGameLine {
   k: number
   hr: number
   bf: number
+  saves?: number
+  holds?: number
 }
 
 export interface GameBoxScore {
@@ -112,6 +114,9 @@ export interface GameBoxScore {
   pitchers: Record<string, PitcherGameLine>
   awayStarterId: string
   homeStarterId: string
+  winningPitcherId?: string
+  losingPitcherId?: string
+  savePitcherId?: string
 }
 
 export interface Team {

@@ -30,7 +30,7 @@ export function generateSchedule(teams: Team[], totalWeeks = 18, seriesLength = 
 }
 
 export function generateFarmSchedule(teams: Team[], totalWeeks = 18): ScheduledGame[] {
-  return generateSchedule(teams, totalWeeks, 1)
+  return generateSchedule(teams, totalWeeks, 5)
 }
 
 export function gamesForWeek(schedule: ScheduledGame[], week: number) {

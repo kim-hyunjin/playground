@@ -1,5 +1,6 @@
 import { firstTeamPlayers } from '../engine/roster'
-import { isBatter } from '../engine/generator'
+import { availableBatters } from '../engine/rosterAvailability'
+import { isPlayerAvailable } from '../engine/injury'
 import { OvrBadge } from '../components/PlayerCard'
 import { PlayerNameButton } from '../components/PlayerNameButton'
 import { useGame } from '../store/gameStore'
@@ -14,7 +15,7 @@ export function LineupPage() {
   const { userTeam, state, setLineup } = useGame()
   if (!userTeam || !state) return null
 
-  const batters = firstTeamPlayers(userTeam).filter(isBatter)
+  const batters = availableBatters(firstTeamPlayers(userTeam))
 
   const handleChange = (pos: FieldPosition, playerId: string) => {
     setLineup({ ...state.lineup, [pos]: playerId })
@@ -24,7 +25,9 @@ export function LineupPage() {
     <div className="bm-animate-in space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-[var(--text-h)]">라인업</h1>
-        <p className="text-sm text-[var(--text-muted)]">타순과 포지션을 배치하세요. 경기 시뮬에 반영됩니다.</p>
+        <p className="text-sm text-[var(--text-muted)]">
+          타순과 포지션을 배치하세요. 부상 선수는 자동으로 제외됩니다.
+        </p>
       </div>
 
       <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
@@ -40,7 +43,7 @@ export function LineupPage() {
                 onChange={(e) => handleChange(pos, e.target.value)}
               >
                 {batters.map((p) => (
-                  <option key={p.id} value={p.id}>
+                  <option key={p.id} value={p.id} disabled={!isPlayerAvailable(p)}>
                     {p.name} ({POSITION_LABEL[p.role]})
                   </option>
                 ))}

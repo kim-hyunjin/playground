@@ -24,6 +24,7 @@ import { createSimContext, type SimLeagueLevel } from './sim/context'
 import { ensureHandedness } from './sim/handedness'
 import { advanceRunners, calcRbi } from './sim/runners'
 import { isPlayerAvailable } from './injury'
+import { pickSavePitcher } from './rosterAvailability'
 
 function rosterForSim(team: Team, level: SimLeagueLevel = 'first'): Player[] {
   const hasLevels = team.players.some((p) => p.rosterLevel === 'farm')
@@ -114,6 +115,10 @@ function playHalfInning(
 
     runs += scored
     runners = state
+
+    if (half === 'bottom' && inning >= 9 && battingScore + runs > pitchingScore) {
+      break
+    }
 
     logs.push({
       inning,
@@ -214,6 +219,16 @@ export function simulateGame(
 
   if (homeTotal === awayTotal) {
     homeTotal += 1
+  }
+
+  const homeWon = homeTotal > awayTotal
+  box.winningPitcherId = homeWon ? box.homeStarterId : box.awayStarterId
+  box.losingPitcherId = homeWon ? box.awayStarterId : box.homeStarterId
+  const saveId = pickSavePitcher(box, box.winningPitcherId)
+  if (saveId) {
+    box.savePitcherId = saveId
+    const saveLine = box.pitchers[saveId]
+    if (saveLine) saveLine.saves = 1
   }
 
   return {

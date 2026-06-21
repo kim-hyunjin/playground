@@ -109,6 +109,7 @@ export function mergePitcherLine(season: PitcherStats, game: PitcherGameLine, pl
     k: season.k + game.k,
     hr: season.hr + game.hr,
     bf: season.bf + game.bf,
+    saves: season.saves + (game.saves ?? 0),
   }
 }
 

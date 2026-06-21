@@ -1,0 +1,1048 @@
+{
+  "teamAbbr": "KT",
+  "season": 2026,
+  "first": [
+    {
+      "id": "KT-강백호",
+      "name": "강백호",
+      "teamAbbr": "KT",
+      "role": "1B",
+      "rosterLevel": "first",
+      "age": 25,
+      "salaryKrw": 600000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.40964285714285714,
+        "iso": 0.19857142857142857,
+        "bbPct": 0.10875000000000001,
+        "kPct": 0.16464285714285715,
+        "sb": 13
+      },
+      "potential": 91,
+      "targetOvr": 86
+    },
+    {
+      "id": "KT-알몬테",
+      "name": "알몬테",
+      "teamAbbr": "KT",
+      "role": "LF",
+      "rosterLevel": "first",
+      "age": 37,
+      "salaryKrw": 5250000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.40321428571428575,
+        "iso": 0.19285714285714287,
+        "bbPct": 0.10625000000000001,
+        "kPct": 0.1682142857142857,
+        "sb": 12
+      },
+      "targetOvr": 68,
+      "bats": "S",
+      "throws": "R"
+    },
+    {
+      "id": "KT-김상수",
+      "name": "김상수",
+      "teamAbbr": "KT",
+      "role": "2B",
+      "rosterLevel": "first",
+      "age": 36,
+      "salaryKrw": 400000000,
+      "sourceStats": {
+        "pa": 62,
+        "woba": 9.149999999999999,
+        "iso": 26.714,
+        "bbPct": 0.532258064516129,
+        "kPct": 0.08064516129032258,
+        "sb": 0
+      },
+      "targetOvr": 78,
+      "bats": "R",
+      "throws": "R"
+    },
+    {
+      "id": "KT-장성우",
+      "name": "장성우",
+      "teamAbbr": "KT",
+      "role": "C",
+      "rosterLevel": "first",
+      "age": 36,
+      "salaryKrw": 300000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.3871428571428571,
+        "iso": 0.17857142857142858,
+        "bbPct": 0.1,
+        "kPct": 0.17714285714285716,
+        "sb": 11
+      },
+      "targetOvr": 65,
+      "bats": "R",
+      "throws": "R"
+    },
+    {
+      "id": "KT-배정대",
+      "name": "배정대",
+      "teamAbbr": "KT",
+      "role": "CF",
+      "rosterLevel": "first",
+      "age": 31,
+      "salaryKrw": 260000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.3839285714285714,
+        "iso": 0.1757142857142857,
+        "bbPct": 0.09875,
+        "kPct": 0.17892857142857144,
+        "sb": 26
+      },
+      "targetOvr": 68,
+      "bats": "R",
+      "throws": "R"
+    },
+    {
+      "id": "KT-오윤석",
+      "name": "오윤석",
+      "teamAbbr": "KT",
+      "role": "3B",
+      "rosterLevel": "first",
+      "age": 34,
+      "salaryKrw": 135000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.3775,
+        "iso": 0.16999999999999998,
+        "bbPct": 0.09625,
+        "kPct": 0.1825,
+        "sb": 10
+      },
+      "targetOvr": 63,
+      "bats": "R",
+      "throws": "R"
+    },
+    {
+      "id": "KT-황재균",
+      "name": "황재균",
+      "teamAbbr": "KT",
+      "role": "3B",
+      "rosterLevel": "first",
+      "age": 39,
+      "salaryKrw": 500000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.3742857142857143,
+        "iso": 0.16714285714285715,
+        "bbPct": 0.095,
+        "kPct": 0.18428571428571427,
+        "sb": 9
+      },
+      "targetOvr": 62,
+      "bats": "R",
+      "throws": "R"
+    },
+    {
+      "id": "KT-김민혁",
+      "name": "김민혁",
+      "teamAbbr": "KT",
+      "role": "RF",
+      "rosterLevel": "first",
+      "age": 31,
+      "salaryKrw": 290000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.3678571428571429,
+        "iso": 0.16142857142857142,
+        "bbPct": 0.09250000000000001,
+        "kPct": 0.18785714285714286,
+        "sb": 8
+      },
+      "targetOvr": 61,
+      "bats": "L",
+      "throws": "R"
+    },
+    {
+      "id": "KT-조용호",
+      "name": "조용호",
+      "teamAbbr": "KT",
+      "role": "DH",
+      "rosterLevel": "first",
+      "age": 37,
+      "salaryKrw": 150000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.36464285714285716,
+        "iso": 0.15857142857142859,
+        "bbPct": 0.09125000000000001,
+        "kPct": 0.18964285714285714,
+        "sb": 8
+      },
+      "targetOvr": 60,
+      "bats": "L",
+      "throws": "R"
+    },
+    {
+      "id": "KT-심우준",
+      "name": "심우준",
+      "teamAbbr": "KT",
+      "role": "SS",
+      "rosterLevel": "first",
+      "age": 29,
+      "salaryKrw": 220000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.36142857142857143,
+        "iso": 0.15571428571428572,
+        "bbPct": 0.09000000000000001,
+        "kPct": 0.19142857142857142,
+        "sb": 21
+      },
+      "targetOvr": 71
+    },
+    {
+      "id": "KT-김현수",
+      "name": "김현수",
+      "teamAbbr": "KT",
+      "role": "C",
+      "rosterLevel": "first",
+      "age": 38,
+      "salaryKrw": 800000000,
+      "sourceStats": {
+        "pa": 69,
+        "woba": 14.45,
+        "iso": 33.711,
+        "bbPct": 0.4492753623188406,
+        "kPct": 0.014492753623188406,
+        "sb": 0
+      },
+      "targetOvr": 79,
+      "bats": "L",
+      "throws": "R"
+    },
+    {
+      "id": "KT-박경수",
+      "name": "박경수",
+      "teamAbbr": "KT",
+      "role": "2B",
+      "rosterLevel": "first",
+      "age": 42,
+      "salaryKrw": 160000000,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.35178571428571426,
+        "iso": 0.14714285714285713,
+        "bbPct": 0.08625000000000001,
+        "kPct": 0.19678571428571429,
+        "sb": 18
+      },
+      "targetOvr": 60,
+      "bats": "R",
+      "throws": "R"
+    },
+    {
+      "id": "KT-이상동",
+      "name": "이상동",
+      "teamAbbr": "KT",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 31,
+      "salaryKrw": 100000000,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.3485714285714286,
+        "iso": 0.1442857142857143,
+        "bbPct": 0.085,
+        "kPct": 0.19857142857142857,
+        "sb": 17
+      },
+      "targetOvr": 67,
+      "bats": "R",
+      "throws": "R"
+    },
+    {
+      "id": "KT-고영표",
+      "name": "고영표",
+      "teamAbbr": "KT",
+      "role": "SP",
+      "rosterLevel": "first",
+      "age": 35,
+      "salaryKrw": 2600000000,
+      "sourceStats": {
+        "ip": 0.556,
+        "era": 4.38,
+        "fip": 1965.330215827338,
+        "k9": 97.12230215827337,
+        "bb9": 129.49640287769782,
+        "gs": 10,
+        "games": 13
+      },
+      "targetOvr": 44,
+      "bats": "R"
+    },
+    {
+      "id": "KT-쿠에바스",
+      "name": "쿠에바스",
+      "teamAbbr": "KT",
+      "role": "SP",
+      "rosterLevel": "first",
+      "age": 36,
+      "salaryKrw": 10000000000,
+      "sourceStats": {
+        "ip": 150,
+        "era": 3.8000000000000003,
+        "fip": 3.8,
+        "k9": 11,
+        "bb9": 2.9,
+        "gs": 24,
+        "games": 26
+      },
+      "targetOvr": 70,
+      "bats": "S",
+      "throws": "R"
+    },
+    {
+      "id": "KT-소형준",
+      "name": "소형준",
+      "teamAbbr": "KT",
+      "role": "SP",
+      "rosterLevel": "first",
+      "age": 25,
+      "salaryKrw": 330000000,
+      "sourceStats": {
+        "ip": 144,
+        "era": 4,
+        "fip": 3.9714285714285715,
+        "k9": 10.357142857142858,
+        "bb9": 3.057142857142857,
+        "gs": 23,
+        "games": 25
+      },
+      "targetOvr": 68,
+      "bats": "R",
+      "throws": "R"
+    },
+    {
+      "id": "KT-주권",
+      "name": "주권",
+      "teamAbbr": "KT",
+      "role": "SP",
+      "rosterLevel": "first",
+      "age": 31,
+      "salaryKrw": 150000000,
+      "sourceStats": {
+        "ip": 140,
+        "era": 4.15,
+        "fip": 4.1,
+        "k9": 9.875,
+        "bb9": 3.175,
+        "gs": 23,
+        "games": 25
+      },
+      "potential": 83,
+      "targetOvr": 67,
+      "bats": "R",
+      "throws": "R"
+    },
+    {
+      "id": "KT-유준",
+      "name": "유준규",
+      "teamAbbr": "KT",
+      "role": "SP",
+      "rosterLevel": "first",
+      "age": 24,
+      "salaryKrw": 34000000,
+      "sourceStats": {
+        "ip": 136,
+        "era": 4.3,
+        "fip": 4.228571428571429,
+        "k9": 9.392857142857142,
+        "bb9": 3.2928571428571427,
+        "gs": 22,
+        "games": 25
+      },
+      "potential": 80,
+      "targetOvr": 65,
+      "bats": "L",
+      "throws": "R"
+    },
+    {
+      "id": "KT-박영현",
+      "name": "박영현",
+      "teamAbbr": "KT",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 23,
+      "salaryKrw": 300000000,
+      "sourceStats": {
+        "ip": 51,
+        "era": 3.95,
+        "fip": 3.928571428571429,
+        "k9": 10.517857142857142,
+        "bb9": 3.017857142857143,
+        "gs": 0,
+        "games": 42
+      },
+      "targetOvr": 57,
+      "bats": "R",
+      "throws": "R"
+    },
+    {
+      "id": "KT-김재윤",
+      "name": "김재윤",
+      "teamAbbr": "KT",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 30,
+      "salaryKrw": 300000000,
+      "sourceStats": {
+        "ip": 50,
+        "era": 4.050000000000001,
+        "fip": 4.014285714285714,
+        "k9": 10.196428571428571,
+        "bb9": 3.0964285714285715,
+        "gs": 0,
+        "games": 42
+      },
+      "targetOvr": 78
+    },
+    {
+      "id": "KT-이상화",
+      "name": "이상화",
+      "teamAbbr": "KT",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 38,
+      "salaryKrw": 40000000,
+      "sourceStats": {
+        "ip": 49,
+        "era": 4.2,
+        "fip": 4.142857142857143,
+        "k9": 9.714285714285715,
+        "bb9": 3.2142857142857144,
+        "gs": 0,
+        "games": 41
+      },
+      "targetOvr": 55,
+      "bats": "R",
+      "throws": "R"
+    },
+    {
+      "id": "KT-박시영",
+      "name": "박시영",
+      "teamAbbr": "KT",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 28,
+      "salaryKrw": 210000000,
+      "sourceStats": {
+        "ip": 48,
+        "era": 4.3,
+        "fip": 4.228571428571429,
+        "k9": 9.392857142857142,
+        "bb9": 3.2928571428571427,
+        "gs": 0,
+        "games": 40
+      },
+      "targetOvr": 73
+    },
+    {
+      "id": "KT-김민",
+      "name": "김민석",
+      "teamAbbr": "KT",
+      "role": "C",
+      "rosterLevel": "first",
+      "age": 21,
+      "salaryKrw": 32000000,
+      "sourceStats": {
+        "ip": 47,
+        "era": 4.4,
+        "fip": 4.314285714285714,
+        "k9": 9.071428571428571,
+        "bb9": 3.3714285714285714,
+        "gs": 0,
+        "games": 40
+      },
+      "targetOvr": 47,
+      "bats": "R",
+      "throws": "R"
+    },
+    {
+      "id": "KT-오유진",
+      "name": "오유진",
+      "teamAbbr": "KT",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 26,
+      "salaryKrw": 150000000,
+      "sourceStats": {
+        "ip": 46,
+        "era": 4.5,
+        "fip": 4.4,
+        "k9": 8.75,
+        "bb9": 3.45,
+        "gs": 0,
+        "games": 39
+      },
+      "targetOvr": 69
+    },
+    {
+      "id": "KT-박준영",
+      "name": "박준영",
+      "teamAbbr": "KT",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 25,
+      "salaryKrw": 130000000,
+      "sourceStats": {
+        "ip": 45,
+        "era": 4.55,
+        "fip": 4.442857142857143,
+        "k9": 8.589285714285715,
+        "bb9": 3.4892857142857143,
+        "gs": 0,
+        "games": 39
+      },
+      "targetOvr": 68
+    },
+    {
+      "id": "KT-이호민",
+      "name": "이호민",
+      "teamAbbr": "KT",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 20,
+      "salaryKrw": 55000000,
+      "sourceStats": {
+        "ip": 44,
+        "era": 4.6000000000000005,
+        "fip": 4.485714285714286,
+        "k9": 8.428571428571429,
+        "bb9": 3.5285714285714285,
+        "gs": 0,
+        "games": 38
+      },
+      "potential": 75,
+      "targetOvr": 52,
+      "bats": "R",
+      "throws": "R"
+    }
+  ],
+  "farm": [
+    {
+      "id": "KT-김준서",
+      "name": "김준서",
+      "teamAbbr": "KT",
+      "role": "SS",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.32607142857142857,
+        "iso": 0.12428571428571429,
+        "bbPct": 0.07625000000000001,
+        "kPct": 0.21107142857142858,
+        "sb": 12
+      },
+      "potential": 81,
+      "targetOvr": 60
+    },
+    {
+      "id": "KT-이민준",
+      "name": "이민준",
+      "teamAbbr": "KT",
+      "role": "CF",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.31642857142857145,
+        "iso": 0.11571428571428571,
+        "bbPct": 0.07250000000000001,
+        "kPct": 0.21642857142857144,
+        "sb": 10
+      },
+      "potential": 79,
+      "targetOvr": 57
+    },
+    {
+      "id": "KT-박태양",
+      "name": "박태양",
+      "teamAbbr": "KT",
+      "role": "SP",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "ip": 114,
+        "era": 5.05,
+        "fip": 4.871428571428572,
+        "k9": 6.982142857142857,
+        "bb9": 3.882142857142857,
+        "gs": 19,
+        "games": 22
+      },
+      "potential": 83,
+      "targetOvr": 58
+    },
+    {
+      "id": "KT-최민호",
+      "name": "최민호",
+      "teamAbbr": "KT",
+      "role": "C",
+      "rosterLevel": "farm",
+      "age": 22,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.31,
+        "iso": 0.11,
+        "bbPct": 0.07,
+        "kPct": 0.22,
+        "sb": 2
+      },
+      "potential": 73,
+      "targetOvr": 55
+    },
+    {
+      "id": "KT-김서준",
+      "name": "김서준",
+      "teamAbbr": "KT",
+      "role": "SP",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "ip": 109,
+        "era": 5.25,
+        "fip": 5.042857142857143,
+        "k9": 6.339285714285714,
+        "bb9": 4.039285714285715,
+        "gs": 18,
+        "games": 22
+      },
+      "potential": 80,
+      "targetOvr": 54
+    },
+    {
+      "id": "KT-한지우",
+      "name": "한지우",
+      "teamAbbr": "KT",
+      "role": "3B",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.30357142857142855,
+        "iso": 0.10428571428571429,
+        "bbPct": 0.0675,
+        "kPct": 0.22357142857142856,
+        "sb": 1
+      },
+      "potential": 75,
+      "targetOvr": 53
+    },
+    {
+      "id": "KT-오태민",
+      "name": "오태민",
+      "teamAbbr": "KT",
+      "role": "RP",
+      "rosterLevel": "farm",
+      "age": 22,
+      "sourceStats": {
+        "ip": 36,
+        "era": 5.3500000000000005,
+        "fip": 5.128571428571428,
+        "k9": 6.017857142857143,
+        "bb9": 4.117857142857143,
+        "gs": 0,
+        "games": 34
+      },
+      "potential": 72,
+      "targetOvr": 52
+    },
+    {
+      "id": "KT-정민재",
+      "name": "정민재",
+      "teamAbbr": "KT",
+      "role": "RF",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.29714285714285715,
+        "iso": 0.09857142857142857,
+        "bbPct": 0.065,
+        "kPct": 0.22714285714285715,
+        "sb": 1
+      },
+      "potential": 74,
+      "targetOvr": 51
+    },
+    {
+      "id": "KT-윤서영",
+      "name": "윤서영",
+      "teamAbbr": "KT",
+      "role": "RP",
+      "rosterLevel": "farm",
+      "age": 19,
+      "sourceStats": {
+        "ip": 35,
+        "era": 5.45,
+        "fip": 5.214285714285714,
+        "k9": 5.696428571428571,
+        "bb9": 4.196428571428571,
+        "gs": 0,
+        "games": 34
+      },
+      "potential": 71,
+      "targetOvr": 50
+    },
+    {
+      "id": "KT-장우진",
+      "name": "장우진",
+      "teamAbbr": "KT",
+      "role": "2B",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.2907142857142857,
+        "iso": 0.09285714285714286,
+        "bbPct": 0.0625,
+        "kPct": 0.2307142857142857,
+        "sb": 3
+      },
+      "potential": 73,
+      "targetOvr": 49
+    },
+    {
+      "id": "KT-신동욱",
+      "name": "신동욱",
+      "teamAbbr": "KT",
+      "role": "SP",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "ip": 100,
+        "era": 5.55,
+        "fip": 5.3,
+        "k9": 5.375,
+        "bb9": 4.275,
+        "gs": 17,
+        "games": 21
+      },
+      "potential": 77,
+      "targetOvr": 48
+    },
+    {
+      "id": "KT-박재민",
+      "name": "박재민",
+      "teamAbbr": "KT",
+      "role": "LF",
+      "rosterLevel": "farm",
+      "age": 19,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.2842857142857143,
+        "iso": 0.08714285714285715,
+        "bbPct": 0.060000000000000005,
+        "kPct": 0.2342857142857143,
+        "sb": 0
+      },
+      "potential": 72,
+      "targetOvr": 47
+    },
+    {
+      "id": "KT-김태우",
+      "name": "김태우",
+      "teamAbbr": "KT",
+      "role": "RP",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "ip": 33,
+        "era": 5.65,
+        "fip": 5.385714285714286,
+        "k9": 5.053571428571429,
+        "bb9": 4.353571428571429,
+        "gs": 0,
+        "games": 32
+      },
+      "potential": 70,
+      "targetOvr": 46
+    },
+    {
+      "id": "KT-이우진",
+      "name": "이우진",
+      "teamAbbr": "KT",
+      "role": "1B",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.27785714285714286,
+        "iso": 0.08142857142857143,
+        "bbPct": 0.05750000000000001,
+        "kPct": 0.23785714285714285,
+        "sb": 0
+      },
+      "potential": 71,
+      "targetOvr": 45
+    },
+    {
+      "id": "KT-배재훈",
+      "name": "배재훈",
+      "teamAbbr": "KT",
+      "role": "DH",
+      "rosterLevel": "farm",
+      "age": 22,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.3196428571428571,
+        "iso": 0.11857142857142858,
+        "bbPct": 0.07375000000000001,
+        "kPct": 0.21464285714285714,
+        "sb": 3
+      },
+      "potential": 77,
+      "targetOvr": 58
+    },
+    {
+      "id": "KT-송우진",
+      "name": "송우진",
+      "teamAbbr": "KT",
+      "role": "SS",
+      "rosterLevel": "farm",
+      "age": 19,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.3132142857142857,
+        "iso": 0.11285714285714286,
+        "bbPct": 0.07125000000000001,
+        "kPct": 0.21821428571428572,
+        "sb": 9
+      },
+      "potential": 81,
+      "targetOvr": 56
+    },
+    {
+      "id": "KT-임성민",
+      "name": "임성민",
+      "teamAbbr": "KT",
+      "role": "CF",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.31,
+        "iso": 0.11,
+        "bbPct": 0.07,
+        "kPct": 0.22,
+        "sb": 8
+      },
+      "potential": 78,
+      "targetOvr": 55
+    },
+    {
+      "id": "KT-황도현",
+      "name": "황도현",
+      "teamAbbr": "KT",
+      "role": "C",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.3067857142857143,
+        "iso": 0.10714285714285714,
+        "bbPct": 0.06875,
+        "kPct": 0.22178571428571428,
+        "sb": 2
+      },
+      "potential": 73,
+      "targetOvr": 54
+    },
+    {
+      "id": "KT-민준혁",
+      "name": "민준혁",
+      "teamAbbr": "KT",
+      "role": "3B",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.30357142857142855,
+        "iso": 0.10428571428571429,
+        "bbPct": 0.0675,
+        "kPct": 0.22357142857142856,
+        "sb": 1
+      },
+      "potential": 75,
+      "targetOvr": 53
+    },
+    {
+      "id": "KT-표지민",
+      "name": "표지민",
+      "teamAbbr": "KT",
+      "role": "RF",
+      "rosterLevel": "farm",
+      "age": 19,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.3003571428571429,
+        "iso": 0.10142857142857142,
+        "bbPct": 0.06625,
+        "kPct": 0.22535714285714287,
+        "sb": 1
+      },
+      "potential": 76,
+      "targetOvr": 52
+    },
+    {
+      "id": "KT-고태민",
+      "name": "고태민",
+      "teamAbbr": "KT",
+      "role": "2B",
+      "rosterLevel": "farm",
+      "age": 22,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.29714285714285715,
+        "iso": 0.09857142857142857,
+        "bbPct": 0.065,
+        "kPct": 0.22714285714285715,
+        "sb": 5
+      },
+      "potential": 72,
+      "targetOvr": 51
+    },
+    {
+      "id": "KT-나균안",
+      "name": "나균안",
+      "teamAbbr": "KT",
+      "role": "SP",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "ip": 113,
+        "era": 5.1000000000000005,
+        "fip": 4.914285714285715,
+        "k9": 6.821428571428571,
+        "bb9": 3.9214285714285713,
+        "gs": 18,
+        "games": 22
+      },
+      "potential": 80,
+      "targetOvr": 57
+    },
+    {
+      "id": "KT-유승민",
+      "name": "유승민",
+      "teamAbbr": "KT",
+      "role": "SP",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "ip": 109,
+        "era": 5.25,
+        "fip": 5.042857142857143,
+        "k9": 6.339285714285714,
+        "bb9": 4.039285714285715,
+        "gs": 18,
+        "games": 22
+      },
+      "potential": 79,
+      "targetOvr": 54
+    },
+    {
+      "id": "KT-차민호",
+      "name": "차민호",
+      "teamAbbr": "KT",
+      "role": "RP",
+      "rosterLevel": "farm",
+      "age": 19,
+      "sourceStats": {
+        "ip": 35,
+        "era": 5.45,
+        "fip": 5.214285714285714,
+        "k9": 5.696428571428571,
+        "bb9": 4.196428571428571,
+        "gs": 0,
+        "games": 34
+      },
+      "potential": 71,
+      "targetOvr": 50
+    },
+    {
+      "id": "KT-허태양",
+      "name": "허태양",
+      "teamAbbr": "KT",
+      "role": "RP",
+      "rosterLevel": "farm",
+      "age": 22,
+      "sourceStats": {
+        "ip": 35,
+        "era": 5.5,
+        "fip": 5.257142857142857,
+        "k9": 5.535714285714286,
+        "bb9": 4.235714285714286,
+        "gs": 0,
+        "games": 33
+      },
+      "potential": 70,
+      "targetOvr": 49
+    },
+    {
+      "id": "KT-신동현",
+      "name": "신동현",
+      "teamAbbr": "KT",
+      "role": "LF",
+      "rosterLevel": "farm",
+      "age": 18,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.2875,
+        "iso": 0.09,
+        "bbPct": 0.061250000000000006,
+        "kPct": 0.2325,
+        "sb": 0
+      },
+      "potential": 77,
+      "targetOvr": 48
+    },
+    {
+      "id": "KT-조민재",
+      "name": "조민재",
+      "teamAbbr": "KT",
+      "role": "RP",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "ip": 34,
+        "era": 5.6000000000000005,
+        "fip": 5.3428571428571425,
+        "k9": 5.214285714285714,
+        "bb9": 4.314285714285714,
+        "gs": 0,
+        "games": 33
+      },
+      "potential": 69,
+      "targetOvr": 47
+    },
+    {
+      "id": "KT-강우성",
+      "name": "강우성",
+      "teamAbbr": "KT",
+      "role": "RP",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "ip": 33,
+        "era": 5.65,
+        "fip": 5.385714285714286,
+        "k9": 5.053571428571429,
+        "bb9": 4.353571428571429,
+        "gs": 0,
+        "games": 32
+      },
+      "potential": 68,
+      "targetOvr": 46
+    }
+  ]
+}

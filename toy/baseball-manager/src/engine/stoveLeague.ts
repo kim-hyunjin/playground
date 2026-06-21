@@ -214,6 +214,8 @@ function resetPlayerForNewSeason(player: Player): Player {
     age: nextAge,
     fatigue: rand(0, 10),
     morale: clamp(player.morale + rand(2, 8), 50, 99),
+    injuryDays: undefined,
+    injuryType: undefined,
     developmentXp: Math.round((player.developmentXp ?? 0) * 0.35),
     potential: player.potential ?? rollPotential(
       ovr >= 75 ? 'star' : ovr >= 58 ? 'avg' : 'weak',

@@ -1,0 +1,1045 @@
+{
+  "teamAbbr": "LG",
+  "season": 2026,
+  "first": [
+    {
+      "id": "LG-오스틴",
+      "name": "오스틴",
+      "teamAbbr": "LG",
+      "role": "1B",
+      "rosterLevel": "first",
+      "age": 33,
+      "salaryKrw": 11000000000,
+      "sourceStats": {
+        "pa": 71,
+        "woba": 12.149999999999999,
+        "iso": 46.655,
+        "bbPct": 0.4788732394366197,
+        "kPct": 0.056338028169014086,
+        "sb": 0
+      },
+      "targetOvr": 78,
+      "bats": "R",
+      "throws": "R"
+    },
+    {
+      "id": "LG-박해민",
+      "name": "박해민",
+      "teamAbbr": "LG",
+      "role": "CF",
+      "rosterLevel": "first",
+      "age": 36,
+      "salaryKrw": 800000000,
+      "sourceStats": {
+        "pa": 71,
+        "woba": 6.3999999999999995,
+        "iso": 36.72,
+        "bbPct": 0.30985915492957744,
+        "kPct": 0.11267605633802817,
+        "sb": 0
+      },
+      "targetOvr": 78,
+      "bats": "L",
+      "throws": "R"
+    },
+    {
+      "id": "LG-오지환",
+      "name": "오지환",
+      "teamAbbr": "LG",
+      "role": "SS",
+      "rosterLevel": "first",
+      "age": 36,
+      "salaryKrw": 1400000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.3967857142857143,
+        "iso": 0.18714285714285717,
+        "bbPct": 0.10375000000000001,
+        "kPct": 0.1717857142857143,
+        "sb": 29
+      },
+      "targetOvr": 71,
+      "bats": "L",
+      "throws": "R"
+    },
+    {
+      "id": "LG-김현수",
+      "name": "김현수",
+      "teamAbbr": "LG",
+      "role": "LF",
+      "rosterLevel": "first",
+      "age": 36,
+      "salaryKrw": 650000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.39357142857142857,
+        "iso": 0.18428571428571427,
+        "bbPct": 0.10250000000000001,
+        "kPct": 0.17357142857142857,
+        "sb": 11
+      },
+      "targetOvr": 81
+    },
+    {
+      "id": "LG-문보경",
+      "name": "문보경",
+      "teamAbbr": "LG",
+      "role": "3B",
+      "rosterLevel": "first",
+      "age": 26,
+      "salaryKrw": 480000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.3871428571428571,
+        "iso": 0.17857142857142858,
+        "bbPct": 0.1,
+        "kPct": 0.17714285714285716,
+        "sb": 11
+      },
+      "potential": 88,
+      "targetOvr": 65,
+      "bats": "L",
+      "throws": "R"
+    },
+    {
+      "id": "LG-홍창기",
+      "name": "홍창기",
+      "teamAbbr": "LG",
+      "role": "RF",
+      "rosterLevel": "first",
+      "age": 33,
+      "salaryKrw": 520000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.3807142857142857,
+        "iso": 0.17285714285714288,
+        "bbPct": 0.0975,
+        "kPct": 0.18071428571428572,
+        "sb": 10
+      },
+      "targetOvr": 64,
+      "bats": "L",
+      "throws": "R"
+    },
+    {
+      "id": "LG-유강남",
+      "name": "유강남",
+      "teamAbbr": "LG",
+      "role": "C",
+      "rosterLevel": "first",
+      "age": 32,
+      "salaryKrw": 320000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.3742857142857143,
+        "iso": 0.16714285714285715,
+        "bbPct": 0.095,
+        "kPct": 0.18428571428571427,
+        "sb": 9
+      },
+      "targetOvr": 75
+    },
+    {
+      "id": "LG-신민재",
+      "name": "신민재",
+      "teamAbbr": "LG",
+      "role": "2B",
+      "rosterLevel": "first",
+      "age": 30,
+      "salaryKrw": 380000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.3678571428571429,
+        "iso": 0.16142857142857142,
+        "bbPct": 0.09250000000000001,
+        "kPct": 0.18785714285714286,
+        "sb": 22
+      },
+      "targetOvr": 64,
+      "bats": "L",
+      "throws": "R"
+    },
+    {
+      "id": "LG-천성호",
+      "name": "천성호",
+      "teamAbbr": "LG",
+      "role": "DH",
+      "rosterLevel": "first",
+      "age": 29,
+      "salaryKrw": 90000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.36464285714285716,
+        "iso": 0.15857142857142859,
+        "bbPct": 0.09125000000000001,
+        "kPct": 0.18964285714285714,
+        "sb": 8
+      },
+      "targetOvr": 60,
+      "bats": "L",
+      "throws": "R"
+    },
+    {
+      "id": "LG-구본혁",
+      "name": "구본혁",
+      "teamAbbr": "LG",
+      "role": "SS",
+      "rosterLevel": "first",
+      "age": 29,
+      "salaryKrw": 230000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.36142857142857143,
+        "iso": 0.15571428571428572,
+        "bbPct": 0.09000000000000001,
+        "kPct": 0.19142857142857142,
+        "sb": 21
+      },
+      "targetOvr": 62,
+      "bats": "R",
+      "throws": "R"
+    },
+    {
+      "id": "LG-이영빈",
+      "name": "이영빈",
+      "teamAbbr": "LG",
+      "role": "2B",
+      "rosterLevel": "first",
+      "age": 24,
+      "salaryKrw": 55000000,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.355,
+        "iso": 0.15,
+        "bbPct": 0.08750000000000001,
+        "kPct": 0.195,
+        "sb": 19
+      },
+      "potential": 80,
+      "targetOvr": 61,
+      "bats": "L",
+      "throws": "R"
+    },
+    {
+      "id": "LG-이성원",
+      "name": "이성원",
+      "teamAbbr": "LG",
+      "role": "C",
+      "rosterLevel": "first",
+      "age": 28,
+      "salaryKrw": 150000000,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.35178571428571426,
+        "iso": 0.14714285714285713,
+        "bbPct": 0.08625000000000001,
+        "kPct": 0.19678571428571429,
+        "sb": 7
+      },
+      "targetOvr": 68
+    },
+    {
+      "id": "LG-김민성",
+      "name": "김민성",
+      "teamAbbr": "LG",
+      "role": "3B",
+      "rosterLevel": "first",
+      "age": 30,
+      "salaryKrw": 140000000,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.3485714285714286,
+        "iso": 0.1442857142857143,
+        "bbPct": 0.085,
+        "kPct": 0.19857142857142857,
+        "sb": 6
+      },
+      "targetOvr": 67
+    },
+    {
+      "id": "LG-켈ley",
+      "name": "켈ley",
+      "teamAbbr": "LG",
+      "role": "SP",
+      "rosterLevel": "first",
+      "age": 28,
+      "salaryKrw": 950000000,
+      "sourceStats": {
+        "ip": 153,
+        "era": 3.7,
+        "fip": 3.7142857142857144,
+        "k9": 11.321428571428571,
+        "bb9": 2.821428571428571,
+        "gs": 24,
+        "games": 26
+      },
+      "targetOvr": 85
+    },
+    {
+      "id": "LG-손주환",
+      "name": "손주환",
+      "teamAbbr": "LG",
+      "role": "SP",
+      "rosterLevel": "first",
+      "age": 27,
+      "salaryKrw": 400000000,
+      "sourceStats": {
+        "ip": 146,
+        "era": 3.95,
+        "fip": 3.928571428571429,
+        "k9": 10.517857142857142,
+        "bb9": 3.017857142857143,
+        "gs": 23,
+        "games": 26
+      },
+      "targetOvr": 80
+    },
+    {
+      "id": "LG-엔스",
+      "name": "엔스",
+      "teamAbbr": "LG",
+      "role": "SP",
+      "rosterLevel": "first",
+      "age": 35,
+      "salaryKrw": 6000000000,
+      "sourceStats": {
+        "ip": 143,
+        "era": 4.050000000000001,
+        "fip": 4.014285714285714,
+        "k9": 10.196428571428571,
+        "bb9": 3.0964285714285715,
+        "gs": 23,
+        "games": 25
+      },
+      "targetOvr": 68,
+      "bats": "L",
+      "throws": "L"
+    },
+    {
+      "id": "LG-송승기",
+      "name": "송승기",
+      "teamAbbr": "LG",
+      "role": "SP",
+      "rosterLevel": "first",
+      "age": 24,
+      "salaryKrw": 136000000,
+      "sourceStats": {
+        "ip": 139,
+        "era": 4.2,
+        "fip": 4.142857142857143,
+        "k9": 9.714285714285715,
+        "bb9": 3.2142857142857144,
+        "gs": 22,
+        "games": 25
+      },
+      "potential": 84,
+      "targetOvr": 66,
+      "bats": "L",
+      "throws": "L"
+    },
+    {
+      "id": "LG-임찬규",
+      "name": "임찬규",
+      "teamAbbr": "LG",
+      "role": "SP",
+      "rosterLevel": "first",
+      "age": 34,
+      "salaryKrw": 200000000,
+      "sourceStats": {
+        "ip": 0.875,
+        "era": 3.45,
+        "fip": 1337.9571428571428,
+        "k9": 20.571428571428573,
+        "bb9": 51.42857142857143,
+        "gs": 11,
+        "games": 14
+      },
+      "targetOvr": 46,
+      "bats": "R",
+      "throws": "R"
+    },
+    {
+      "id": "LG-고우석",
+      "name": "고우석",
+      "teamAbbr": "LG",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 28,
+      "salaryKrw": 430000000,
+      "sourceStats": {
+        "ip": 52,
+        "era": 3.8500000000000005,
+        "fip": 3.842857142857143,
+        "k9": 10.839285714285715,
+        "bb9": 2.939285714285714,
+        "gs": 0,
+        "games": 43
+      },
+      "targetOvr": 58,
+      "bats": "R",
+      "throws": "R"
+    },
+    {
+      "id": "LG-김진성",
+      "name": "김진성",
+      "teamAbbr": "LG",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 41,
+      "salaryKrw": 450000000,
+      "sourceStats": {
+        "ip": 51,
+        "era": 4,
+        "fip": 3.9714285714285715,
+        "k9": 10.357142857142858,
+        "bb9": 3.057142857142857,
+        "gs": 0,
+        "games": 42
+      },
+      "targetOvr": 57,
+      "bats": "R",
+      "throws": "R"
+    },
+    {
+      "id": "LG-함덕주",
+      "name": "함덕주",
+      "teamAbbr": "LG",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 31,
+      "salaryKrw": 800000000,
+      "sourceStats": {
+        "ip": 49,
+        "era": 4.15,
+        "fip": 4.1,
+        "k9": 9.875,
+        "bb9": 3.175,
+        "gs": 0,
+        "games": 41
+      },
+      "targetOvr": 55,
+      "bats": "L",
+      "throws": "L"
+    },
+    {
+      "id": "LG-이정용",
+      "name": "이정용",
+      "teamAbbr": "LG",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 30,
+      "salaryKrw": 270000000,
+      "sourceStats": {
+        "ip": 48,
+        "era": 4.25,
+        "fip": 4.185714285714286,
+        "k9": 9.553571428571429,
+        "bb9": 3.2535714285714286,
+        "gs": 0,
+        "games": 40
+      },
+      "targetOvr": 54,
+      "bats": "R",
+      "throws": "R"
+    },
+    {
+      "id": "LG-박치국",
+      "name": "박치국",
+      "teamAbbr": "LG",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 27,
+      "salaryKrw": 180000000,
+      "sourceStats": {
+        "ip": 47,
+        "era": 4.3500000000000005,
+        "fip": 4.271428571428571,
+        "k9": 9.232142857142858,
+        "bb9": 3.3321428571428573,
+        "gs": 0,
+        "games": 40
+      },
+      "targetOvr": 72
+    },
+    {
+      "id": "LG-이우찬",
+      "name": "이우찬",
+      "teamAbbr": "LG",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 34,
+      "salaryKrw": 80000000,
+      "sourceStats": {
+        "ip": 47,
+        "era": 4.4,
+        "fip": 4.314285714285714,
+        "k9": 9.071428571428571,
+        "bb9": 3.3714285714285714,
+        "gs": 0,
+        "games": 40
+      },
+      "targetOvr": 54,
+      "bats": "L",
+      "throws": "L"
+    },
+    {
+      "id": "LG-최채훈",
+      "name": "최채훈",
+      "teamAbbr": "LG",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 25,
+      "salaryKrw": 130000000,
+      "sourceStats": {
+        "ip": 46,
+        "era": 4.5,
+        "fip": 4.4,
+        "k9": 8.75,
+        "bb9": 3.45,
+        "gs": 0,
+        "games": 39
+      },
+      "targetOvr": 69
+    },
+    {
+      "id": "LG-김영우",
+      "name": "김영우",
+      "teamAbbr": "LG",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 21,
+      "salaryKrw": 85000000,
+      "sourceStats": {
+        "ip": 45,
+        "era": 4.55,
+        "fip": 4.442857142857143,
+        "k9": 8.589285714285715,
+        "bb9": 3.4892857142857143,
+        "gs": 0,
+        "games": 39
+      },
+      "potential": 76,
+      "targetOvr": 53,
+      "bats": "R",
+      "throws": "R"
+    }
+  ],
+  "farm": [
+    {
+      "id": "LG-이주헌",
+      "name": "이주헌",
+      "teamAbbr": "LG",
+      "role": "SS",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.3292857142857143,
+        "iso": 0.12714285714285714,
+        "bbPct": 0.07750000000000001,
+        "kPct": 0.2092857142857143,
+        "sb": 13
+      },
+      "potential": 81,
+      "targetOvr": 61
+    },
+    {
+      "id": "LG-박준",
+      "name": "박준",
+      "teamAbbr": "LG",
+      "role": "CF",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.31642857142857145,
+        "iso": 0.11571428571428571,
+        "bbPct": 0.07250000000000001,
+        "kPct": 0.21642857142857144,
+        "sb": 10
+      },
+      "potential": 79,
+      "targetOvr": 57
+    },
+    {
+      "id": "LG-김태훈",
+      "name": "김태훈",
+      "teamAbbr": "LG",
+      "role": "C",
+      "rosterLevel": "farm",
+      "age": 22,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.31,
+        "iso": 0.11,
+        "bbPct": 0.07,
+        "kPct": 0.22,
+        "sb": 2
+      },
+      "potential": 73,
+      "targetOvr": 55
+    },
+    {
+      "id": "LG-정우준",
+      "name": "정우준",
+      "teamAbbr": "LG",
+      "role": "SP",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "ip": 116,
+        "era": 5,
+        "fip": 4.828571428571428,
+        "k9": 7.142857142857142,
+        "bb9": 3.842857142857143,
+        "gs": 19,
+        "games": 23
+      },
+      "potential": 83,
+      "targetOvr": 59
+    },
+    {
+      "id": "LG-이민호",
+      "name": "이민호",
+      "teamAbbr": "LG",
+      "role": "SP",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "ip": 111,
+        "era": 5.15,
+        "fip": 4.957142857142857,
+        "k9": 6.660714285714286,
+        "bb9": 3.960714285714286,
+        "gs": 18,
+        "games": 22
+      },
+      "potential": 80,
+      "targetOvr": 56
+    },
+    {
+      "id": "LG-최승민",
+      "name": "최승민",
+      "teamAbbr": "LG",
+      "role": "3B",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.3067857142857143,
+        "iso": 0.10714285714285714,
+        "bbPct": 0.06875,
+        "kPct": 0.22178571428571428,
+        "sb": 2
+      },
+      "potential": 75,
+      "targetOvr": 54
+    },
+    {
+      "id": "LG-박건우",
+      "name": "박건우",
+      "teamAbbr": "LG",
+      "role": "RP",
+      "rosterLevel": "farm",
+      "age": 22,
+      "sourceStats": {
+        "ip": 37,
+        "era": 5.3,
+        "fip": 5.085714285714285,
+        "k9": 6.178571428571429,
+        "bb9": 4.078571428571428,
+        "gs": 0,
+        "games": 34
+      },
+      "potential": 74,
+      "targetOvr": 53
+    },
+    {
+      "id": "LG-한지민",
+      "name": "한지민",
+      "teamAbbr": "LG",
+      "role": "RF",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.3003571428571429,
+        "iso": 0.10142857142857142,
+        "bbPct": 0.06625,
+        "kPct": 0.22535714285714287,
+        "sb": 1
+      },
+      "potential": 76,
+      "targetOvr": 52
+    },
+    {
+      "id": "LG-서동현",
+      "name": "서동현",
+      "teamAbbr": "LG",
+      "role": "RP",
+      "rosterLevel": "farm",
+      "age": 19,
+      "sourceStats": {
+        "ip": 36,
+        "era": 5.4,
+        "fip": 5.171428571428572,
+        "k9": 5.857142857142858,
+        "bb9": 4.1571428571428575,
+        "gs": 0,
+        "games": 34
+      },
+      "potential": 72,
+      "targetOvr": 51
+    },
+    {
+      "id": "LG-장민재",
+      "name": "장민재",
+      "teamAbbr": "LG",
+      "role": "2B",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.29392857142857143,
+        "iso": 0.09571428571428571,
+        "bbPct": 0.06375,
+        "kPct": 0.22892857142857143,
+        "sb": 4
+      },
+      "potential": 73,
+      "targetOvr": 50
+    },
+    {
+      "id": "LG-김도현",
+      "name": "김도현",
+      "teamAbbr": "LG",
+      "role": "SP",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "ip": 101,
+        "era": 5.5,
+        "fip": 5.257142857142857,
+        "k9": 5.535714285714286,
+        "bb9": 4.235714285714286,
+        "gs": 17,
+        "games": 21
+      },
+      "potential": 78,
+      "targetOvr": 49
+    },
+    {
+      "id": "LG-윤서준",
+      "name": "윤서준",
+      "teamAbbr": "LG",
+      "role": "LF",
+      "rosterLevel": "farm",
+      "age": 19,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.2875,
+        "iso": 0.09,
+        "bbPct": 0.061250000000000006,
+        "kPct": 0.2325,
+        "sb": 0
+      },
+      "potential": 75,
+      "targetOvr": 48
+    },
+    {
+      "id": "LG-오민석",
+      "name": "오민석",
+      "teamAbbr": "LG",
+      "role": "RP",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "ip": 34,
+        "era": 5.6000000000000005,
+        "fip": 5.3428571428571425,
+        "k9": 5.214285714285714,
+        "bb9": 4.314285714285714,
+        "gs": 0,
+        "games": 33
+      },
+      "potential": 71,
+      "targetOvr": 47
+    },
+    {
+      "id": "LG-이준영",
+      "name": "이준영",
+      "teamAbbr": "LG",
+      "role": "1B",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.2810714285714286,
+        "iso": 0.08428571428571428,
+        "bbPct": 0.058750000000000004,
+        "kPct": 0.23607142857142857,
+        "sb": 0
+      },
+      "potential": 70,
+      "targetOvr": 46
+    },
+    {
+      "id": "LG-배준서",
+      "name": "배준서",
+      "teamAbbr": "LG",
+      "role": "DH",
+      "rosterLevel": "farm",
+      "age": 22,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.3196428571428571,
+        "iso": 0.11857142857142858,
+        "bbPct": 0.07375000000000001,
+        "kPct": 0.21464285714285714,
+        "sb": 3
+      },
+      "potential": 77,
+      "targetOvr": 58
+    },
+    {
+      "id": "LG-송현우",
+      "name": "송현우",
+      "teamAbbr": "LG",
+      "role": "SS",
+      "rosterLevel": "farm",
+      "age": 19,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.3132142857142857,
+        "iso": 0.11285714285714286,
+        "bbPct": 0.07125000000000001,
+        "kPct": 0.21821428571428572,
+        "sb": 9
+      },
+      "potential": 81,
+      "targetOvr": 56
+    },
+    {
+      "id": "LG-임재민",
+      "name": "임재민",
+      "teamAbbr": "LG",
+      "role": "CF",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.31,
+        "iso": 0.11,
+        "bbPct": 0.07,
+        "kPct": 0.22,
+        "sb": 8
+      },
+      "potential": 78,
+      "targetOvr": 55
+    },
+    {
+      "id": "LG-황서준",
+      "name": "황서준",
+      "teamAbbr": "LG",
+      "role": "C",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.3067857142857143,
+        "iso": 0.10714285714285714,
+        "bbPct": 0.06875,
+        "kPct": 0.22178571428571428,
+        "sb": 2
+      },
+      "potential": 73,
+      "targetOvr": 54
+    },
+    {
+      "id": "LG-민도현",
+      "name": "민도현",
+      "teamAbbr": "LG",
+      "role": "3B",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.30357142857142855,
+        "iso": 0.10428571428571429,
+        "bbPct": 0.0675,
+        "kPct": 0.22357142857142856,
+        "sb": 1
+      },
+      "potential": 75,
+      "targetOvr": 53
+    },
+    {
+      "id": "LG-표재훈",
+      "name": "표재훈",
+      "teamAbbr": "LG",
+      "role": "RF",
+      "rosterLevel": "farm",
+      "age": 19,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.3003571428571429,
+        "iso": 0.10142857142857142,
+        "bbPct": 0.06625,
+        "kPct": 0.22535714285714287,
+        "sb": 1
+      },
+      "potential": 76,
+      "targetOvr": 52
+    },
+    {
+      "id": "LG-고민준",
+      "name": "고민준",
+      "teamAbbr": "LG",
+      "role": "2B",
+      "rosterLevel": "farm",
+      "age": 22,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.29714285714285715,
+        "iso": 0.09857142857142857,
+        "bbPct": 0.065,
+        "kPct": 0.22714285714285715,
+        "sb": 5
+      },
+      "potential": 72,
+      "targetOvr": 51
+    },
+    {
+      "id": "LG-나우진",
+      "name": "나우진",
+      "teamAbbr": "LG",
+      "role": "SP",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "ip": 113,
+        "era": 5.1000000000000005,
+        "fip": 4.914285714285715,
+        "k9": 6.821428571428571,
+        "bb9": 3.9214285714285713,
+        "gs": 18,
+        "games": 22
+      },
+      "potential": 80,
+      "targetOvr": 57
+    },
+    {
+      "id": "LG-유성민",
+      "name": "유성민",
+      "teamAbbr": "LG",
+      "role": "SP",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "ip": 109,
+        "era": 5.25,
+        "fip": 5.042857142857143,
+        "k9": 6.339285714285714,
+        "bb9": 4.039285714285715,
+        "gs": 18,
+        "games": 22
+      },
+      "potential": 79,
+      "targetOvr": 54
+    },
+    {
+      "id": "LG-차재원",
+      "name": "차재원",
+      "teamAbbr": "LG",
+      "role": "RP",
+      "rosterLevel": "farm",
+      "age": 19,
+      "sourceStats": {
+        "ip": 35,
+        "era": 5.45,
+        "fip": 5.214285714285714,
+        "k9": 5.696428571428571,
+        "bb9": 4.196428571428571,
+        "gs": 0,
+        "games": 34
+      },
+      "potential": 71,
+      "targetOvr": 50
+    },
+    {
+      "id": "LG-허동민",
+      "name": "허동민",
+      "teamAbbr": "LG",
+      "role": "RP",
+      "rosterLevel": "farm",
+      "age": 22,
+      "sourceStats": {
+        "ip": 35,
+        "era": 5.5,
+        "fip": 5.257142857142857,
+        "k9": 5.535714285714286,
+        "bb9": 4.235714285714286,
+        "gs": 0,
+        "games": 33
+      },
+      "potential": 70,
+      "targetOvr": 49
+    },
+    {
+      "id": "LG-신우성",
+      "name": "신우성",
+      "teamAbbr": "LG",
+      "role": "LF",
+      "rosterLevel": "farm",
+      "age": 18,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.2875,
+        "iso": 0.09,
+        "bbPct": 0.061250000000000006,
+        "kPct": 0.2325,
+        "sb": 0
+      },
+      "potential": 77,
+      "targetOvr": 48
+    },
+    {
+      "id": "LG-조태양",
+      "name": "조태양",
+      "teamAbbr": "LG",
+      "role": "RP",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "ip": 34,
+        "era": 5.6000000000000005,
+        "fip": 5.3428571428571425,
+        "k9": 5.214285714285714,
+        "bb9": 4.314285714285714,
+        "gs": 0,
+        "games": 33
+      },
+      "potential": 69,
+      "targetOvr": 47
+    },
+    {
+      "id": "LG-강재혁",
+      "name": "강재혁",
+      "teamAbbr": "LG",
+      "role": "RP",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "ip": 33,
+        "era": 5.65,
+        "fip": 5.385714285714286,
+        "k9": 5.053571428571429,
+        "bb9": 4.353571428571429,
+        "gs": 0,
+        "games": 32
+      },
+      "potential": 68,
+      "targetOvr": 46
+    }
+  ]
+}

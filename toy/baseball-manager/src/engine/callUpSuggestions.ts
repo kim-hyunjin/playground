@@ -7,6 +7,7 @@ import {
   weakestAtPosition,
 } from './callUpEvaluation'
 import { overallRating } from './generator'
+import { isPlayerAvailable } from './injury'
 import { countByLevel, farmPlayers, FIRST_TEAM_MAX } from './roster'
 import type { Player } from '../types/game'
 
@@ -25,6 +26,7 @@ export function generateCallUpSuggestions(state: GameState): CallUpSuggestion[] 
 
   for (const player of farmPlayers(team)) {
     if (existingIds.has(player.id)) continue
+    if (!isPlayerAvailable(player)) continue
 
     const evaluation = evaluateCallUpCandidate(team, player)
     if (!evaluation.eligible || !evaluation.reason) continue

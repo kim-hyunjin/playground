@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { findPlayerInLeague } from '../engine/playerLookup'
+import { ipFromOuts } from '../engine/sabermetrics'
 import { PlayerNameButton } from '../components/PlayerNameButton'
 import { useGame } from '../store/gameStore'
 
@@ -129,6 +130,99 @@ export function MatchPage() {
               </div>
             )}
           </div>
+
+          {result.boxScore && (
+            <div className="bm-card p-4">
+              <h2 className="mb-3 font-semibold text-[var(--text-h)]">박스스코어</h2>
+              <div className="mb-4 flex flex-wrap gap-4 text-sm text-[var(--text-muted)]">
+                {result.boxScore.winningPitcherId ? (
+                  <span>
+                    승:{' '}
+                    <PlayerNameButton
+                      playerId={result.boxScore.winningPitcherId}
+                      name={findPlayerInLeague(state.teams, result.boxScore.winningPitcherId)?.player.name ?? '-'}
+                    />
+                  </span>
+                ) : null}
+                {result.boxScore.savePitcherId ? (
+                  <span>
+                    SV:{' '}
+                    <PlayerNameButton
+                      playerId={result.boxScore.savePitcherId}
+                      name={findPlayerInLeague(state.teams, result.boxScore.savePitcherId)?.player.name ?? '-'}
+                    />
+                  </span>
+                ) : null}
+                {result.parkStadium ? (
+                  <span>구장: {result.parkStadium}</span>
+                ) : null}
+              </div>
+
+              <div className="grid gap-6 md:grid-cols-2">
+                <div>
+                  <h3 className="mb-2 text-xs font-semibold uppercase text-[var(--accent)]">타자</h3>
+                  <table className="bm-table text-sm">
+                    <thead>
+                      <tr>
+                        <th>선수</th>
+                        <th>AB</th>
+                        <th>H</th>
+                        <th>RBI</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Object.entries(result.boxScore.batters)
+                        .filter(([, line]) => line.ab > 0 || line.pa > 0)
+                        .sort((a, b) => b[1].pa - a[1].pa)
+                        .slice(0, 9)
+                        .map(([id, line]) => {
+                          const name = findPlayerInLeague(state.teams, id)?.player.name ?? id
+                          return (
+                            <tr key={id}>
+                              <td><PlayerNameButton playerId={id} name={name} className="text-sm" /></td>
+                              <td>{line.ab}</td>
+                              <td>{line.hits}</td>
+                              <td>{line.rbi}</td>
+                            </tr>
+                          )
+                        })}
+                    </tbody>
+                  </table>
+                </div>
+                <div>
+                  <h3 className="mb-2 text-xs font-semibold uppercase text-[var(--accent)]">투수</h3>
+                  <table className="bm-table text-sm">
+                    <thead>
+                      <tr>
+                        <th>선수</th>
+                        <th>IP</th>
+                        <th>H</th>
+                        <th>K</th>
+                        <th>ER</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Object.entries(result.boxScore.pitchers)
+                        .filter(([, line]) => line.bf > 0)
+                        .sort((a, b) => b[1].outs - a[1].outs)
+                        .map(([id, line]) => {
+                          const name = findPlayerInLeague(state.teams, id)?.player.name ?? id
+                          return (
+                            <tr key={id}>
+                              <td><PlayerNameButton playerId={id} name={name} className="text-sm" /></td>
+                              <td>{ipFromOuts(line.outs)}</td>
+                              <td>{line.h}</td>
+                              <td>{line.k}</td>
+                              <td>{line.er}</td>
+                            </tr>
+                          )
+                        })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="bm-card max-h-96 overflow-y-auto p-4">
             <h2 className="mb-3 font-semibold text-[var(--text-h)]">플레이-by-플레이</h2>

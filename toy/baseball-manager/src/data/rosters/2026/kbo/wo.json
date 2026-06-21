@@ -1,0 +1,1037 @@
+{
+  "teamAbbr": "WO",
+  "season": 2026,
+  "first": [
+    {
+      "id": "WO-이정후",
+      "name": "이정후",
+      "teamAbbr": "WO",
+      "role": "CF",
+      "rosterLevel": "first",
+      "age": 28,
+      "salaryKrw": 1100000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.41607142857142854,
+        "iso": 0.2042857142857143,
+        "bbPct": 0.11125000000000002,
+        "kPct": 0.16107142857142856,
+        "sb": 34
+      },
+      "potential": 92,
+      "targetOvr": 76,
+      "bats": "L",
+      "throws": "R"
+    },
+    {
+      "id": "WO-김혜성",
+      "name": "김혜성",
+      "teamAbbr": "WO",
+      "role": "2B",
+      "rosterLevel": "first",
+      "age": 27,
+      "salaryKrw": 650000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.39035714285714285,
+        "iso": 0.18142857142857144,
+        "bbPct": 0.10125,
+        "kPct": 0.17535714285714285,
+        "sb": 28
+      },
+      "potential": 86,
+      "targetOvr": 70,
+      "bats": "L",
+      "throws": "R"
+    },
+    {
+      "id": "WO-송성문",
+      "name": "송성문",
+      "teamAbbr": "WO",
+      "role": "3B",
+      "rosterLevel": "first",
+      "age": 30,
+      "salaryKrw": 300000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.3839285714285714,
+        "iso": 0.1757142857142857,
+        "bbPct": 0.09875,
+        "kPct": 0.17892857142857144,
+        "sb": 10
+      },
+      "targetOvr": 64,
+      "bats": "L",
+      "throws": "R"
+    },
+    {
+      "id": "WO-김웅빈",
+      "name": "김웅빈",
+      "teamAbbr": "WO",
+      "role": "1B",
+      "rosterLevel": "first",
+      "age": 30,
+      "salaryKrw": 42000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.3775,
+        "iso": 0.16999999999999998,
+        "bbPct": 0.09625,
+        "kPct": 0.1825,
+        "sb": 10
+      },
+      "potential": 84,
+      "targetOvr": 63,
+      "bats": "L",
+      "throws": "R"
+    },
+    {
+      "id": "WO-이용규",
+      "name": "이용규",
+      "teamAbbr": "WO",
+      "role": "LF",
+      "rosterLevel": "first",
+      "age": 41,
+      "salaryKrw": 120000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.37107142857142855,
+        "iso": 0.16428571428571428,
+        "bbPct": 0.09375000000000001,
+        "kPct": 0.18607142857142855,
+        "sb": 9
+      },
+      "targetOvr": 62,
+      "bats": "L",
+      "throws": "L"
+    },
+    {
+      "id": "WO-박동원",
+      "name": "박동원",
+      "teamAbbr": "WO",
+      "role": "C",
+      "rosterLevel": "first",
+      "age": 30,
+      "salaryKrw": 260000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.3678571428571429,
+        "iso": 0.16142857142857142,
+        "bbPct": 0.09250000000000001,
+        "kPct": 0.18785714285714286,
+        "sb": 8
+      },
+      "targetOvr": 73
+    },
+    {
+      "id": "WO-임병욱",
+      "name": "임병욱",
+      "teamAbbr": "WO",
+      "role": "SS",
+      "rosterLevel": "first",
+      "age": 31,
+      "salaryKrw": 58000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.36464285714285716,
+        "iso": 0.15857142857142859,
+        "bbPct": 0.09125000000000001,
+        "kPct": 0.18964285714285714,
+        "sb": 21
+      },
+      "targetOvr": 63,
+      "bats": "L",
+      "throws": "R"
+    },
+    {
+      "id": "WO-김재현",
+      "name": "김재현",
+      "teamAbbr": "WO",
+      "role": "C",
+      "rosterLevel": "first",
+      "age": 33,
+      "salaryKrw": 100000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.36142857142857143,
+        "iso": 0.15571428571428572,
+        "bbPct": 0.09000000000000001,
+        "kPct": 0.19142857142857142,
+        "sb": 8
+      },
+      "targetOvr": 59,
+      "bats": "R",
+      "throws": "R"
+    },
+    {
+      "id": "WO-박주홍",
+      "name": "박주홍",
+      "teamAbbr": "WO",
+      "role": "DH",
+      "rosterLevel": "first",
+      "age": 25,
+      "salaryKrw": 55000000,
+      "sourceStats": {
+        "pa": 520,
+        "woba": 0.3582142857142857,
+        "iso": 0.15285714285714286,
+        "bbPct": 0.08875000000000001,
+        "kPct": 0.19321428571428573,
+        "sb": 7
+      },
+      "targetOvr": 59,
+      "bats": "L",
+      "throws": "L"
+    },
+    {
+      "id": "WO-김성민",
+      "name": "김성민",
+      "teamAbbr": "WO",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 32,
+      "salaryKrw": 90000000,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.35178571428571426,
+        "iso": 0.14714285714285713,
+        "bbPct": 0.08625000000000001,
+        "kPct": 0.19678571428571429,
+        "sb": 7
+      },
+      "targetOvr": 68,
+      "bats": "L",
+      "throws": "L"
+    },
+    {
+      "id": "WO-오태곤",
+      "name": "오태곤",
+      "teamAbbr": "WO",
+      "role": "1B",
+      "rosterLevel": "first",
+      "age": 25,
+      "salaryKrw": 150000000,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.3485714285714286,
+        "iso": 0.1442857142857143,
+        "bbPct": 0.085,
+        "kPct": 0.19857142857142857,
+        "sb": 6
+      },
+      "targetOvr": 67
+    },
+    {
+      "id": "WO-이재원",
+      "name": "이재원",
+      "teamAbbr": "WO",
+      "role": "SS",
+      "rosterLevel": "first",
+      "age": 24,
+      "salaryKrw": 140000000,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.34535714285714286,
+        "iso": 0.14142857142857143,
+        "bbPct": 0.08375,
+        "kPct": 0.20035714285714284,
+        "sb": 17
+      },
+      "potential": 78,
+      "targetOvr": 66
+    },
+    {
+      "id": "WO-김동혁",
+      "name": "김동혁",
+      "teamAbbr": "WO",
+      "role": "2B",
+      "rosterLevel": "first",
+      "age": 27,
+      "salaryKrw": 130000000,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.34214285714285714,
+        "iso": 0.13857142857142857,
+        "bbPct": 0.0825,
+        "kPct": 0.20214285714285715,
+        "sb": 16
+      },
+      "targetOvr": 65
+    },
+    {
+      "id": "WO-앤더슨",
+      "name": "앤더슨",
+      "teamAbbr": "WO",
+      "role": "SP",
+      "rosterLevel": "first",
+      "age": 28,
+      "salaryKrw": 700000000,
+      "sourceStats": {
+        "ip": 147,
+        "era": 3.9000000000000004,
+        "fip": 3.8857142857142857,
+        "k9": 10.678571428571429,
+        "bb9": 2.9785714285714286,
+        "gs": 24,
+        "games": 26
+      },
+      "targetOvr": 81
+    },
+    {
+      "id": "WO-하영민",
+      "name": "하영민",
+      "teamAbbr": "WO",
+      "role": "SP",
+      "rosterLevel": "first",
+      "age": 31,
+      "salaryKrw": 210000000,
+      "sourceStats": {
+        "ip": 141,
+        "era": 4.1000000000000005,
+        "fip": 4.057142857142857,
+        "k9": 10.035714285714285,
+        "bb9": 3.1357142857142857,
+        "gs": 23,
+        "games": 25
+      },
+      "targetOvr": 67,
+      "bats": "R",
+      "throws": "R"
+    },
+    {
+      "id": "WO-김민",
+      "name": "김민",
+      "teamAbbr": "WO",
+      "role": "SP",
+      "rosterLevel": "first",
+      "age": 26,
+      "salaryKrw": 280000000,
+      "sourceStats": {
+        "ip": 137,
+        "era": 4.25,
+        "fip": 4.185714285714286,
+        "k9": 9.553571428571429,
+        "bb9": 3.2535714285714286,
+        "gs": 22,
+        "games": 25
+      },
+      "targetOvr": 74
+    },
+    {
+      "id": "WO-이로운",
+      "name": "이로운",
+      "teamAbbr": "WO",
+      "role": "SP",
+      "rosterLevel": "first",
+      "age": 25,
+      "salaryKrw": 220000000,
+      "sourceStats": {
+        "ip": 134,
+        "era": 4.3500000000000005,
+        "fip": 4.271428571428571,
+        "k9": 9.232142857142858,
+        "bb9": 3.3321428571428573,
+        "gs": 22,
+        "games": 24
+      },
+      "potential": 80,
+      "targetOvr": 72
+    },
+    {
+      "id": "WO-박윤성",
+      "name": "박윤성",
+      "teamAbbr": "WO",
+      "role": "SP",
+      "rosterLevel": "first",
+      "age": 22,
+      "salaryKrw": 60000000,
+      "sourceStats": {
+        "ip": 131,
+        "era": 4.45,
+        "fip": 4.357142857142858,
+        "k9": 8.910714285714285,
+        "bb9": 3.4107142857142856,
+        "gs": 21,
+        "games": 24
+      },
+      "potential": 78,
+      "targetOvr": 64,
+      "bats": "R",
+      "throws": "R"
+    },
+    {
+      "id": "WO-조영우",
+      "name": "조영우",
+      "teamAbbr": "WO",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 30,
+      "salaryKrw": 260000000,
+      "sourceStats": {
+        "ip": 49,
+        "era": 4.15,
+        "fip": 4.1,
+        "k9": 9.875,
+        "bb9": 3.175,
+        "gs": 0,
+        "games": 41
+      },
+      "targetOvr": 76
+    },
+    {
+      "id": "WO-김성훈",
+      "name": "김성훈",
+      "teamAbbr": "WO",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 29,
+      "salaryKrw": 230000000,
+      "sourceStats": {
+        "ip": 48,
+        "era": 4.25,
+        "fip": 4.185714285714286,
+        "k9": 9.553571428571429,
+        "bb9": 3.2535714285714286,
+        "gs": 0,
+        "games": 40
+      },
+      "targetOvr": 74
+    },
+    {
+      "id": "WO-원종현",
+      "name": "원종현",
+      "teamAbbr": "WO",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 39,
+      "salaryKrw": 500000000,
+      "sourceStats": {
+        "ip": 47,
+        "era": 4.3500000000000005,
+        "fip": 4.271428571428571,
+        "k9": 9.232142857142858,
+        "bb9": 3.3321428571428573,
+        "gs": 0,
+        "games": 40
+      },
+      "targetOvr": 54,
+      "bats": "R"
+    },
+    {
+      "id": "WO-이태양",
+      "name": "이태양",
+      "teamAbbr": "WO",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 19,
+      "salaryKrw": 30000000,
+      "sourceStats": {
+        "ip": 47,
+        "era": 4.4,
+        "fip": 4.314285714285714,
+        "k9": 9.071428571428571,
+        "bb9": 3.3714285714285714,
+        "gs": 0,
+        "games": 40
+      },
+      "targetOvr": 54,
+      "bats": "R",
+      "throws": "R"
+    },
+    {
+      "id": "WO-박상원",
+      "name": "박상원",
+      "teamAbbr": "WO",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 26,
+      "salaryKrw": 150000000,
+      "sourceStats": {
+        "ip": 46,
+        "era": 4.5,
+        "fip": 4.4,
+        "k9": 8.75,
+        "bb9": 3.45,
+        "gs": 0,
+        "games": 39
+      },
+      "targetOvr": 69
+    },
+    {
+      "id": "WO-김재윤",
+      "name": "김재윤",
+      "teamAbbr": "WO",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 25,
+      "salaryKrw": 130000000,
+      "sourceStats": {
+        "ip": 45,
+        "era": 4.55,
+        "fip": 4.442857142857143,
+        "k9": 8.589285714285715,
+        "bb9": 3.4892857142857143,
+        "gs": 0,
+        "games": 39
+      },
+      "targetOvr": 68
+    },
+    {
+      "id": "WO-최원준",
+      "name": "최원준",
+      "teamAbbr": "WO",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 24,
+      "salaryKrw": 120000000,
+      "sourceStats": {
+        "ip": 44,
+        "era": 4.6000000000000005,
+        "fip": 4.485714285714286,
+        "k9": 8.428571428571429,
+        "bb9": 3.5285714285714285,
+        "gs": 0,
+        "games": 38
+      },
+      "targetOvr": 67
+    },
+    {
+      "id": "WO-이민우",
+      "name": "이민우",
+      "teamAbbr": "WO",
+      "role": "RP",
+      "rosterLevel": "first",
+      "age": 23,
+      "salaryKrw": 110000000,
+      "sourceStats": {
+        "ip": 44,
+        "era": 4.65,
+        "fip": 4.5285714285714285,
+        "k9": 8.267857142857142,
+        "bb9": 3.567857142857143,
+        "gs": 0,
+        "games": 38
+      },
+      "potential": 74,
+      "targetOvr": 66
+    }
+  ],
+  "farm": [
+    {
+      "id": "WO-박준서",
+      "name": "박준서",
+      "teamAbbr": "WO",
+      "role": "SS",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.3196428571428571,
+        "iso": 0.11857142857142858,
+        "bbPct": 0.07375000000000001,
+        "kPct": 0.21464285714285714,
+        "sb": 10
+      },
+      "potential": 80,
+      "targetOvr": 58
+    },
+    {
+      "id": "WO-김민수",
+      "name": "김민수",
+      "teamAbbr": "WO",
+      "role": "CF",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.31,
+        "iso": 0.11,
+        "bbPct": 0.07,
+        "kPct": 0.22,
+        "sb": 8
+      },
+      "potential": 78,
+      "targetOvr": 55
+    },
+    {
+      "id": "WO-이태민",
+      "name": "이태민",
+      "teamAbbr": "WO",
+      "role": "SP",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "ip": 111,
+        "era": 5.15,
+        "fip": 4.957142857142857,
+        "k9": 6.660714285714286,
+        "bb9": 3.960714285714286,
+        "gs": 18,
+        "games": 22
+      },
+      "potential": 82,
+      "targetOvr": 56
+    },
+    {
+      "id": "WO-최동현",
+      "name": "최동현",
+      "teamAbbr": "WO",
+      "role": "C",
+      "rosterLevel": "farm",
+      "age": 22,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.3067857142857143,
+        "iso": 0.10714285714285714,
+        "bbPct": 0.06875,
+        "kPct": 0.22178571428571428,
+        "sb": 2
+      },
+      "potential": 72,
+      "targetOvr": 54
+    },
+    {
+      "id": "WO-정우성",
+      "name": "정우성",
+      "teamAbbr": "WO",
+      "role": "SP",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "ip": 107,
+        "era": 5.3,
+        "fip": 5.085714285714285,
+        "k9": 6.178571428571429,
+        "bb9": 4.078571428571428,
+        "gs": 18,
+        "games": 22
+      },
+      "potential": 79,
+      "targetOvr": 53
+    },
+    {
+      "id": "WO-한승민",
+      "name": "한승민",
+      "teamAbbr": "WO",
+      "role": "3B",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.3003571428571429,
+        "iso": 0.10142857142857142,
+        "bbPct": 0.06625,
+        "kPct": 0.22535714285714287,
+        "sb": 1
+      },
+      "potential": 74,
+      "targetOvr": 52
+    },
+    {
+      "id": "WO-오민재",
+      "name": "오민재",
+      "teamAbbr": "WO",
+      "role": "RP",
+      "rosterLevel": "farm",
+      "age": 22,
+      "sourceStats": {
+        "ip": 36,
+        "era": 5.4,
+        "fip": 5.171428571428572,
+        "k9": 5.857142857142858,
+        "bb9": 4.1571428571428575,
+        "gs": 0,
+        "games": 34
+      },
+      "potential": 71,
+      "targetOvr": 51
+    },
+    {
+      "id": "WO-윤서진",
+      "name": "윤서진",
+      "teamAbbr": "WO",
+      "role": "RF",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.29392857142857143,
+        "iso": 0.09571428571428571,
+        "bbPct": 0.06375,
+        "kPct": 0.22892857142857143,
+        "sb": 0
+      },
+      "potential": 73,
+      "targetOvr": 50
+    },
+    {
+      "id": "WO-김도현",
+      "name": "김도현",
+      "teamAbbr": "WO",
+      "role": "RP",
+      "rosterLevel": "farm",
+      "age": 19,
+      "sourceStats": {
+        "ip": 35,
+        "era": 5.5,
+        "fip": 5.257142857142857,
+        "k9": 5.535714285714286,
+        "bb9": 4.235714285714286,
+        "gs": 0,
+        "games": 33
+      },
+      "potential": 70,
+      "targetOvr": 49
+    },
+    {
+      "id": "WO-장민우",
+      "name": "장민우",
+      "teamAbbr": "WO",
+      "role": "2B",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.2875,
+        "iso": 0.09,
+        "bbPct": 0.061250000000000006,
+        "kPct": 0.2325,
+        "sb": 3
+      },
+      "potential": 72,
+      "targetOvr": 48
+    },
+    {
+      "id": "WO-박서준",
+      "name": "박서준",
+      "teamAbbr": "WO",
+      "role": "SP",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "ip": 99,
+        "era": 5.6000000000000005,
+        "fip": 5.3428571428571425,
+        "k9": 5.214285714285714,
+        "bb9": 4.314285714285714,
+        "gs": 16,
+        "games": 21
+      },
+      "potential": 76,
+      "targetOvr": 47
+    },
+    {
+      "id": "WO-신재훈",
+      "name": "신재훈",
+      "teamAbbr": "WO",
+      "role": "LF",
+      "rosterLevel": "farm",
+      "age": 19,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.2810714285714286,
+        "iso": 0.08428571428571428,
+        "bbPct": 0.058750000000000004,
+        "kPct": 0.23607142857142857,
+        "sb": 0
+      },
+      "potential": 71,
+      "targetOvr": 46
+    },
+    {
+      "id": "WO-이준호",
+      "name": "이준호",
+      "teamAbbr": "WO",
+      "role": "RP",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "ip": 33,
+        "era": 5.7,
+        "fip": 5.428571428571429,
+        "k9": 4.892857142857142,
+        "bb9": 4.392857142857143,
+        "gs": 0,
+        "games": 32
+      },
+      "potential": 69,
+      "targetOvr": 45
+    },
+    {
+      "id": "WO-김우성",
+      "name": "김우성",
+      "teamAbbr": "WO",
+      "role": "1B",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.27464285714285713,
+        "iso": 0.07857142857142857,
+        "bbPct": 0.05625000000000001,
+        "kPct": 0.23964285714285716,
+        "sb": 0
+      },
+      "potential": 70,
+      "targetOvr": 44
+    },
+    {
+      "id": "WO-김태연",
+      "name": "김태연",
+      "teamAbbr": "WO",
+      "role": "DH",
+      "rosterLevel": "farm",
+      "age": 22,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.31642857142857145,
+        "iso": 0.11571428571428571,
+        "bbPct": 0.07250000000000001,
+        "kPct": 0.21642857142857144,
+        "sb": 3
+      },
+      "potential": 76,
+      "targetOvr": 57
+    },
+    {
+      "id": "WO-이성민",
+      "name": "이성민",
+      "teamAbbr": "WO",
+      "role": "SS",
+      "rosterLevel": "farm",
+      "age": 19,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.31,
+        "iso": 0.11,
+        "bbPct": 0.07,
+        "kPct": 0.22,
+        "sb": 8
+      },
+      "potential": 80,
+      "targetOvr": 55
+    },
+    {
+      "id": "WO-박지후",
+      "name": "박지후",
+      "teamAbbr": "WO",
+      "role": "CF",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.3067857142857143,
+        "iso": 0.10714285714285714,
+        "bbPct": 0.06875,
+        "kPct": 0.22178571428571428,
+        "sb": 7
+      },
+      "potential": 77,
+      "targetOvr": 54
+    },
+    {
+      "id": "WO-최우빈",
+      "name": "최우빈",
+      "teamAbbr": "WO",
+      "role": "C",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.30357142857142855,
+        "iso": 0.10428571428571429,
+        "bbPct": 0.0675,
+        "kPct": 0.22357142857142856,
+        "sb": 1
+      },
+      "potential": 72,
+      "targetOvr": 53
+    },
+    {
+      "id": "WO-한재민",
+      "name": "한재민",
+      "teamAbbr": "WO",
+      "role": "3B",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.3003571428571429,
+        "iso": 0.10142857142857142,
+        "bbPct": 0.06625,
+        "kPct": 0.22535714285714287,
+        "sb": 1
+      },
+      "potential": 74,
+      "targetOvr": 52
+    },
+    {
+      "id": "WO-정하늘",
+      "name": "정하늘",
+      "teamAbbr": "WO",
+      "role": "RF",
+      "rosterLevel": "farm",
+      "age": 19,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.29714285714285715,
+        "iso": 0.09857142857142857,
+        "bbPct": 0.065,
+        "kPct": 0.22714285714285715,
+        "sb": 1
+      },
+      "potential": 75,
+      "targetOvr": 51
+    },
+    {
+      "id": "WO-윤도윤",
+      "name": "윤도윤",
+      "teamAbbr": "WO",
+      "role": "2B",
+      "rosterLevel": "farm",
+      "age": 22,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.29392857142857143,
+        "iso": 0.09571428571428571,
+        "bbPct": 0.06375,
+        "kPct": 0.22892857142857143,
+        "sb": 4
+      },
+      "potential": 71,
+      "targetOvr": 50
+    },
+    {
+      "id": "WO-김민재",
+      "name": "김민재",
+      "teamAbbr": "WO",
+      "role": "SP",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "ip": 111,
+        "era": 5.15,
+        "fip": 4.957142857142857,
+        "k9": 6.660714285714286,
+        "bb9": 3.960714285714286,
+        "gs": 18,
+        "games": 22
+      },
+      "potential": 79,
+      "targetOvr": 56
+    },
+    {
+      "id": "WO-오승준",
+      "name": "오승준",
+      "teamAbbr": "WO",
+      "role": "SP",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "ip": 107,
+        "era": 5.3,
+        "fip": 5.085714285714285,
+        "k9": 6.178571428571429,
+        "bb9": 4.078571428571428,
+        "gs": 18,
+        "games": 22
+      },
+      "potential": 78,
+      "targetOvr": 53
+    },
+    {
+      "id": "WO-배성훈",
+      "name": "배성훈",
+      "teamAbbr": "WO",
+      "role": "RP",
+      "rosterLevel": "farm",
+      "age": 19,
+      "sourceStats": {
+        "ip": 35,
+        "era": 5.5,
+        "fip": 5.257142857142857,
+        "k9": 5.535714285714286,
+        "bb9": 4.235714285714286,
+        "gs": 0,
+        "games": 33
+      },
+      "potential": 70,
+      "targetOvr": 49
+    },
+    {
+      "id": "WO-신우진",
+      "name": "신우진",
+      "teamAbbr": "WO",
+      "role": "RP",
+      "rosterLevel": "farm",
+      "age": 22,
+      "sourceStats": {
+        "ip": 34,
+        "era": 5.55,
+        "fip": 5.3,
+        "k9": 5.375,
+        "bb9": 4.275,
+        "gs": 0,
+        "games": 33
+      },
+      "potential": 69,
+      "targetOvr": 48
+    },
+    {
+      "id": "WO-장민성",
+      "name": "장민성",
+      "teamAbbr": "WO",
+      "role": "LF",
+      "rosterLevel": "farm",
+      "age": 18,
+      "sourceStats": {
+        "pa": 380,
+        "woba": 0.2842857142857143,
+        "iso": 0.08714285714285715,
+        "bbPct": 0.060000000000000005,
+        "kPct": 0.2342857142857143,
+        "sb": 0
+      },
+      "potential": 76,
+      "targetOvr": 47
+    },
+    {
+      "id": "WO-류태양",
+      "name": "류태양",
+      "teamAbbr": "WO",
+      "role": "RP",
+      "rosterLevel": "farm",
+      "age": 21,
+      "sourceStats": {
+        "ip": 33,
+        "era": 5.65,
+        "fip": 5.385714285714286,
+        "k9": 5.053571428571429,
+        "bb9": 4.353571428571429,
+        "gs": 0,
+        "games": 32
+      },
+      "potential": 68,
+      "targetOvr": 46
+    },
+    {
+      "id": "WO-홍준영",
+      "name": "홍준영",
+      "teamAbbr": "WO",
+      "role": "RP",
+      "rosterLevel": "farm",
+      "age": 20,
+      "sourceStats": {
+        "ip": 33,
+        "era": 5.7,
+        "fip": 5.428571428571429,
+        "k9": 4.892857142857142,
+        "bb9": 4.392857142857143,
+        "gs": 0,
+        "games": 32
+      },
+      "potential": 67,
+      "targetOvr": 45
+    }
+  ]
+}

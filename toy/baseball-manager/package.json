@@ -12,7 +12,9 @@
     "roster:report": "npx tsx scripts/roster-report.ts",
     "regression:check": "npx tsx scripts/regression-check.ts",
     "sim:sanity": "npx tsx scripts/sim-sanity.ts",
-    "sim:outcomes": "npx tsx scripts/sim-outcomes.ts"
+    "sim:outcomes": "npx tsx scripts/sim-outcomes.ts",
+    "kbo:handedness": "npx tsx scripts/fetch-kbo-handedness.ts",
+    "kbo:sync-roster": "npx tsx scripts/sync-kbo-roster.ts"
   },
   "dependencies": {
     "react": "^19.2.5",

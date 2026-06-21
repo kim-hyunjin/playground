@@ -104,6 +104,7 @@ export function StatsPage() {
               <th>WHIP</th>
               <th>K/9</th>
               <th>BB/9</th>
+              <th>SV</th>
               <th>K</th>
             </tr>
           </thead>
@@ -132,6 +133,7 @@ export function StatsPage() {
                   <td>{whip}</td>
                   <td>{k9}</td>
                   <td>{bb9}</td>
+                  <td>{s.saves}</td>
                   <td>{s.k}</td>
                 </tr>
               )

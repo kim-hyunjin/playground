@@ -41,6 +41,7 @@ import {
 } from '../engine/draft'
 
 import { recoverTeamInjuries, rollWeeklyInjuries } from '../engine/injury'
+import { sanitizeLineup, sanitizeRotation } from '../engine/rosterAvailability'
 
 const STORAGE_KEY = 'baseball-manager:v7'
 const LEGACY_KEYS = [
@@ -361,9 +362,12 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
       const suggestions = generateCallUpSuggestions(interim)
       const coachMarket = refreshCoachMarket(s.coachMarket ?? [])
+      const userTeam = recovered.find((t) => t.id === s.userTeamId)!
 
       return {
         ...interim,
+        lineup: sanitizeLineup(userTeam, interim.lineup),
+        rotation: sanitizeRotation(userTeam, interim.rotation),
         callUpSuggestions: mergeCallUpSuggestions(s.callUpSuggestions ?? [], suggestions),
         coachMarket,
       }

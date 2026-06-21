@@ -12,6 +12,7 @@ import { ensureHandedness } from '../engine/sim/handedness'
 import { handednessForPlayerId } from './rosters/2026/handednessOverrides'
 import type { BatterSourceStats, PitcherSourceStats, PlayerRecord, PlayerRatings, TeamAbbr, TeamRosterFile } from './types'
 import { ROSTERS_2026 } from './rosters/2026/teams'
+import { loadKboRosterCache } from './rosters/2026/kbo/loadCache'
 
 export const DATA_SEASON = 2026
 
@@ -164,12 +165,27 @@ export function validateRosterFile(file: TeamRosterFile): string[] {
     errors.push(`2군 ${file.farm.length}명 (max ${FARM_TEAM_MAX})`)
   }
 
+  for (const list of [file.first, file.farm]) {
+    for (const r of list) {
+      if (r.bats && !['L', 'R', 'S'].includes(r.bats)) {
+        errors.push(`${r.id}: invalid bats ${r.bats}`)
+      }
+      if (r.throws && !['L', 'R', 'S'].includes(r.throws)) {
+        errors.push(`${r.id}: invalid throws ${r.throws}`)
+      }
+    }
+  }
+
   return errors
+}
+
+function rosterFiles(): typeof ROSTERS_2026 {
+  return loadKboRosterCache() ?? ROSTERS_2026
 }
 
 export function validateAllRosters(): { ok: boolean; errors: string[] } {
   const errors: string[] = []
-  for (const file of ROSTERS_2026) {
+  for (const file of rosterFiles()) {
     errors.push(...validateRosterFile(file).map((e) => `${file.teamAbbr}: ${e}`))
   }
   return { ok: errors.length === 0, errors }
@@ -208,7 +224,7 @@ function buildTeamFromRoster(
 }
 
 export function loadLeague2026(userTeamIndex: number): Team[] {
-  const byAbbr = new Map(ROSTERS_2026.map((f) => [f.teamAbbr, f]))
+  const byAbbr = new Map(rosterFiles().map((f) => [f.teamAbbr, f]))
 
   return TEAM_DEFS.map((def, i) => {
     const file = byAbbr.get(def.abbr as TeamAbbr)
@@ -220,7 +236,7 @@ export function loadLeague2026(userTeamIndex: number): Team[] {
 }
 
 export function previewTeamStars(abbr: TeamAbbr, limit = 5): PlayerRecord[] {
-  const file = ROSTERS_2026.find((f) => f.teamAbbr === abbr)
+  const file = rosterFiles().find((f) => f.teamAbbr === abbr)
   if (!file) return []
   return [...file.first]
     .sort((a, b) => {

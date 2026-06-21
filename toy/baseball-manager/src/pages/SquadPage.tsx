@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { calcOps, calcWoba, calcFip, calcWhip } from '../engine/sabermetrics'
 import { firstTeamPlayers, countByLevel, FIRST_TEAM_MAX } from '../engine/roster'
 import { isBatter, isPitcher, overallRating } from '../engine/generator'
+import { formatHandedness } from '../engine/rosterAvailability'
 import { OvrBadge } from '../components/PlayerCard'
 import { PlayerNameButton } from '../components/PlayerNameButton'
 import { useGame } from '../store/gameStore'
@@ -78,6 +79,7 @@ export function SquadPage() {
             <tr>
               <th>선수</th>
               <th>Pos</th>
+              <th>타/투</th>
               <th>OVR</th>
               <th>{statCol1}</th>
               <th>{statCol2}</th>
@@ -95,6 +97,7 @@ export function SquadPage() {
                   <PlayerNameButton playerId={p.id} name={p.name} />
                 </td>
                 <td>{POSITION_LABEL[p.role]}</td>
+                <td className="font-mono text-xs text-[var(--text-muted)]">{formatHandedness(p)}</td>
                 <td><OvrBadge player={p} /></td>
                 <td className="font-mono text-[var(--accent)]">{keyStat(p)}</td>
                 <td className="font-mono text-[var(--text-muted)]">{keyStat2(p)}</td>
