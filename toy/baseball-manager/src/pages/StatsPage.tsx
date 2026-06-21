@@ -1,5 +1,6 @@
 import { calcFip, calcOps, calcWoba, calcWrcPlus, calcXFip, leagueBattingRates, leaguePitchingRates, ipFromOuts } from '../engine/sabermetrics'
 import { isBatter, isPitcher } from '../engine/generator'
+import { firstTeamPlayers } from '../engine/roster'
 import { PlayerNameButton } from '../components/PlayerNameButton'
 import { useGame } from '../store/gameStore'
 import { POSITION_LABEL } from '../types/game'
@@ -11,7 +12,7 @@ export function StatsPage() {
   const lgBat = leagueBattingRates(state.teams)
   const lgPit = leaguePitchingRates(state.teams)
 
-  const batters = userTeam.players
+  const batters = firstTeamPlayers(userTeam)
     .filter(isBatter)
     .filter((p) => p.seasonStats.type === 'batter' && p.seasonStats.pa > 0)
     .sort((a, b) => {
@@ -20,7 +21,7 @@ export function StatsPage() {
       return calcWrcPlus(sb!, lgBat) - calcWrcPlus(sa!, lgBat)
     })
 
-  const pitchers = userTeam.players
+  const pitchers = firstTeamPlayers(userTeam)
     .filter(isPitcher)
     .filter((p) => p.seasonStats.type === 'pitcher' && p.seasonStats.outs > 0)
     .sort((a, b) => {

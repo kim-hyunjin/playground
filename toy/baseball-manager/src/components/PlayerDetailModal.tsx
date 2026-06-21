@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { formatSalary, isPitcher } from '../engine/generator'
+import { rosterLevelOf } from '../engine/roster'
 import { findPlayerInLeague } from '../engine/playerLookup'
 import { PlayerCard, StatBar } from './PlayerCard'
 import { SabermetricsPanel } from './SabermetricsPanel'
@@ -7,7 +8,7 @@ import { useGame } from '../store/gameStore'
 import { POSITION_LABEL } from '../types/game'
 
 export function PlayerDetailModal() {
-  const { state, userTeam, focusedPlayerId, closePlayer, releasePlayer } = useGame()
+  const { state, userTeam, focusedPlayerId, closePlayer, releasePlayer, promotePlayer, demotePlayer } = useGame()
   const [tab, setTab] = useState<'stats' | 'attrs'>('stats')
 
   useEffect(() => {
@@ -27,6 +28,8 @@ export function PlayerDetailModal() {
 
   const { player, team } = found
   const isOwnPlayer = userTeam?.id === team.id
+  const level = rosterLevelOf(player)
+  const statsSource = level === 'farm' ? 'farm' : 'season'
 
   const handleRelease = () => {
     if (!isOwnPlayer) return
@@ -56,7 +59,7 @@ export function PlayerDetailModal() {
               {player.name}
             </h2>
             <div className="text-sm text-[var(--text-muted)]">
-              {POSITION_LABEL[player.role]} · {player.age}세 · {formatSalary(player.salary)}
+              {level === 'farm' ? '2군' : '1군'} · {POSITION_LABEL[player.role]} · {player.age}세 · {formatSalary(player.salary)}
             </div>
           </div>
           <button type="button" className="bm-btn bm-btn-ghost px-3 py-2" onClick={closePlayer} aria-label="닫기">
@@ -85,12 +88,30 @@ export function PlayerDetailModal() {
           </div>
 
           {tab === 'stats' ? (
-            <SabermetricsPanel player={player} />
+            <SabermetricsPanel player={player} statsSource={statsSource} />
           ) : (
             <div className="bm-card space-y-3 p-4">
               <StatBar label="사기" value={player.morale} />
               <StatBar label="피로" value={player.fatigue} />
               {!isPitcher(player) && <StatBar label="수비" value={player.fielding} />}
+              {isOwnPlayer && level === 'farm' && (
+                <button
+                  type="button"
+                  className="bm-btn bm-btn-primary w-full text-xs"
+                  onClick={() => { promotePlayer(player.id); closePlayer() }}
+                >
+                  1군 승격
+                </button>
+              )}
+              {isOwnPlayer && level === 'first' && (
+                <button
+                  type="button"
+                  className="bm-btn bm-btn-ghost w-full text-xs"
+                  onClick={() => { demotePlayer(player.id); closePlayer() }}
+                >
+                  2군으로 보내기
+                </button>
+              )}
               {isOwnPlayer && (
                 <button
                   type="button"

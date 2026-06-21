@@ -1,5 +1,6 @@
 import { formatSalary, isPitcher, overallRating, teamPayroll } from '../engine/generator'
-import { sortedStandings } from '../engine/schedule'
+import { countByLevel, firstTeamPlayers } from '../engine/roster'
+import { sortedStandings, sortedFarmStandings } from '../engine/schedule'
 import { MiniStat } from '../components/PlayerCard'
 import { useGame } from '../store/gameStore'
 
@@ -14,7 +15,9 @@ export function DashboardPage() {
     : null
 
   const standings = sortedStandings(state.teams)
+  const farmStandings = sortedFarmStandings(state.teams)
   const rank = standings.findIndex((t) => t.id === userTeam.id) + 1
+  const farmRank = farmStandings.findIndex((t) => t.id === userTeam.id) + 1
   const seasonOver = state.currentWeek > state.totalWeeks
 
   return (
@@ -22,7 +25,7 @@ export function DashboardPage() {
       <div>
         <h1 className="text-2xl font-bold text-[var(--text-h)]">대시보드</h1>
         <p className="text-sm text-[var(--text-muted)]">
-          {state.currentWeek}주차 · {userTeam.wins}승 {userTeam.losses}패 · {rank}위
+          {state.currentWeek}주차 · 1군 {userTeam.wins}승 {userTeam.losses}패 ({rank}위) · 2군 {userTeam.farmWins}승 {userTeam.farmLosses}패 ({farmRank}위)
         </p>
       </div>
 
@@ -80,14 +83,18 @@ export function DashboardPage() {
               <dd className="text-[var(--text-h)]">{formatSalary(teamPayroll(userTeam))}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-[var(--text-muted)]">선수단</dt>
-              <dd className="text-[var(--text-h)]">{userTeam.players.length}명</dd>
+              <dt className="text-[var(--text-muted)]">1군 등록</dt>
+              <dd className="text-[var(--text-h)]">{countByLevel(userTeam, 'first')}명</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-[var(--text-muted)]">2군 등록</dt>
+              <dd className="text-[var(--text-h)]">{countByLevel(userTeam, 'farm')}명</dd>
             </div>
             <div className="flex justify-between">
               <dt className="text-[var(--text-muted)]">팀 OVR (타선)</dt>
               <dd className="text-[var(--text-h)]">
                 {Math.round(
-                  userTeam.players.filter((p) => !isPitcher(p)).slice(0, 9)
+                  firstTeamPlayers(userTeam).filter((p) => !isPitcher(p)).slice(0, 9)
                     .reduce((s, p) => s + overallRating(p), 0) / 9,
                 )}
               </dd>

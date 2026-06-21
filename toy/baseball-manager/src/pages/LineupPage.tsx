@@ -1,3 +1,4 @@
+import { firstTeamPlayers } from '../engine/roster'
 import { isBatter } from '../engine/generator'
 import { OvrBadge } from '../components/PlayerCard'
 import { PlayerNameButton } from '../components/PlayerNameButton'
@@ -13,7 +14,7 @@ export function LineupPage() {
   const { userTeam, state, setLineup } = useGame()
   if (!userTeam || !state) return null
 
-  const batters = userTeam.players.filter(isBatter)
+  const batters = firstTeamPlayers(userTeam).filter(isBatter)
 
   const handleChange = (pos: FieldPosition, playerId: string) => {
     setLineup({ ...state.lineup, [pos]: playerId })
@@ -59,7 +60,7 @@ export function LineupPage() {
         <h2 className="mb-3 font-semibold text-[var(--text-h)]">현재 타순 미리보기</h2>
         <ol className="space-y-1">
           {FIELD_POSITIONS.map((pos, i) => {
-            const p = userTeam.players.find((pl) => pl.id === state.lineup[pos])
+            const p = firstTeamPlayers(userTeam).find((pl) => pl.id === state.lineup[pos])
             return (
               <li key={pos} className="flex items-center gap-3 text-sm">
                 <span className="w-6 text-[var(--text-muted)]">{i + 1}</span>

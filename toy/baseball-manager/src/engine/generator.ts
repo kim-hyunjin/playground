@@ -1,4 +1,4 @@
-import type { FieldPosition, Player, PlayerRole, Team } from '../types/game'
+import type { FieldPosition, Player, PlayerRole, RosterLevel, Team } from '../types/game'
 import { emptyBatterStats, emptyPitcherStats } from '../types/game'
 
 const LAST_NAMES = [
@@ -28,17 +28,27 @@ export function generateName(): string {
   return `${pick(LAST_NAMES)}${pick(FIRST_NAMES)}`
 }
 
-export function generatePlayer(role: PlayerRole, tier: 'star' | 'avg' | 'weak' = 'avg'): Player {
+export function generatePlayer(
+  role: PlayerRole,
+  tier: 'star' | 'avg' | 'weak' = 'avg',
+  options: { rosterLevel?: RosterLevel; ageMin?: number; ageMax?: number } = {},
+): Player {
+  const rosterLevel = options.rosterLevel ?? 'first'
+  const ageMin = options.ageMin ?? (rosterLevel === 'farm' ? 18 : 21)
+  const ageMax = options.ageMax ?? (rosterLevel === 'farm' ? 24 : 36)
   const base = tier === 'star' ? rand(72, 92) : tier === 'avg' ? rand(52, 78) : rand(38, 58)
-  const variance = () => clamp(base + rand(-8, 8))
+  const farmBase = tier === 'avg' ? rand(45, 62) : rand(35, 52)
+  const effectiveBase = rosterLevel === 'farm' ? farmBase : base
+  const variance = () => clamp(effectiveBase + rand(-8, 8))
 
   const isPitcher = role === 'SP' || role === 'RP'
 
   return {
     id: crypto.randomUUID(),
     name: generateName(),
-    age: rand(21, 36),
+    age: rand(ageMin, ageMax),
     role,
+    rosterLevel,
     contact: isPitcher ? rand(25, 45) : variance(),
     power: isPitcher ? rand(20, 40) : variance(),
     eye: isPitcher ? rand(25, 45) : variance(),
@@ -52,6 +62,7 @@ export function generatePlayer(role: PlayerRole, tier: 'star' | 'avg' | 'weak' =
     morale: rand(65, 95),
     fatigue: rand(0, 15),
     seasonStats: isPitcher ? emptyPitcherStats() : emptyBatterStats(),
+    farmSeasonStats: isPitcher ? emptyPitcherStats() : emptyBatterStats(),
   }
 }
 
@@ -75,6 +86,23 @@ const ROSTER_TEMPLATE: PlayerRole[] = [
   'RP', 'RP', 'RP', 'RP', 'RP',
 ]
 
+const FARM_ROSTER_TEMPLATE: PlayerRole[] = [
+  'C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'DH',
+  'C', '2B', 'SS', 'LF', 'CF', 'RF',
+  'SP', 'SP', 'SP', 'SP',
+  'RP', 'RP', 'RP', 'RP', 'RP', 'RP',
+]
+
+function farmRosterTier(index: number): 'avg' | 'weak' {
+  return index < 4 ? 'avg' : 'weak'
+}
+
+export function generateFarmRosterPlayers(): Player[] {
+  return FARM_ROSTER_TEMPLATE.map((role, i) =>
+    generatePlayer(role, farmRosterTier(i), { rosterLevel: 'farm' }),
+  )
+}
+
 function rosterTier(index: number, role: PlayerRole): 'star' | 'avg' | 'weak' {
   if (role === 'SP' && index < 2) return 'star'
   if (['SS', 'CF', 'C'].includes(role) && index === 0) return 'star'
@@ -83,10 +111,11 @@ function rosterTier(index: number, role: PlayerRole): 'star' | 'avg' | 'weak' {
 }
 
 export function generateTeam(def: (typeof TEAM_DEFS)[number], starBoost = false): Team {
-  const players = ROSTER_TEMPLATE.map((role, i) => {
+  const firstPlayers = ROSTER_TEMPLATE.map((role, i) => {
     const tier = starBoost && i < 3 ? 'star' : rosterTier(i, role)
-    return generatePlayer(role, tier)
+    return generatePlayer(role, tier, { rosterLevel: 'first' })
   })
+  const farmPlayers = generateFarmRosterPlayers()
 
   return {
     id: crypto.randomUUID(),
@@ -96,11 +125,15 @@ export function generateTeam(def: (typeof TEAM_DEFS)[number], starBoost = false)
     color: def.color,
     stadium: def.stadium,
     budget: rand(8, 15) * 1_000_000,
-    players,
+    players: [...firstPlayers, ...farmPlayers],
     wins: 0,
     losses: 0,
     runsScored: 0,
     runsAllowed: 0,
+    farmWins: 0,
+    farmLosses: 0,
+    farmRunsScored: 0,
+    farmRunsAllowed: 0,
   }
 }
 
@@ -111,9 +144,10 @@ export function generateLeague(userTeamIndex: number): Team[] {
 export function defaultLineup(team: Team): Record<FieldPosition, string> {
   const positions: FieldPosition[] = ['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'DH']
   const lineup = {} as Record<FieldPosition, string>
+  const pool = team.players.filter((p) => p.rosterLevel !== 'farm')
 
   for (const pos of positions) {
-    const player = team.players.find((p) => p.role === pos)
+    const player = pool.find((p) => p.role === pos)
     if (player) lineup[pos] = player.id
   }
 
@@ -121,7 +155,7 @@ export function defaultLineup(team: Team): Record<FieldPosition, string> {
 }
 
 export function defaultRotation(team: Team): string[] {
-  return team.players.filter((p) => p.role === 'SP').map((p) => p.id)
+  return team.players.filter((p) => p.role === 'SP' && p.rosterLevel !== 'farm').map((p) => p.id)
 }
 
 export function isPitcher(p: Player) {

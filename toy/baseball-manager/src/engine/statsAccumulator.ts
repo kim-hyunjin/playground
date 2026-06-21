@@ -118,25 +118,48 @@ export function applyBoxScoreToPlayers(
   teamLost: boolean,
   starterId: string,
 ): Player[] {
+  return applyBoxScoreToPlayersInternal(players, box, teamWon, teamLost, starterId, 'first')
+}
+
+export function applyFarmBoxScoreToPlayers(
+  players: Player[],
+  box: GameBoxScore,
+  teamWon: boolean,
+  teamLost: boolean,
+  starterId: string,
+): Player[] {
+  return applyBoxScoreToPlayersInternal(players, box, teamWon, teamLost, starterId, 'farm')
+}
+
+function applyBoxScoreToPlayersInternal(
+  players: Player[],
+  box: GameBoxScore,
+  teamWon: boolean,
+  teamLost: boolean,
+  starterId: string,
+  target: 'first' | 'farm',
+): Player[] {
   const starterW = teamWon
   const starterL = teamLost
+  const statsKey = target === 'farm' ? 'farmSeasonStats' : 'seasonStats'
 
   return players.map((p) => {
     const bat = box.batters[p.id]
     const pit = box.pitchers[p.id]
+    const seasonStats = p[statsKey]
 
-    if (bat && p.seasonStats.type === 'batter') {
+    if (bat && seasonStats.type === 'batter') {
       return {
         ...p,
-        seasonStats: mergeBatterLine(p.seasonStats, bat, bat.pa > 0),
+        [statsKey]: mergeBatterLine(seasonStats, bat, bat.pa > 0),
       }
     }
 
-    if (pit && p.seasonStats.type === 'pitcher') {
-      let stats = mergePitcherLine(p.seasonStats, pit, pit.bf > 0)
+    if (pit && seasonStats.type === 'pitcher') {
+      let stats = mergePitcherLine(seasonStats, pit, pit.bf > 0)
       if (p.id === starterId && starterW) stats = { ...stats, wins: stats.wins + 1 }
       if (p.id === starterId && starterL) stats = { ...stats, losses: stats.losses + 1 }
-      return { ...p, seasonStats: stats }
+      return { ...p, [statsKey]: stats }
     }
 
     return p
@@ -205,4 +228,16 @@ export function migratePlayerStats(player: Player): Player {
   }
 
   return player
+}
+
+export function ensurePlayerRosterFields(player: Player): Player {
+  const migrated = migratePlayerStats(player)
+  const isPitcherRole = migrated.role === 'SP' || migrated.role === 'RP'
+  return {
+    ...migrated,
+    rosterLevel: migrated.rosterLevel ?? 'first',
+    farmSeasonStats:
+      migrated.farmSeasonStats ??
+      (isPitcherRole ? emptyPitcherStats() : emptyBatterStats()),
+  }
 }

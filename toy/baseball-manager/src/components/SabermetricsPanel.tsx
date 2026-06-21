@@ -28,21 +28,29 @@ function CountingRow({ label, value }: { label: string; value: string | number }
   )
 }
 
-export function SabermetricsPanel({ player }: { player: Player }) {
+export function SabermetricsPanel({
+  player,
+  statsSource = 'season',
+}: {
+  player: Player
+  statsSource?: 'season' | 'farm'
+}) {
   const { state } = useGame()
   if (!state) return null
 
   const lgBat = leagueBattingRates(state.teams)
   const lgPit = leaguePitchingRates(state.teams)
+  const labelPrefix = statsSource === 'farm' ? '2군 ' : ''
 
   if (!isPitcher(player) && player.seasonStats.type === 'batter') {
-    const raw = player.seasonStats
+    const raw = statsSource === 'farm' ? player.farmSeasonStats : player.seasonStats
+    if (raw.type !== 'batter') return null
     const s = batterSabermetrics(raw, lgBat)
 
     if (raw.pa === 0) {
       return (
         <div className="bm-card p-4 text-sm text-[var(--text-muted)]">
-          아직 시즌 기록이 없습니다. 경기를 진행하면 세이버매트릭스 스탯이 집계됩니다.
+          아직 {labelPrefix}시즌 기록이 없습니다. 경기를 진행하면 세이버매트릭스 스탯이 집계됩니다.
         </div>
       )
     }
@@ -50,7 +58,7 @@ export function SabermetricsPanel({ player }: { player: Player }) {
     return (
       <div className="space-y-4">
         <div className="bm-card p-4">
-          <h3 className="mb-3 font-semibold text-[var(--text-h)]">세이버매트릭스 — 타격</h3>
+          <h3 className="mb-3 font-semibold text-[var(--text-h)]">세이버매트릭스 — {labelPrefix}타격</h3>
           <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
             <StatCell label="wOBA" value={s.woba} highlight />
             <StatCell label="wRC+" value={s.wrcPlus} highlight />
@@ -66,7 +74,7 @@ export function SabermetricsPanel({ player }: { player: Player }) {
         </div>
 
         <div className="bm-card p-4">
-          <h3 className="mb-2 font-semibold text-[var(--text-h)]">시즌 누적 기록</h3>
+          <h3 className="mb-2 font-semibold text-[var(--text-h)]">{labelPrefix}시즌 누적 기록</h3>
           <CountingRow label="경기" value={raw.games} />
           <CountingRow label="타석 (PA)" value={raw.pa} />
           <CountingRow label="타수 (AB)" value={raw.ab} />
@@ -86,13 +94,14 @@ export function SabermetricsPanel({ player }: { player: Player }) {
   }
 
   if (isPitcher(player) && player.seasonStats.type === 'pitcher') {
-    const raw = player.seasonStats
+    const raw = statsSource === 'farm' ? player.farmSeasonStats : player.seasonStats
+    if (raw.type !== 'pitcher') return null
     const s = pitcherSabermetrics(raw, lgPit)
 
     if (raw.outs === 0) {
       return (
         <div className="bm-card p-4 text-sm text-[var(--text-muted)]">
-          아직 시즌 기록이 없습니다. 경기를 진행하면 세이버매트릭스 스탯이 집계됩니다.
+          아직 {labelPrefix}시즌 기록이 없습니다. 경기를 진행하면 세이버매트릭스 스탯이 집계됩니다.
         </div>
       )
     }
@@ -100,7 +109,7 @@ export function SabermetricsPanel({ player }: { player: Player }) {
     return (
       <div className="space-y-4">
         <div className="bm-card p-4">
-          <h3 className="mb-3 font-semibold text-[var(--text-h)]">세이버매트릭스 — 투구</h3>
+          <h3 className="mb-3 font-semibold text-[var(--text-h)]">세이버매트릭스 — {labelPrefix}투구</h3>
           <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
             <StatCell label="FIP" value={s.fip} highlight />
             <StatCell label="xFIP" value={s.xfip} highlight />
@@ -116,7 +125,7 @@ export function SabermetricsPanel({ player }: { player: Player }) {
         </div>
 
         <div className="bm-card p-4">
-          <h3 className="mb-2 font-semibold text-[var(--text-h)]">시즌 누적 기록</h3>
+          <h3 className="mb-2 font-semibold text-[var(--text-h)]">{labelPrefix}시즌 누적 기록</h3>
           <CountingRow label="경기 / 선발" value={`${raw.games} / ${raw.gs}`} />
           <CountingRow label="승 / 패" value={`${raw.wins} / ${raw.losses}`} />
           <CountingRow label="이닝 (IP)" value={s.ip} />

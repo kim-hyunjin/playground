@@ -4,7 +4,8 @@ import { PlayerDetailModal } from './PlayerDetailModal'
 
 const NAV: { id: View; label: string; icon: string }[] = [
   { id: 'dashboard', label: '대시보드', icon: '📊' },
-  { id: 'squad', label: '스쿼드', icon: '👥' },
+  { id: 'squad', label: '1군', icon: '👥' },
+  { id: 'farm', label: '2군', icon: '🌱' },
   { id: 'stats', label: '스탯', icon: '📈' },
   { id: 'lineup', label: '라인업', icon: '📋' },
   { id: 'rotation', label: '로테이션', icon: '⚾' },

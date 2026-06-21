@@ -1,11 +1,13 @@
 export type FieldPosition = 'C' | '1B' | '2B' | '3B' | 'SS' | 'LF' | 'CF' | 'RF' | 'DH'
 export type PlayerRole = FieldPosition | 'SP' | 'RP'
+export type RosterLevel = 'first' | 'farm'
 
 export interface Player {
   id: string
   name: string
   age: number
   role: PlayerRole
+  rosterLevel: RosterLevel
   contact: number
   power: number
   eye: number
@@ -19,6 +21,7 @@ export interface Player {
   morale: number
   fatigue: number
   seasonStats: BatterStats | PitcherStats
+  farmSeasonStats: BatterStats | PitcherStats
 }
 
 /** 시즌 누적 타격 기록 (파생 스탯은 sabermetrics.ts에서 계산) */
@@ -108,6 +111,10 @@ export interface Team {
   losses: number
   runsScored: number
   runsAllowed: number
+  farmWins: number
+  farmLosses: number
+  farmRunsScored: number
+  farmRunsAllowed: number
 }
 
 export interface ScheduledGame {
@@ -162,6 +169,7 @@ export interface GameResult {
 export type View =
   | 'dashboard'
   | 'squad'
+  | 'farm'
   | 'lineup'
   | 'rotation'
   | 'match'
@@ -170,16 +178,18 @@ export type View =
   | 'stats'
 
 export interface GameState {
-  version: 2
+  version: 3
   userTeamId: string
   teams: Team[]
   schedule: ScheduledGame[]
+  farmSchedule: ScheduledGame[]
   currentWeek: number
   totalWeeks: number
   lineup: Record<FieldPosition, string>
   rotation: string[]
   rotationIndex: number
   results: GameResult[]
+  farmResults: GameResult[]
   managerName: string
 }
 

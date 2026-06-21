@@ -3,6 +3,7 @@ import { Layout } from './components/Layout'
 import { StartScreen } from './pages/StartScreen'
 import { DashboardPage } from './pages/DashboardPage'
 import { SquadPage } from './pages/SquadPage'
+import { FarmSquadPage } from './pages/FarmSquadPage'
 import { LineupPage } from './pages/LineupPage'
 import { RotationPage } from './pages/RotationPage'
 import { MatchPage } from './pages/MatchPage'
@@ -18,6 +19,7 @@ function GameShell() {
   const pages = {
     dashboard: <DashboardPage />,
     squad: <SquadPage />,
+    farm: <FarmSquadPage />,
     lineup: <LineupPage />,
     rotation: <RotationPage />,
     match: <MatchPage />,

@@ -18,13 +18,24 @@ import {
   applyBoxScoreToPlayers,
 } from './statsAccumulator'
 
+function rosterForSim(team: Team, level: 'first' | 'farm' = 'first'): Player[] {
+  const hasLevels = team.players.some((p) => p.rosterLevel === 'farm')
+  if (!hasLevels) return team.players
+  return team.players.filter((p) => (p.rosterLevel ?? 'first') === level)
+}
+
+function teamRoster(team: Team, level: 'first' | 'farm' = 'first'): Team {
+  return { ...team, players: rosterForSim(team, level) }
+}
+
 function rand() {
   return Math.random()
 }
 
 function pickPitcher(team: Team, rotationIndex: number, inning: number): Player {
-  const starters = team.players.filter((p) => p.role === 'SP')
-  const relievers = team.players.filter((p) => p.role === 'RP')
+  const pool = team.players
+  const starters = pool.filter((p) => p.role === 'SP')
+  const relievers = pool.filter((p) => p.role === 'RP')
 
   if (inning <= 6 && starters.length > 0) {
     return starters[rotationIndex % starters.length]!
@@ -44,13 +55,14 @@ function isStarterPitcher(team: Team, pitcher: Player, rotationIndex: number, in
 }
 
 function battingOrder(team: Team, lineup?: Record<FieldPosition, string>): Player[] {
+  const pool = team.players
   if (lineup) {
     return FIELD_POSITIONS.map((pos) => {
       const id = lineup[pos]
-      return team.players.find((p) => p.id === id) ?? team.players.find((p) => !isPitcher(p))!
+      return pool.find((p) => p.id === id) ?? pool.find((p) => !isPitcher(p))!
     }).filter(Boolean)
   }
-  return team.players.filter((p) => !isPitcher(p)).slice(0, 9)
+  return pool.filter((p) => !isPitcher(p)).slice(0, 9)
 }
 
 function resolveAtBat(batter: Player, pitcher: Player): AtBatOutcome {
@@ -177,6 +189,8 @@ export interface SimOptions {
   awayLineup?: Record<FieldPosition, string>
   homeRotationIndex?: number
   awayRotationIndex?: number
+  skipLogs?: boolean
+  rosterLevel?: 'first' | 'farm'
 }
 
 function playHalfInning(
@@ -232,6 +246,9 @@ export function simulateGame(
   away: Team,
   options: SimOptions = {},
 ): GameResult {
+  const level = options.rosterLevel ?? 'first'
+  const homeTeam = teamRoster(home, level)
+  const awayTeam = teamRoster(away, level)
   const logs: PlayLog[] = []
   const innings: InningScore[] = Array.from({ length: 9 }, () => ({}))
   let homeTotal = 0
@@ -239,11 +256,11 @@ export function simulateGame(
   const homeRot = options.homeRotationIndex ?? 0
   const awayRot = options.awayRotationIndex ?? 0
 
-  const homeOrder = battingOrder(home, options.homeLineup)
-  const awayOrder = battingOrder(away, options.awayLineup)
+  const homeOrder = battingOrder(homeTeam, options.homeLineup)
+  const awayOrder = battingOrder(awayTeam, options.awayLineup)
 
-  const awayStarter = pickPitcher(home, homeRot, 1)
-  const homeStarter = pickPitcher(away, awayRot, 1)
+  const awayStarter = pickPitcher(homeTeam, homeRot, 1)
+  const homeStarter = pickPitcher(awayTeam, awayRot, 1)
 
   const box: GameBoxScore = {
     batters: {},
@@ -253,11 +270,11 @@ export function simulateGame(
   }
 
   for (let inning = 1; inning <= 9; inning++) {
-    const awayRuns = playHalfInning(inning, 'top', awayOrder, home, homeRot, box, logs)
+    const awayRuns = playHalfInning(inning, 'top', awayOrder, homeTeam, homeRot, box, logs)
     innings[inning - 1]!.top = awayRuns
     awayTotal += awayRuns
 
-    const homeRuns = playHalfInning(inning, 'bottom', homeOrder, away, awayRot, box, logs)
+    const homeRuns = playHalfInning(inning, 'bottom', homeOrder, awayTeam, awayRot, box, logs)
     innings[inning - 1]!.bottom = homeRuns
     homeTotal += homeRuns
   }
@@ -269,7 +286,7 @@ export function simulateGame(
     homeScore: homeTotal,
     awayScore: awayTotal,
     innings,
-    logs,
+    logs: options.skipLogs ? [] : logs,
     week: game.week,
     boxScore: box,
   }

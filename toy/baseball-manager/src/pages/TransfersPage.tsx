@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { countByLevel, FIRST_TEAM_MAX } from '../engine/roster'
 import { formatSalary, isPitcher, overallRating } from '../engine/generator'
 import { OvrBadge } from '../components/PlayerCard'
 import { PlayerNameButton } from '../components/PlayerNameButton'
@@ -32,8 +33,8 @@ export function TransfersPage() {
       setMessage('예산이 부족합니다.')
       return
     }
-    if (userTeam.players.length >= 28) {
-      setMessage('로스터가 가득 찼습니다. 선수를 방출하세요.')
+    if (countByLevel(userTeam, 'first') >= FIRST_TEAM_MAX) {
+      setMessage('1군 등록 정원(26명)이 가득 찼습니다.')
       return
     }
     const ok = buyPlayer(player, fromTeamId)
@@ -46,7 +47,7 @@ export function TransfersPage() {
         <div>
           <h1 className="text-2xl font-bold text-[var(--text-h)]">이적시장</h1>
           <p className="text-sm text-[var(--text-muted)]">
-            잔여 예산: {formatSalary(userTeam.budget)} · 로스터 {userTeam.players.length}/28
+            잔여 예산: {formatSalary(userTeam.budget)} · 1군 {countByLevel(userTeam, 'first')}/{FIRST_TEAM_MAX}
           </p>
         </div>
         <div className="flex gap-2">
