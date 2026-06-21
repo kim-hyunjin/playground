@@ -1,5 +1,5 @@
 import type { BatterSourceStats, PitcherSourceStats } from '../../src/data/types'
-import { extractHidden, fetchKboPositionLabel, fetchText, HITTER_DETAIL, PITCHER_DETAIL, sleep } from './kboClient'
+import { fetchKboPositionLabel, fetchText, HITTER_DETAIL, PITCHER_DETAIL, sleep } from './kboClient'
 import { parseKboProfileHtml, type KboPlayerProfile } from './parseProfile'
 
 export interface KboRecordHitter {
@@ -42,14 +42,22 @@ const PITCHER_BASIC = 'https://www.koreabaseball.com/Record/Player/PitcherBasic'
 
 const PAGER_PREFIX = 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ucPager$btnNo'
 
-async function fetchAspxPage(baseUrl: string, pageNum: number): Promise<string> {
-  const first = await fetchText(baseUrl)
-  if (pageNum <= 1) return first
+function extractAspxHiddenFields(html: string): Record<string, string> {
+  const out: Record<string, string> = {}
+  for (const m of html.matchAll(/<input[^>]*type="hidden"[^>]*>/gi)) {
+    const name = m[0].match(/name="([^"]+)"/)?.[1]
+    const value = m[0].match(/value="([^"]*)"/)?.[1] ?? ''
+    if (name) out[name] = value
+  }
+  return out
+}
 
+async function fetchAspxPage(baseUrl: string, pageNum: number, prevHtml: string): Promise<string> {
+  if (pageNum <= 1) return prevHtml
+
+  const fields = extractAspxHiddenFields(prevHtml)
   const body = new URLSearchParams({
-    __VIEWSTATE: extractHidden(first, '__VIEWSTATE'),
-    __VIEWSTATEGENERATOR: extractHidden(first, '__VIEWSTATEGENERATOR'),
-    __EVENTVALIDATION: extractHidden(first, '__EVENTVALIDATION'),
+    ...fields,
     __EVENTTARGET: `${PAGER_PREFIX}${pageNum}`,
     __EVENTARGUMENT: '',
   })
@@ -66,17 +74,18 @@ function maxPagerPage(html: string): number {
   return nums.length > 0 ? Math.max(...nums) : 1
 }
 
-async function fetchAllTablePages(
+async function fetchAllTablePages<T extends { playerId: string }>(
   baseUrl: string,
-  parse: (html: string) => { playerId: string }[],
-): Promise<{ playerId: string }[]> {
-  const first = await fetchText(baseUrl)
-  const pages = maxPagerPage(first)
-  const byId = new Map<string, { playerId: string }>()
+  parse: (html: string) => T[],
+): Promise<T[]> {
+  let html = await fetchText(baseUrl)
+  const byId = new Map<string, T>()
+  let pages = maxPagerPage(html)
 
   for (let p = 1; p <= pages; p++) {
-    const html = p === 1 ? first : await fetchAspxPage(baseUrl, p)
+    if (p > 1) html = await fetchAspxPage(baseUrl, p, html)
     for (const row of parse(html)) byId.set(row.playerId, row)
+    pages = Math.max(pages, maxPagerPage(html))
     if (p < pages) await sleep(200)
   }
 
@@ -204,14 +213,16 @@ export async function fetchKboRecordPool(season = 2026): Promise<{
   for (const h of hitterRows as KboRecordHitter[]) hitters.set(h.playerId, h)
 
   try {
-    const advPages = maxPagerPage(await fetchText(`${HITTER_BASIC}/Basic2.aspx`))
+    let advHtml = await fetchText(`${HITTER_BASIC}/Basic2.aspx`)
+    let advPages = maxPagerPage(advHtml)
     for (let p = 1; p <= advPages; p++) {
-      const html = await fetchAspxPage(`${HITTER_BASIC}/Basic2.aspx`, p)
-      const adv = parseHitterAdvanced(html)
+      if (p > 1) advHtml = await fetchAspxPage(`${HITTER_BASIC}/Basic2.aspx`, p, advHtml)
+      const adv = parseHitterAdvanced(advHtml)
       for (const [id, extra] of adv) {
         const base = hitters.get(id)
         if (base) hitters.set(id, { ...base, ...extra })
       }
+      advPages = Math.max(advPages, maxPagerPage(advHtml))
       if (p < advPages) await sleep(200)
     }
   } catch {
