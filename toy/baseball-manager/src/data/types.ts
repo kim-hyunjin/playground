@@ -44,6 +44,8 @@ export interface PlayerRecord {
   targetOvr?: number
   /** 프로시저럴 보충 선수 표시 */
   generated?: boolean
+  bats?: 'L' | 'R' | 'S'
+  throws?: 'L' | 'R' | 'S'
 }
 
 export interface TeamRosterFile {

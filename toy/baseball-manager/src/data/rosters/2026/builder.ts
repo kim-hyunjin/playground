@@ -21,6 +21,8 @@ export function batter(
     salaryKrw?: number
     sourceStats?: BatterSourceStats
     potential?: number
+    bats?: 'L' | 'R' | 'S'
+    throws?: 'L' | 'R' | 'S'
   } = {},
 ): PlayerRecord {
   return {
@@ -34,6 +36,8 @@ export function batter(
     sourceStats: opts.sourceStats ?? batterSourceForOvr(ovr, role),
     potential: opts.potential,
     targetOvr: ovr,
+    bats: opts.bats,
+    throws: opts.throws,
   }
 }
 
@@ -48,6 +52,8 @@ export function pitcher(
     salaryKrw?: number
     sourceStats?: PitcherSourceStats
     potential?: number
+    bats?: 'L' | 'R' | 'S'
+    throws?: 'L' | 'R' | 'S'
   } = {},
 ): PlayerRecord {
   return {
@@ -61,5 +67,7 @@ export function pitcher(
     sourceStats: opts.sourceStats ?? pitcherSourceForOvr(ovr, role),
     potential: opts.potential,
     targetOvr: ovr,
+    bats: opts.bats,
+    throws: opts.throws,
   }
 }

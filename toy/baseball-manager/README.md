@@ -30,7 +30,28 @@ npm run build              # 프로덕션 빌드
 npm run validate:rosters   # JSON 스키마·인원 검증
 npm run roster:report      # 팀별 OVR 분포·밸런스 경고
 npm run regression:check   # 핵심 플로우 헤드리스 회귀 테스트
+npm run sim:sanity         # 시뮬 R/G·park factor 몬te카를lo 검증 (KBO ~4.5–5.5 R/G)
+npm run sim:outcomes       # 타석 결과 분포 (K/BB/안타 %) 샘플
 ```
+
+## 시뮬레이션 (TODO 5)
+
+```
+src/engine/sim/
+  atBat.ts           # 타석 결과 (K/BB/안타)
+  atBatConstants.ts  # R/G 튜닝 상수 (contactBase 등)
+  bullpen.ts         # SP/RP·closer·pitch count
+  context.ts         # SimContext, LEAGUE_STRENGTH
+  handedness.ts      # 투타·platoon 보정
+  runners.ts         # 주자·RBI
+src/data/parks/kbo2026.ts              # 구장별 run/hr factor
+src/data/rosters/2026/handednessOverrides.ts  # 실명 투타 오버라이드
+```
+
+- **Park factor** — 홈 구장 `runFactor` / `hrFactor` 적용 (`GameResult.parkAbbr`)
+- **리그 강도** — `rosterLevel: 'farm'` 시 `LEAGUE_STRENGTH.farm` 보정
+- **Platoon** — 동타·동투 −4%, 이타·이투 +4% contact/power
+- **R/G 튜닝** — `atBatConstants.ts`의 `contactBase` (↑ = 득점 ↑). 목표 **~4.5–5.5 R/G** (팀당)
 
 ## 데이터 구조
 

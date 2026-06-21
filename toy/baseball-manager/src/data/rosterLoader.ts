@@ -8,6 +8,8 @@ import { batterRatingsFromStats } from './ratings/batterFromStats'
 import { pitcherRatingsFromStats } from './ratings/pitcherFromStats'
 import { ratingsFromOvr } from './ratings/ovrToRatings'
 import { estimateSalaryFromOvr, salaryKrwToGame } from './ratings/salaryScale'
+import { ensureHandedness } from '../engine/sim/handedness'
+import { handednessForPlayerId } from './rosters/2026/handednessOverrides'
 import type { BatterSourceStats, PitcherSourceStats, PlayerRecord, PlayerRatings, TeamAbbr, TeamRosterFile } from './types'
 import { ROSTERS_2026 } from './rosters/2026/teams'
 
@@ -113,7 +115,12 @@ function recordToPlayer(record: PlayerRecord): Player {
   } as Player
 
   player.potential = record.potential ?? defaultPotentialForPlayer(player)
-  return player
+  const hand = handednessForPlayerId(player.id)
+  if (hand?.bats) player.bats = hand.bats
+  if (hand?.throws) player.throws = hand.throws
+  if (record.bats) player.bats = record.bats
+  if (record.throws) player.throws = record.throws
+  return ensureHandedness(player)
 }
 
 function fillFarmGaps(teamAbbr: TeamAbbr, players: Player[]): Player[] {

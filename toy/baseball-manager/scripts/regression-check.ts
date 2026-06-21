@@ -23,7 +23,7 @@ import {
   validateFarmRoster,
   validateFirstTeamRoster,
 } from '../src/engine/roster'
-import { simulateCpuGames } from '../src/engine/simulation'
+import { simulateCpuGames, simulateGame } from '../src/engine/simulation'
 import { buildStoveLeagueState } from '../src/engine/stoveLeague'
 import type { GameState } from '../types/game'
 
@@ -152,9 +152,26 @@ try {
   assert((stove.freeAgents?.length ?? 0) > 0, 'FA 풀 생성')
   assert(stove.draft !== undefined, '드래프트 상태 생성')
 
+  section('Simulation (park + league strength + extras)')
+  const parkGame = simulateGame(
+    { id: 'reg-park', week: 1, homeId: userTeam.id, awayId: teams[1]!.id, played: false },
+    userTeam,
+    teams[1]!,
+    { skipLogs: true },
+  )
+  assert(parkGame.parkAbbr === userTeam.abbr, 'GameResult.parkAbbr = home abbr')
+  assert(parkGame.parkStadium === userTeam.stadium, 'GameResult.parkStadium = home stadium')
+  assert(parkGame.innings.length >= 9, '최소 9이닝 기록')
+  assert(parkGame.homeScore !== parkGame.awayScore, '경기 승패 확정 (동점 타breaker)')
+
+  const withHand = userTeam.players.filter((p) => p.bats && p.throws)
+  assert(withHand.length >= FIRST_TEAM_MAX, '1군 선수 투타 정보')
+
+  const farmOnly = userTeam.players.filter((p) => p.rosterLevel === 'farm')
+  assert(farmOnly.length >= 28, '2군 28명 이상 (farm sim 대상)')
+
   section('External FA data pool')
   assert(EXTERNAL_FA_2026.length >= 10, '외부 FA 실명 10명 이상')
-
   console.log(`\n=== Regression: ${passed} passed, ${failed} failed ===`)
   process.exit(failed > 0 ? 1 : 0)
 } catch (e) {

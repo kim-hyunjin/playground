@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from 'react'
 import type { FieldPosition, GameResult, GameState, Player, ScheduledGame, Team, View } from '../types/game'
-import { loadLeague2026 } from '../data/rosterLoader'
+import { loadLeague2026, DATA_SEASON } from '../data/rosterLoader'
 import { defaultLineup, defaultRotation, generateFarmRosterPlayers } from '../engine/generator'
 import { generateSchedule, generateFarmSchedule, nextUserGame } from '../engine/schedule'
 import { applyResult, simulateCpuGames, simulateGame } from '../engine/simulation'
@@ -40,7 +40,7 @@ import {
   simulateRemainingDraft,
 } from '../engine/draft'
 
-import { DATA_SEASON } from '../data/rosterLoader'
+import { recoverTeamInjuries, rollWeeklyInjuries } from '../engine/injury'
 
 const STORAGE_KEY = 'baseball-manager:v7'
 const LEGACY_KEYS = [
@@ -338,10 +338,14 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
       const recovered = adjusted.map((t) => ({
         ...t,
-        players: t.players.map((p) => ({
-          ...p,
-          fatigue: Math.max(0, p.fatigue - (t.id === s.userTeamId ? 12 : 8)),
-        })),
+        players: rollWeeklyInjuries(
+          recoverTeamInjuries(
+            t.players.map((p) => ({
+              ...p,
+              fatigue: Math.max(0, p.fatigue - (t.id === s.userTeamId ? 12 : 8)),
+            })),
+          ),
+        ),
       }))
 
       const nextWeek = s.currentWeek + 1

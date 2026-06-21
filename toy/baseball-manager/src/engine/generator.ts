@@ -2,6 +2,7 @@ import type { FieldPosition, Player, PlayerRole, RosterLevel, Team } from '../ty
 import { emptyBatterStats, emptyPitcherStats } from '../types/game'
 import { generateDefaultStaff } from './coachGenerator'
 import { rollPotential } from './playerDevelopment'
+import { ensureHandedness } from './sim/handedness'
 
 const LAST_NAMES = [
   '김', '이', '박', '최', '정', '강', '조', '윤', '장', '임',
@@ -68,11 +69,11 @@ export function generatePlayer(
   } satisfies Omit<Player, 'potential' | 'developmentXp'>
 
   const ovr = overallRating(attrs as Player)
-  return {
+  return ensureHandedness({
     ...attrs,
     potential: rollPotential(tier, attrs.age, rosterLevel, ovr),
     developmentXp: 0,
-  }
+  })
 }
 
 export const TEAM_DEFS = [

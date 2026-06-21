@@ -29,6 +29,13 @@ export interface Player {
   dataSeason?: number
   /** fillFarmGaps·드래프트 보충 등 프로시저럴 생성 */
   isGenerated?: boolean
+  /** 타격 (L/R/S) — 미기재 시 ID 해시로 추론 */
+  bats?: 'L' | 'R' | 'S'
+  /** 투구 (L/R) */
+  throws?: 'L' | 'R' | 'S'
+  /** 부상 잔여 일수 (0 이하 = 출전 가능) */
+  injuryDays?: number
+  injuryType?: string
   seasonStats: BatterStats | PitcherStats
   farmSeasonStats: BatterStats | PitcherStats
 }
@@ -197,6 +204,9 @@ export interface GameResult {
   logs: PlayLog[]
   week: number
   boxScore: GameBoxScore
+  /** 홈 구장 (park factor 적용 기준) */
+  parkAbbr?: string
+  parkStadium?: string
 }
 
 export type SeasonPhase = 'regular' | 'stove'

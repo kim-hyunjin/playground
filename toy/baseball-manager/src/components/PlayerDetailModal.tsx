@@ -9,6 +9,7 @@ import { CallUpBadge } from './RosterBadges'
 import { DevelopmentPanel } from './DevelopmentPanel'
 import { useGame } from '../store/gameStore'
 import { POSITION_LABEL } from '../types/game'
+import { formatHandedness } from '../engine/sim/handedness'
 
 export function PlayerDetailModal() {
   const { state, userTeam, focusedPlayerId, closePlayer, releasePlayer, promotePlayer, demotePlayer } = useGame()
@@ -69,7 +70,12 @@ export function PlayerDetailModal() {
               {player.name}
             </h2>
             <div className="text-sm text-[var(--text-muted)]">
-              {level === 'farm' ? '2군' : '1군'} · {POSITION_LABEL[player.role]} · {player.age}세 · {formatSalary(player.salary)}
+              {level === 'farm' ? '2군' : '1군'} · {POSITION_LABEL[player.role]} · {formatHandedness(player)} · {player.age}세 · {formatSalary(player.salary)}
+              {player.injuryDays && player.injuryDays > 0 ? (
+                <span className="ml-2 rounded bg-red-900/40 px-1.5 py-0.5 text-[10px] font-semibold text-red-300">
+                  부상 {player.injuryType ?? ''} ({player.injuryDays}일)
+                </span>
+              ) : null}
               {player.dataSeason ? (
                 <span className="ml-2 rounded bg-[var(--accent-dim)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--accent)]">
                   {player.dataSeason} 실명
