@@ -12,6 +12,7 @@ const REGULAR_NAV: { id: View; label: string; icon: string }[] = [
   { id: 'lineup', label: '라인업', icon: '📋' },
   { id: 'rotation', label: '로테이션', icon: '⚾' },
   { id: 'match', label: '경기', icon: '🏟️' },
+  { id: 'schedule', label: '일정', icon: '📅' },
   { id: 'standings', label: '순위', icon: '🏆' },
   { id: 'transfers', label: '이적시장', icon: '💰' },
 ]
@@ -46,7 +47,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             Baseball Manager
           </div>
           <div className="mt-1 text-lg font-bold" style={{ color: userTeam.color }}>
-            {userTeam.city} {userTeam.name}
+            {userTeam.name}
           </div>
           <div className="text-xs text-[var(--text-muted)]">
             {state.managerName} 감독 · {subLabel}

@@ -96,7 +96,7 @@ function collectContractExpirations(teams: Team[]): {
       listings.push({
         player: { ...p, morale: clamp(p.morale - rand(3, 8), 40, 99) },
         askingSalary: askingSalaryFor(p),
-        formerTeamName: `${team.city} ${team.name}`,
+        formerTeamName: team.name,
       })
     }
 

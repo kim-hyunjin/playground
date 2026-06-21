@@ -164,9 +164,23 @@ export interface CallUpSuggestion {
   reason: string
 }
 
+export const GAME_DAYS = ['tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const
+export type GameDay = (typeof GAME_DAYS)[number]
+
+export const DAY_LABELS: Record<GameDay, string> = {
+  tue: '화',
+  wed: '수',
+  thu: '목',
+  fri: '금',
+  sat: '토',
+  sun: '일',
+}
+
 export interface ScheduledGame {
   id: string
   week: number
+  /** 화~일 (정규시즌 주간 일정) */
+  day: GameDay
   homeId: string
   awayId: string
   played: boolean
@@ -210,6 +224,7 @@ export interface GameResult {
   innings: InningScore[]
   logs: PlayLog[]
   week: number
+  day?: GameDay
   boxScore: GameBoxScore
   /** 홈 구장 (park factor 적용 기준) */
   parkAbbr?: string
@@ -249,6 +264,7 @@ export type View =
   | 'lineup'
   | 'rotation'
   | 'match'
+  | 'schedule'
   | 'standings'
   | 'transfers'
   | 'coaches'

@@ -154,7 +154,7 @@ try {
 
   section('Simulation (park + league strength + extras)')
   const parkGame = simulateGame(
-    { id: 'reg-park', week: 1, homeId: userTeam.id, awayId: teams[1]!.id, played: false },
+    { id: 'reg-park', week: 1, day: 'tue', homeId: userTeam.id, awayId: teams[1]!.id, played: false },
     userTeam,
     teams[1]!,
     { skipLogs: true },

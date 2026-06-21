@@ -148,7 +148,7 @@ export function DraftPage() {
             </p>
           ) : (
             <p className="text-[var(--text-muted)]">
-              현재 지명: {pickerTeam ? `${pickerTeam.city} ${pickerTeam.name}` : '—'}
+              현재 지명: {pickerTeam ? pickerTeam.name : '—'}
             </p>
           )}
         </div>

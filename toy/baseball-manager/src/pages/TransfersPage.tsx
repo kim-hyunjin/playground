@@ -209,7 +209,7 @@ export function TransfersPage() {
                   <tr key={p.id}>
                     <td><PlayerNameButton playerId={p.id} name={p.name} /></td>
                     <td className="text-[var(--text-muted)]">
-                      {p.fromTeam.city} {p.fromTeam.name}
+                      {p.fromTeam.name}
                     </td>
                     <td><RosterLevelBadge level={level} compact /></td>
                     <td>{POSITION_LABEL[p.role]}</td>
@@ -246,7 +246,7 @@ export function TransfersPage() {
               <option value="">팀 선택…</option>
               {cpuTeams.map((t) => (
                 <option key={t.id} value={t.id}>
-                  {t.city} {t.name}
+                  {t.name}
                 </option>
               ))}
             </select>
@@ -288,7 +288,7 @@ export function TransfersPage() {
             <div className="bm-card overflow-x-auto p-4">
               <h2 className="mb-3 font-semibold text-[var(--text-h)]">
                 받을 선수 ({incomingIds.length}/3)
-                {tradePartner ? ` — ${tradePartner.city} ${tradePartner.name}` : ''}
+                {tradePartner ? ` — ${tradePartner.name}` : ''}
               </h2>
               {!tradePartner ? (
                 <p className="text-sm text-[var(--text-muted)]">상대 팀을 먼저 선택하세요.</p>

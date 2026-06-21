@@ -67,7 +67,7 @@ export function StandingsPage() {
                   </td>
                   <td>
                     <span className="font-medium" style={{ color: t.color }}>
-                      {t.city} {t.name}
+                      {t.name}
                     </span>
                   </td>
                   <td>{wins + losses}</td>

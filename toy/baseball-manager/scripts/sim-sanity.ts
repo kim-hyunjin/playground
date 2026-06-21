@@ -29,6 +29,7 @@ function simulateBlock(teams: Team[], level: 'first' | 'farm'): number {
     const game: ScheduledGame = {
       id: `sanity-${level}-${i}`,
       week: (i % 18) + 1,
+      day: 'tue',
       homeId: home.id,
       awayId: away.id,
       played: false,
@@ -54,6 +55,7 @@ const sample = simulateGame(
   {
     id: 'park-check',
     week: 1,
+    day: 'tue',
     homeId: teams[0]!.id,
     awayId: teams[1]!.id,
     played: false,

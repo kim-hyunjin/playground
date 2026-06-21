@@ -277,6 +277,7 @@ export function simulateGame(
     innings,
     logs: options.skipLogs ? [] : logs,
     week: game.week,
+    day: game.day,
     boxScore: box,
     parkAbbr: home.abbr,
     parkStadium: home.stadium,

@@ -64,7 +64,7 @@ export function PlayerDetailModal() {
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[var(--border)] bg-[var(--panel)] px-5 py-4">
           <div>
             <div className="text-xs text-[var(--text-muted)]" style={{ color: team.color }}>
-              {team.city} {team.name}
+              {team.name}
             </div>
             <h2 id="player-detail-title" className="text-xl font-bold text-[var(--text-h)]">
               {player.name}

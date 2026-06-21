@@ -1,7 +1,8 @@
 import { formatSalary, isPitcher, overallRating, teamPayroll } from '../engine/generator'
 import { teamCoachPayroll } from '../engine/coachGenerator'
 import { countByLevel, firstTeamPlayers } from '../engine/roster'
-import { sortedStandings, sortedFarmStandings } from '../engine/schedule'
+import { sortedStandings, sortedFarmStandings, userGamesForWeek } from '../engine/schedule'
+import { DAY_LABELS } from '../types/game'
 import { MiniStat } from '../components/PlayerCard'
 import { PlayerNameButton } from '../components/PlayerNameButton'
 import { isDraftComplete, draftProgressLabel } from '../engine/draft'
@@ -17,7 +18,6 @@ export function DashboardPage() {
     enterStoveLeague,
     setView,
     advanceWeek,
-    playUserGame,
     acceptCallUp,
     dismissCallUp,
     sendToRehab,
@@ -184,15 +184,21 @@ export function DashboardPage() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-[var(--text-muted)]">
-                  {upcomingGame.homeId === userTeam.id ? '홈' : '원정'} · {upcomingGame.week}주차
+                  {DAY_LABELS[upcomingGame.day]} · {upcomingGame.homeId === userTeam.id ? '홈' : '원정'} · {upcomingGame.week}주차
                 </span>
                 <span className="font-bold text-[var(--text-h)]">
-                  vs {opponent.city} {opponent.name}
+                  vs {opponent.name}
                 </span>
               </div>
+              <p className="text-xs text-[var(--text-muted)]">
+                이번 주 {userGamesForWeek(state.schedule, userTeam.id, state.currentWeek).filter((g) => !g.played).length}경기 남음
+              </p>
               <div className="flex gap-2">
-                <button type="button" className="bm-btn bm-btn-primary flex-1" onClick={() => { playUserGame(); setView('match') }}>
-                  경기 시작
+                <button type="button" className="bm-btn bm-btn-primary flex-1" onClick={() => setView('match')}>
+                  경기장으로
+                </button>
+                <button type="button" className="bm-btn bm-btn-ghost" onClick={() => setView('schedule')}>
+                  일정
                 </button>
                 <button type="button" className="bm-btn bm-btn-ghost" onClick={() => setView('lineup')}>
                   라인업
@@ -201,7 +207,7 @@ export function DashboardPage() {
             </div>
           ) : (
             <div className="space-y-3">
-              <p className="text-[var(--text-muted)]">이번 주 경기가 없습니다.</p>
+              <p className="text-[var(--text-muted)]">이번 주 경기를 모두 치렀습니다.</p>
               <button
                 type="button"
                 className="bm-btn bm-btn-primary"
@@ -263,7 +269,7 @@ export function DashboardPage() {
               <tr key={t.id} className={t.id === userTeam.id ? 'bg-[var(--accent-dim)]' : ''}>
                 <td>{i + 1}</td>
                 <td style={{ color: t.id === userTeam.id ? userTeam.color : undefined }}>
-                  {t.city} {t.name}
+                  {t.name}
                 </td>
                 <td>{t.wins}</td>
                 <td>{t.losses}</td>

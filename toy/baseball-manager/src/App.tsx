@@ -13,6 +13,7 @@ import { CoachesPage } from './pages/CoachesPage'
 import { StatsPage } from './pages/StatsPage'
 import { StoveLeaguePage } from './pages/StoveLeaguePage'
 import { DraftPage } from './pages/DraftPage'
+import { SchedulePage } from './pages/SchedulePage'
 
 function GameShell() {
   const { state, view } = useGame()
@@ -26,6 +27,7 @@ function GameShell() {
     lineup: <LineupPage />,
     rotation: <RotationPage />,
     match: <MatchPage />,
+    schedule: <SchedulePage />,
     standings: <StandingsPage />,
     transfers: <TransfersPage />,
     coaches: <CoachesPage />,

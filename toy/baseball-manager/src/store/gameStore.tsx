@@ -10,7 +10,7 @@ import {
 import type { FieldPosition, GameResult, GameState, Player, ScheduledGame, Team, View } from '../types/game'
 import { loadLeague2026 } from '../data/rosterLoader'
 import { defaultLineup, defaultRotation } from '../engine/generator'
-import { generateSchedule, generateFarmSchedule, nextUserGame } from '../engine/schedule'
+import { generateSchedule, generateFarmSchedule, nextUserGame, normalizeSchedule, hasUnplayedUserGamesInWeek } from '../engine/schedule'
 import { applyResult, simulateCpuGames, simulateGame } from '../engine/simulation'
 import { simulateFarmWeek } from '../engine/farmSimulation'
 import {
@@ -122,7 +122,11 @@ function loadState(): GameState | null {
     if (!raw) return null
     const parsed = JSON.parse(raw) as GameState
     if (!parsed?.teams?.length || !parsed.userTeamId) return null
-    return parsed
+    return {
+      ...parsed,
+      schedule: normalizeSchedule(parsed.schedule ?? []),
+      farmSchedule: normalizeSchedule(parsed.farmSchedule ?? []),
+    }
   } catch {
     return null
   }
@@ -246,6 +250,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const advanceWeek = useCallback(() => {
     setState((s) => {
       if (!s || s.phase !== 'regular' || s.currentWeek >= s.totalWeeks) return s
+      if (hasUnplayedUserGamesInWeek(s.schedule, s.userTeamId, s.currentWeek)) return s
 
       const cpu = simulateCpuGames(s.schedule, s.teams, s.currentWeek, s.userTeamId)
       const farm = simulateFarmWeek(s.farmSchedule, cpu.teams, s.currentWeek)
