@@ -8,8 +8,8 @@ import {
   type ReactNode,
 } from 'react'
 import type { FieldPosition, GameResult, GameState, Player, ScheduledGame, Team, View } from '../types/game'
-import { loadLeague2026, DATA_SEASON } from '../data/rosterLoader'
-import { defaultLineup, defaultRotation, generateFarmRosterPlayers } from '../engine/generator'
+import { loadLeague2026 } from '../data/rosterLoader'
+import { defaultLineup, defaultRotation } from '../engine/generator'
 import { generateSchedule, generateFarmSchedule, nextUserGame } from '../engine/schedule'
 import { applyResult, simulateCpuGames, simulateGame } from '../engine/simulation'
 import { simulateFarmWeek } from '../engine/farmSimulation'
@@ -21,8 +21,7 @@ import {
   FARM_TEAM_MAX,
   promoteInLeague,
 } from '../engine/roster'
-import { ensurePlayerRosterFields } from '../engine/statsAccumulator'
-import { generateCoachMarket, generateDefaultStaff, refreshCoachMarket } from '../engine/coachGenerator'
+import { generateCoachMarket, refreshCoachMarket } from '../engine/coachGenerator'
 import { developTeam } from '../engine/development'
 import { generateCallUpSuggestions, mergeCallUpSuggestions } from '../engine/callUpSuggestions'
 import {
@@ -35,7 +34,6 @@ import {
 } from '../engine/stoveLeague'
 import {
   draftProspect,
-  initializeDraft,
   simulateDraftUntilUser,
   simulateRemainingDraft,
 } from '../engine/draft'
@@ -43,16 +41,8 @@ import {
 import { recoverTeamInjuries, rollWeeklyInjuries } from '../engine/injury'
 import { sanitizeLineup, sanitizeRotation } from '../engine/rosterAvailability'
 import { cpuAcceptsTrade, executeTrade, validateTrade, type TradeProposal } from '../engine/trades'
-import { contractYearsForPlayer } from '../engine/contracts'
 
-const STORAGE_KEY = 'baseball-manager:v7'
-const LEGACY_KEYS = [
-  'baseball-manager:v6',
-  'baseball-manager:v5',
-  'baseball-manager:v3',
-  'baseball-manager:v2',
-  'baseball-manager:v1',
-]
+const STORAGE_KEY = 'baseball-manager'
 
 interface GameContextValue {
   state: GameState | null
@@ -100,7 +90,6 @@ function createInitialState(teamIndex: number, managerName: string): GameState {
   const totalWeeks = 18
 
   return {
-    version: 7,
     userTeamId: userTeam.id,
     teams,
     schedule: generateSchedule(teams, totalWeeks),
@@ -127,90 +116,13 @@ function saveState(state: GameState) {
   }
 }
 
-function migrateResult(r: GameResult & { boxScore?: GameResult['boxScore'] }): GameResult {
-  if (r.boxScore) return r
-  return {
-    ...r,
-    boxScore: {
-      batters: {},
-      pitchers: {},
-      awayStarterId: '',
-      homeStarterId: '',
-    },
-  }
-}
-
-function migratePlayerMetadata(player: Player): Player {
-  const isGenerated =
-    player.isGenerated ??
-    (player.name.startsWith('(퓨처스)') || player.id.includes('-gen-'))
-
-  return {
-    ...player,
-    isGenerated,
-    realPlayerId: player.realPlayerId ?? (isGenerated ? undefined : player.id),
-    dataSeason:
-      player.dataSeason ??
-      (isGenerated ? undefined : player.rosterLevel === 'first' ? DATA_SEASON : undefined),
-    contractYears: player.contractYears ?? contractYearsForPlayer(player),
-  }
-}
-
-function migrateTeam(team: Team): Team {
-  const players = team.players.map(ensurePlayerRosterFields).map(migratePlayerMetadata)
-  const hasFarm = players.some((p) => p.rosterLevel === 'farm')
-
-  return {
-    ...team,
-    stadium: team.stadium ?? '',
-    coaches: team.coaches?.length ? team.coaches : generateDefaultStaff(false),
-    players: hasFarm ? players : [...players, ...generateFarmRosterPlayers()],
-    farmWins: team.farmWins ?? 0,
-    farmLosses: team.farmLosses ?? 0,
-    farmRunsScored: team.farmRunsScored ?? 0,
-    farmRunsAllowed: team.farmRunsAllowed ?? 0,
-  }
-}
-
-function migrateState(raw: unknown): GameState | null {
-  if (!raw || typeof raw !== 'object') return null
-  const s = raw as GameState & { version?: number }
-
-  const teams = (s.teams ?? []).map(migrateTeam)
-  const results = (s.results ?? []).map(migrateResult)
-  const totalWeeks = s.totalWeeks ?? 18
-  const draft =
-    s.draft ?? (s.phase === 'stove' ? initializeDraft(teams) : undefined)
-
-  return {
-    ...s,
-    version: 7,
-    teams,
-    results,
-    seasonYear: s.seasonYear ?? 2026,
-    phase: s.phase ?? 'regular',
-    freeAgents: s.freeAgents ?? [],
-    draft,
-    stoveWeek: s.stoveWeek,
-    stoveTotalWeeks: s.stoveTotalWeeks,
-    farmSchedule: s.farmSchedule ?? generateFarmSchedule(teams, totalWeeks),
-    farmResults: s.farmResults ?? [],
-    coachMarket: s.coachMarket?.length ? s.coachMarket : generateCoachMarket(),
-    callUpSuggestions: s.callUpSuggestions ?? [],
-  } as GameState
-}
-
 function loadState(): GameState | null {
   try {
-    const raw =
-      localStorage.getItem(STORAGE_KEY) ??
-      LEGACY_KEYS.map((k) => localStorage.getItem(k)).find(Boolean)
+    const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return null
-    const migrated = migrateState(JSON.parse(raw))
-    if (migrated) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated))
-    }
-    return migrated
+    const parsed = JSON.parse(raw) as GameState
+    if (!parsed?.teams?.length || !parsed.userTeamId) return null
+    return parsed
   } catch {
     return null
   }
@@ -261,7 +173,6 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
   const resetGame = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY)
-    for (const key of LEGACY_KEYS) localStorage.removeItem(key)
     setState(null)
     setView('dashboard')
     setLastResult(null)

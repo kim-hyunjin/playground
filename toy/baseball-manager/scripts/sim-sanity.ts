@@ -2,6 +2,7 @@
  * Monte Carlo sanity check for simulation balance.
  * Run: npm run sim:sanity
  */
+import './load-csv-shim.ts'
 import { PARKS_2026 } from '../src/data/parks/kbo2026'
 import { loadLeague2026 } from '../src/data/rosterLoader'
 import { simulateGame } from '../src/engine/simulation'

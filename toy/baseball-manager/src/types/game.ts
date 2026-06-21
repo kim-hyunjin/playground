@@ -257,7 +257,6 @@ export type View =
   | 'draft'
 
 export interface GameState {
-  version: 7
   userTeamId: string
   teams: Team[]
   schedule: ScheduledGame[]

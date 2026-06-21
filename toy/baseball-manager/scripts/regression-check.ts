@@ -1,10 +1,10 @@
+import './load-csv-shim.ts'
 /**
  * Headless regression checks for core game flows (no browser).
  * Run: npm run regression:check
  */
 import { DATA_SEASON, loadLeague2026, validateAllRosters } from '../src/data/rosterLoader'
-import { DRAFT_PROSPECTS_2026 } from '../src/data/draft/2026'
-import { EXTERNAL_FA_2026 } from '../src/data/fa/external2026'
+import { getDraftRecords, getFaRecords } from '../src/data/playerDataset'
 import { generateProspectPool } from '../src/engine/draft'
 import {
   defaultLineup,
@@ -121,14 +121,14 @@ try {
   assert(farm.results.length > 0, '2군 경기 결과 생성')
 
   section('Draft pool')
+  const draftRecords = getDraftRecords()
   const pool = generateProspectPool(20)
   assert(pool.length === 20, '드래프트 풀 20명')
-  const named = pool.filter((p) => DRAFT_PROSPECTS_2026.some((r) => r.id === p.id))
-  assert(named.length >= Math.min(20, DRAFT_PROSPECTS_2026.length), '실명 유망주 포함')
+  const named = pool.filter((p) => draftRecords.some((r) => r.id === p.id))
+  assert(named.length >= Math.min(20, draftRecords.length), '실명 유망주 포함')
 
   section('Stove league bootstrap')
   const stubState: GameState = {
-    version: 7,
     userTeamId: userTeam.id,
     teams,
     schedule,
@@ -171,7 +171,7 @@ try {
   assert(farmOnly.length >= 28, '2군 28명 이상 (farm sim 대상)')
 
   section('External FA data pool')
-  assert(EXTERNAL_FA_2026.length >= 10, '외부 FA 실명 10명 이상')
+  assert(getFaRecords().length >= 10, '외부 FA 실명 10명 이상')
   console.log(`\n=== Regression: ${passed} passed, ${failed} failed ===`)
   process.exit(failed > 0 ? 1 : 0)
 } catch (e) {

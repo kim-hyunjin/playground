@@ -1,6 +1,6 @@
 import type { DraftPick, DraftState, GameState, Player, PlayerRole, Team } from '../types/game'
 import { playerFromRecord } from '../data/rosterLoader'
-import { DRAFT_PROSPECTS_2026 } from '../data/draft/2026'
+import { getDraftRecords } from '../data/playerDataset'
 import { generatePlayer, overallRating } from './generator'
 import { countByLevel, FARM_TEAM_MAX } from './roster'
 import { sortedStandings } from './schedule'
@@ -26,7 +26,7 @@ function clamp(n: number, min: number, max: number) {
 }
 
 export function generateProspectPool(size = DRAFT_POOL_SIZE): Player[] {
-  const fromData = DRAFT_PROSPECTS_2026.slice(0, size).map((r) =>
+  const fromData = getDraftRecords().slice(0, size).map((r) =>
     playerFromRecord({ ...r, rosterLevel: 'farm' }),
   )
 

@@ -10,9 +10,9 @@ import { pitcherRatingsFromStats } from './ratings/pitcherFromStats'
 import { ratingsFromOvr } from './ratings/ovrToRatings'
 import { estimateSalaryFromOvr, salaryKrwToGame } from './ratings/salaryScale'
 import { ensureHandedness } from '../engine/sim/handedness'
-import { handednessForPlayerId } from './rosters/2026/handednessOverrides'
 import type { BatterSourceStats, PitcherSourceStats, PlayerRecord, PlayerRatings, TeamAbbr, TeamRosterFile } from './types'
-import { ROSTERS_KBO } from './rosters/2026/kbo/index'
+import { getRosterFiles } from './playerDataset'
+import { newPlayerId } from '../lib/playerId'
 
 export const DATA_SEASON = 2026
 
@@ -117,15 +117,12 @@ function recordToPlayer(record: PlayerRecord): Player {
 
   player.potential = record.potential ?? defaultPotentialForPlayer(player)
   player.contractYears = contractYearsForPlayer(player)
-  const hand = handednessForPlayerId(player.id)
-  if (hand?.bats) player.bats = hand.bats
-  if (hand?.throws) player.throws = hand.throws
   if (record.bats) player.bats = record.bats
   if (record.throws) player.throws = record.throws
   return ensureHandedness(player)
 }
 
-function fillFarmGaps(teamAbbr: TeamAbbr, players: Player[]): Player[] {
+function fillFarmGaps(players: Player[]): Player[] {
   const farmCount = players.filter((p) => p.rosterLevel === 'farm').length
   const need = Math.min(FARM_TEAM_MAX, 28) - farmCount
   if (need <= 0) return players
@@ -135,7 +132,7 @@ function fillFarmGaps(teamAbbr: TeamAbbr, players: Player[]): Player[] {
     const role = FARM_FILL_TEMPLATE[i % FARM_FILL_TEMPLATE.length]!
     const tier = i < 3 ? 'avg' : 'weak'
     const gen = generatePlayer(role, tier, { rosterLevel: 'farm', ageMin: 18, ageMax: 24 })
-    gen.id = `${teamAbbr}-gen-${i + 1}`
+    gen.id = newPlayerId()
     gen.name = `(퓨처스) ${gen.name}`
     gen.isGenerated = true
     gen.realPlayerId = undefined
@@ -181,10 +178,11 @@ export function validateRosterFile(file: TeamRosterFile): string[] {
 }
 
 function rosterFiles(): TeamRosterFile[] {
-  if (ROSTERS_KBO.length === 0) {
-    throw new Error('KBO 로스터가 비어 있습니다. npm run kbo:sync-roster 를 실행하세요.')
+  const files = getRosterFiles()
+  if (files.every((f) => f.first.length === 0 && f.farm.length === 0)) {
+    throw new Error('players.csv에 로스터 데이터가 없습니다. src/data/players.csv 를 편집하세요.')
   }
-  return ROSTERS_KBO
+  return files
 }
 
 export function validateAllRosters(): { ok: boolean; errors: string[] } {
@@ -204,7 +202,7 @@ function buildTeamFromRoster(
     ...file.first.map(recordToPlayer),
     ...file.farm.map(recordToPlayer),
   ]
-  const withFarm = fillFarmGaps(file.teamAbbr, players)
+  const withFarm = fillFarmGaps(players)
 
   return {
     id: crypto.randomUUID(),

@@ -1,3 +1,4 @@
+import './load-csv-shim.ts'
 import { validateAllRosters } from '../src/data/rosterLoader'
 
 const { ok, errors } = validateAllRosters()

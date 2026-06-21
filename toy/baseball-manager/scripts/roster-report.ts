@@ -1,3 +1,4 @@
+import './load-csv-shim.ts'
 import { loadLeague2026 } from '../src/data/rosterLoader'
 import { overallRating, TEAM_DEFS } from '../src/engine/generator'
 

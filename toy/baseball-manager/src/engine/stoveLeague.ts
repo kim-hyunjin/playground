@@ -1,7 +1,7 @@
 import type { FreeAgentListing, GameState, Player, Team } from '../types/game'
 import { emptyBatterStats, emptyPitcherStats } from '../types/game'
 import { playerFromRecord } from '../data/rosterLoader'
-import { EXTERNAL_FA_2026 } from '../data/fa/external2026'
+import { getFaRecords } from '../data/playerDataset'
 import {
   defaultLineup,
   defaultRotation,
@@ -55,10 +55,11 @@ function askingSalaryFor(player: Player): number {
 }
 
 function generateExternalFa(count: number): FreeAgentListing[] {
+  const faRecords = getFaRecords()
   const listings: FreeAgentListing[] = []
 
   for (let i = 0; i < count; i++) {
-    const record = EXTERNAL_FA_2026[i % EXTERNAL_FA_2026.length]!
+    const record = faRecords[i % faRecords.length]!
     const player = playerFromRecord({ ...record, rosterLevel: 'first' })
     listings.push({
       player: { ...player, morale: rand(70, 92) },
@@ -260,7 +261,6 @@ export function startNextSeasonState(state: GameState): GameState {
 
   return {
     ...state,
-    version: 7,
     seasonYear,
     phase: 'regular',
     teams: teamsWithBudget,

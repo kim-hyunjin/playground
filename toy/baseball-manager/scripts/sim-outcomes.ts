@@ -2,6 +2,7 @@
  * Monte Carlo outcome distribution for at-bat tuning.
  * Run: npx tsx scripts/sim-outcomes.ts
  */
+import './load-csv-shim.ts'
 import { loadLeague2026 } from '../src/data/rosterLoader'
 import { resolveAtBat } from '../src/engine/sim/atBat'
 import { createSimContext } from '../src/engine/sim/context'

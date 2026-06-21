@@ -83,13 +83,13 @@ export const TEAM_DEFS = [
   { city: '광주', name: '기아 타이거즈', abbr: 'KIA', color: '#EA0029', stadium: '광주-기아 챔피언스 필드' },
   { city: '창원', name: 'NC 다이노스', abbr: 'NC', color: '#315288', stadium: '창원 NC 파크' },
   { city: '인천', name: 'SSG 랜더스', abbr: 'SSG', color: '#CE0E2D', stadium: '인천 SSG 랜더스필드' },
-  { city: '서울', name: '키움 히어로즈', abbr: 'WO', color: '#570514', stadium: '고척 스카이돔' },
+  { city: '서울', name: '키움 히어로즈', abbr: '키움', color: '#570514', stadium: '고척 스카이돔' },
   { city: '수원', name: 'KT 위즈', abbr: 'KT', color: '#000000', stadium: 'KT 위즈파크' },
-  { city: '서울', name: '두산 베어스', abbr: 'DS', color: '#131230', stadium: '잠실 야구장' },
+  { city: '서울', name: '두산 베어스', abbr: '두산', color: '#131230', stadium: '잠실 야구장' },
   { city: '서울', name: 'LG 트윈스', abbr: 'LG', color: '#C30452', stadium: '잠실 야구장' },
-  { city: '부산', name: '롯데 자이언츠', abbr: 'LT', color: '#041E42', stadium: '사직야구장' },
-  { city: '대전', name: '한화 이글스', abbr: 'HH', color: '#FF6600', stadium: '대전 한화생명 이글스파크' },
-  { city: '대구', name: '삼성 라이온즈', abbr: 'SS', color: '#074CA1', stadium: '대구 삼성 라이온즈 파크' },
+  { city: '부산', name: '롯데 자이언츠', abbr: '롯데', color: '#041E42', stadium: '사직야구장' },
+  { city: '대전', name: '한화 이글스', abbr: '한화', color: '#FF6600', stadium: '대전 한화생명 이글스파크' },
+  { city: '대구', name: '삼성 라이온즈', abbr: '삼성', color: '#074CA1', stadium: '대구 삼성 라이온즈 파크' },
 ]
 
 const ROSTER_TEMPLATE: PlayerRole[] = [

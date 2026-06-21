@@ -1,6 +1,6 @@
 import type { Player, PlayerRole, RosterLevel } from '../types/game'
 
-export type TeamAbbr = 'KIA' | 'NC' | 'SSG' | 'WO' | 'KT' | 'DS' | 'LG' | 'LT' | 'HH' | 'SS'
+export type TeamAbbr = 'KIA' | 'NC' | 'SSG' | '키움' | 'KT' | '두산' | 'LG' | '롯데' | '한화' | '삼성'
 
 export interface BatterSourceStats {
   pa: number
