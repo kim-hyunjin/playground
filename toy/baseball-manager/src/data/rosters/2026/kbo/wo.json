@@ -111,17 +111,19 @@
       "teamAbbr": "WO",
       "role": "C",
       "rosterLevel": "first",
-      "age": 30,
-      "salaryKrw": 260000000,
+      "age": 36,
+      "salaryKrw": 500000000,
       "sourceStats": {
-        "pa": 520,
-        "woba": 0.3678571428571429,
-        "iso": 0.16142857142857142,
-        "bbPct": 0.09250000000000001,
-        "kPct": 0.18785714285714286,
-        "sb": 8
+        "pa": 223,
+        "woba": 0.3751,
+        "iso": 0.185,
+        "bbPct": 0.15695067264573992,
+        "kPct": 0.23766816143497757,
+        "sb": 0
       },
-      "targetOvr": 73
+      "targetOvr": 69,
+      "bats": "R",
+      "throws": "R"
     },
     {
       "id": "WO-임병욱",
@@ -209,8 +211,8 @@
       "teamAbbr": "WO",
       "role": "1B",
       "rosterLevel": "first",
-      "age": 25,
-      "salaryKrw": 150000000,
+      "age": 35,
+      "salaryKrw": 500000000,
       "sourceStats": {
         "pa": 380,
         "woba": 0.3485714285714286,
@@ -219,7 +221,9 @@
         "kPct": 0.19857142857142857,
         "sb": 6
       },
-      "targetOvr": 67
+      "targetOvr": 57,
+      "bats": "R",
+      "throws": "R"
     },
     {
       "id": "WO-이재원",
@@ -246,8 +250,8 @@
       "teamAbbr": "WO",
       "role": "2B",
       "rosterLevel": "first",
-      "age": 27,
-      "salaryKrw": 130000000,
+      "age": 26,
+      "salaryKrw": 45000000,
       "sourceStats": {
         "pa": 380,
         "woba": 0.34214285714285714,
@@ -256,7 +260,9 @@
         "kPct": 0.20214285714285715,
         "sb": 16
       },
-      "targetOvr": 65
+      "targetOvr": 58,
+      "bats": "L",
+      "throws": "L"
     },
     {
       "id": "WO-앤더슨",
@@ -323,8 +329,8 @@
       "teamAbbr": "WO",
       "role": "SP",
       "rosterLevel": "first",
-      "age": 25,
-      "salaryKrw": 220000000,
+      "age": 22,
+      "salaryKrw": 200000000,
       "sourceStats": {
         "ip": 134,
         "era": 4.3500000000000005,
@@ -335,7 +341,9 @@
         "games": 24
       },
       "potential": 80,
-      "targetOvr": 72
+      "targetOvr": 65,
+      "bats": "R",
+      "throws": "R"
     },
     {
       "id": "WO-박윤성",
@@ -463,8 +471,8 @@
       "teamAbbr": "WO",
       "role": "RP",
       "rosterLevel": "first",
-      "age": 25,
-      "salaryKrw": 130000000,
+      "age": 36,
+      "salaryKrw": 800000000,
       "sourceStats": {
         "ip": 45,
         "era": 4.55,
@@ -474,7 +482,9 @@
         "gs": 0,
         "games": 39
       },
-      "targetOvr": 68
+      "targetOvr": 53,
+      "bats": "R",
+      "throws": "R"
     },
     {
       "id": "WO-최원준",
@@ -501,8 +511,8 @@
       "teamAbbr": "WO",
       "role": "RP",
       "rosterLevel": "first",
-      "age": 23,
-      "salaryKrw": 110000000,
+      "age": 33,
+      "salaryKrw": 56000000,
       "sourceStats": {
         "ip": 44,
         "era": 4.65,
@@ -513,7 +523,9 @@
         "games": 38
       },
       "potential": 74,
-      "targetOvr": 66
+      "targetOvr": 52,
+      "bats": "R",
+      "throws": "R"
     }
   ],
   "farm": [

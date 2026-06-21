@@ -8,18 +8,20 @@
       "teamAbbr": "KT",
       "role": "1B",
       "rosterLevel": "first",
-      "age": 25,
-      "salaryKrw": 600000000,
+      "age": 27,
+      "salaryKrw": 900000000,
       "sourceStats": {
-        "pa": 520,
-        "woba": 0.40964285714285714,
-        "iso": 0.19857142857142857,
-        "bbPct": 0.10875000000000001,
-        "kPct": 0.16464285714285715,
-        "sb": 13
+        "pa": 289,
+        "woba": 0.41964999999999997,
+        "iso": 0.26599999999999996,
+        "bbPct": 0.10726643598615918,
+        "kPct": 0.21107266435986158,
+        "sb": 0
       },
       "potential": 91,
-      "targetOvr": 86
+      "targetOvr": 69,
+      "bats": "L",
+      "throws": "R"
     },
     {
       "id": "KT-알몬테",
@@ -187,17 +189,19 @@
       "teamAbbr": "KT",
       "role": "SS",
       "rosterLevel": "first",
-      "age": 29,
-      "salaryKrw": 220000000,
+      "age": 31,
+      "salaryKrw": 400000000,
       "sourceStats": {
-        "pa": 520,
-        "woba": 0.36142857142857143,
-        "iso": 0.15571428571428572,
-        "bbPct": 0.09000000000000001,
-        "kPct": 0.19142857142857142,
-        "sb": 21
+        "pa": 222,
+        "woba": 0.352,
+        "iso": 0.08000000000000002,
+        "bbPct": 0.11711711711711711,
+        "kPct": 0.16666666666666666,
+        "sb": 0
       },
-      "targetOvr": 71
+      "targetOvr": 58,
+      "bats": "R",
+      "throws": "R"
     },
     {
       "id": "KT-김현수",
@@ -392,8 +396,8 @@
       "teamAbbr": "KT",
       "role": "RP",
       "rosterLevel": "first",
-      "age": 30,
-      "salaryKrw": 300000000,
+      "age": 36,
+      "salaryKrw": 800000000,
       "sourceStats": {
         "ip": 50,
         "era": 4.050000000000001,
@@ -403,7 +407,9 @@
         "gs": 0,
         "games": 42
       },
-      "targetOvr": 78
+      "targetOvr": 56,
+      "bats": "R",
+      "throws": "R"
     },
     {
       "id": "KT-이상화",
@@ -432,8 +438,8 @@
       "teamAbbr": "KT",
       "role": "RP",
       "rosterLevel": "first",
-      "age": 28,
-      "salaryKrw": 210000000,
+      "age": 37,
+      "salaryKrw": 50000000,
       "sourceStats": {
         "ip": 48,
         "era": 4.3,
@@ -443,7 +449,9 @@
         "gs": 0,
         "games": 40
       },
-      "targetOvr": 73
+      "targetOvr": 54,
+      "bats": "R",
+      "throws": "R"
     },
     {
       "id": "KT-김민석",

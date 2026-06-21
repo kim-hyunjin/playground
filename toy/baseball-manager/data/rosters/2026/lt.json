@@ -8,8 +8,8 @@
       "teamAbbr": "LT",
       "role": "RF",
       "rosterLevel": "first",
-      "age": 32,
-      "salaryKrw": 650000000,
+      "age": 38,
+      "salaryKrw": 100000000,
       "sourceStats": {
         "pa": 520,
         "woba": 0.40321428571428575,
@@ -18,7 +18,9 @@
         "kPct": 0.1682142857142857,
         "sb": 12
       },
-      "targetOvr": 84
+      "targetOvr": 68,
+      "bats": "L",
+      "throws": "R"
     },
     {
       "id": "LT-윤동희",
@@ -128,17 +130,19 @@
       "teamAbbr": "LT",
       "role": "2B",
       "rosterLevel": "first",
-      "age": 28,
-      "salaryKrw": 280000000,
+      "age": 33,
+      "salaryKrw": 800000000,
       "sourceStats": {
-        "pa": 520,
-        "woba": 0.37107142857142855,
-        "iso": 0.16428571428571428,
-        "bbPct": 0.09375000000000001,
-        "kPct": 0.18607142857142855,
-        "sb": 23
+        "pa": 276,
+        "woba": 0.44345,
+        "iso": 0.127,
+        "bbPct": 0.13768115942028986,
+        "kPct": 0.11231884057971014,
+        "sb": 0
       },
-      "targetOvr": 74
+      "targetOvr": 71,
+      "bats": "L",
+      "throws": "R"
     },
     {
       "id": "LT-김성민",
@@ -241,10 +245,10 @@
       "id": "LT-김동헌",
       "name": "김동헌",
       "teamAbbr": "LT",
-      "role": "2B",
+      "role": "C",
       "rosterLevel": "first",
-      "age": 24,
-      "salaryKrw": 140000000,
+      "age": 22,
+      "salaryKrw": 43000000,
       "sourceStats": {
         "pa": 380,
         "woba": 0.34535714285714286,
@@ -254,7 +258,9 @@
         "sb": 17
       },
       "potential": 76,
-      "targetOvr": 66
+      "targetOvr": 58,
+      "bats": "R",
+      "throws": "R"
     },
     {
       "id": "LT-나균안",

@@ -190,8 +190,8 @@
       "teamAbbr": "SS",
       "role": "CF",
       "rosterLevel": "first",
-      "age": 28,
-      "salaryKrw": 240000000,
+      "age": 33,
+      "salaryKrw": 100000000,
       "sourceStats": {
         "pa": 520,
         "woba": 0.36142857142857143,
@@ -200,7 +200,9 @@
         "kPct": 0.19142857142857142,
         "sb": 21
       },
-      "targetOvr": 71
+      "targetOvr": 62,
+      "bats": "R",
+      "throws": "R"
     },
     {
       "id": "SS-이해승",
@@ -500,8 +502,8 @@
       "teamAbbr": "SS",
       "role": "RP",
       "rosterLevel": "first",
-      "age": 25,
-      "salaryKrw": 140000000,
+      "age": 32,
+      "salaryKrw": 70000000,
       "sourceStats": {
         "ip": 46,
         "era": 4.5,
@@ -511,7 +513,9 @@
         "gs": 0,
         "games": 39
       },
-      "targetOvr": 69
+      "targetOvr": 53,
+      "bats": "R",
+      "throws": "R"
     },
     {
       "id": "SS-정현우",

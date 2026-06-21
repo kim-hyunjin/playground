@@ -51,14 +51,14 @@
       "age": 36,
       "salaryKrw": 1400000000,
       "sourceStats": {
-        "pa": 520,
-        "woba": 0.3967857142857143,
-        "iso": 0.18714285714285717,
-        "bbPct": 0.10375000000000001,
-        "kPct": 0.1717857142857143,
-        "sb": 29
+        "pa": 240,
+        "woba": 0.34625,
+        "iso": 0.131,
+        "bbPct": 0.09166666666666666,
+        "kPct": 0.175,
+        "sb": 0
       },
-      "targetOvr": 71,
+      "targetOvr": 55,
       "bats": "L",
       "throws": "R"
     },
@@ -110,12 +110,12 @@
       "age": 33,
       "salaryKrw": 520000000,
       "sourceStats": {
-        "pa": 520,
-        "woba": 0.3807142857142857,
-        "iso": 0.17285714285714288,
-        "bbPct": 0.0975,
-        "kPct": 0.18071428571428572,
-        "sb": 10
+        "pa": 278,
+        "woba": 0.36605,
+        "iso": 0.05,
+        "bbPct": 0.1618705035971223,
+        "kPct": 0.2302158273381295,
+        "sb": 0
       },
       "targetOvr": 64,
       "bats": "L",
@@ -127,8 +127,8 @@
       "teamAbbr": "LG",
       "role": "C",
       "rosterLevel": "first",
-      "age": 32,
-      "salaryKrw": 320000000,
+      "age": 34,
+      "salaryKrw": 700000000,
       "sourceStats": {
         "pa": 520,
         "woba": 0.3742857142857143,
@@ -137,7 +137,9 @@
         "kPct": 0.18428571428571427,
         "sb": 9
       },
-      "targetOvr": 75
+      "targetOvr": 62,
+      "bats": "R",
+      "throws": "R"
     },
     {
       "id": "LG-신민재",
@@ -148,14 +150,14 @@
       "age": 30,
       "salaryKrw": 380000000,
       "sourceStats": {
-        "pa": 520,
-        "woba": 0.3678571428571429,
-        "iso": 0.16142857142857142,
-        "bbPct": 0.09250000000000001,
-        "kPct": 0.18785714285714286,
-        "sb": 22
+        "pa": 247,
+        "woba": 0.31295,
+        "iso": 0.05,
+        "bbPct": 0.11740890688259109,
+        "kPct": 0.12550607287449392,
+        "sb": 0
       },
-      "targetOvr": 64,
+      "targetOvr": 53,
       "bats": "L",
       "throws": "R"
     },
@@ -257,13 +259,13 @@
       "targetOvr": 67
     },
     {
-      "id": "LG-켈ley",
-      "name": "켈ley",
+      "id": "LG-켈리",
+      "name": "켈리",
       "teamAbbr": "LG",
       "role": "SP",
       "rosterLevel": "first",
-      "age": 28,
-      "salaryKrw": 950000000,
+      "age": 37,
+      "salaryKrw": 8000000000,
       "sourceStats": {
         "ip": 153,
         "era": 3.7,
@@ -273,7 +275,9 @@
         "gs": 24,
         "games": 26
       },
-      "targetOvr": 85
+      "targetOvr": 70,
+      "bats": "R",
+      "throws": "R"
     },
     {
       "id": "LG-손주환",
@@ -281,8 +285,8 @@
       "teamAbbr": "LG",
       "role": "SP",
       "rosterLevel": "first",
-      "age": 27,
-      "salaryKrw": 400000000,
+      "age": 24,
+      "salaryKrw": 80000000,
       "sourceStats": {
         "ip": 146,
         "era": 3.95,
@@ -292,7 +296,9 @@
         "gs": 23,
         "games": 26
       },
-      "targetOvr": 80
+      "targetOvr": 68,
+      "bats": "R",
+      "throws": "R"
     },
     {
       "id": "LG-엔스",
@@ -448,8 +454,8 @@
       "teamAbbr": "LG",
       "role": "RP",
       "rosterLevel": "first",
-      "age": 27,
-      "salaryKrw": 180000000,
+      "age": 28,
+      "salaryKrw": 187000000,
       "sourceStats": {
         "ip": 47,
         "era": 4.3500000000000005,
@@ -459,7 +465,8 @@
         "gs": 0,
         "games": 40
       },
-      "targetOvr": 72
+      "targetOvr": 54,
+      "bats": "R"
     },
     {
       "id": "LG-이우찬",

@@ -11,14 +11,14 @@
       "age": 39,
       "salaryKrw": 4200000000,
       "sourceStats": {
-        "pa": 520,
-        "woba": 0.40964285714285714,
-        "iso": 0.19857142857142857,
-        "bbPct": 0.10875000000000001,
-        "kPct": 0.16464285714285715,
-        "sb": 13
+        "pa": 273,
+        "woba": 0.35675,
+        "iso": 0.174,
+        "bbPct": 0.08058608058608059,
+        "kPct": 0.11721611721611722,
+        "sb": 0
       },
-      "targetOvr": 70,
+      "targetOvr": 57,
       "bats": "R",
       "throws": "R"
     },
@@ -28,17 +28,19 @@
       "teamAbbr": "DS",
       "role": "LF",
       "rosterLevel": "first",
-      "age": 36,
-      "salaryKrw": 750000000,
+      "age": 38,
+      "salaryKrw": 500000000,
       "sourceStats": {
-        "pa": 520,
-        "woba": 0.40321428571428575,
-        "iso": 0.19285714285714287,
-        "bbPct": 0.10625000000000001,
-        "kPct": 0.1682142857142857,
-        "sb": 12
+        "pa": 251,
+        "woba": 0.34945000000000004,
+        "iso": 0.17800000000000002,
+        "bbPct": 0.1593625498007968,
+        "kPct": 0.2908366533864542,
+        "sb": 0
       },
-      "targetOvr": 84
+      "targetOvr": 67,
+      "bats": "L",
+      "throws": "R"
     },
     {
       "id": "DS-케이브",
@@ -106,8 +108,8 @@
       "teamAbbr": "DS",
       "role": "3B",
       "rosterLevel": "first",
-      "age": 34,
-      "salaryKrw": 380000000,
+      "age": 36,
+      "salaryKrw": 700000000,
       "sourceStats": {
         "pa": 520,
         "woba": 0.3807142857142857,
@@ -116,7 +118,9 @@
         "kPct": 0.18071428571428572,
         "sb": 10
       },
-      "targetOvr": 77
+      "targetOvr": 64,
+      "bats": "R",
+      "throws": "R"
     },
     {
       "id": "DS-박계범",
@@ -124,8 +128,8 @@
       "teamAbbr": "DS",
       "role": "2B",
       "rosterLevel": "first",
-      "age": 28,
-      "salaryKrw": 320000000,
+      "age": 30,
+      "salaryKrw": 77000000,
       "sourceStats": {
         "pa": 520,
         "woba": 0.3742857142857143,
@@ -134,7 +138,9 @@
         "kPct": 0.18428571428571427,
         "sb": 24
       },
-      "targetOvr": 75
+      "targetOvr": 66,
+      "bats": "R",
+      "throws": "R"
     },
     {
       "id": "DS-김민석",
@@ -203,8 +209,8 @@
       "teamAbbr": "DS",
       "role": "C",
       "rosterLevel": "first",
-      "age": 29,
-      "salaryKrw": 180000000,
+      "age": 36,
+      "salaryKrw": 400000000,
       "sourceStats": {
         "pa": 380,
         "woba": 0.355,
@@ -213,7 +219,9 @@
         "kPct": 0.195,
         "sb": 7
       },
-      "targetOvr": 69
+      "targetOvr": 58,
+      "bats": "L",
+      "throws": "R"
     },
     {
       "id": "DS-이유찬",
@@ -370,8 +378,8 @@
       "teamAbbr": "DS",
       "role": "RP",
       "rosterLevel": "first",
-      "age": 32,
-      "salaryKrw": 350000000,
+      "age": 38,
+      "salaryKrw": 250000000,
       "sourceStats": {
         "ip": 51,
         "era": 3.95,
@@ -381,7 +389,9 @@
         "gs": 0,
         "games": 42
       },
-      "targetOvr": 80
+      "targetOvr": 57,
+      "bats": "R",
+      "throws": "R"
     },
     {
       "id": "DS-홍건희",
@@ -389,8 +399,8 @@
       "teamAbbr": "DS",
       "role": "RP",
       "rosterLevel": "first",
-      "age": 30,
-      "salaryKrw": 300000000,
+      "age": 34,
+      "salaryKrw": 650000000,
       "sourceStats": {
         "ip": 50,
         "era": 4.050000000000001,
@@ -400,7 +410,9 @@
         "gs": 0,
         "games": 42
       },
-      "targetOvr": 78
+      "targetOvr": 56,
+      "bats": "R",
+      "throws": "R"
     },
     {
       "id": "DS-이승진",
@@ -449,8 +461,8 @@
       "teamAbbr": "DS",
       "role": "RP",
       "rosterLevel": "first",
-      "age": 27,
-      "salaryKrw": 180000000,
+      "age": 19,
+      "salaryKrw": 30000000,
       "sourceStats": {
         "ip": 47,
         "era": 4.4,
@@ -460,7 +472,9 @@
         "gs": 0,
         "games": 40
       },
-      "targetOvr": 71
+      "targetOvr": 54,
+      "bats": "R",
+      "throws": "R"
     },
     {
       "id": "DS-이민혁",

@@ -11,15 +11,15 @@
       "age": 23,
       "salaryKrw": 250000000,
       "sourceStats": {
-        "pa": 520,
-        "woba": 0.41607142857142854,
-        "iso": 0.2042857142857143,
-        "bbPct": 0.11125000000000002,
-        "kPct": 0.16107142857142856,
-        "sb": 34
+        "pa": 311,
+        "woba": 0.4091,
+        "iso": 0.28200000000000003,
+        "bbPct": 0.13504823151125403,
+        "kPct": 0.15755627009646303,
+        "sb": 0
       },
       "potential": 94,
-      "targetOvr": 76,
+      "targetOvr": 74,
       "bats": "R",
       "throws": "R"
     },
@@ -113,14 +113,14 @@
       "age": 37,
       "salaryKrw": 600000000,
       "sourceStats": {
-        "pa": 520,
-        "woba": 0.3839285714285714,
-        "iso": 0.1757142857142857,
-        "bbPct": 0.09875,
-        "kPct": 0.17892857142857144,
-        "sb": 26
+        "pa": 277,
+        "woba": 0.3643,
+        "iso": 0.068,
+        "bbPct": 0.13357400722021662,
+        "kPct": 0.10108303249097472,
+        "sb": 0
       },
-      "targetOvr": 68,
+      "targetOvr": 61,
       "bats": "R",
       "throws": "R"
     },
@@ -209,8 +209,8 @@
       "teamAbbr": "KIA",
       "role": "C",
       "rosterLevel": "first",
-      "age": 30,
-      "salaryKrw": 160000000,
+      "age": 32,
+      "salaryKrw": 150000000,
       "sourceStats": {
         "pa": 520,
         "woba": 0.3582142857142857,
@@ -219,7 +219,9 @@
         "kPct": 0.19321428571428573,
         "sb": 7
       },
-      "targetOvr": 70
+      "targetOvr": 59,
+      "bats": "R",
+      "throws": "R"
     },
     {
       "id": "KIA-오선진",
@@ -227,8 +229,8 @@
       "teamAbbr": "KIA",
       "role": "3B",
       "rosterLevel": "first",
-      "age": 34,
-      "salaryKrw": 140000000,
+      "age": 37,
+      "salaryKrw": 80000000,
       "sourceStats": {
         "pa": 380,
         "woba": 0.355,
@@ -237,7 +239,9 @@
         "kPct": 0.195,
         "sb": 7
       },
-      "targetOvr": 69
+      "targetOvr": 58,
+      "bats": "R",
+      "throws": "R"
     },
     {
       "id": "KIA-김규성",
@@ -475,8 +479,8 @@
       "teamAbbr": "KIA",
       "role": "RP",
       "rosterLevel": "first",
-      "age": 30,
-      "salaryKrw": 150000000,
+      "age": 31,
+      "salaryKrw": 1500000000,
       "sourceStats": {
         "ip": 47,
         "era": 4.3500000000000005,
@@ -486,7 +490,9 @@
         "gs": 0,
         "games": 40
       },
-      "targetOvr": 72
+      "targetOvr": 54,
+      "bats": "R",
+      "throws": "R"
     },
     {
       "id": "KIA-임기영",
@@ -494,8 +500,8 @@
       "teamAbbr": "KIA",
       "role": "RP",
       "rosterLevel": "first",
-      "age": 26,
-      "salaryKrw": 130000000,
+      "age": 33,
+      "salaryKrw": 300000000,
       "sourceStats": {
         "ip": 47,
         "era": 4.4,
@@ -505,7 +511,8 @@
         "gs": 0,
         "games": 40
       },
-      "targetOvr": 71
+      "targetOvr": 54,
+      "bats": "R"
     },
     {
       "id": "KIA-이호민",

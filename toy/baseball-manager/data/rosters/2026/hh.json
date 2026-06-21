@@ -11,15 +11,15 @@
       "age": 26,
       "salaryKrw": 1000000000,
       "sourceStats": {
-        "pa": 520,
-        "woba": 0.4128571428571428,
-        "iso": 0.20142857142857143,
-        "bbPct": 0.11000000000000001,
-        "kPct": 0.16285714285714287,
-        "sb": 13
+        "pa": 287,
+        "woba": 0.34965,
+        "iso": 0.16999999999999998,
+        "bbPct": 0.09059233449477352,
+        "kPct": 0.28222996515679444,
+        "sb": 0
       },
       "potential": 93,
-      "targetOvr": 70,
+      "targetOvr": 56,
       "bats": "R",
       "throws": "R"
     },
@@ -190,8 +190,8 @@
       "teamAbbr": "HH",
       "role": "DH",
       "rosterLevel": "first",
-      "age": 31,
-      "salaryKrw": 200000000,
+      "age": 33,
+      "salaryKrw": 90000000,
       "sourceStats": {
         "pa": 520,
         "woba": 0.3582142857142857,
@@ -200,7 +200,9 @@
         "kPct": 0.19321428571428573,
         "sb": 7
       },
-      "targetOvr": 70
+      "targetOvr": 59,
+      "bats": "L",
+      "throws": "R"
     },
     {
       "id": "HH-박상언",
@@ -312,7 +314,7 @@
       "teamAbbr": "HH",
       "role": "SP",
       "rosterLevel": "first",
-      "age": 26,
+      "age": 51,
       "salaryKrw": 380000000,
       "sourceStats": {
         "ip": 144,
@@ -323,7 +325,9 @@
         "gs": 23,
         "games": 25
       },
-      "targetOvr": 79
+      "targetOvr": 68,
+      "bats": "L",
+      "throws": "L"
     },
     {
       "id": "HH-한승주",
@@ -332,7 +336,7 @@
       "role": "SP",
       "rosterLevel": "first",
       "age": 25,
-      "salaryKrw": 300000000,
+      "salaryKrw": 45000000,
       "sourceStats": {
         "ip": 140,
         "era": 4.15,
@@ -343,7 +347,9 @@
         "games": 25
       },
       "potential": 84,
-      "targetOvr": 76
+      "targetOvr": 67,
+      "bats": "R",
+      "throws": "R"
     },
     {
       "id": "HH-정우람",
@@ -518,8 +524,8 @@
       "teamAbbr": "HH",
       "role": "RP",
       "rosterLevel": "first",
-      "age": 23,
-      "salaryKrw": 120000000,
+      "age": 26,
+      "salaryKrw": 30000000,
       "sourceStats": {
         "ip": 44,
         "era": 4.6000000000000005,
@@ -530,7 +536,9 @@
         "games": 38
       },
       "potential": 75,
-      "targetOvr": 67
+      "targetOvr": 52,
+      "bats": "L",
+      "throws": "L"
     }
   ],
   "farm": [

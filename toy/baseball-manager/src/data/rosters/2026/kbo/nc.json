@@ -52,14 +52,14 @@
       "age": 35,
       "salaryKrw": 9750000000,
       "sourceStats": {
-        "pa": 520,
-        "woba": 0.3967857142857143,
-        "iso": 0.18714285714285717,
-        "bbPct": 0.10375000000000001,
-        "kPct": 0.1717857142857143,
-        "sb": 12
+        "pa": 235,
+        "woba": 0.36324999999999996,
+        "iso": 0.173,
+        "bbPct": 0.04680851063829787,
+        "kPct": 0.23404255319148937,
+        "sb": 0
       },
-      "targetOvr": 67,
+      "targetOvr": 52,
       "bats": "R",
       "throws": "R"
     },
@@ -69,8 +69,8 @@
       "teamAbbr": "NC",
       "role": "CF",
       "rosterLevel": "first",
-      "age": 31,
-      "salaryKrw": 480000000,
+      "age": 33,
+      "salaryKrw": 100000000,
       "sourceStats": {
         "pa": 520,
         "woba": 0.39035714285714285,
@@ -79,7 +79,9 @@
         "kPct": 0.17535714285714285,
         "sb": 28
       },
-      "targetOvr": 80
+      "targetOvr": 70,
+      "bats": "R",
+      "throws": "R"
     },
     {
       "id": "NC-김형준",
@@ -145,10 +147,10 @@
       "id": "NC-김태군",
       "name": "김태군",
       "teamAbbr": "NC",
-      "role": "DH",
+      "role": "C",
       "rosterLevel": "first",
-      "age": 33,
-      "salaryKrw": 300000000,
+      "age": 37,
+      "salaryKrw": 600000000,
       "sourceStats": {
         "pa": 520,
         "woba": 0.37107142857142855,
@@ -157,7 +159,9 @@
         "kPct": 0.18607142857142855,
         "sb": 9
       },
-      "targetOvr": 74
+      "targetOvr": 62,
+      "bats": "R",
+      "throws": "R"
     },
     {
       "id": "NC-이상호",
@@ -203,8 +207,8 @@
       "teamAbbr": "NC",
       "role": "C",
       "rosterLevel": "first",
-      "age": 30,
-      "salaryKrw": 170000000,
+      "age": 36,
+      "salaryKrw": 400000000,
       "sourceStats": {
         "pa": 380,
         "woba": 0.355,
@@ -213,7 +217,9 @@
         "kPct": 0.195,
         "sb": 7
       },
-      "targetOvr": 69
+      "targetOvr": 58,
+      "bats": "L",
+      "throws": "R"
     },
     {
       "id": "NC-도태훈",
@@ -363,8 +369,8 @@
       "teamAbbr": "NC",
       "role": "RP",
       "rosterLevel": "first",
-      "age": 32,
-      "salaryKrw": 320000000,
+      "age": 37,
+      "salaryKrw": 100000000,
       "sourceStats": {
         "ip": 51,
         "era": 4,
@@ -374,7 +380,9 @@
         "gs": 0,
         "games": 42
       },
-      "targetOvr": 79
+      "targetOvr": 57,
+      "bats": "R",
+      "throws": "R"
     },
     {
       "id": "NC-김영규",
