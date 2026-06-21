@@ -44,6 +44,7 @@ function rosterLevelForSign(team: Team): 'first' | 'farm' | null {
 }
 
 function isFaEligible(player: Player): boolean {
+  if ((player.contractYears ?? 1) <= 0) return true
   return player.age >= 29 || (player.age >= 27 && overallRating(player) >= 68)
 }
 
@@ -143,6 +144,7 @@ export function signFreeAgentForTeam(
     rosterLevel: level,
     salary: listing.askingSalary,
     morale: Math.min(99, listing.player.morale + 8),
+    contractYears: listing.player.age <= 28 ? 2 : 1,
   }
 
   return {
@@ -216,6 +218,7 @@ function resetPlayerForNewSeason(player: Player): Player {
     morale: clamp(player.morale + rand(2, 8), 50, 99),
     injuryDays: undefined,
     injuryType: undefined,
+    contractYears: Math.max(0, (player.contractYears ?? 1) - 1),
     developmentXp: Math.round((player.developmentXp ?? 0) * 0.35),
     potential: player.potential ?? rollPotential(
       ovr >= 75 ? 'star' : ovr >= 58 ? 'avg' : 'weak',
@@ -290,3 +293,4 @@ export function initialSeasonMeta() {
     freeAgents: [] as FreeAgentListing[],
   }
 }
+

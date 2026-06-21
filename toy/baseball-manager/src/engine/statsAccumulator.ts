@@ -8,6 +8,7 @@ import type {
   Player,
 } from '../types/game'
 import { emptyBatterGameLine, emptyBatterStats, emptyPitcherGameLine, emptyPitcherStats } from '../types/game'
+import { contractYearsForPlayer } from './contracts'
 import { awardXpFromGameLine, defaultPotentialForPlayer } from './playerDevelopment'
 
 function getBatterLine(box: GameBoxScore, id: string): BatterGameLine {
@@ -67,6 +68,11 @@ export function recordRunsScored(box: GameBoxScore, batterId: string, runs: numb
   if (runs <= 0 || outcome === 'homerun') return
   const b = getBatterLine(box, batterId)
   b.runs += runs
+}
+
+export function recordStolenBase(box: GameBoxScore, runnerId: string) {
+  const b = getBatterLine(box, runnerId)
+  b.sb++
 }
 
 export function recordPitcherRuns(box: GameBoxScore, pitcherId: string, runs: number) {
@@ -245,5 +251,6 @@ export function ensurePlayerRosterFields(player: Player): Player {
     farmSeasonStats:
       migrated.farmSeasonStats ??
       (isPitcherRole ? emptyPitcherStats() : emptyBatterStats()),
+    contractYears: migrated.contractYears ?? contractYearsForPlayer(migrated),
   }
 }

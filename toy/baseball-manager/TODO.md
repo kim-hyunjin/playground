@@ -448,4 +448,19 @@ interface Player {
 ---
 
 - [ ] 4. 경기 시뮬레이션시 그래픽 적용
-- [ ] 5. 시뮬레이션 고도화
+- [x] 5. 시뮬레이션 고도화 (텍스트 엔진) — **부분 완료** (그래픽 제외)
+
+### 5.1 구현 요약 (2026-06)
+
+- [x] 희생번트·실책·수비 fielding (`atBatSituation.ts`, `pickContactOutcome`)
+- [x] 도루 시도·SB 기록 (`runners.tryStealAttempt`, `recordStolenBase`)
+- [x] platoon·park factor·2군 리그 강도 (기존)
+- [ ] 구종·세밀한 투구전 (미구현)
+- [ ] 경기 화면 그래픽 (TODO 4)
+
+### 5.2 트레이드·계약·재활
+
+- [x] CPU 트레이드 (`trades.ts`, `TransfersPage` 탭)
+- [x] `contractYears` — 로스터 기본값, FA 만료, 스토브 FA 영입 시 갱신
+- [x] 부상 2군 재활 가속, 대시보드·선수 상세 재활 배치
+- [x] UI 배지 (부상·계약·등록), Stats SB 컬럼

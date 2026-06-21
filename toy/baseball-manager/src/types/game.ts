@@ -36,6 +36,8 @@ export interface Player {
   /** 부상 잔여 일수 (0 이하 = 출전 가능) */
   injuryDays?: number
   injuryType?: string
+  /** 잔여 계약 연수 (시즌 종료마다 -1, 0 이하 FA 후보) */
+  contractYears?: number
   seasonStats: BatterStats | PitcherStats
   farmSeasonStats: BatterStats | PitcherStats
 }

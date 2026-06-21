@@ -1,4 +1,4 @@
-import type { Player } from '../types/game'
+import type { Player, RosterLevel } from '../types/game'
 
 export const INJURY_TYPES = [
   '어깨',
@@ -15,14 +15,16 @@ export function isPlayerAvailable(player: Player): boolean {
   return !player.injuryDays || player.injuryDays <= 0
 }
 
-/** 주간 회복 — injuryDays 1 감소 */
-export function tickInjuryDays(player: Player): Player {
+/** 주간 회복 — 2군은 재활 가속 (+1일 추가) */
+export function tickInjuryDays(player: Player, rosterLevel: RosterLevel = player.rosterLevel): Player {
   if (!player.injuryDays || player.injuryDays <= 0) {
     return { ...player, injuryDays: undefined, injuryType: undefined }
   }
-  const next = player.injuryDays - 1
+
+  const step = rosterLevel === 'farm' ? 2 : 1
+  const next = player.injuryDays - step
   if (next <= 0) {
-    return { ...player, injuryDays: undefined, injuryType: undefined }
+    return { ...player, injuryDays: undefined, injuryType: undefined, fatigue: Math.max(0, player.fatigue - 15) }
   }
   return { ...player, injuryDays: next }
 }
@@ -40,5 +42,12 @@ export function rollWeeklyInjuries(players: Player[]): Player[] {
 }
 
 export function recoverTeamInjuries(players: Player[]): Player[] {
-  return players.map(tickInjuryDays)
+  return players.map((p) => tickInjuryDays(p, p.rosterLevel))
+}
+
+/** 1군 부상자 — 2군 재활 배치 권장 */
+export function injuredFirstTeamPlayers(players: Player[]): Player[] {
+  return players.filter(
+    (p) => p.rosterLevel === 'first' && (p.injuryDays ?? 0) > 0,
+  )
 }

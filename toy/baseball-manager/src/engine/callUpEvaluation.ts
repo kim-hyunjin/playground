@@ -63,7 +63,10 @@ export function isProspect(player: Player): boolean {
 }
 
 export function isRehabCandidate(player: Player): boolean {
-  return player.rosterLevel === 'farm' && player.fatigue >= 50
+  return (
+    player.rosterLevel === 'farm' &&
+    ((player.injuryDays ?? 0) > 0 || player.fatigue >= 50)
+  )
 }
 
 export function callUpCandidateIds(

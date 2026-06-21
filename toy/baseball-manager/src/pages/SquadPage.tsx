@@ -5,6 +5,7 @@ import { isBatter, isPitcher, overallRating } from '../engine/generator'
 import { formatHandedness } from '../engine/rosterAvailability'
 import { OvrBadge } from '../components/PlayerCard'
 import { PlayerNameButton } from '../components/PlayerNameButton'
+import { InjuryBadge } from '../components/RosterBadges'
 import { useGame } from '../store/gameStore'
 import { POSITION_LABEL } from '../types/game'
 import type { Player } from '../types/game'
@@ -94,7 +95,10 @@ export function SquadPage() {
                 onClick={() => openPlayer(p.id)}
               >
                 <td>
-                  <PlayerNameButton playerId={p.id} name={p.name} />
+                  <div className="flex flex-wrap items-center gap-1">
+                    <PlayerNameButton playerId={p.id} name={p.name} />
+                    <InjuryBadge player={p} compact />
+                  </div>
                 </td>
                 <td>{POSITION_LABEL[p.role]}</td>
                 <td className="font-mono text-xs text-[var(--text-muted)]">{formatHandedness(p)}</td>

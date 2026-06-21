@@ -5,14 +5,14 @@ import { evaluateCallUpCandidate } from '../engine/callUpEvaluation'
 import { findPlayerInLeague } from '../engine/playerLookup'
 import { PlayerCard, StatBar } from './PlayerCard'
 import { SabermetricsPanel } from './SabermetricsPanel'
-import { CallUpBadge } from './RosterBadges'
+import { CallUpBadge, InjuryBadge } from './RosterBadges'
 import { DevelopmentPanel } from './DevelopmentPanel'
 import { useGame } from '../store/gameStore'
 import { POSITION_LABEL } from '../types/game'
 import { formatHandedness } from '../engine/sim/handedness'
 
 export function PlayerDetailModal() {
-  const { state, userTeam, focusedPlayerId, closePlayer, releasePlayer, promotePlayer, demotePlayer } = useGame()
+  const { state, userTeam, focusedPlayerId, closePlayer, releasePlayer, promotePlayer, demotePlayer, sendToRehab } = useGame()
   const [tab, setTab] = useState<'stats' | 'attrs' | 'dev'>('stats')
 
   useEffect(() => {
@@ -71,11 +71,12 @@ export function PlayerDetailModal() {
             </h2>
             <div className="text-sm text-[var(--text-muted)]">
               {level === 'farm' ? '2군' : '1군'} · {POSITION_LABEL[player.role]} · {formatHandedness(player)} · {player.age}세 · {formatSalary(player.salary)}
-              {player.injuryDays && player.injuryDays > 0 ? (
-                <span className="ml-2 rounded bg-red-900/40 px-1.5 py-0.5 text-[10px] font-semibold text-red-300">
-                  부상 {player.injuryType ?? ''} ({player.injuryDays}일)
-                </span>
-              ) : null}
+              {(player.contractYears ?? 1) > 0 ? (
+                <span className="ml-2 text-xs">· 잔여 계약 {player.contractYears}년</span>
+              ) : (
+                <span className="ml-2 text-xs text-orange-300">· FA 임박</span>
+              )}
+              <InjuryBadge player={player} />
               {player.dataSeason ? (
                 <span className="ml-2 rounded bg-[var(--accent-dim)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--accent)]">
                   {player.dataSeason} 실명
@@ -147,6 +148,15 @@ export function PlayerDetailModal() {
                   onClick={() => { promotePlayer(player.id); closePlayer() }}
                 >
                   1군 승격
+                </button>
+              )}
+              {isOwnPlayer && level === 'first' && (player.injuryDays ?? 0) > 0 && (
+                <button
+                  type="button"
+                  className="bm-btn bm-btn-primary w-full text-xs"
+                  onClick={() => { sendToRehab(player.id); closePlayer() }}
+                >
+                  2군 재활 배치 (회복 가속)
                 </button>
               )}
               {isOwnPlayer && level === 'first' && (

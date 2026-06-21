@@ -2,6 +2,7 @@ import type { AtBatOutcome, Player } from '../../types/game'
 import { LEAGUE_STRENGTH, type SimContext } from './context'
 import { AT_BAT_TUNING as T } from './atBatConstants'
 import { batterSideForMatchup, inferBats, inferThrows, platoonMultiplier } from './handedness'
+import { pickContactOutcome, type AtBatSituation } from './atBatSituation'
 
 function clamp(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, n))
@@ -30,6 +31,8 @@ export function resolveAtBat(
   pitcher: Player,
   ctx: SimContext,
   rand = Math.random,
+  situation?: AtBatSituation,
+  defenseFielding = 50,
 ): AtBatOutcome {
   const { contact, power, eye } = effectiveBatterSkills(batter, ctx)
   const pitch = effectivePitcherSkills(pitcher, ctx)
@@ -54,7 +57,12 @@ export function resolveAtBat(
     T.contactThresholdMax,
   )
 
-  if (contactRoll > contactThreshold) return 'out'
+  if (contactRoll > contactThreshold) {
+    if (situation) {
+      return pickContactOutcome(true, batter.speed, defenseFielding, situation, rand)
+    }
+    return 'out'
+  }
 
   const { hrFactor, runFactor } = ctx.park
   const powerRoll = rand() * 100
@@ -70,4 +78,11 @@ export function resolveAtBat(
   if (extraBase > T.tripleGate - adjPower * T.triplePowerScale - runBoost) return 'triple'
   if (extraBase > T.doubleGate - adjPower * T.doublePowerScale - runBoost) return 'double'
   return 'single'
+}
+
+/** 수비 팀 평균 fielding (비투수) */
+export function teamDefenseFielding(team: Player[]): number {
+  const fielders = team.filter((p) => p.role !== 'SP' && p.role !== 'RP')
+  if (fielders.length === 0) return 50
+  return fielders.reduce((s, p) => s + p.fielding, 0) / fielders.length
 }

@@ -42,6 +42,8 @@ import {
 
 import { recoverTeamInjuries, rollWeeklyInjuries } from '../engine/injury'
 import { sanitizeLineup, sanitizeRotation } from '../engine/rosterAvailability'
+import { cpuAcceptsTrade, executeTrade, validateTrade, type TradeProposal } from '../engine/trades'
+import { contractYearsForPlayer } from '../engine/contracts'
 
 const STORAGE_KEY = 'baseball-manager:v7'
 const LEGACY_KEYS = [
@@ -69,9 +71,11 @@ interface GameContextValue {
   clearLastResult: () => void
   upcomingGame: ScheduledGame | null
   buyPlayer: (player: Player, fromTeamId: string) => boolean
+  tradePlayers: (proposal: Omit<TradeProposal, 'fromTeamId'>) => { ok: boolean; message: string }
   releasePlayer: (playerId: string) => void
   promotePlayer: (playerId: string) => boolean
   demotePlayer: (playerId: string) => boolean
+  sendToRehab: (playerId: string) => boolean
   hireCoach: (coachId: string) => boolean
   fireCoach: (coachId: string) => boolean
   acceptCallUp: (suggestionId: string) => boolean
@@ -148,6 +152,7 @@ function migratePlayerMetadata(player: Player): Player {
     dataSeason:
       player.dataSeason ??
       (isGenerated ? undefined : player.rosterLevel === 'first' ? DATA_SEASON : undefined),
+    contractYears: player.contractYears ?? contractYearsForPlayer(player),
   }
 }
 
@@ -416,6 +421,40 @@ export function GameProvider({ children }: { children: ReactNode }) {
     return true
   }, [state, userTeam])
 
+  const tradePlayers = useCallback(
+    (proposal: Omit<TradeProposal, 'fromTeamId'>): { ok: boolean; message: string } => {
+      if (!state || !userTeam || state.phase !== 'regular') {
+        return { ok: false, message: '정규시즌 중에만 트레이드할 수 있습니다.' }
+      }
+
+      const full: TradeProposal = { ...proposal, fromTeamId: state.userTeamId }
+      const validationErr = validateTrade(state.teams, full)
+      if (validationErr) {
+        return { ok: false, message: validationErr }
+      }
+
+      const cpuTeam = state.teams.find((t) => t.id === proposal.toTeamId)
+      if (!cpuTeam) return { ok: false, message: '상대 팀을 찾을 수 없습니다.' }
+
+      const accepted = cpuAcceptsTrade(
+        userTeam,
+        cpuTeam,
+        proposal.outgoingIds,
+        proposal.incomingIds,
+      )
+      if (!accepted) {
+        return { ok: false, message: '상대 구단이 제안을 거절했습니다.' }
+      }
+
+      const updated = executeTrade(state.teams, full)
+      if (!updated) return { ok: false, message: '트레이드 처리에 실패했습니다.' }
+
+      setState({ ...state, teams: updated })
+      return { ok: true, message: '트레이드가 성사되었습니다!' }
+    },
+    [state, userTeam],
+  )
+
   const releasePlayer = useCallback((playerId: string) => {
     setState((s) => {
       if (!s) return s
@@ -452,6 +491,23 @@ export function GameProvider({ children }: { children: ReactNode }) {
     let ok = false
     setState((s) => {
       if (!s) return s
+      const updated = demoteWithLineup(s, playerId)
+      if (!updated) return s
+      ok = true
+      return { ...s, ...updated }
+    })
+    return ok
+  }, [])
+
+  const sendToRehab = useCallback((playerId: string): boolean => {
+    let ok = false
+    setState((s) => {
+      if (!s) return s
+      const team = s.teams.find((t) => t.id === s.userTeamId)
+      const player = team?.players.find((p) => p.id === playerId)
+      if (!player || player.rosterLevel !== 'first' || !(player.injuryDays && player.injuryDays > 0)) {
+        return s
+      }
       const updated = demoteWithLineup(s, playerId)
       if (!updated) return s
       ok = true
@@ -636,9 +692,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
     clearLastResult,
     upcomingGame,
     buyPlayer,
+    tradePlayers,
     releasePlayer,
     promotePlayer,
     demotePlayer,
+    sendToRehab,
     hireCoach,
     fireCoach,
     acceptCallUp,

@@ -3,6 +3,7 @@ import { emptyBatterStats, emptyPitcherStats } from '../types/game'
 import { generateDefaultStaff } from '../engine/coachGenerator'
 import { generatePlayer, isPitcher, overallRating, TEAM_DEFS } from '../engine/generator'
 import { defaultPotentialForPlayer } from '../engine/playerDevelopment'
+import { contractYearsForPlayer } from '../engine/contracts'
 import { FIRST_TEAM_MAX, FARM_TEAM_MAX } from '../engine/roster'
 import { batterRatingsFromStats } from './ratings/batterFromStats'
 import { pitcherRatingsFromStats } from './ratings/pitcherFromStats'
@@ -115,6 +116,7 @@ function recordToPlayer(record: PlayerRecord): Player {
   } as Player
 
   player.potential = record.potential ?? defaultPotentialForPlayer(player)
+  player.contractYears = contractYearsForPlayer(player)
   const hand = handednessForPlayerId(player.id)
   if (hand?.bats) player.bats = hand.bats
   if (hand?.throws) player.throws = hand.throws

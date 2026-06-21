@@ -7,7 +7,7 @@ export const AT_BAT_TUNING = {
   bbMin: 0.028,
   bbMax: 0.088,
   /** contactRoll > threshold → out. contactBase ↑ → threshold ↑ → 아웃 ↓ → 득점 ↑ */
-  contactBase: 50,
+  contactBase: 38,
   contactSkillScale: 0.20,
   contactThresholdMin: 12,
   contactThresholdMax: 55,

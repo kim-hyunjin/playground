@@ -54,12 +54,13 @@ export function StatsPage() {
               <th>K%</th>
               <th>BB%</th>
               <th>HR</th>
+              <th>SB</th>
               <th>RBI</th>
             </tr>
           </thead>
           <tbody>
             {batters.length === 0 ? (
-              <tr><td colSpan={11} className="text-center text-[var(--text-muted)]">기록 없음</td></tr>
+              <tr><td colSpan={12} className="text-center text-[var(--text-muted)]">기록 없음</td></tr>
             ) : batters.map((p) => {
               const s = p.seasonStats
               if (s.type !== 'batter') return null
@@ -81,6 +82,7 @@ export function StatsPage() {
                   <td>{kPct}%</td>
                   <td>{bbPct}%</td>
                   <td>{s.hr}</td>
+                  <td>{s.sb}</td>
                   <td>{s.rbi}</td>
                 </tr>
               )

@@ -6,6 +6,7 @@ import { MiniStat } from '../components/PlayerCard'
 import { PlayerNameButton } from '../components/PlayerNameButton'
 import { isDraftComplete, draftProgressLabel } from '../engine/draft'
 import { isSeasonComplete, isStoveLeague, stoveWeekLabel } from '../engine/stoveLeague'
+import { injuredFirstTeamPlayers } from '../engine/injury'
 import { useGame } from '../store/gameStore'
 
 export function DashboardPage() {
@@ -19,6 +20,7 @@ export function DashboardPage() {
     playUserGame,
     acceptCallUp,
     dismissCallUp,
+    sendToRehab,
   } = useGame()
   if (!state || !userTeam) return null
 
@@ -75,6 +77,7 @@ export function DashboardPage() {
   }
 
   const seasonOver = seasonComplete
+  const injuredFirst = injuredFirstTeamPlayers(userTeam.players)
 
   return (
     <div className="bm-animate-in space-y-6">
@@ -91,6 +94,34 @@ export function DashboardPage() {
         <MiniStat label="득점" value={userTeam.runsScored} />
         <MiniStat label="예산" value={formatSalary(userTeam.budget)} />
       </div>
+
+      {injuredFirst.length > 0 && (
+        <div className="bm-card border border-red-500/30 p-5">
+          <h2 className="mb-3 font-semibold text-red-300">1군 부상자 — 2군 재활 권장</h2>
+          <ul className="space-y-3">
+            {injuredFirst.map((p) => (
+              <li
+                key={p.id}
+                className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-[var(--border)] bg-[var(--panel)] p-3"
+              >
+                <div className="text-sm">
+                  <PlayerNameButton playerId={p.id} name={p.name} />
+                  <span className="ml-2 text-[var(--text-muted)]">
+                    {p.injuryType ?? '부상'} · 잔여 {p.injuryDays}일
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  className="bm-btn bm-btn-ghost text-xs"
+                  onClick={() => sendToRehab(p.id)}
+                >
+                  2군 재활 배치
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {state.callUpSuggestions.length > 0 && (
         <div className="bm-card p-5">

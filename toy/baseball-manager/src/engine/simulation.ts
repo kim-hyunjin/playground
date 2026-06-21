@@ -16,13 +16,20 @@ import {
   recordPitcherRuns,
   recordPlateAppearance,
   recordRunsScored,
+  recordStolenBase,
   applyBoxScoreToPlayers,
 } from './statsAccumulator'
-import { resolveAtBat } from './sim/atBat'
+import { resolveAtBat, teamDefenseFielding } from './sim/atBat'
 import { isStarterPitcher, pickPitcher, recordPitchCount } from './sim/bullpen'
 import { createSimContext, type SimLeagueLevel } from './sim/context'
 import { ensureHandedness } from './sim/handedness'
-import { advanceRunners, calcRbi } from './sim/runners'
+import {
+  advanceRunners,
+  calcRbi,
+  emptyRunners,
+  tryStealAttempt,
+  type RunnerState,
+} from './sim/runners'
 import { isPlayerAvailable } from './injury'
 import { pickSavePitcher } from './rosterAvailability'
 
@@ -83,11 +90,12 @@ function playHalfInning(
   pitchingScore: number,
 ): number {
   let outs = 0
-  let runners = { first: false, second: false, third: false }
+  let runners: RunnerState = emptyRunners()
   let runs = 0
   let idx = 0
   const pitchingLead = pitchingScore - battingScore
   const ctx = createSimContext(leagueLevel, parkForTeamAbbr(homeAbbr), inning, half)
+  const defenseFielding = teamDefenseFielding(pitchingTeam.players)
 
   while (outs < 3) {
     const batter = ensureHandedness(battingTeam[idx % battingTeam.length]!)
@@ -100,13 +108,42 @@ function playHalfInning(
         pitchCounts,
       }),
     )
+
+    const runnerSpeed =
+      runners.firstId != null
+        ? battingTeam.find((p) => p.id === runners.firstId)?.speed ?? batter.speed
+        : batter.speed
+
+    const steal = tryStealAttempt(runners, runnerSpeed, pitcher.control, outs)
+    if (steal.stolen && steal.stealerId) {
+      runners = steal.state
+      recordStolenBase(box, steal.stealerId)
+      logs.push({
+        inning,
+        half,
+        text: `${battingTeam.find((p) => p.id === steal.stealerId)?.name ?? '주자'} 도루 성공`,
+        outcome: 'single',
+        runsScored: 0,
+        batterId: steal.stealerId,
+        pitcherId: pitcher.id,
+        rbi: 0,
+      })
+    }
+
     const pitcherGs = isStarterPitcher(pitchingTeam, pitcher, rotIndex, inning)
-    const outcome = resolveAtBat(batter, pitcher, ctx)
+    const outcome = resolveAtBat(
+      batter,
+      pitcher,
+      ctx,
+      Math.random,
+      { outs, runners },
+      defenseFielding,
+    )
     recordPitchCount(pitchCounts, pitcher.id, outcome === 'walk' ? 4 : 1)
 
-    if (outcome === 'out' || outcome === 'strikeout') outs++
+    if (outcome === 'out' || outcome === 'strikeout' || outcome === 'sacrifice') outs++
 
-    const { runs: scored, state } = advanceRunners(runners, outcome)
+    const { runs: scored, state } = advanceRunners(runners, outcome, batter.id)
     const rbi = calcRbi(outcome, scored)
 
     recordPlateAppearance(box, batter.id, pitcher.id, outcome, rbi, pitcherGs)

@@ -1,6 +1,7 @@
 import type { FieldPosition, Player, PlayerRole, RosterLevel, Team } from '../types/game'
 import { emptyBatterStats, emptyPitcherStats } from '../types/game'
 import { generateDefaultStaff } from './coachGenerator'
+import { contractYearsForPlayer } from './contracts'
 import { rollPotential } from './playerDevelopment'
 import { ensureHandedness } from './sim/handedness'
 import { isPlayerAvailable } from './injury'
@@ -70,11 +71,12 @@ export function generatePlayer(
   } satisfies Omit<Player, 'potential' | 'developmentXp'>
 
   const ovr = overallRating(attrs as Player)
-  return ensureHandedness({
+  const player = ensureHandedness({
     ...attrs,
     potential: rollPotential(tier, attrs.age, rosterLevel, ovr),
     developmentXp: 0,
   })
+  return { ...player, contractYears: contractYearsForPlayer(player) }
 }
 
 export const TEAM_DEFS = [
