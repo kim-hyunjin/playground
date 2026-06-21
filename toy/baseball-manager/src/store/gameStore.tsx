@@ -40,8 +40,11 @@ import {
   simulateRemainingDraft,
 } from '../engine/draft'
 
-const STORAGE_KEY = 'baseball-manager:v6'
+import { DATA_SEASON } from '../data/rosterLoader'
+
+const STORAGE_KEY = 'baseball-manager:v7'
 const LEGACY_KEYS = [
+  'baseball-manager:v6',
   'baseball-manager:v5',
   'baseball-manager:v3',
   'baseball-manager:v2',
@@ -132,8 +135,23 @@ function migrateResult(r: GameResult & { boxScore?: GameResult['boxScore'] }): G
   }
 }
 
+function migratePlayerMetadata(player: Player): Player {
+  const isGenerated =
+    player.isGenerated ??
+    (player.name.startsWith('(퓨처스)') || player.id.includes('-gen-'))
+
+  return {
+    ...player,
+    isGenerated,
+    realPlayerId: player.realPlayerId ?? (isGenerated ? undefined : player.id),
+    dataSeason:
+      player.dataSeason ??
+      (isGenerated ? undefined : player.rosterLevel === 'first' ? DATA_SEASON : undefined),
+  }
+}
+
 function migrateTeam(team: Team): Team {
-  const players = team.players.map(ensurePlayerRosterFields)
+  const players = team.players.map(ensurePlayerRosterFields).map(migratePlayerMetadata)
   const hasFarm = players.some((p) => p.rosterLevel === 'farm')
 
   return {
