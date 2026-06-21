@@ -1,11 +1,18 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
+import { DATA_SEASON, previewTeamStarLines } from '../data/rosterLoader'
 import { TEAM_DEFS } from '../engine/generator'
+import type { TeamAbbr } from '../data/types'
 import { useGame } from '../store/gameStore'
 
 export function StartScreen() {
   const { startNewGame, loadGame } = useGame()
   const [selected, setSelected] = useState(0)
   const [name, setName] = useState('감독')
+  const selectedAbbr = TEAM_DEFS[selected]!.abbr as TeamAbbr
+  const starPreview = useMemo(
+    () => previewTeamStarLines(selectedAbbr, 4),
+    [selectedAbbr],
+  )
 
   const handleStart = () => {
     if (name.trim()) startNewGame(selected, name.trim())
@@ -21,6 +28,9 @@ export function StartScreen() {
           <p className="mt-2 text-[var(--text-muted)]">
             팀을 이끌고 라인업을 짜고, 18주 시즌을 정복하세요
           </p>
+          <span className="mt-2 inline-block rounded-full bg-[var(--accent-dim)] px-3 py-1 text-xs font-semibold text-[var(--accent)]">
+            {DATA_SEASON} KBO 실명 로스터
+          </span>
         </div>
 
         <div className="bm-card space-y-6 p-6">
@@ -60,6 +70,24 @@ export function StartScreen() {
                 </button>
               ))}
             </div>
+            {starPreview.length > 0 ? (
+              <div className="mt-3 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-3">
+                <div className="mb-2 text-xs font-medium text-[var(--text-muted)]">
+                  {TEAM_DEFS[selected]!.name} 핵심 선수
+                </div>
+                <ul className="space-y-1 text-sm">
+                  {starPreview.map((p) => (
+                    <li key={p.id} className="flex justify-between gap-2">
+                      <span>
+                        {p.name}{' '}
+                        <span className="text-[var(--text-muted)]">{p.role}</span>
+                      </span>
+                      <span className="font-mono text-[var(--accent)]">OVR {p.ovr}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
           </div>
 
           <div className="flex gap-3">
@@ -73,7 +101,10 @@ export function StartScreen() {
         </div>
 
         <p className="mt-4 text-center text-xs text-[var(--text-muted)]">
-          10개 구단 · 18주 정규시즌 · 라인업/로테이션/이적 관리
+          10개 구단 · 18주 정규시즌 · {DATA_SEASON} KBO 실명 로스터 기반
+        </p>
+        <p className="mt-1 text-center text-[10px] text-[var(--text-muted)]">
+          비공식 팬메이드 프로젝트 · 실제 KBO와 무관 · 데이터는 추정치 포함
         </p>
       </div>
     </div>

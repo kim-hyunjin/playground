@@ -8,6 +8,8 @@ import type {
   Player,
 } from '../types/game'
 import { emptyBatterGameLine, emptyBatterStats, emptyPitcherGameLine, emptyPitcherStats } from '../types/game'
+import { contractYearsForPlayer } from './contracts'
+import { awardXpFromGameLine, defaultPotentialForPlayer } from './playerDevelopment'
 
 function getBatterLine(box: GameBoxScore, id: string): BatterGameLine {
   if (!box.batters[id]) box.batters[id] = emptyBatterGameLine()
@@ -68,6 +70,11 @@ export function recordRunsScored(box: GameBoxScore, batterId: string, runs: numb
   b.runs += runs
 }
 
+export function recordStolenBase(box: GameBoxScore, runnerId: string) {
+  const b = getBatterLine(box, runnerId)
+  b.sb++
+}
+
 export function recordPitcherRuns(box: GameBoxScore, pitcherId: string, runs: number) {
   const p = getPitcherLine(box, pitcherId)
   p.r += runs
@@ -108,6 +115,7 @@ export function mergePitcherLine(season: PitcherStats, game: PitcherGameLine, pl
     k: season.k + game.k,
     hr: season.hr + game.hr,
     bf: season.bf + game.bf,
+    saves: season.saves + (game.saves ?? 0),
   }
 }
 
@@ -118,25 +126,50 @@ export function applyBoxScoreToPlayers(
   teamLost: boolean,
   starterId: string,
 ): Player[] {
+  return applyBoxScoreToPlayersInternal(players, box, teamWon, teamLost, starterId, 'first')
+}
+
+export function applyFarmBoxScoreToPlayers(
+  players: Player[],
+  box: GameBoxScore,
+  teamWon: boolean,
+  teamLost: boolean,
+  starterId: string,
+): Player[] {
+  return applyBoxScoreToPlayersInternal(players, box, teamWon, teamLost, starterId, 'farm')
+}
+
+function applyBoxScoreToPlayersInternal(
+  players: Player[],
+  box: GameBoxScore,
+  teamWon: boolean,
+  teamLost: boolean,
+  starterId: string,
+  target: 'first' | 'farm',
+): Player[] {
   const starterW = teamWon
   const starterL = teamLost
+  const statsKey = target === 'farm' ? 'farmSeasonStats' : 'seasonStats'
 
   return players.map((p) => {
     const bat = box.batters[p.id]
     const pit = box.pitchers[p.id]
+    const seasonStats = p[statsKey]
 
-    if (bat && p.seasonStats.type === 'batter') {
-      return {
+    if (bat && seasonStats.type === 'batter') {
+      const withStats = {
         ...p,
-        seasonStats: mergeBatterLine(p.seasonStats, bat, bat.pa > 0),
+        [statsKey]: mergeBatterLine(seasonStats, bat, bat.pa > 0),
       }
+      return awardXpFromGameLine(withStats, bat, undefined, target)
     }
 
-    if (pit && p.seasonStats.type === 'pitcher') {
-      let stats = mergePitcherLine(p.seasonStats, pit, pit.bf > 0)
+    if (pit && seasonStats.type === 'pitcher') {
+      let stats = mergePitcherLine(seasonStats, pit, pit.bf > 0)
       if (p.id === starterId && starterW) stats = { ...stats, wins: stats.wins + 1 }
       if (p.id === starterId && starterL) stats = { ...stats, losses: stats.losses + 1 }
-      return { ...p, seasonStats: stats }
+      const withStats = { ...p, [statsKey]: stats }
+      return awardXpFromGameLine(withStats, undefined, pit, target)
     }
 
     return p
@@ -205,4 +238,19 @@ export function migratePlayerStats(player: Player): Player {
   }
 
   return player
+}
+
+export function ensurePlayerRosterFields(player: Player): Player {
+  const migrated = migratePlayerStats(player)
+  const isPitcherRole = migrated.role === 'SP' || migrated.role === 'RP'
+  return {
+    ...migrated,
+    rosterLevel: migrated.rosterLevel ?? 'first',
+    potential: migrated.potential ?? defaultPotentialForPlayer(migrated),
+    developmentXp: migrated.developmentXp ?? 0,
+    farmSeasonStats:
+      migrated.farmSeasonStats ??
+      (isPitcherRole ? emptyPitcherStats() : emptyBatterStats()),
+    contractYears: migrated.contractYears ?? contractYearsForPlayer(migrated),
+  }
 }

@@ -1,4 +1,5 @@
 import { overallRating } from '../engine/generator'
+import { isPlayerAvailable } from '../engine/injury'
 import { OvrBadge } from '../components/PlayerCard'
 import { PlayerNameButton } from '../components/PlayerNameButton'
 import { useGame } from '../store/gameStore'
@@ -30,7 +31,10 @@ export function RotationPage() {
 
       <div className="space-y-2">
         {starters.map((p, i) => (
-          <div key={p!.id} className="bm-card flex items-center gap-4 p-4">
+          <div
+            key={p!.id}
+            className={`bm-card flex items-center gap-4 p-4 ${!isPlayerAvailable(p!) ? 'opacity-60' : ''}`}
+          >
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--panel-2)] text-lg font-bold text-[var(--accent)]">
               {i + 1}
             </div>
@@ -38,6 +42,9 @@ export function RotationPage() {
               <PlayerNameButton playerId={p!.id} name={p!.name} className="text-base font-semibold" />
               <div className="text-xs text-[var(--text-muted)]">
                 구속 {p!.velocity} · 제구 {p!.control} · 구위 {p!.movement} · OVR {overallRating(p!)}
+                {!isPlayerAvailable(p!) && p!.injuryType ? (
+                  <span className="ml-2 text-red-400">부상 ({p!.injuryType}, {p!.injuryDays}일)</span>
+                ) : null}
               </div>
             </div>
             <OvrBadge player={p!} />

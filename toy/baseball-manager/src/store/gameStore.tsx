@@ -8,17 +8,41 @@ import {
   type ReactNode,
 } from 'react'
 import type { FieldPosition, GameResult, GameState, Player, ScheduledGame, Team, View } from '../types/game'
-import {
-  defaultLineup,
-  defaultRotation,
-  generateLeague,
-} from '../engine/generator'
-import { generateSchedule, nextUserGame } from '../engine/schedule'
+import { loadLeague2026 } from '../data/rosterLoader'
+import { defaultLineup, defaultRotation } from '../engine/generator'
+import { generateSchedule, generateFarmSchedule, nextUserGame, normalizeSchedule, hasUnplayedUserGamesInWeek } from '../engine/schedule'
 import { applyResult, simulateCpuGames, simulateGame } from '../engine/simulation'
-import { migratePlayerStats } from '../engine/statsAccumulator'
+import { simulateFarmWeek } from '../engine/farmSimulation'
+import {
+  countByLevel,
+  demoteWithLineup,
+  autoAdjustLeagueRosters,
+  FIRST_TEAM_MAX,
+  FARM_TEAM_MAX,
+  promoteInLeague,
+} from '../engine/roster'
+import { generateCoachMarket, refreshCoachMarket } from '../engine/coachGenerator'
+import { developTeam } from '../engine/development'
+import { generateCallUpSuggestions, mergeCallUpSuggestions } from '../engine/callUpSuggestions'
+import {
+  advanceStoveWeekState,
+  buildStoveLeagueState,
+  initialSeasonMeta,
+  isStoveLeague,
+  signFreeAgentForTeam,
+  startNextSeasonState,
+} from '../engine/stoveLeague'
+import {
+  draftProspect,
+  simulateDraftUntilUser,
+  simulateRemainingDraft,
+} from '../engine/draft'
 
-const STORAGE_KEY = 'baseball-manager:v2'
-const LEGACY_KEY = 'baseball-manager:v1'
+import { recoverTeamInjuries, rollWeeklyInjuries } from '../engine/injury'
+import { sanitizeLineup, sanitizeRotation } from '../engine/rosterAvailability'
+import { cpuAcceptsTrade, executeTrade, validateTrade, type TradeProposal } from '../engine/trades'
+
+const STORAGE_KEY = 'baseball-manager'
 
 interface GameContextValue {
   state: GameState | null
@@ -37,7 +61,22 @@ interface GameContextValue {
   clearLastResult: () => void
   upcomingGame: ScheduledGame | null
   buyPlayer: (player: Player, fromTeamId: string) => boolean
+  tradePlayers: (proposal: Omit<TradeProposal, 'fromTeamId'>) => { ok: boolean; message: string }
   releasePlayer: (playerId: string) => void
+  promotePlayer: (playerId: string) => boolean
+  demotePlayer: (playerId: string) => boolean
+  sendToRehab: (playerId: string) => boolean
+  hireCoach: (coachId: string) => boolean
+  fireCoach: (coachId: string) => boolean
+  acceptCallUp: (suggestionId: string) => boolean
+  dismissCallUp: (suggestionId: string) => void
+  enterStoveLeague: () => void
+  signFreeAgent: (playerId: string) => boolean
+  advanceStoveWeek: () => void
+  startNextSeason: () => void
+  draftPlayer: (playerId: string) => boolean
+  simulateDraftToUser: () => void
+  simulateRemainingDraft: () => void
   focusedPlayerId: string | null
   openPlayer: (playerId: string) => void
   closePlayer: () => void
@@ -46,21 +85,25 @@ interface GameContextValue {
 const GameContext = createContext<GameContextValue | null>(null)
 
 function createInitialState(teamIndex: number, managerName: string): GameState {
-  const teams = generateLeague(teamIndex)
+  const teams = loadLeague2026(teamIndex)
   const userTeam = teams[teamIndex]!
   const totalWeeks = 18
 
   return {
-    version: 2,
     userTeamId: userTeam.id,
     teams,
     schedule: generateSchedule(teams, totalWeeks),
+    farmSchedule: generateFarmSchedule(teams, totalWeeks),
+    coachMarket: generateCoachMarket(),
+    callUpSuggestions: [],
+    ...initialSeasonMeta(),
     currentWeek: 1,
     totalWeeks,
     lineup: defaultLineup(userTeam),
     rotation: defaultRotation(userTeam),
     rotationIndex: 0,
     results: [],
+    farmResults: [],
     managerName,
   }
 }
@@ -73,47 +116,17 @@ function saveState(state: GameState) {
   }
 }
 
-function migrateResult(r: GameResult & { boxScore?: GameResult['boxScore'] }): GameResult {
-  if (r.boxScore) return r
-  return {
-    ...r,
-    boxScore: {
-      batters: {},
-      pitchers: {},
-      awayStarterId: '',
-      homeStarterId: '',
-    },
-  }
-}
-
-function migrateState(raw: unknown): GameState | null {
-  if (!raw || typeof raw !== 'object') return null
-  const s = raw as GameState & { version?: number }
-
-  const teams = (s.teams ?? []).map((t) => ({
-    ...t,
-    players: t.players.map(migratePlayerStats),
-  }))
-
-  const results = (s.results ?? []).map(migrateResult)
-
-  return {
-    ...s,
-    version: 2,
-    teams,
-    results,
-  } as GameState
-}
-
 function loadState(): GameState | null {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem(LEGACY_KEY)
+    const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return null
-    const migrated = migrateState(JSON.parse(raw))
-    if (migrated && !localStorage.getItem(STORAGE_KEY)) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated))
+    const parsed = JSON.parse(raw) as GameState
+    if (!parsed?.teams?.length || !parsed.userTeamId) return null
+    return {
+      ...parsed,
+      schedule: normalizeSchedule(parsed.schedule ?? []),
+      farmSchedule: normalizeSchedule(parsed.farmSchedule ?? []),
     }
-    return migrated
   } catch {
     return null
   }
@@ -164,7 +177,6 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
   const resetGame = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY)
-    localStorage.removeItem(LEGACY_KEY)
     setState(null)
     setView('dashboard')
     setLastResult(null)
@@ -197,7 +209,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const playUserGame = useCallback((): GameResult | null => {
-    if (!state) return null
+    if (!state || state.phase !== 'regular') return null
     const game = nextUserGame(state.schedule, state.userTeamId, state.currentWeek)
     if (!game) return null
 
@@ -237,37 +249,64 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
   const advanceWeek = useCallback(() => {
     setState((s) => {
-      if (!s || s.currentWeek >= s.totalWeeks) return s
+      if (!s || s.phase !== 'regular' || s.currentWeek >= s.totalWeeks) return s
+      if (hasUnplayedUserGamesInWeek(s.schedule, s.userTeamId, s.currentWeek)) return s
 
-      const { teams, schedule, results } = simulateCpuGames(
-        s.schedule,
-        s.teams,
-        s.currentWeek,
-        s.userTeamId,
-      )
+      const cpu = simulateCpuGames(s.schedule, s.teams, s.currentWeek, s.userTeamId)
+      const farm = simulateFarmWeek(s.farmSchedule, cpu.teams, s.currentWeek)
 
-      const recovered = teams.map((t) => ({
+      const developed = farm.teams.map(developTeam)
+      const adjusted = autoAdjustLeagueRosters(developed, s.userTeamId)
+
+      const recovered = adjusted.map((t) => ({
         ...t,
-        players: t.players.map((p) => ({
-          ...p,
-          fatigue: Math.max(0, p.fatigue - (t.id === s.userTeamId ? 12 : 8)),
-        })),
+        players: rollWeeklyInjuries(
+          recoverTeamInjuries(
+            t.players.map((p) => ({
+              ...p,
+              fatigue: Math.max(0, p.fatigue - (t.id === s.userTeamId ? 12 : 8)),
+            })),
+          ),
+        ),
       }))
 
-      return {
+      const nextWeek = s.currentWeek + 1
+      const interim: GameState = {
         ...s,
         teams: recovered,
-        schedule,
-        results: [...s.results, ...results],
-        currentWeek: s.currentWeek + 1,
+        schedule: cpu.schedule,
+        farmSchedule: farm.schedule,
+        results: [...s.results, ...cpu.results],
+        farmResults: [...s.farmResults, ...farm.results],
+        currentWeek: nextWeek,
+      }
+
+      const suggestions = generateCallUpSuggestions(interim)
+      const coachMarket = refreshCoachMarket(s.coachMarket ?? [])
+      const userTeam = recovered.find((t) => t.id === s.userTeamId)!
+
+      return {
+        ...interim,
+        lineup: sanitizeLineup(userTeam, interim.lineup),
+        rotation: sanitizeRotation(userTeam, interim.rotation),
+        callUpSuggestions: mergeCallUpSuggestions(s.callUpSuggestions ?? [], suggestions),
+        coachMarket,
       }
     })
   }, [])
 
   const buyPlayer = useCallback((player: Player, fromTeamId: string): boolean => {
-    if (!state || !userTeam) return false
+    if (!state || !userTeam || state.phase !== 'regular') return false
     if (userTeam.budget < player.salary) return false
-    if (userTeam.players.length >= 28) return false
+
+    const firstFull = countByLevel(userTeam, 'first') >= FIRST_TEAM_MAX
+    const farmFull = countByLevel(userTeam, 'farm') >= FARM_TEAM_MAX
+
+    let rosterLevel: 'first' | 'farm' = 'first'
+    if (firstFull) {
+      if (farmFull) return false
+      rosterLevel = 'farm'
+    }
 
     const newTeams = state.teams.map((t) => {
       if (t.id === fromTeamId) {
@@ -280,7 +319,14 @@ export function GameProvider({ children }: { children: ReactNode }) {
       if (t.id === state.userTeamId) {
         return {
           ...t,
-          players: [...t.players, { ...player, morale: Math.min(99, player.morale + 5) }],
+          players: [
+            ...t.players,
+            {
+              ...player,
+              rosterLevel,
+              morale: Math.min(99, player.morale + 5),
+            },
+          ],
           budget: t.budget - player.salary,
         }
       }
@@ -290,6 +336,40 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setState({ ...state, teams: newTeams })
     return true
   }, [state, userTeam])
+
+  const tradePlayers = useCallback(
+    (proposal: Omit<TradeProposal, 'fromTeamId'>): { ok: boolean; message: string } => {
+      if (!state || !userTeam || state.phase !== 'regular') {
+        return { ok: false, message: '정규시즌 중에만 트레이드할 수 있습니다.' }
+      }
+
+      const full: TradeProposal = { ...proposal, fromTeamId: state.userTeamId }
+      const validationErr = validateTrade(state.teams, full)
+      if (validationErr) {
+        return { ok: false, message: validationErr }
+      }
+
+      const cpuTeam = state.teams.find((t) => t.id === proposal.toTeamId)
+      if (!cpuTeam) return { ok: false, message: '상대 팀을 찾을 수 없습니다.' }
+
+      const accepted = cpuAcceptsTrade(
+        userTeam,
+        cpuTeam,
+        proposal.outgoingIds,
+        proposal.incomingIds,
+      )
+      if (!accepted) {
+        return { ok: false, message: '상대 구단이 제안을 거절했습니다.' }
+      }
+
+      const updated = executeTrade(state.teams, full)
+      if (!updated) return { ok: false, message: '트레이드 처리에 실패했습니다.' }
+
+      setState({ ...state, teams: updated })
+      return { ok: true, message: '트레이드가 성사되었습니다!' }
+    },
+    [state, userTeam],
+  )
 
   const releasePlayer = useCallback((playerId: string) => {
     setState((s) => {
@@ -311,6 +391,204 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setFocusedPlayerId((id) => (id === playerId ? null : id))
   }, [])
 
+  const promotePlayer = useCallback((playerId: string): boolean => {
+    let ok = false
+    setState((s) => {
+      if (!s) return s
+      const teams = promoteInLeague(s.teams, s.userTeamId, playerId)
+      if (!teams) return s
+      ok = true
+      return { ...s, teams }
+    })
+    return ok
+  }, [])
+
+  const demotePlayer = useCallback((playerId: string): boolean => {
+    let ok = false
+    setState((s) => {
+      if (!s) return s
+      const updated = demoteWithLineup(s, playerId)
+      if (!updated) return s
+      ok = true
+      return { ...s, ...updated }
+    })
+    return ok
+  }, [])
+
+  const sendToRehab = useCallback((playerId: string): boolean => {
+    let ok = false
+    setState((s) => {
+      if (!s) return s
+      const team = s.teams.find((t) => t.id === s.userTeamId)
+      const player = team?.players.find((p) => p.id === playerId)
+      if (!player || player.rosterLevel !== 'first' || !(player.injuryDays && player.injuryDays > 0)) {
+        return s
+      }
+      const updated = demoteWithLineup(s, playerId)
+      if (!updated) return s
+      ok = true
+      return { ...s, ...updated }
+    })
+    return ok
+  }, [])
+
+  const hireCoach = useCallback((coachId: string): boolean => {
+    let ok = false
+    setState((s) => {
+      if (!s) return s
+      const coach = s.coachMarket.find((c) => c.id === coachId)
+      if (!coach) return s
+
+      const team = s.teams.find((t) => t.id === s.userTeamId)
+      if (!team || team.budget < coach.salary) return s
+      if (team.coaches.some((c) => c.role === coach.role)) return s
+
+      ok = true
+      return {
+        ...s,
+        coachMarket: s.coachMarket.filter((c) => c.id !== coachId),
+        teams: s.teams.map((t) =>
+          t.id === s.userTeamId
+            ? {
+                ...t,
+                budget: t.budget - coach.salary,
+                coaches: [...t.coaches, coach],
+              }
+            : t,
+        ),
+      }
+    })
+    return ok
+  }, [])
+
+  const fireCoach = useCallback((coachId: string): boolean => {
+    let ok = false
+    setState((s) => {
+      if (!s) return s
+      const team = s.teams.find((t) => t.id === s.userTeamId)
+      const coach = team?.coaches.find((c) => c.id === coachId)
+      if (!coach) return s
+
+      ok = true
+      return {
+        ...s,
+        coachMarket: [...(s.coachMarket ?? []), coach],
+        teams: s.teams.map((t) =>
+          t.id === s.userTeamId
+            ? { ...t, coaches: t.coaches.filter((c) => c.id !== coachId) }
+            : t,
+        ),
+      }
+    })
+    return ok
+  }, [])
+
+  const acceptCallUp = useCallback((suggestionId: string): boolean => {
+    let ok = false
+    setState((s) => {
+      if (!s) return s
+      const suggestion = s.callUpSuggestions.find((x) => x.id === suggestionId)
+      if (!suggestion) return s
+
+      const teams = promoteInLeague(s.teams, s.userTeamId, suggestion.playerId)
+      if (!teams) return s
+
+      ok = true
+      return {
+        ...s,
+        teams,
+        callUpSuggestions: s.callUpSuggestions.filter((x) => x.id !== suggestionId),
+      }
+    })
+    return ok
+  }, [])
+
+  const dismissCallUp = useCallback((suggestionId: string) => {
+    setState((s) => {
+      if (!s) return s
+      return {
+        ...s,
+        callUpSuggestions: s.callUpSuggestions.filter((x) => x.id !== suggestionId),
+      }
+    })
+  }, [])
+
+  const enterStoveLeague = useCallback(() => {
+    setState((s) => {
+      if (!s || s.phase !== 'regular' || s.currentWeek < s.totalWeeks) return s
+      return buildStoveLeagueState(s)
+    })
+    setView('draft')
+  }, [])
+
+  const draftPlayer = useCallback((playerId: string): boolean => {
+    let ok = false
+    setState((s) => {
+      if (!s) return s
+      const next = draftProspect(s, playerId)
+      if (!next) return s
+      ok = true
+      return next
+    })
+    return ok
+  }, [])
+
+  const simulateDraftToUser = useCallback(() => {
+    setState((s) => {
+      if (!s || s.phase !== 'stove' || !s.draft) return s
+      return simulateDraftUntilUser(s)
+    })
+  }, [])
+
+  const simulateRemainingDraftFn = useCallback(() => {
+    setState((s) => {
+      if (!s || s.phase !== 'stove' || !s.draft) return s
+      return simulateRemainingDraft(s)
+    })
+  }, [])
+
+  const signFreeAgent = useCallback((playerId: string): boolean => {
+    let ok = false
+    setState((s) => {
+      if (!s || s.phase !== 'stove') return s
+      const listing = s.freeAgents.find((l) => l.player.id === playerId)
+      if (!listing) return s
+
+      const teamIdx = s.teams.findIndex((t) => t.id === s.userTeamId)
+      if (teamIdx < 0) return s
+
+      const signed = signFreeAgentForTeam(s.teams[teamIdx]!, listing)
+      if (!signed) return s
+
+      ok = true
+      const teams = [...s.teams]
+      teams[teamIdx] = signed.team
+      return {
+        ...s,
+        teams,
+        freeAgents: s.freeAgents.filter((l) => l.player.id !== playerId),
+      }
+    })
+    return ok
+  }, [])
+
+  const advanceStoveWeek = useCallback(() => {
+    setState((s) => {
+      if (!s || !isStoveLeague(s)) return s
+      const maxWeek = s.stoveTotalWeeks ?? 4
+      if ((s.stoveWeek ?? 1) >= maxWeek) return s
+      return advanceStoveWeekState(s)
+    })
+  }, [])
+
+  const startNextSeason = useCallback(() => {
+    setState((s) => {
+      if (!s || s.phase !== 'stove') return s
+      return startNextSeasonState(s)
+    })
+    setView('dashboard')
+  }, [])
+
   const clearLastResult = useCallback(() => setLastResult(null), [])
 
   const value: GameContextValue = {
@@ -330,7 +608,22 @@ export function GameProvider({ children }: { children: ReactNode }) {
     clearLastResult,
     upcomingGame,
     buyPlayer,
+    tradePlayers,
     releasePlayer,
+    promotePlayer,
+    demotePlayer,
+    sendToRehab,
+    hireCoach,
+    fireCoach,
+    acceptCallUp,
+    dismissCallUp,
+    enterStoveLeague,
+    signFreeAgent,
+    advanceStoveWeek,
+    startNextSeason,
+    draftPlayer,
+    simulateDraftToUser,
+    simulateRemainingDraft: simulateRemainingDraftFn,
     focusedPlayerId,
     openPlayer,
     closePlayer,

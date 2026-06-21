@@ -10,154 +10,48 @@ import type {
   Team,
 } from '../types/game'
 import { FIELD_POSITIONS } from '../types/game'
+import { parkForTeamAbbr } from '../data/parks/kbo2026'
 import { isPitcher } from './generator'
 import {
   recordPitcherRuns,
   recordPlateAppearance,
   recordRunsScored,
+  recordStolenBase,
   applyBoxScoreToPlayers,
 } from './statsAccumulator'
+import { resolveAtBat, teamDefenseFielding } from './sim/atBat'
+import { isStarterPitcher, pickPitcher, recordPitchCount } from './sim/bullpen'
+import { createSimContext, type SimLeagueLevel } from './sim/context'
+import { ensureHandedness } from './sim/handedness'
+import {
+  advanceRunners,
+  calcRbi,
+  emptyRunners,
+  tryStealAttempt,
+  type RunnerState,
+} from './sim/runners'
+import { isPlayerAvailable } from './injury'
+import { pickSavePitcher } from './rosterAvailability'
 
-function rand() {
-  return Math.random()
+function rosterForSim(team: Team, level: SimLeagueLevel = 'first'): Player[] {
+  const hasLevels = team.players.some((p) => p.rosterLevel === 'farm')
+  if (!hasLevels) return team.players
+  return team.players.filter((p) => (p.rosterLevel ?? 'first') === level)
 }
 
-function pickPitcher(team: Team, rotationIndex: number, inning: number): Player {
-  const starters = team.players.filter((p) => p.role === 'SP')
-  const relievers = team.players.filter((p) => p.role === 'RP')
-
-  if (inning <= 6 && starters.length > 0) {
-    return starters[rotationIndex % starters.length]!
-  }
-  if (relievers.length > 0) {
-    return relievers[Math.min(inning - 7, relievers.length - 1)] ?? relievers[0]!
-  }
-  return starters[0]!
-}
-
-function isStarterPitcher(team: Team, pitcher: Player, rotationIndex: number, inning: number) {
-  const starters = team.players.filter((p) => p.role === 'SP')
-  if (inning <= 6 && starters.length > 0) {
-    return pitcher.id === starters[rotationIndex % starters.length]!.id
-  }
-  return false
+function teamRoster(team: Team, level: SimLeagueLevel = 'first'): Team {
+  return { ...team, players: rosterForSim(team, level) }
 }
 
 function battingOrder(team: Team, lineup?: Record<FieldPosition, string>): Player[] {
+  const pool = team.players.filter(isPlayerAvailable)
   if (lineup) {
     return FIELD_POSITIONS.map((pos) => {
       const id = lineup[pos]
-      return team.players.find((p) => p.id === id) ?? team.players.find((p) => !isPitcher(p))!
+      return pool.find((p) => p.id === id) ?? pool.find((p) => !isPitcher(p))!
     }).filter(Boolean)
   }
-  return team.players.filter((p) => !isPitcher(p)).slice(0, 9)
-}
-
-function resolveAtBat(batter: Player, pitcher: Player): AtBatOutcome {
-  const contactSkill = batter.contact * (1 - batter.fatigue / 200)
-  const powerSkill = batter.power * (1 - batter.fatigue / 200)
-  const eyeSkill = batter.eye
-  const pitchSkill = (pitcher.control + pitcher.movement + pitcher.velocity) / 3
-
-  const kRate = clamp((pitchSkill - contactSkill * 0.6) / 180, 0.08, 0.32)
-  const bbRate = clamp((eyeSkill - pitcher.control * 0.5) / 200, 0.04, 0.14)
-
-  const r = rand()
-  if (r < kRate) return 'strikeout'
-  if (r < kRate + bbRate) return 'walk'
-
-  const contactRoll = rand() * 100
-  const contactThreshold = clamp(55 - (contactSkill - pitchSkill) * 0.25, 18, 62)
-
-  if (contactRoll > contactThreshold) return 'out'
-
-  const powerRoll = rand() * 100
-  const hrThreshold = clamp(96 - powerSkill * 0.35, 88, 99)
-  if (powerRoll > hrThreshold) return 'homerun'
-
-  const extraBase = rand() * 100
-  if (extraBase > 94 - powerSkill * 0.08) return 'triple'
-  if (extraBase > 82 - powerSkill * 0.12) return 'double'
-  return 'single'
-}
-
-function clamp(n: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, n))
-}
-
-interface RunnerState {
-  first: boolean
-  second: boolean
-  third: boolean
-}
-
-function advanceRunners(state: RunnerState, outcome: AtBatOutcome): { runs: number; state: RunnerState } {
-  let runs = 0
-  const next: RunnerState = { first: false, second: false, third: false }
-
-  if (outcome === 'walk') {
-    if (state.first && state.second && state.third) runs++
-    next.third = state.second || state.third
-    next.second = state.first || state.second
-    next.first = true
-    if (state.first && state.second && state.third) {
-      next.third = true
-      next.second = true
-      next.first = true
-    } else if (state.first && state.second) {
-      next.third = true
-      next.second = true
-      next.first = true
-    } else if (state.first) {
-      next.second = true
-      next.first = true
-    } else {
-      next.first = true
-    }
-    return { runs, state: next }
-  }
-
-  if (outcome === 'single') {
-    if (state.third) runs++
-    next.third = state.second
-    next.second = state.first
-    next.first = true
-    return { runs, state: next }
-  }
-
-  if (outcome === 'double') {
-    if (state.third) runs++
-    if (state.second) runs++
-    next.third = state.first
-    next.second = true
-    return { runs, state: next }
-  }
-
-  if (outcome === 'triple') {
-    runs += [state.first, state.second, state.third].filter(Boolean).length
-    next.third = true
-    return { runs, state: next }
-  }
-
-  if (outcome === 'homerun') {
-    runs += 1 + [state.first, state.second, state.third].filter(Boolean).length
-    return { runs, state: next }
-  }
-
-  if (outcome === 'out' && rand() < 0.12 && state.third) {
-    runs++
-    next.second = state.second
-    next.first = state.first
-    return { runs, state: next }
-  }
-
-  return { runs, state }
-}
-
-function calcRbi(outcome: AtBatOutcome, runs: number): number {
-  if (outcome === 'homerun') return runs
-  if (['single', 'double', 'triple', 'walk', 'out', 'sacrifice'].includes(outcome)) return runs
-  return 0
+  return pool.filter((p) => !isPitcher(p)).slice(0, 9)
 }
 
 const OUTCOME_TEXT: Record<AtBatOutcome, (b: string) => string> = {
@@ -177,6 +71,8 @@ export interface SimOptions {
   awayLineup?: Record<FieldPosition, string>
   homeRotationIndex?: number
   awayRotationIndex?: number
+  skipLogs?: boolean
+  rosterLevel?: SimLeagueLevel
 }
 
 function playHalfInning(
@@ -185,22 +81,69 @@ function playHalfInning(
   battingTeam: Player[],
   pitchingTeam: Team,
   rotIndex: number,
+  leagueLevel: SimLeagueLevel,
+  homeAbbr: string,
   box: GameBoxScore,
   logs: PlayLog[],
+  pitchCounts: Map<string, number>,
+  battingScore: number,
+  pitchingScore: number,
 ): number {
   let outs = 0
-  let runners: RunnerState = { first: false, second: false, third: false }
+  let runners: RunnerState = emptyRunners()
   let runs = 0
   let idx = 0
-  const pitcher = pickPitcher(pitchingTeam, rotIndex, inning)
-  const pitcherGs = isStarterPitcher(pitchingTeam, pitcher, rotIndex, inning)
+  const pitchingLead = pitchingScore - battingScore
+  const ctx = createSimContext(leagueLevel, parkForTeamAbbr(homeAbbr), inning, half)
+  const defenseFielding = teamDefenseFielding(pitchingTeam.players)
 
   while (outs < 3) {
-    const batter = battingTeam[idx % battingTeam.length]!
-    const outcome = resolveAtBat(batter, pitcher)
-    if (outcome === 'out' || outcome === 'strikeout') outs++
+    const batter = ensureHandedness(battingTeam[idx % battingTeam.length]!)
+    const pitcher = ensureHandedness(
+      pickPitcher(pitchingTeam, {
+        inning,
+        rotationIndex: rotIndex,
+        pitchingLead,
+        batterHand: batter.bats,
+        pitchCounts,
+      }),
+    )
 
-    const { runs: scored, state } = advanceRunners(runners, outcome)
+    const runnerSpeed =
+      runners.firstId != null
+        ? battingTeam.find((p) => p.id === runners.firstId)?.speed ?? batter.speed
+        : batter.speed
+
+    const steal = tryStealAttempt(runners, runnerSpeed, pitcher.control, outs)
+    if (steal.stolen && steal.stealerId) {
+      runners = steal.state
+      recordStolenBase(box, steal.stealerId)
+      logs.push({
+        inning,
+        half,
+        text: `${battingTeam.find((p) => p.id === steal.stealerId)?.name ?? '주자'} 도루 성공`,
+        outcome: 'single',
+        runsScored: 0,
+        batterId: steal.stealerId,
+        pitcherId: pitcher.id,
+        rbi: 0,
+      })
+    }
+
+    const pitcherGs = isStarterPitcher(pitchingTeam, pitcher, rotIndex, inning)
+    const outcome = resolveAtBat(
+      batter,
+      pitcher,
+      ctx,
+      Math.random,
+      { outs, runners },
+      defenseFielding,
+    )
+    recordPitchCount(pitchCounts, pitcher.id, outcome === 'walk' ? 4 : 1)
+
+    if (outcome === 'out' || outcome === 'strikeout' || outcome === 'sacrifice') outs++
+
+    const { runs: scored, state } = advanceRunners(runners, outcome, batter.id)
     const rbi = calcRbi(outcome, scored)
 
     recordPlateAppearance(box, batter.id, pitcher.id, outcome, rbi, pitcherGs)
@@ -209,6 +152,10 @@ function playHalfInning(
 
     runs += scored
     runners = state
+
+    if (half === 'bottom' && inning >= 9 && battingScore + runs > pitchingScore) {
+      break
+    }
 
     logs.push({
       inning,
@@ -232,18 +179,31 @@ export function simulateGame(
   away: Team,
   options: SimOptions = {},
 ): GameResult {
+  const level = options.rosterLevel ?? 'first'
+  const homeTeam = teamRoster(home, level)
+  const awayTeam = teamRoster(away, level)
   const logs: PlayLog[] = []
-  const innings: InningScore[] = Array.from({ length: 9 }, () => ({}))
+  const innings: InningScore[] = []
   let homeTotal = 0
   let awayTotal = 0
   const homeRot = options.homeRotationIndex ?? 0
   const awayRot = options.awayRotationIndex ?? 0
 
-  const homeOrder = battingOrder(home, options.homeLineup)
-  const awayOrder = battingOrder(away, options.awayLineup)
+  const homeOrder = battingOrder(homeTeam, options.homeLineup)
+  const awayOrder = battingOrder(awayTeam, options.awayLineup)
 
-  const awayStarter = pickPitcher(home, homeRot, 1)
-  const homeStarter = pickPitcher(away, awayRot, 1)
+  const awayStarter = pickPitcher(homeTeam, {
+    inning: 1,
+    rotationIndex: homeRot,
+    pitchingLead: 0,
+    pitchCounts: new Map(),
+  })
+  const homeStarter = pickPitcher(awayTeam, {
+    inning: 1,
+    rotationIndex: awayRot,
+    pitchingLead: 0,
+    pitchCounts: new Map(),
+  })
 
   const box: GameBoxScore = {
     batters: {},
@@ -252,14 +212,60 @@ export function simulateGame(
     homeStarterId: homeStarter.id,
   }
 
-  for (let inning = 1; inning <= 9; inning++) {
-    const awayRuns = playHalfInning(inning, 'top', awayOrder, home, homeRot, box, logs)
+  const pitchCounts = new Map<string, number>()
+  const MAX_INNINGS = 15
+
+  for (let inning = 1; inning <= MAX_INNINGS; inning++) {
+    const awayRuns = playHalfInning(
+      inning,
+      'top',
+      awayOrder,
+      homeTeam,
+      homeRot,
+      level,
+      home.abbr,
+      box,
+      logs,
+      pitchCounts,
+      awayTotal,
+      homeTotal,
+    )
+    innings[inning - 1] ??= {}
     innings[inning - 1]!.top = awayRuns
     awayTotal += awayRuns
 
-    const homeRuns = playHalfInning(inning, 'bottom', homeOrder, away, awayRot, box, logs)
+    const homeRuns = playHalfInning(
+      inning,
+      'bottom',
+      homeOrder,
+      awayTeam,
+      awayRot,
+      level,
+      home.abbr,
+      box,
+      logs,
+      pitchCounts,
+      homeTotal,
+      awayTotal,
+    )
     innings[inning - 1]!.bottom = homeRuns
     homeTotal += homeRuns
+
+    if (inning >= 9 && homeTotal !== awayTotal) break
+  }
+
+  if (homeTotal === awayTotal) {
+    homeTotal += 1
+  }
+
+  const homeWon = homeTotal > awayTotal
+  box.winningPitcherId = homeWon ? box.homeStarterId : box.awayStarterId
+  box.losingPitcherId = homeWon ? box.awayStarterId : box.homeStarterId
+  const saveId = pickSavePitcher(box, box.winningPitcherId)
+  if (saveId) {
+    box.savePitcherId = saveId
+    const saveLine = box.pitchers[saveId]
+    if (saveLine) saveLine.saves = 1
   }
 
   return {
@@ -269,9 +275,12 @@ export function simulateGame(
     homeScore: homeTotal,
     awayScore: awayTotal,
     innings,
-    logs,
+    logs: options.skipLogs ? [] : logs,
     week: game.week,
+    day: game.day,
     boxScore: box,
+    parkAbbr: home.abbr,
+    parkStadium: home.stadium,
   }
 }
 
@@ -338,3 +347,8 @@ export function simulateCpuGames(
 
   return { results, teams: currentTeams, schedule: currentSchedule }
 }
+
+// Re-export for tests / sanity scripts
+export { LEAGUE_STRENGTH, createSimContext } from './sim/context'
+export { resolveAtBat } from './sim/atBat'
+export { parkForTeamAbbr, PARKS_2026 } from '../data/parks/kbo2026'

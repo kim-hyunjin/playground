@@ -1,5 +1,10 @@
-import type { FieldPosition, Player, PlayerRole, Team } from '../types/game'
+import type { FieldPosition, Player, PlayerRole, RosterLevel, Team } from '../types/game'
 import { emptyBatterStats, emptyPitcherStats } from '../types/game'
+import { generateDefaultStaff } from './coachGenerator'
+import { contractYearsForPlayer } from './contracts'
+import { rollPotential } from './playerDevelopment'
+import { ensureHandedness } from './sim/handedness'
+import { isPlayerAvailable } from './injury'
 
 const LAST_NAMES = [
   '김', '이', '박', '최', '정', '강', '조', '윤', '장', '임',
@@ -28,44 +33,63 @@ export function generateName(): string {
   return `${pick(LAST_NAMES)}${pick(FIRST_NAMES)}`
 }
 
-export function generatePlayer(role: PlayerRole, tier: 'star' | 'avg' | 'weak' = 'avg'): Player {
+export function generatePlayer(
+  role: PlayerRole,
+  tier: 'star' | 'avg' | 'weak' = 'avg',
+  options: { rosterLevel?: RosterLevel; ageMin?: number; ageMax?: number } = {},
+): Player {
+  const rosterLevel = options.rosterLevel ?? 'first'
+  const ageMin = options.ageMin ?? (rosterLevel === 'farm' ? 18 : 21)
+  const ageMax = options.ageMax ?? (rosterLevel === 'farm' ? 24 : 36)
   const base = tier === 'star' ? rand(72, 92) : tier === 'avg' ? rand(52, 78) : rand(38, 58)
-  const variance = () => clamp(base + rand(-8, 8))
+  const farmBase = tier === 'avg' ? rand(45, 62) : rand(35, 52)
+  const effectiveBase = rosterLevel === 'farm' ? farmBase : base
+  const variance = () => clamp(effectiveBase + rand(-8, 8))
 
-  const isPitcher = role === 'SP' || role === 'RP'
+  const isPitcherRole = role === 'SP' || role === 'RP'
 
-  return {
+  const attrs = {
     id: crypto.randomUUID(),
     name: generateName(),
-    age: rand(21, 36),
+    age: rand(ageMin, ageMax),
     role,
-    contact: isPitcher ? rand(25, 45) : variance(),
-    power: isPitcher ? rand(20, 40) : variance(),
-    eye: isPitcher ? rand(25, 45) : variance(),
-    speed: isPitcher ? rand(30, 55) : variance(),
-    fielding: isPitcher ? rand(40, 60) : variance(),
-    velocity: isPitcher ? variance() : rand(20, 40),
-    control: isPitcher ? variance() : rand(20, 40),
-    movement: isPitcher ? variance() : rand(20, 40),
-    stamina: isPitcher ? (role === 'SP' ? variance() : rand(45, 70)) : rand(50, 80),
-    salary: isPitcher ? rand(80, 350) * 10000 : rand(30, 200) * 10000,
+    rosterLevel,
+    contact: isPitcherRole ? rand(25, 45) : variance(),
+    power: isPitcherRole ? rand(20, 40) : variance(),
+    eye: isPitcherRole ? rand(25, 45) : variance(),
+    speed: isPitcherRole ? rand(30, 55) : variance(),
+    fielding: isPitcherRole ? rand(40, 60) : variance(),
+    velocity: isPitcherRole ? variance() : rand(20, 40),
+    control: isPitcherRole ? variance() : rand(20, 40),
+    movement: isPitcherRole ? variance() : rand(20, 40),
+    stamina: isPitcherRole ? (role === 'SP' ? variance() : rand(45, 70)) : rand(50, 80),
+    salary: isPitcherRole ? rand(80, 350) * 10000 : rand(30, 200) * 10000,
     morale: rand(65, 95),
     fatigue: rand(0, 15),
-    seasonStats: isPitcher ? emptyPitcherStats() : emptyBatterStats(),
-  }
+    seasonStats: isPitcherRole ? emptyPitcherStats() : emptyBatterStats(),
+    farmSeasonStats: isPitcherRole ? emptyPitcherStats() : emptyBatterStats(),
+  } satisfies Omit<Player, 'potential' | 'developmentXp'>
+
+  const ovr = overallRating(attrs as Player)
+  const player = ensureHandedness({
+    ...attrs,
+    potential: rollPotential(tier, attrs.age, rosterLevel, ovr),
+    developmentXp: 0,
+  })
+  return { ...player, contractYears: contractYearsForPlayer(player) }
 }
 
 export const TEAM_DEFS = [
-  { city: '광주', name: '기아 타이거즈', abbr: 'KIA', color: '#EA0029', stadium: '광주-기아 챔피언스 필드' },
-  { city: '창원', name: 'NC 다이노스', abbr: 'NC', color: '#315288', stadium: '창원 NC 파크' },
-  { city: '인천', name: 'SSG 랜더스', abbr: 'SSG', color: '#CE0E2D', stadium: '인천 SSG 랜더스필드' },
-  { city: '서울', name: '키움 히어로즈', abbr: 'WO', color: '#570514', stadium: '고척 스카이돔' },
-  { city: '수원', name: 'KT 위즈', abbr: 'KT', color: '#000000', stadium: 'KT 위즈파크' },
-  { city: '서울', name: '두산 베어스', abbr: 'DS', color: '#131230', stadium: '잠실 야구장' },
-  { city: '서울', name: 'LG 트윈스', abbr: 'LG', color: '#C30452', stadium: '잠실 야구장' },
-  { city: '부산', name: '롯데 자이언츠', abbr: 'LT', color: '#041E42', stadium: '사직야구장' },
-  { city: '대전', name: '한화 이글스', abbr: 'HH', color: '#FF6600', stadium: '대전 한화생명 이글스파크' },
-  { city: '대구', name: '삼성 라이온즈', abbr: 'SS', color: '#074CA1', stadium: '대구 삼성 라이온즈 파크' },
+  { city: '광주', name: 'KIA 타이거즈', abbr: 'KIA', color: '#EA0029', stadium: '광주-기아챔피언스필드' },
+  { city: '창원', name: 'NC 다이노스', abbr: 'NC', color: '#315288', stadium: '창원NC파크' },
+  { city: '인천', name: 'SSG 랜더스', abbr: 'SSG', color: '#CE0E2D', stadium: '인천SSG랜더스필드' },
+  { city: '서울', name: '키움 히어로즈', abbr: '키움', color: '#570514', stadium: '서울고척스카이돔' },
+  { city: '수원', name: 'KT 위즈', abbr: 'KT', color: '#000000', stadium: '수원KT위즈파크' },
+  { city: '서울', name: '두산 베어스', abbr: '두산', color: '#131230', stadium: '서울잠실야구장' },
+  { city: '서울', name: 'LG 트윈스', abbr: 'LG', color: '#C30452', stadium: '서울잠실야구장' },
+  { city: '부산', name: '롯데 자이언츠', abbr: '롯데', color: '#041E42', stadium: '부산사직야구장' },
+  { city: '대전', name: '한화 이글스', abbr: '한화', color: '#FF6600', stadium: '대전한화생명이글스파크' },
+  { city: '대구', name: '삼성 라이온즈', abbr: '삼성', color: '#074CA1', stadium: '대구삼성라이온즈파크' },
 ]
 
 const ROSTER_TEMPLATE: PlayerRole[] = [
@@ -75,6 +99,23 @@ const ROSTER_TEMPLATE: PlayerRole[] = [
   'RP', 'RP', 'RP', 'RP', 'RP',
 ]
 
+const FARM_ROSTER_TEMPLATE: PlayerRole[] = [
+  'C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'DH',
+  'C', '2B', 'SS', 'LF', 'CF', 'RF',
+  'SP', 'SP', 'SP', 'SP',
+  'RP', 'RP', 'RP', 'RP', 'RP', 'RP',
+]
+
+function farmRosterTier(index: number): 'avg' | 'weak' {
+  return index < 4 ? 'avg' : 'weak'
+}
+
+export function generateFarmRosterPlayers(): Player[] {
+  return FARM_ROSTER_TEMPLATE.map((role, i) =>
+    generatePlayer(role, farmRosterTier(i), { rosterLevel: 'farm' }),
+  )
+}
+
 function rosterTier(index: number, role: PlayerRole): 'star' | 'avg' | 'weak' {
   if (role === 'SP' && index < 2) return 'star'
   if (['SS', 'CF', 'C'].includes(role) && index === 0) return 'star'
@@ -83,10 +124,11 @@ function rosterTier(index: number, role: PlayerRole): 'star' | 'avg' | 'weak' {
 }
 
 export function generateTeam(def: (typeof TEAM_DEFS)[number], starBoost = false): Team {
-  const players = ROSTER_TEMPLATE.map((role, i) => {
+  const firstPlayers = ROSTER_TEMPLATE.map((role, i) => {
     const tier = starBoost && i < 3 ? 'star' : rosterTier(i, role)
-    return generatePlayer(role, tier)
+    return generatePlayer(role, tier, { rosterLevel: 'first' })
   })
+  const farmPlayers = generateFarmRosterPlayers()
 
   return {
     id: crypto.randomUUID(),
@@ -96,11 +138,16 @@ export function generateTeam(def: (typeof TEAM_DEFS)[number], starBoost = false)
     color: def.color,
     stadium: def.stadium,
     budget: rand(8, 15) * 1_000_000,
-    players,
+    players: [...firstPlayers, ...farmPlayers],
     wins: 0,
     losses: 0,
     runsScored: 0,
     runsAllowed: 0,
+    farmWins: 0,
+    farmLosses: 0,
+    farmRunsScored: 0,
+    farmRunsAllowed: 0,
+    coaches: generateDefaultStaff(starBoost),
   }
 }
 
@@ -111,9 +158,10 @@ export function generateLeague(userTeamIndex: number): Team[] {
 export function defaultLineup(team: Team): Record<FieldPosition, string> {
   const positions: FieldPosition[] = ['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'DH']
   const lineup = {} as Record<FieldPosition, string>
+  const pool = team.players.filter((p) => p.rosterLevel !== 'farm' && isPlayerAvailable(p))
 
   for (const pos of positions) {
-    const player = team.players.find((p) => p.role === pos)
+    const player = pool.find((p) => p.role === pos)
     if (player) lineup[pos] = player.id
   }
 
@@ -121,7 +169,9 @@ export function defaultLineup(team: Team): Record<FieldPosition, string> {
 }
 
 export function defaultRotation(team: Team): string[] {
-  return team.players.filter((p) => p.role === 'SP').map((p) => p.id)
+  return team.players
+    .filter((p) => p.role === 'SP' && p.rosterLevel !== 'farm' && isPlayerAvailable(p))
+    .map((p) => p.id)
 }
 
 export function isPitcher(p: Player) {
