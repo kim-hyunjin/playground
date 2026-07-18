@@ -3,14 +3,16 @@ import { isPlayerAvailable } from '../engine/injury'
 import { OvrBadge } from '../components/PlayerCard'
 import { PlayerNameButton } from '../components/PlayerNameButton'
 import { useGame } from '../store/gameStore'
+import { DEFAULT_BULLPEN_STRATEGY } from '../types/game'
 
 export function RotationPage() {
-  const { userTeam, state, swapRotation } = useGame()
+  const { userTeam, state, swapRotation, setBullpenStrategy } = useGame()
   if (!userTeam || !state) return null
 
   const starters = state.rotation
     .map((id) => userTeam.players.find((p) => p.id === id))
     .filter(Boolean)
+  const strategy = state.bullpenStrategy ?? DEFAULT_BULLPEN_STRATEGY
 
   return (
     <div className="bm-animate-in space-y-6">
@@ -73,6 +75,28 @@ export function RotationPage() {
       <p className="text-xs text-[var(--text-muted)]">
         ▲▼ 버튼으로 로테이션 순서를 변경할 수 있습니다. 경기마다 다음 선발이 자동으로 선택됩니다.
       </p>
+
+      <section className="bm-card space-y-4 p-4">
+        <div>
+          <h2 className="font-semibold text-[var(--text-h)]">자동 불펜 운용</h2>
+          <p className="text-xs text-[var(--text-muted)]">사용자 경기와 자동 진행에 적용되는 기본 교체 조건입니다.</p>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-3">
+          <label className="text-sm">선발 투구 한계
+            <input className="bm-input mt-1" type="number" min="60" max="120" value={strategy.starterPitchLimit} onChange={(e) => setBullpenStrategy({ ...strategy, starterPitchLimit: Number(e.target.value) })} />
+          </label>
+          <label className="text-sm">셋업 등판 이닝
+            <input className="bm-input mt-1" type="number" min="6" max="9" value={strategy.setupInning} onChange={(e) => setBullpenStrategy({ ...strategy, setupInning: Number(e.target.value) })} />
+          </label>
+          <label className="text-sm">마무리 등판 이닝
+            <input className="bm-input mt-1" type="number" min="7" max="9" value={strategy.closerInning} onChange={(e) => setBullpenStrategy({ ...strategy, closerInning: Number(e.target.value) })} />
+          </label>
+        </div>
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={strategy.useLeftyMatchups} onChange={(e) => setBullpenStrategy({ ...strategy, useLeftyMatchups: e.target.checked })} />
+          좌타자 상대 좌완 매치업 우선
+        </label>
+      </section>
     </div>
   )
 }

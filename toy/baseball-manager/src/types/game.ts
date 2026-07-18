@@ -312,9 +312,24 @@ export interface GameState {
   lineup: Record<FieldPosition, string>
   rotation: string[]
   rotationIndex: number
+  bullpenStrategy?: BullpenStrategy
   results: GameResult[]
   farmResults: GameResult[]
   managerName: string
+}
+
+export interface BullpenStrategy {
+  starterPitchLimit: number
+  setupInning: number
+  closerInning: number
+  useLeftyMatchups: boolean
+}
+
+export const DEFAULT_BULLPEN_STRATEGY: BullpenStrategy = {
+  starterPitchLimit: 95,
+  setupInning: 8,
+  closerInning: 9,
+  useLeftyMatchups: true,
 }
 
 export const COACH_ROLE_LABEL: Record<CoachRole, string> = {

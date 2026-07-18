@@ -31,6 +31,7 @@ import {
   gameSessionView,
   pauseGameSession,
   restoreGameSession,
+  substituteSessionPitcher,
 } from '../src/engine/gameSession'
 import { buildStoveLeagueState } from '../src/engine/stoveLeague'
 import type { GameState } from '../types/game'
@@ -224,6 +225,12 @@ try {
   const restored = restoreGameSession(JSON.parse(JSON.stringify(paused)))
   assert(restored?.status === 'paused' && restored.cursor === session.cursor, '세션 JSON 저장·복원')
   assert(gameSessionView(restored!).logs.length === session.cursor, '세션 cursor까지만 로그 공개')
+  const managed = createGameSession(seededGame(), 20260718, gameRoster)
+  const managedPitcher = userTeam.players.find((p) => gameRoster.bullpenIds.includes(p.id))!
+  const managedChange = substituteSessionPitcher(managed, managedPitcher)
+  assert(managedChange.ok, '세션 투수 교체 반영')
+  assert(managedChange.session.resolvedResult.logs.some((log) => log.pitcherId === managedPitcher.id), '교체 투수가 잔여 플레이에 등판')
+  assert(Boolean(managedChange.session.resolvedResult.boxScore.pitchers[managedPitcher.id]), '교체 투수 박스스코어 재계산')
   while (session.status !== 'complete') session = advancePlateAppearance(session)
   assert(gameSessionView(session).complete, '세션을 경기 종료까지 진행')
 

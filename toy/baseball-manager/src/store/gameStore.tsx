@@ -7,7 +7,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import type { FieldPosition, GameResult, GameState, Player, ScheduledGame, Team, View } from '../types/game'
+import { DEFAULT_BULLPEN_STRATEGY, type BullpenStrategy, type FieldPosition, type GameResult, type GameState, type Player, type ScheduledGame, type Team, type View } from '../types/game'
 import { loadLeague2026 } from '../data/rosterLoader'
 import { defaultLineup, defaultRotation } from '../engine/generator'
 import { generateSchedule, generateFarmSchedule, nextUserGame, normalizeSchedule, hasUnplayedUserGamesInWeek } from '../engine/schedule'
@@ -50,6 +50,7 @@ import {
   type GameSession,
   substituteSessionBatter,
   substituteSessionPitcher,
+  substituteSessionRunner,
 } from '../engine/gameSession'
 import { createSeededRandom } from '../engine/sim/random'
 import { createGameRoster } from '../engine/substitutions'
@@ -68,6 +69,7 @@ interface GameContextValue {
   setLineup: (lineup: Record<FieldPosition, string>) => void
   setRotation: (rotation: string[]) => void
   swapRotation: (from: number, to: number) => void
+  setBullpenStrategy: (strategy: BullpenStrategy) => void
   playUserGame: () => GameResult | null
   advanceWeek: () => void
   lastResult: GameResult | null
@@ -77,6 +79,7 @@ interface GameContextValue {
   resumeActiveGame: () => void
   substitutePitcher: (playerId: string) => string
   substituteBatter: (battingOrder: number, playerId: string) => string
+  substituteRunner: (outgoingId: string, playerId: string) => string
   clearLastResult: () => void
   upcomingGame: ScheduledGame | null
   buyPlayer: (player: Player, fromTeamId: string) => boolean
@@ -121,6 +124,7 @@ function createInitialState(teamIndex: number, managerName: string): GameState {
     lineup: defaultLineup(userTeam),
     rotation: defaultRotation(userTeam),
     rotationIndex: 0,
+    bullpenStrategy: DEFAULT_BULLPEN_STRATEGY,
     results: [],
     farmResults: [],
     managerName,
@@ -145,6 +149,7 @@ function loadState(): GameState | null {
       ...parsed,
       schedule: normalizeSchedule(parsed.schedule ?? []),
       farmSchedule: normalizeSchedule(parsed.farmSchedule ?? []),
+      bullpenStrategy: parsed.bullpenStrategy ?? DEFAULT_BULLPEN_STRATEGY,
     }
   } catch {
     return null
@@ -244,6 +249,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
       return { ...s, rotation }
     })
   }, [])
+  const setBullpenStrategy = useCallback((bullpenStrategy: BullpenStrategy) => {
+    setState((s) => s ? { ...s, bullpenStrategy } : s)
+  }, [])
 
   const playUserGame = useCallback((): GameResult | null => {
     if (!state || state.phase !== 'regular') return null
@@ -261,6 +269,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
       homeRotationIndex: isHome ? state.rotationIndex : undefined,
       awayRotationIndex: !isHome ? state.rotationIndex : undefined,
       random: createSeededRandom({ seed }),
+      homeBullpenStrategy: isHome ? state.bullpenStrategy : undefined,
+      awayBullpenStrategy: !isHome ? state.bullpenStrategy : undefined,
     })
 
     const applied = applyResult(state.teams, state.schedule, result)
@@ -300,29 +310,30 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const substitutePitcher = useCallback((playerId: string): string => {
     const player = userTeam?.players.find((p) => p.id === playerId)
     if (!player) return '선수를 찾을 수 없습니다.'
-    let message = '진행 중인 경기가 없습니다.'
-    setActiveGameSession((session) => {
-      if (!session) return session
-      const result = substituteSessionPitcher(session, player)
-      message = result.message
-      if (result.ok) setLastResult(result.session.resolvedResult)
-      return result.session
-    })
-    return message
-  }, [userTeam])
+    if (!activeGameSession) return '진행 중인 경기가 없습니다.'
+    const result = substituteSessionPitcher(activeGameSession, player)
+    setActiveGameSession(result.session)
+    if (result.ok) setLastResult(result.session.resolvedResult)
+    return result.message
+  }, [activeGameSession, userTeam])
   const substituteBatter = useCallback((battingOrder: number, playerId: string): string => {
     const player = userTeam?.players.find((p) => p.id === playerId)
     if (!player) return '선수를 찾을 수 없습니다.'
-    let message = '진행 중인 경기가 없습니다.'
-    setActiveGameSession((session) => {
-      if (!session) return session
-      const result = substituteSessionBatter(session, battingOrder, player)
-      message = result.message
-      if (result.ok) setLastResult(result.session.resolvedResult)
-      return result.session
-    })
-    return message
-  }, [userTeam])
+    if (!activeGameSession) return '진행 중인 경기가 없습니다.'
+    const result = substituteSessionBatter(activeGameSession, battingOrder, player)
+    setActiveGameSession(result.session)
+    if (result.ok) setLastResult(result.session.resolvedResult)
+    return result.message
+  }, [activeGameSession, userTeam])
+  const substituteRunner = useCallback((outgoingId: string, playerId: string): string => {
+    const player = userTeam?.players.find((p) => p.id === playerId)
+    if (!player) return '선수를 찾을 수 없습니다.'
+    if (!activeGameSession) return '진행 중인 경기가 없습니다.'
+    const result = substituteSessionRunner(activeGameSession, outgoingId, player)
+    setActiveGameSession(result.session)
+    if (result.ok) setLastResult(result.session.resolvedResult)
+    return result.message
+  }, [activeGameSession, userTeam])
 
   const advanceWeek = useCallback(() => {
     setState((s) => {
@@ -682,6 +693,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setLineup,
     setRotation,
     swapRotation,
+    setBullpenStrategy,
     playUserGame,
     advanceWeek,
     lastResult,
@@ -691,6 +703,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     resumeActiveGame,
     substitutePitcher,
     substituteBatter,
+    substituteRunner,
     clearLastResult,
     upcomingGame,
     buyPlayer,

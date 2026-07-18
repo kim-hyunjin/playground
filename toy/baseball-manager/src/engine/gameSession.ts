@@ -1,8 +1,34 @@
 import type { GameResult, PlayLog } from '../types/game'
 import { computeScoreThroughLogs, type LiveScore } from './liveScore'
 import { normalizeSeed } from './sim/random'
-import { changePitcher, substituteBatter, type GameRosterState } from './substitutions'
+import { changePitcher, substituteBatter, substituteRunner, type GameRosterState } from './substitutions'
 import type { Player } from '../types/game'
+import { recordPitcherRuns, recordPlateAppearance, recordRunsScored, recordStolenBase } from './statsAccumulator'
+
+function rebuildBoxScore(result: GameResult): GameResult {
+  const original = result.boxScore
+  const box = {
+    batters: {}, pitchers: {},
+    awayStarterId: original.awayStarterId,
+    homeStarterId: original.homeStarterId,
+    winningPitcherId: original.winningPitcherId,
+    losingPitcherId: original.losingPitcherId,
+    savePitcherId: original.savePitcherId,
+  }
+  for (const log of result.logs) {
+    if (!log.batterId || !log.pitcherId || !log.outcome) continue
+    if (log.eventType === 'stolenBase') {
+      recordStolenBase(box, log.batterId)
+      continue
+    }
+    if (log.eventType !== 'plateAppearance') continue
+    const gs = log.pitcherId === original.awayStarterId || log.pitcherId === original.homeStarterId
+    recordPlateAppearance(box, log.batterId, log.pitcherId, log.outcome, log.rbi ?? 0, gs)
+    recordRunsScored(box, log.batterId, log.runsScored, log.outcome)
+    if (log.runsScored > 0) recordPitcherRuns(box, log.pitcherId, log.runsScored)
+  }
+  return { ...result, boxScore: box }
+}
 
 export type GameSessionStatus = 'ready' | 'playing' | 'paused' | 'complete'
 
@@ -71,7 +97,7 @@ export function substituteSessionPitcher(session: GameSession, incoming: Player)
     session: {
       ...session,
       userRoster: changed.roster,
-      resolvedResult: replaceFuturePlayer(session, 'pitcherId', outgoingId, incoming.id),
+      resolvedResult: rebuildBoxScore(replaceFuturePlayer(session, 'pitcherId', outgoingId, incoming.id)),
     },
   }
 }
@@ -88,7 +114,35 @@ export function substituteSessionBatter(session: GameSession, battingOrder: numb
     session: {
       ...session,
       userRoster: changed.roster,
-      resolvedResult: replaceFuturePlayer(session, 'batterId', outgoingId, incoming.id),
+      resolvedResult: rebuildBoxScore(replaceFuturePlayer(session, 'batterId', outgoingId, incoming.id)),
+    },
+  }
+}
+
+export function substituteSessionRunner(session: GameSession, outgoingId: string, incoming: Player): { session: GameSession; message: string; ok: boolean } {
+  if (!session.userRoster) return { session, ok: false, message: '경기 엔트리가 없습니다.' }
+  const changed = substituteRunner(session.userRoster, outgoingId, incoming)
+  if (!changed.ok) return { session, ok: false, message: changed.message }
+  const result = replaceFuturePlayer(session, 'batterId', outgoingId, incoming.id)
+  const replaceRunner = (id?: string) => id === outgoingId ? incoming.id : id
+  return {
+    ok: true,
+    message: changed.message,
+    session: {
+      ...session,
+      userRoster: changed.roster,
+      resolvedResult: rebuildBoxScore({
+        ...result,
+        logs: result.logs.map((log, index) => index < session.cursor ? log : ({
+          ...log,
+          situationBefore: log.situationBefore ? { ...log.situationBefore, runners: {
+            firstId: replaceRunner(log.situationBefore.runners.firstId), secondId: replaceRunner(log.situationBefore.runners.secondId), thirdId: replaceRunner(log.situationBefore.runners.thirdId),
+          } } : undefined,
+          situationAfter: log.situationAfter ? { ...log.situationAfter, runners: {
+            firstId: replaceRunner(log.situationAfter.runners.firstId), secondId: replaceRunner(log.situationAfter.runners.secondId), thirdId: replaceRunner(log.situationAfter.runners.thirdId),
+          } } : undefined,
+        })),
+      }),
     },
   }
 }

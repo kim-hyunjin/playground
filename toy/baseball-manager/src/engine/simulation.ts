@@ -9,6 +9,7 @@ import type {
   Player,
   ScheduledGame,
   Team,
+  BullpenStrategy,
 } from '../types/game'
 import { FIELD_POSITIONS } from '../types/game'
 import { parkForTeamAbbr } from '../data/parks/kbo2026'
@@ -76,6 +77,8 @@ export interface SimOptions {
   rosterLevel?: SimLeagueLevel
   /** 테스트·저장 경기 재현을 위한 난수 공급자 */
   random?: () => number
+  homeBullpenStrategy?: BullpenStrategy
+  awayBullpenStrategy?: BullpenStrategy
 }
 
 function playHalfInning(
@@ -92,6 +95,7 @@ function playHalfInning(
   battingScore: number,
   pitchingScore: number,
   random: () => number,
+  bullpenStrategy?: BullpenStrategy,
 ): number {
   let outs = 0
   let runners: RunnerState = emptyRunners()
@@ -131,6 +135,7 @@ function playHalfInning(
         pitchingLead,
         batterHand: batter.bats,
         pitchCounts,
+        strategy: bullpenStrategy,
       }),
     )
 
@@ -262,6 +267,7 @@ export function simulateGame(
       awayTotal,
       homeTotal,
       random,
+      options.homeBullpenStrategy,
     )
     innings[inning - 1] ??= {}
     innings[inning - 1]!.top = awayRuns
@@ -281,6 +287,7 @@ export function simulateGame(
       homeTotal,
       awayTotal,
       random,
+      options.awayBullpenStrategy,
     )
     innings[inning - 1]!.bottom = homeRuns
     homeTotal += homeRuns

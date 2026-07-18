@@ -95,3 +95,22 @@ export function changePitcher(roster: GameRosterState, incoming: Player): Substi
     },
   }
 }
+
+export function substituteRunner(roster: GameRosterState, outgoingId: string, incoming: Player): SubstitutionResult {
+  const slot = roster.lineup.find((item) => item.playerId === outgoingId)
+  if (!slot) return { ok: false, message: '주자의 타순을 찾을 수 없습니다.', roster }
+  if (!roster.benchIds.includes(incoming.id) || unavailable(roster, incoming.id)) {
+    return { ok: false, message: '교체 가능한 대주자가 아닙니다.', roster }
+  }
+  return {
+    ok: true,
+    message: '대주자 교체 완료',
+    roster: {
+      ...roster,
+      lineup: roster.lineup.map((item) => item.playerId === outgoingId ? { ...item, playerId: incoming.id } : item),
+      benchIds: roster.benchIds.filter((id) => id !== incoming.id),
+      usedPlayerIds: [...roster.usedPlayerIds, incoming.id],
+      removedPlayerIds: [...roster.removedPlayerIds, outgoingId],
+    },
+  }
+}

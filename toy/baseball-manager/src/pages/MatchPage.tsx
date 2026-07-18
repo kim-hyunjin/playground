@@ -5,6 +5,7 @@ import { ipFromOuts } from '../engine/sabermetrics'
 import { DAY_LABELS } from '../types/game'
 import { PlayerNameButton } from '../components/PlayerNameButton'
 import { GameSituationPanel } from '../components/GameSituationPanel'
+import { GameManagementPanel } from '../components/GameManagementPanel'
 import { useGame } from '../store/gameStore'
 
 export function MatchPage() {
@@ -219,6 +220,8 @@ export function MatchPage() {
           </div>
 
           <GameSituationPanel situation={currentSituation} teams={state.teams} />
+
+          <GameManagementPanel />
 
           {activeGameSession && activeGameSession.status !== 'complete' ? (
             <div className="flex justify-center">
