@@ -8,6 +8,7 @@ import { GameSituationPanel } from '../components/GameSituationPanel'
 import { GameManagementPanel } from '../components/GameManagementPanel'
 import { ManagerTacticsPanel } from '../components/ManagerTacticsPanel'
 import { PitchLocationPanel } from '../components/PitchLocationPanel'
+import { LiveGameStatsPanel } from '../components/LiveGameStatsPanel'
 import { useGame } from '../store/gameStore'
 import { createLivePitch, type LivePitch, type PitchCall } from '../engine/livePitch'
 
@@ -58,6 +59,7 @@ export function MatchPage() {
   const [pitchNumber, setPitchNumber] = useState(0)
   const [lastPitch, setLastPitch] = useState<LivePitch>()
   const [pendingResolution, setPendingResolution] = useState(false)
+  const [showPlayLog, setShowPlayLog] = useState(false)
   const timerRef = useRef<number | null>(null)
   const result = lastResult
   const playing = activeGameSession?.status === 'playing'
@@ -178,19 +180,32 @@ export function MatchPage() {
     : undefined
   const shownLogCount = sessionInProgress || playing ? replayCursor : result?.logs.length ?? 0
   const currentLog = shownLogCount > 0 ? result?.logs[shownLogCount - 1] : undefined
+  const visibleLogs = result?.logs.slice(0, shownLogCount) ?? []
   const userSide = currentSituation
     ? ((currentSituation.half === 'bottom') === Boolean(isHome) ? 'offense' : 'defense')
     : undefined
 
   return (
-    <div className="bm-animate-in space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-[var(--text-h)]">경기</h1>
-        <p className="text-sm text-[var(--text-muted)]">
-          {state.currentWeek}주차
-          {upcomingGame?.day ? ` · ${DAY_LABELS[upcomingGame.day]}요일` : null}
-          {result?.day && !upcomingGame ? ` · ${DAY_LABELS[result.day]}요일` : null}
-        </p>
+    <div className="bm-animate-in space-y-3">
+      <div className="flex min-h-8 items-center justify-between gap-3">
+        <div className="flex items-baseline gap-3">
+          <h1 className="text-xl font-bold text-[var(--text-h)]">경기</h1>
+          <p className="text-xs text-[var(--text-muted)]">
+            {state.currentWeek}주차
+            {upcomingGame?.day ? ` · ${DAY_LABELS[upcomingGame.day]}요일` : null}
+            {result?.day && !upcomingGame ? ` · ${DAY_LABELS[result.day]}요일` : null}
+          </p>
+        </div>
+        {result && opponent && liveScore ? (
+          <div className={`bm-card flex shrink-0 items-center gap-2 px-3 py-1 text-xs ${gameFinished && userWon ? 'border-emerald-500/50' : gameFinished ? 'border-red-500/30' : ''}`} aria-label={`${userTeam.name} ${userScore} 대 ${opponent.name} ${oppScore}`}>
+            <span className="text-[var(--text-muted)]">{playing || sessionInProgress ? currentInningLabel(result.logs, replayCursor) : userWon ? '승리' : '패배'}</span>
+            <b className="text-[var(--text-h)]">{userTeam.abbr}</b>
+            <strong className="text-base text-[var(--text-h)] tabular-nums">{userScore}</strong>
+            <span className="text-[var(--text-muted)]">:</span>
+            <strong className="text-base text-[var(--text-h)] tabular-nums">{oppScore}</strong>
+            <b className="text-[var(--text-h)]">{opponent.abbr}</b>
+          </div>
+        ) : null}
       </div>
 
       {!result && upcomingGame && opponent && (
@@ -233,28 +248,8 @@ export function MatchPage() {
 
       {result && opponent && liveScore && (
         <>
-          <div className={`bm-card p-6 text-center ${gameFinished && userWon ? 'border-emerald-500/50' : gameFinished ? 'border-red-500/30' : ''}`}>
-            <div className="mb-2 text-sm font-semibold tracking-wider text-[var(--text-muted)]">
-              {playing || sessionInProgress
-                ? currentInningLabel(result.logs, replayCursor)
-                : userWon
-                  ? '승리!'
-                  : '패배'}
-            </div>
-            <div className="flex items-center justify-center gap-8">
-              <div>
-                <div className="text-4xl font-black text-[var(--text-h)] tabular-nums">{userScore}</div>
-                <div className="text-sm font-medium text-[var(--text-h)]">{userTeam.name}</div>
-              </div>
-              <div className="text-[var(--text-muted)]">:</div>
-              <div>
-                <div className="text-4xl font-black text-[var(--text-h)] tabular-nums">{oppScore}</div>
-                <div className="text-sm font-medium text-[var(--text-h)]">{opponent.name}</div>
-              </div>
-            </div>
-
-            {gameFinished && (
-              <div className="mt-4 flex flex-wrap justify-center gap-2">
+          {gameFinished && (
+              <div className="flex flex-wrap justify-end gap-2">
                 {hasMoreGamesThisWeek ? (
                   <button
                     type="button"
@@ -279,27 +274,48 @@ export function MatchPage() {
                   대시보드
                 </button>
               </div>
-            )}
+          )}
+
+          <div className="grid items-start gap-3 md:grid-cols-[minmax(0,1fr)_200px_240px] 2xl:grid-cols-[minmax(0,1.2fr)_minmax(220px,.7fr)_minmax(280px,.9fr)]">
+            <GameSituationPanel
+              situation={currentSituation}
+              currentLog={currentLog}
+              teams={state.teams}
+              balls={sessionInProgress ? pitchCount.balls : 0}
+              strikes={sessionInProgress ? pitchCount.strikes : 0}
+              userSide={userSide}
+            />
+
+            <PitchLocationPanel pitch={lastPitch} />
+
+            <div className="space-y-3">
+              {sessionInProgress ? <ManagerTacticsPanel /> : null}
+              <div className="bm-card p-3" aria-label="경기 재생 설정">
+                <span className="mb-1.5 block text-xs text-[var(--text-muted)]">재생 속도</span>
+                <div className="grid grid-cols-4 gap-2">
+                  {[0.5, 1, 2].map((speed) => <button key={speed} type="button" className={`bm-btn w-full justify-center px-1 py-1.5 text-xs ${playbackSpeed === speed ? 'bm-btn-primary' : 'bm-btn-ghost'}`} onClick={() => setPlaybackSpeed(speed)}>{speed}×</button>)}
+                  {sessionInProgress ? (
+                    <button
+                      type="button"
+                      className="bm-btn bm-btn-ghost w-full justify-center px-1 py-1.5"
+                      onClick={togglePlaying}
+                      aria-label={playing ? '경기 일시정지' : '경기 계속 진행'}
+                      title={playing ? '일시정지' : '계속 진행'}
+                    >
+                      <PlayPauseIcon playing={playing} />
+                    </button>
+                  ) : null}
+                </div>
+              </div>
+            </div>
           </div>
 
-          <GameSituationPanel
-            situation={currentSituation}
-            currentLog={currentLog}
+          <LiveGameStatsPanel
+            logs={visibleLogs}
             teams={state.teams}
-            balls={sessionInProgress ? pitchCount.balls : 0}
-            strikes={sessionInProgress ? pitchCount.strikes : 0}
-            userSide={userSide}
+            currentPitcherId={sessionInProgress ? currentSituation?.pitcherId : undefined}
+            currentPitchCount={sessionInProgress ? pitchNumber : 0}
           />
-
-          <PitchLocationPanel pitch={lastPitch} />
-
-          {sessionInProgress ? <ManagerTacticsPanel /> : null}
-
-          <div className="flex flex-wrap items-center justify-center gap-2" aria-label="경기 재생 설정">
-            <span className="text-xs text-[var(--text-muted)]">재생 속도</span>
-            {[0.5, 1, 2].map((speed) => <button key={speed} type="button" className={`bm-btn py-1 text-xs ${playbackSpeed === speed ? 'bm-btn-primary' : 'bm-btn-ghost'}`} onClick={() => setPlaybackSpeed(speed)}>{speed}×</button>)}
-            {sessionInProgress ? <button type="button" className="bm-btn bm-btn-ghost py-1 text-xs" onClick={togglePlaying}>{playing ? '일시정지' : '계속 진행'}</button> : null}
-          </div>
 
           <GameManagementPanel />
 
@@ -439,10 +455,34 @@ export function MatchPage() {
             </table>
           </div>
 
-          <div className="bm-card max-h-96 overflow-y-auto p-4">
-            <h2 className="mb-3 font-semibold text-[var(--text-h)]">플레이-by-플레이</h2>
-            <ul className="space-y-1 font-mono text-sm">
-              {result.logs.slice(0, sessionInProgress || playing ? replayCursor : result.logs.length).map((log, i) => {
+          <button
+            type="button"
+            className="bm-card flex w-full items-center gap-3 px-4 py-2 text-left text-sm"
+            onClick={() => setShowPlayLog(true)}
+            aria-haspopup="dialog"
+          >
+            <span className="shrink-0 font-semibold text-[var(--accent)]">플레이-by-플레이</span>
+            <span className="min-w-0 flex-1 truncate text-[var(--text-h)]">
+              {currentLog ? `${currentLog.inning}회 ${currentLog.half === 'top' ? '초' : '말'} · ${currentLog.text}` : '아직 기록된 플레이가 없습니다.'}
+            </span>
+            <span className="shrink-0 text-xs text-[var(--text-muted)]">전체 보기</span>
+          </button>
+
+          {showPlayLog ? (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" role="presentation" onMouseDown={() => setShowPlayLog(false)}>
+              <section
+                className="bm-card flex max-h-[80vh] w-full max-w-3xl flex-col overflow-hidden"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="play-log-title"
+                onMouseDown={(event) => event.stopPropagation()}
+              >
+                <div className="flex items-center justify-between border-b border-[var(--border)] px-5 py-4">
+                  <h2 id="play-log-title" className="font-semibold text-[var(--text-h)]">플레이-by-플레이</h2>
+                  <button type="button" className="bm-btn bm-btn-ghost py-1 text-xs" onClick={() => setShowPlayLog(false)}>닫기</button>
+                </div>
+                <ul className="space-y-1 overflow-y-auto p-5 font-mono text-sm">
+              {visibleLogs.map((log, i) => {
                 const batter = log.batterId
                   ? findPlayerInLeague(state.teams, log.batterId)?.player
                   : null
@@ -474,10 +514,25 @@ export function MatchPage() {
                   </li>
                 )
               })}
-            </ul>
-          </div>
+                </ul>
+              </section>
+            </div>
+          ) : null}
         </>
       )}
     </div>
+  )
+}
+
+function PlayPauseIcon({ playing }: { playing: boolean }) {
+  return playing ? (
+    <svg viewBox="0 0 20 20" className="h-4 w-4" fill="currentColor" aria-hidden="true">
+      <rect x="4" y="3" width="4" height="14" rx="1" />
+      <rect x="12" y="3" width="4" height="14" rx="1" />
+    </svg>
+  ) : (
+    <svg viewBox="0 0 20 20" className="h-4 w-4" fill="currentColor" aria-hidden="true">
+      <path d="M5 3.8a1 1 0 0 1 1.53-.85l10 6.2a1 1 0 0 1 0 1.7l-10 6.2A1 1 0 0 1 5 16.2V3.8Z" />
+    </svg>
   )
 }

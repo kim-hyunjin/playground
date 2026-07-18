@@ -449,6 +449,27 @@ export function simulateCpuGames(
   return { results, teams: currentTeams, schedule: currentSchedule }
 }
 
+/** 사용자 경기와 같은 경기일에 열리는 다른 구단 경기를 함께 진행한다. */
+export function simulateCpuGamesForDay(
+  schedule: ScheduledGame[],
+  teams: Team[],
+  week: number,
+  day: ScheduledGame['day'],
+  userTeamId: string,
+): { results: GameResult[]; teams: Team[]; schedule: ScheduledGame[] } {
+  const targetSchedule = schedule.map((game) => game.day === day ? game : { ...game, played: true })
+  const simulated = simulateCpuGames(targetSchedule, teams, week, userTeamId)
+  const playedIds = new Set(simulated.results.map((result) => result.gameId))
+  return {
+    results: simulated.results,
+    teams: simulated.teams,
+    schedule: schedule.map((game) => {
+      if (!playedIds.has(game.id)) return game
+      return simulated.schedule.find((item) => item.id === game.id) ?? game
+    }),
+  }
+}
+
 // Re-export for tests / sanity scripts
 export { LEAGUE_STRENGTH, createSimContext } from './sim/context'
 export { resolveAtBat } from './sim/atBat'

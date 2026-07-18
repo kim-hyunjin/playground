@@ -66,3 +66,10 @@ export const PITCH_CALL_LABEL: Record<PitchCall, string> = {
   strike: '스트라이크',
   inPlay: '인플레이',
 }
+
+/** 현재 투구 재생 규칙에서 타석이 끝날 때까지 표시되는 투구 수. */
+export function pitchCountForOutcome(outcome?: AtBatOutcome): number {
+  if (outcome === 'walk') return 6
+  if (outcome === 'strikeout') return 4
+  return 3
+}

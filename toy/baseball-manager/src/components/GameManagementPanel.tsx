@@ -14,6 +14,7 @@ export function GameManagementPanel() {
   } = useGame()
   const [message, setMessage] = useState('')
   const [targetOrder, setTargetOrder] = useState(0)
+  const [open, setOpen] = useState(false)
 
   const roster = activeGameSession?.userRoster
   const pitchCounts = useMemo(() => {
@@ -38,12 +39,21 @@ export function GameManagementPanel() {
   }
 
   return (
-    <div className="bm-card space-y-5 p-4">
-      <div>
-        <h2 className="font-semibold text-[var(--text-h)]">경기 운용</h2>
+    <>
+      <button type="button" className="bm-card flex w-full items-center justify-between px-4 py-2 text-left text-sm font-semibold text-[var(--text-h)]" onClick={() => setOpen(true)} aria-haspopup="dialog">
+        <span>경기 운용 <small className="ml-2 font-normal text-[var(--text-muted)]">투수·대타·대주자 교체</small></span>
+        <span className="text-xs text-[var(--text-muted)]">열기</span>
+      </button>
+      {open ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" role="presentation" onMouseDown={() => setOpen(false)}>
+          <section className="bm-card flex max-h-[85vh] w-full max-w-5xl flex-col overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="game-management-title" onMouseDown={(event) => event.stopPropagation()}>
+            <div className="flex items-center justify-between border-b border-[var(--border)] px-5 py-4">
+              <h2 id="game-management-title" className="font-semibold text-[var(--text-h)]">경기 운용</h2>
+              <button type="button" className="bm-btn bm-btn-ghost py-1 text-xs" onClick={() => setOpen(false)}>닫기</button>
+            </div>
+            <div className="space-y-5 overflow-y-auto p-5">
         <p className="text-xs text-[var(--text-muted)]">교체를 실행하면 경기가 일시정지됩니다.</p>
-      </div>
-      {message ? <p className="rounded bg-[var(--panel-2)] px-3 py-2 text-sm text-[var(--accent)]">{message}</p> : null}
+        {message ? <p className="rounded bg-[var(--panel-2)] px-3 py-2 text-sm text-[var(--accent)]">{message}</p> : null}
 
       <section>
         <h3 className="mb-2 text-sm font-semibold text-[var(--text-h)]">불펜</h3>
@@ -74,8 +84,8 @@ export function GameManagementPanel() {
         ))}
       </section> : null}
 
-      <section>
-        <div className="mb-2 flex flex-wrap items-center gap-2">
+        <section>
+          <div className="mb-2 flex flex-wrap items-center gap-2">
           <h3 className="mr-2 text-sm font-semibold text-[var(--text-h)]">대타·수비 교체</h3>
           <select className="bm-input w-auto py-1" value={targetOrder} onChange={(e) => setTargetOrder(Number(e.target.value))}>
             {roster.lineup.map((slot) => (
@@ -84,8 +94,8 @@ export function GameManagementPanel() {
               </option>
             ))}
           </select>
-        </div>
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          </div>
+          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {roster.benchIds.map((id) => {
             const batter = player(id)
             if (!batter) return null
@@ -104,8 +114,12 @@ export function GameManagementPanel() {
               </button>
             )
           })}
+          </div>
+        </section>
+            </div>
+          </section>
         </div>
-      </section>
-    </div>
+      ) : null}
+    </>
   )
 }

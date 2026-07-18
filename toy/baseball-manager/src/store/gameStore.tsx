@@ -11,7 +11,7 @@ import { DEFAULT_BULLPEN_STRATEGY, DEFAULT_MANAGER_COMMAND, type BullpenStrategy
 import { loadLeague2026 } from '../data/rosterLoader'
 import { defaultLineup, defaultRotation } from '../engine/generator'
 import { generateSchedule, generateFarmSchedule, nextUserGame, normalizeSchedule, hasUnplayedUserGamesInWeek } from '../engine/schedule'
-import { applyResult, simulateCpuGames, simulateGame } from '../engine/simulation'
+import { applyResult, simulateCpuGames, simulateCpuGamesForDay, simulateGame } from '../engine/simulation'
 import { simulateFarmWeek } from '../engine/farmSimulation'
 import {
   countByLevel,
@@ -315,6 +315,17 @@ export function GameProvider({ children }: { children: ReactNode }) {
     const result = simulateGame(game, home, away, {
       ...sessionOptions,
       random: createSeededRandom({ seed }),
+    })
+
+    setState((current) => {
+      if (!current) return current
+      const cpu = simulateCpuGamesForDay(current.schedule, current.teams, game.week, game.day, current.userTeamId)
+      return {
+        ...current,
+        teams: cpu.teams,
+        schedule: cpu.schedule,
+        results: [...current.results, ...cpu.results],
+      }
     })
 
     setLastResult(result)

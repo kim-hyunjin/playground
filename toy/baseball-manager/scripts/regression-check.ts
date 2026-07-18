@@ -22,7 +22,7 @@ import {
   validateFarmRoster,
   validateFirstTeamRoster,
 } from '../src/engine/roster'
-import { cpuManagerCommand, simulateCpuGames, simulateGame } from '../src/engine/simulation'
+import { cpuManagerCommand, simulateCpuGames, simulateCpuGamesForDay, simulateGame } from '../src/engine/simulation'
 import { createSeededRandom } from '../src/engine/sim/random'
 import {
   advancePlateAppearance,
@@ -144,6 +144,9 @@ try {
   const farmSchedule = generateFarmSchedule(teams, 18)
   const cpu = simulateCpuGames(schedule, teams, 1, userTeam.id)
   assert(cpu.results.length > 0, 'CPU 경기 결과 생성')
+  const cpuForDay = simulateCpuGamesForDay(schedule, teams, 1, 'tue', userTeam.id)
+  assert(cpuForDay.results.length === 4 && cpuForDay.results.every((result) => result.day === 'tue'), '사용자 경기일의 CPU 4경기 동시 진행')
+  assert(cpuForDay.schedule.filter((game) => game.week === 1 && game.day !== 'tue').every((game) => !game.played), '다른 경기일 일정은 미진행 유지')
   const farm = simulateFarmWeek(farmSchedule, cpu.teams, 1)
   assert(farm.results.length > 0, '2군 경기 결과 생성')
 
