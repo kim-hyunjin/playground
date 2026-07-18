@@ -2,6 +2,7 @@ import { useGame } from '../store/gameStore'
 import type { View } from '../types/game'
 import { stoveWeekLabel } from '../engine/stoveLeague'
 import { PlayerDetailModal } from './PlayerDetailModal'
+import { ThemeToggle } from './ThemeToggle'
 
 const REGULAR_NAV: { id: View; label: string; icon: string }[] = [
   { id: 'dashboard', label: '대시보드', icon: '📊' },
@@ -46,7 +47,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <div className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
             Baseball Manager
           </div>
-          <div className="mt-1 text-lg font-bold" style={{ color: userTeam.color }}>
+          <div className="mt-1 text-lg font-bold text-[var(--text-h)]">
             {userTeam.name}
           </div>
           <div className="text-xs text-[var(--text-muted)]">
@@ -68,7 +69,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
 
-        <button type="button" className="bm-btn bm-btn-ghost mt-4 w-full text-xs" onClick={resetGame}>
+        <ThemeToggle className="mt-4 w-full" />
+        <button type="button" className="bm-btn bm-btn-ghost mt-2 w-full text-xs" onClick={resetGame}>
           새 게임
         </button>
       </aside>

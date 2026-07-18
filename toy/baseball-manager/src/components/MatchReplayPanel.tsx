@@ -30,20 +30,20 @@ export function MatchReplayPanel({ result, teams, userTeamId }: MatchReplayPanel
         <div className="flex items-center justify-center gap-8">
           <div>
             <div className="text-3xl font-black text-[var(--text-h)]">{result.awayScore}</div>
-            <div className="text-sm font-medium" style={{ color: away?.color }}>
+            <div className="text-sm font-medium text-[var(--text-h)]">
               {away?.name}
             </div>
           </div>
           <div className="text-[var(--text-muted)]">:</div>
           <div>
             <div className="text-3xl font-black text-[var(--text-h)]">{result.homeScore}</div>
-            <div className="text-sm font-medium" style={{ color: home?.color }}>
+            <div className="text-sm font-medium text-[var(--text-h)]">
               {home?.name}
             </div>
           </div>
         </div>
         {userTeamId ? (
-          <div className={`mt-3 text-sm font-semibold ${userWon ? 'text-emerald-400' : 'text-red-400'}`}>
+          <div className={`mt-3 text-sm font-semibold ${userWon ? 'text-[var(--success)]' : 'text-[var(--danger)]'}`}>
             {userWon ? '승리' : '패배'}
           </div>
         ) : null}

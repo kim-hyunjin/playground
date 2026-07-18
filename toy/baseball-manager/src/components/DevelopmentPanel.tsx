@@ -19,7 +19,7 @@ export function DevelopmentPanel({ player }: { player: Player }) {
           <div className="text-[var(--text-muted)]">현재 OVR</div>
         </div>
         <div>
-          <div className="font-bold text-emerald-400">{prog.potential}</div>
+          <div className="font-bold text-[var(--success)]">{prog.potential}</div>
           <div className="text-[var(--text-muted)]">잠재력</div>
         </div>
         <div>
@@ -67,7 +67,7 @@ export function PotentialBadge({ player, compact = false }: { player: Player; co
   const ovr = overallRating(player)
   return (
     <span
-      className={`inline-flex items-center rounded-full border border-emerald-500/30 bg-emerald-500/10 font-medium text-emerald-400 ${
+      className={`inline-flex items-center rounded-full border border-emerald-500/30 bg-emerald-500/10 font-medium text-[var(--success)] ${
         compact ? 'px-1.5 py-0.5 text-[10px]' : 'px-2 py-0.5 text-xs'
       }`}
       title={`잠재력 ${player.potential} (현재 ${ovr})`}

@@ -45,7 +45,7 @@ export function RotationPage() {
               <div className="text-xs text-[var(--text-muted)]">
                 구속 {p!.velocity} · 제구 {p!.control} · 구위 {p!.movement} · OVR {overallRating(p!)}
                 {!isPlayerAvailable(p!) && p!.injuryType ? (
-                  <span className="ml-2 text-red-400">부상 ({p!.injuryType}, {p!.injuryDays}일)</span>
+                  <span className="ml-2 text-[var(--danger)]">부상 ({p!.injuryType}, {p!.injuryDays}일)</span>
                 ) : null}
               </div>
             </div>

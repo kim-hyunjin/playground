@@ -163,13 +163,13 @@ export function FarmSquadPage() {
                         <PotentialBadge player={p} compact />
                       </div>
                       {isCallUp && evalHint.reason && (
-                        <div className="mt-0.5 text-[10px] text-amber-400/80">{evalHint.reason}</div>
+                        <div className="mt-0.5 text-[10px] text-[var(--warning)]">{evalHint.reason}</div>
                       )}
                     </td>
                     <td>{POSITION_LABEL[p.role]}</td>
                     <td className="text-[var(--text-muted)]">{p.age}</td>
                     <td><OvrBadge player={p} /></td>
-                    <td className="font-mono text-emerald-400/90">{p.potential ?? '—'}</td>
+                    <td className="font-mono text-[var(--success)]">{p.potential ?? '—'}</td>
                     <td className="font-mono text-[var(--accent)]">{keyStat(p)}</td>
                     <td className="font-mono text-[var(--text-muted)]">{keyStat2(p)}</td>
                     <td>

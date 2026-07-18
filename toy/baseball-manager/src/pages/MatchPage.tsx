@@ -73,10 +73,6 @@ export function MatchPage() {
     }
   }
 
-  const advanceOnce = () => {
-    advanceActiveGame(true)
-  }
-
   const isHome = result ? result.homeId === userTeam.id : upcomingGame?.homeId === userTeam.id
 
   const homeScore = liveScore?.homeScore ?? 0
@@ -135,14 +131,14 @@ export function MatchPage() {
           </div>
           <div className="flex items-center justify-center gap-6">
             <div>
-              <div className="text-xl font-bold" style={{ color: userTeam.color }}>
+              <div className="text-xl font-bold text-[var(--text-h)]">
                 {userTeam.name}
               </div>
               <div className="text-xs text-[var(--text-muted)]">{userTeam.city}</div>
             </div>
             <div className="text-2xl font-black text-[var(--text-muted)]">VS</div>
             <div>
-              <div className="text-xl font-bold" style={{ color: opponent.color }}>
+              <div className="text-xl font-bold text-[var(--text-h)]">
                 {opponent.name}
               </div>
               <div className="text-xs text-[var(--text-muted)]">{opponent.city}</div>
@@ -176,12 +172,12 @@ export function MatchPage() {
             <div className="flex items-center justify-center gap-8">
               <div>
                 <div className="text-4xl font-black text-[var(--text-h)] tabular-nums">{userScore}</div>
-                <div className="text-sm font-medium" style={{ color: userTeam.color }}>{userTeam.name}</div>
+                <div className="text-sm font-medium text-[var(--text-h)]">{userTeam.name}</div>
               </div>
               <div className="text-[var(--text-muted)]">:</div>
               <div>
                 <div className="text-4xl font-black text-[var(--text-h)] tabular-nums">{oppScore}</div>
-                <div className="text-sm font-medium" style={{ color: opponent.color }}>{opponent.name}</div>
+                <div className="text-sm font-medium text-[var(--text-h)]">{opponent.name}</div>
               </div>
             </div>
 
@@ -221,18 +217,10 @@ export function MatchPage() {
           <div className="flex flex-wrap items-center justify-center gap-2" aria-label="경기 재생 설정">
             <span className="text-xs text-[var(--text-muted)]">재생 속도</span>
             {[0.5, 1, 2].map((speed) => <button key={speed} type="button" className={`bm-btn py-1 text-xs ${playbackSpeed === speed ? 'bm-btn-primary' : 'bm-btn-ghost'}`} onClick={() => setPlaybackSpeed(speed)}>{speed}×</button>)}
-            {sessionInProgress ? <button type="button" className="bm-btn bm-btn-ghost py-1 text-xs" onClick={advanceOnce}>다음 타석</button> : null}
+            {sessionInProgress ? <button type="button" className="bm-btn bm-btn-ghost py-1 text-xs" onClick={togglePlaying}>{playing ? '일시정지' : '계속 진행'}</button> : null}
           </div>
 
           <GameManagementPanel />
-
-          {activeGameSession && activeGameSession.status !== 'complete' ? (
-            <div className="flex justify-center">
-              <button type="button" className="bm-btn bm-btn-ghost" onClick={togglePlaying}>
-                {playing ? '일시정지' : '계속 진행'}
-              </button>
-            </div>
-          ) : null}
 
           {gameFinished && result.boxScore ? (
             <div className="bm-card p-4">

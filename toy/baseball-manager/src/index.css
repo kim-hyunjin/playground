@@ -1,19 +1,52 @@
 @import 'tailwindcss';
 
-:root {
-  --text: #94a3b8;
-  --text-h: #f1f5f9;
-  --text-muted: #64748b;
+:root,
+:root[data-theme='dark'] {
+  --text: #cbd5e1;
+  --text-h: #f8fafc;
+  --text-muted: #94a3b8;
   --bg: #0a0f14;
   --panel: #111827;
   --panel-2: #1a2332;
-  --border: #1e293b;
-  --accent: #22c55e;
-  --accent-dim: rgba(34, 197, 94, 0.15);
-  --accent-border: rgba(34, 197, 94, 0.35);
-  --danger: #ef4444;
-  --gold: #fbbf24;
+  --bg-elevated: #1a2332;
+  --border: #334155;
+  --accent: #4ade80;
+  --accent-hover: #22c55e;
+  --accent-contrast: #052e16;
+  --accent-dim: rgba(74, 222, 128, 0.14);
+  --accent-border: rgba(74, 222, 128, 0.45);
+  --success: #4ade80;
+  --success-dim: rgba(74, 222, 128, 0.14);
+  --warning: #fbbf24;
+  --warning-dim: rgba(251, 191, 36, 0.14);
+  --danger: #f87171;
+  --danger-dim: rgba(248, 113, 113, 0.14);
+  --focus: #86efac;
   color-scheme: dark;
+}
+
+:root[data-theme='light'] {
+  --text: #334155;
+  --text-h: #0f172a;
+  --text-muted: #64748b;
+  --bg: #f1f5f9;
+  --panel: #ffffff;
+  --panel-2: #e8edf3;
+  --bg-elevated: #f8fafc;
+  --border: #cbd5e1;
+  --accent: #166534;
+  --accent-hover: #14532d;
+  --accent-contrast: #ffffff;
+  --accent-dim: rgba(22, 101, 52, 0.1);
+  --accent-border: rgba(22, 101, 52, 0.4);
+  --success: #166534;
+  --success-dim: rgba(22, 101, 52, 0.1);
+  --warning: #92400e;
+  --warning-dim: rgba(146, 64, 14, 0.1);
+  --danger: #b91c1c;
+  --danger-dim: rgba(185, 28, 28, 0.1);
+  --focus: #15803d;
+  color-scheme: light;
 }
 
 * {
@@ -26,6 +59,7 @@ body {
   color: var(--text);
   font-family: 'Segoe UI', system-ui, sans-serif;
   line-height: 1.5;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 #root {
@@ -53,17 +87,17 @@ body {
 }
 
 .bm-btn:disabled {
-  opacity: 0.45;
+  opacity: 0.58;
   cursor: not-allowed;
 }
 
 .bm-btn-primary {
   background: var(--accent);
-  color: #052e16;
+  color: var(--accent-contrast);
 }
 
 .bm-btn-primary:hover:not(:disabled) {
-  background: #16a34a;
+  background: var(--accent-hover);
 }
 
 .bm-btn-ghost {
@@ -86,7 +120,7 @@ body {
 .bm-stat-fill {
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, #166534, var(--accent));
+  background: linear-gradient(90deg, var(--accent-hover), var(--accent));
 }
 
 .bm-nav-item {
@@ -160,7 +194,19 @@ body {
 
 .bm-input:focus {
   outline: none;
-  border-color: var(--accent);
+  border-color: var(--focus);
+  box-shadow: 0 0 0 2px var(--accent-dim);
+}
+
+.bm-btn:focus-visible,
+.bm-nav-item:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-contrast);
 }
 
 @keyframes fadeIn {

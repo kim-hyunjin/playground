@@ -39,7 +39,7 @@ export function GameSituationPanel({ situation, teams, currentLog }: Props) {
         ] as const).map(([base, id]) => (
           <div key={base} className={`rounded border px-3 py-2 ${id ? 'border-amber-500/50 bg-amber-500/10' : 'border-[var(--border)] bg-[var(--panel-2)]'}`}>
             <span className="text-xs text-[var(--text-muted)]">{base}</span>
-            <div className={id ? 'font-semibold text-amber-300' : 'text-[var(--text-muted)]'}>{playerName(id)}</div>
+            <div className={id ? 'font-semibold text-[var(--warning)]' : 'text-[var(--text-muted)]'}>{playerName(id)}</div>
           </div>
         ))}
       </div>

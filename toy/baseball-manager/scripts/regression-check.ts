@@ -30,6 +30,7 @@ import {
   createGameSession,
   gameSessionView,
   pauseGameSession,
+  resumeGameSession,
   restoreGameSession,
   substituteSessionPitcher,
 } from '../src/engine/gameSession'
@@ -249,9 +250,9 @@ try {
   const interactiveGame = { id: 'reg-interactive', week: 1, day: 'sat' as const, homeId: userTeam.id, awayId: teams[1]!.id, played: false }
   const interactiveOptions = { homeLineup: lineup, homeRotationIndex: 0, homeCommand: { offense: 'normal' as const, pitching: 'normal' as const }, awayCommand: { offense: 'normal' as const, pitching: 'normal' as const } }
   const interactiveResult = simulateGame(interactiveGame, userTeam, teams[1]!, { ...interactiveOptions, random: createSeededRandom({ seed: interactiveSeed }) })
-  const interactiveSession = createGameSession(interactiveResult, interactiveSeed, gameRoster, { game: interactiveGame, home: userTeam, away: teams[1]!, userTeamId: userTeam.id, options: interactiveOptions })
+  const interactiveSession = resumeGameSession(createGameSession(interactiveResult, interactiveSeed, gameRoster, { game: interactiveGame, home: userTeam, away: teams[1]!, userTeamId: userTeam.id, options: interactiveOptions }))
   const commanded = applySessionCommand(interactiveSession, { offense: 'normal', pitching: 'intentionalWalk' })
-  assert(commanded.ok && commanded.session.status === 'paused', '현재 경기 작전 적용 시 일시정지')
+  assert(commanded.ok && commanded.session.status === 'playing', '현재 경기 작전 적용 후 진행 상태 유지')
   assert(commanded.session.resolvedResult.logs.find((log) => log.eventType === 'plateAppearance')?.outcome === 'walk', '현재 경기 다음 타석에 고의사구 적용')
   let progressed = interactiveSession
   for (let i = 0; i < 3; i++) progressed = advancePlateAppearance(progressed)

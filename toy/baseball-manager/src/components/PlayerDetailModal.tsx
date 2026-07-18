@@ -63,7 +63,7 @@ export function PlayerDetailModal() {
       >
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[var(--border)] bg-[var(--panel)] px-5 py-4">
           <div>
-            <div className="text-xs text-[var(--text-muted)]" style={{ color: team.color }}>
+            <div className="text-xs text-[var(--text-muted)]">
               {team.name}
             </div>
             <h2 id="player-detail-title" className="text-xl font-bold text-[var(--text-h)]">
@@ -92,7 +92,7 @@ export function PlayerDetailModal() {
               <div className="mt-2 flex flex-wrap items-center gap-2">
                 <CallUpBadge />
                 {isSuggested && (
-                  <span className="text-xs text-amber-400">2군 감독 제안 중</span>
+                  <span className="text-xs text-[var(--warning)]">2군 감독 제안 중</span>
                 )}
                 {callUpEval.reason && (
                   <span className="text-xs text-[var(--text-muted)]">{callUpEval.reason}</span>

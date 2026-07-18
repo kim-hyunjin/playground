@@ -10,7 +10,7 @@ const PITCHING: Array<[PitchingCommand, string]> = [
 ]
 
 export function ManagerTacticsPanel() {
-  const { state, activeGameSession, setManagerCommand, applyCurrentGameCommand, pauseActiveGame } = useGame()
+  const { state, activeGameSession, setManagerCommand, applyCurrentGameCommand } = useGame()
   const [message, setMessage] = useState('')
   if (!state) return null
   const active = activeGameSession && activeGameSession.status !== 'complete'
@@ -24,7 +24,6 @@ export function ManagerTacticsPanel() {
   const select = (next: typeof command) => {
     setManagerCommand(next)
     if (active) {
-      pauseActiveGame()
       setMessage(applyCurrentGameCommand(next))
     }
   }
@@ -32,7 +31,7 @@ export function ManagerTacticsPanel() {
     <div className="bm-card space-y-3 p-4">
       <div>
         <h2 className="font-semibold text-[var(--text-h)]">경기 작전</h2>
-        <p className="text-xs text-[var(--text-muted)]">{active ? '경기를 정지하고 선택한 작전을 다음 타석부터 적용합니다.' : '경기 시작 시 적용할 기본 작전입니다.'}</p>
+        <p className="text-xs text-[var(--text-muted)]">{active ? '선택 즉시 다음 미진행 타석부터 적용됩니다.' : '경기 시작 시 적용할 기본 작전입니다.'}</p>
       </div>
       {message ? <p className="text-sm text-[var(--accent)]">{message}</p> : null}
       {(!active || userBatting) ? <div className="flex flex-wrap items-center gap-2">

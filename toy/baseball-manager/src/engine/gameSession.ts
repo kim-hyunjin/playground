@@ -107,7 +107,7 @@ export function applySessionCommand(session: GameSession, command: ManagerComman
       return input.game.homeId === input.userTeamId ? { homeCommand: active.command } : { awayCommand: active.command }
     },
   })
-  let next: GameSession = { ...session, status: 'paused', resolvedResult: result, commandChanges: changes }
+  let next: GameSession = { ...session, resolvedResult: result, commandChanges: changes }
   if (session.userRoster) {
     const originalLineup = input.game.homeId === input.userTeamId ? input.options.homeLineup : input.options.awayLineup
     if (originalLineup) {

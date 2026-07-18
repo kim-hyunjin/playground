@@ -3,6 +3,7 @@ import { DATA_SEASON, previewTeamStarLines } from '../data/rosterLoader'
 import { TEAM_DEFS } from '../engine/generator'
 import type { TeamAbbr } from '../data/types'
 import { useGame } from '../store/gameStore'
+import { ThemeToggle } from '../components/ThemeToggle'
 
 export function StartScreen() {
   const { startNewGame, loadGame } = useGame()
@@ -20,6 +21,7 @@ export function StartScreen() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[var(--bg)] p-6">
+      <ThemeToggle className="absolute right-4 top-4" />
       <div className="bm-animate-in w-full max-w-2xl">
         <div className="mb-8 text-center">
           <h1 className="text-4xl font-black tracking-tight text-[var(--text-h)]">
@@ -62,7 +64,7 @@ export function StartScreen() {
                       : 'border-[var(--border)] hover:border-[var(--text-muted)]'
                   }`}
                 >
-                  <div className="font-bold" style={{ color: team.color }}>
+                  <div className="font-bold text-[var(--text-h)]">
                     {team.name}
                   </div>
                   <div className="text-xs text-[var(--text-muted)]">{team.city}</div>

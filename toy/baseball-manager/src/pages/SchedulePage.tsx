@@ -151,7 +151,7 @@ export function SchedulePage() {
                   {played && result ? (
                     <div
                       className={`mt-2 text-sm font-mono ${
-                        won ? 'text-emerald-400' : 'text-red-400'
+                        won ? 'text-[var(--success)]' : 'text-[var(--danger)]'
                       }`}
                     >
                       {userScore} : {oppScore} {won ? '승' : '패'}
@@ -250,7 +250,7 @@ export function SchedulePage() {
                           <td className="font-mono">
                             {us} : {them}
                           </td>
-                          <td className={won ? 'text-emerald-400' : 'text-red-400'}>
+                          <td className={won ? 'text-[var(--success)]' : 'text-[var(--danger)]'}>
                             {won ? '승' : '패'}
                           </td>
                           <td>
