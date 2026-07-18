@@ -9,7 +9,6 @@ import { generateProspectPool } from '../src/engine/draft'
 import {
   defaultLineup,
   defaultRotation,
-  overallRating,
 } from '../src/engine/generator'
 import { simulateFarmWeek } from '../src/engine/farmSimulation'
 import { generateFarmSchedule, generateSchedule } from '../src/engine/schedule'

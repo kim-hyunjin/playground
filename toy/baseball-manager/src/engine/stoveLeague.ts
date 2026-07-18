@@ -162,7 +162,7 @@ export function signFreeAgentForTeam(
 
 function cpuSignPass(teams: Team[], freeAgents: FreeAgentListing[], userTeamId: string) {
   let pool = [...freeAgents]
-  let nextTeams = [...teams]
+  const nextTeams = [...teams]
 
   const cpuOrder = nextTeams
     .filter((t) => t.id !== userTeamId)

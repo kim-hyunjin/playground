@@ -183,7 +183,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     } catch {
       localStorage.removeItem(ACTIVE_GAME_KEY)
     }
-    if (restored && restored.status !== 'complete') {
+    if (restored) {
       setActiveGameSession(restored)
       setLastResult(restored.resolvedResult)
     }
@@ -197,6 +197,29 @@ export function GameProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (state) saveState(state)
   }, [state])
+
+  useEffect(() => {
+    if (!activeGameSession || activeGameSession.status !== 'complete') return
+    const result = activeGameSession.resolvedResult
+    setState((current) => {
+      if (!current || current.schedule.find((game) => game.id === result.gameId)?.played) return current
+      const applied = applyResult(current.teams, current.schedule, result)
+      const teams = applied.teams.map((team) => team.id !== current.userTeamId ? team : {
+        ...team,
+        players: team.players.map((player) => ({
+          ...player,
+          fatigue: Math.min(100, player.fatigue + (player.role === 'SP' ? 18 : 6)),
+        })),
+      })
+      return {
+        ...current,
+        teams,
+        schedule: applied.schedule,
+        results: [...current.results, result],
+        rotationIndex: current.rotationIndex + 1,
+      }
+    })
+  }, [activeGameSession])
 
   const userTeam = useMemo(
     () => state?.teams.find((t) => t.id === state.userTeamId) ?? null,
@@ -289,30 +312,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
       awayCommand: !isHome ? state.managerCommand : undefined,
     })
 
-    const applied = applyResult(state.teams, state.schedule, result)
-    const fatigueTeams = applied.teams.map((t) => {
-      if (t.id !== state.userTeamId) return t
-      return {
-        ...t,
-        players: t.players.map((p) => ({
-          ...p,
-          fatigue: Math.min(100, p.fatigue + (p.role === 'SP' ? 18 : 6)),
-        })),
-      }
-    })
-
-    setState({
-      ...state,
-      teams: fatigueTeams,
-      schedule: applied.schedule,
-      results: [...state.results, result],
-      rotationIndex: state.rotationIndex + 1,
-    })
     setLastResult(result)
     const starterId = isHome ? result.boxScore.homeStarterId : result.boxScore.awayStarterId
     setActiveGameSession(createGameSession(result, seed, createGameRoster(userTeam!, state.lineup, starterId)))
     return result
-  }, [state])
+  }, [state, userTeam])
 
   const advanceActiveGame = useCallback(() => {
     setActiveGameSession((session) => session ? advancePlateAppearance(session) : null)

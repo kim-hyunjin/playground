@@ -59,11 +59,11 @@
 
 ## G. 최종 검증과 문서화
 
-- [ ] `npm run build`
-- [ ] `npm run lint`
-- [ ] `npm run regression:check`
-- [ ] `npm run sim:sanity`
-- [ ] README 기능·조작법·저장 호환성 갱신
+- [x] `npm run build`
+- [x] `npm run lint`
+- [x] `npm run regression:check`
+- [x] `npm run sim:sanity`
+- [x] README 기능·조작법·저장 호환성 갱신
 
 ## 진행 로그
 
@@ -77,3 +77,4 @@
 - 2026-07-18: D 완료 — 공통 감독 명령, 번트·도루·고의사구·타격/투구 성향, CPU 상황 판단과 명령별 분포 회귀 검사를 추가.
 - 2026-07-18: E 완료 — 선수·코치 요구 조건, 최대 3회 제안·역제안·합의·결렬, 재계약 UI, 예산·FA/코치 시장 이동, 해고 위약금과 저장 마이그레이션 추가.
 - 2026-07-18: F 완료 — 구조화된 타구 시각 데이터, 반응형 2D 구장·수비 위치·주자, 타구/결과 효과, 속도·일시정지·모션 끄기와 reduced-motion 접근성 지원 추가.
+- 2026-07-18: G 완료 — ESLint flat config 추가, README 갱신. build·lint·106개 회귀 검사·시뮬레이션 sanity 전체 통과.

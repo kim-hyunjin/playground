@@ -1,7 +1,6 @@
 import { buildPlayersDataset, type PlayersDataset } from './csvPlayerLoader'
 
 declare global {
-  // eslint-disable-next-line no-var
   var __PLAYERS_CSV__: string | undefined
 }
 

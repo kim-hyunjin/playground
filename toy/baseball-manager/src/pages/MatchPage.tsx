@@ -30,6 +30,7 @@ export function MatchPage() {
   const [animationsEnabled, setAnimationsEnabled] = useState(true)
   const timerRef = useRef<number | null>(null)
   const sessionInProgress = Boolean(activeGameSession && activeGameSession.status !== 'complete')
+  const gameFinished = !playing && !sessionInProgress
   const replayCursor = sessionInProgress ? activeGameSession!.cursor : visibleLogs
 
   const result = lastResult
@@ -66,6 +67,8 @@ export function MatchPage() {
       }
     }, 360 / playbackSpeed)
     return () => { if (timerRef.current) clearInterval(timerRef.current) }
+    // cursor 변화마다 interval을 재시작하지 않고 시작 시점만 읽는다.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result, playing, advanceActiveGame, playbackSpeed])
 
   if (!state || !userTeam) return null
@@ -95,7 +98,7 @@ export function MatchPage() {
   const userScore = isHome ? homeScore : awayScore
   const oppScore = isHome ? awayScore : homeScore
 
-  const userWon = result && !playing
+  const userWon = result && gameFinished
     ? userScore > oppScore
     : false
 
@@ -116,7 +119,7 @@ export function MatchPage() {
     ? Math.max(result.innings.length, displayInnings.length, 9)
     : 9
 
-  const hasMoreGamesThisWeek = Boolean(upcomingGame && result && !playing)
+  const hasMoreGamesThisWeek = Boolean(upcomingGame && result && gameFinished)
   const currentSituation = result
     ? result.logs[Math.max(0, (sessionInProgress || playing ? replayCursor : result.logs.length) - 1)]?.situationAfter
       ?? result.logs[0]?.situationBefore
@@ -174,9 +177,9 @@ export function MatchPage() {
 
       {result && opponent && liveScore && (
         <>
-          <div className={`bm-card p-6 text-center ${!playing && userWon ? 'border-emerald-500/50' : !playing ? 'border-red-500/30' : ''}`}>
+          <div className={`bm-card p-6 text-center ${gameFinished && userWon ? 'border-emerald-500/50' : gameFinished ? 'border-red-500/30' : ''}`}>
             <div className="mb-2 text-sm font-semibold tracking-wider text-[var(--text-muted)]">
-              {playing
+              {playing || sessionInProgress
                 ? currentInningLabel(result.logs, visibleLogs)
                 : userWon
                   ? '승리!'
@@ -194,7 +197,7 @@ export function MatchPage() {
               </div>
             </div>
 
-            {!playing && (
+            {gameFinished && (
               <div className="mt-4 flex flex-wrap justify-center gap-2">
                 {hasMoreGamesThisWeek ? (
                   <button
@@ -241,7 +244,7 @@ export function MatchPage() {
             </div>
           ) : null}
 
-          {!playing && result.boxScore ? (
+          {gameFinished && result.boxScore ? (
             <div className="bm-card p-4">
               <h2 className="mb-3 font-semibold text-[var(--text-h)]">박스스코어</h2>
               <div className="mb-4 flex flex-wrap gap-4 text-sm text-[var(--text-muted)]">
