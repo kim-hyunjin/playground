@@ -171,3 +171,20 @@ body {
 .bm-animate-in {
   animation: fadeIn 0.25s ease-out;
 }
+
+@keyframes ballFlight {
+  from { opacity: 0.2; transform: translate(-80px, 90px) scale(0.5); }
+  to { opacity: 1; transform: translate(0, 0) scale(1); }
+}
+
+@keyframes playResult {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.bm-ball-flight { animation: ballFlight 0.55s ease-out; }
+.bm-play-result { animation: playResult 0.3s ease-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  .bm-animate-in, .bm-ball-flight, .bm-play-result { animation: none; }
+}

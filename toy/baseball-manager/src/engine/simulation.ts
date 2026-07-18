@@ -69,6 +69,16 @@ const OUTCOME_TEXT: Record<AtBatOutcome, (b: string) => string> = {
   error: (b) => `${b} 실책 출루`,
 }
 
+function playVisual(outcome: AtBatOutcome, random: () => number) {
+  const distance = outcome === 'homerun' ? 92 + random() * 8
+    : outcome === 'triple' ? 78 + random() * 15
+      : outcome === 'double' ? 58 + random() * 25
+        : outcome === 'single' || outcome === 'error' ? 32 + random() * 38 : 18 + random() * 55
+  const trajectory = outcome === 'homerun' || outcome === 'triple' ? 'fly'
+    : outcome === 'double' ? 'line' : random() < 0.55 ? 'ground' : 'fly'
+  return { ballAngle: -58 + random() * 116, distance, trajectory } as const
+}
+
 export function cpuManagerCommand(
   inning: number,
   outs: number,
@@ -229,6 +239,7 @@ function playHalfInning(
       eventType: 'plateAppearance',
       situationBefore,
       situationAfter: situation(outs, runners, runs, batter.id, pitcher.id),
+      visual: playVisual(outcome, random),
     })
 
     if (half === 'bottom' && inning >= 9 && battingScore + runs > pitchingScore) break

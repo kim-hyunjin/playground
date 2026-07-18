@@ -51,6 +51,7 @@ export function MatchReplayPanel({ result, teams, userTeamId }: MatchReplayPanel
 
       <GameSituationPanel
         situation={result.logs[result.logs.length - 1]?.situationAfter ?? result.logs[0]?.situationBefore}
+        currentLog={result.logs[result.logs.length - 1]}
         teams={teams}
       />
 

@@ -26,6 +26,8 @@ export function MatchPage() {
   } = useGame()
   const [visibleLogs, setVisibleLogs] = useState(0)
   const [playing, setPlaying] = useState(false)
+  const [playbackSpeed, setPlaybackSpeed] = useState(1)
+  const [animationsEnabled, setAnimationsEnabled] = useState(true)
   const timerRef = useRef<number | null>(null)
   const sessionInProgress = Boolean(activeGameSession && activeGameSession.status !== 'complete')
   const replayCursor = sessionInProgress ? activeGameSession!.cursor : visibleLogs
@@ -62,9 +64,9 @@ export function MatchPage() {
         if (timerRef.current) clearInterval(timerRef.current)
         setPlaying(false)
       }
-    }, 120)
+    }, 360 / playbackSpeed)
     return () => { if (timerRef.current) clearInterval(timerRef.current) }
-  }, [result, playing, advanceActiveGame])
+  }, [result, playing, advanceActiveGame, playbackSpeed])
 
   if (!state || !userTeam) return null
 
@@ -119,6 +121,7 @@ export function MatchPage() {
     ? result.logs[Math.max(0, (sessionInProgress || playing ? replayCursor : result.logs.length) - 1)]?.situationAfter
       ?? result.logs[0]?.situationBefore
     : undefined
+  const currentLog = result?.logs[Math.max(0, (sessionInProgress || playing ? replayCursor : result.logs.length) - 1)]
 
   return (
     <div className="bm-animate-in space-y-6">
@@ -220,7 +223,13 @@ export function MatchPage() {
             )}
           </div>
 
-          <GameSituationPanel situation={currentSituation} teams={state.teams} />
+          <GameSituationPanel situation={currentSituation} currentLog={currentLog} teams={state.teams} animationsEnabled={animationsEnabled} />
+
+          <div className="flex flex-wrap items-center justify-center gap-2" aria-label="경기 재생 설정">
+            <span className="text-xs text-[var(--text-muted)]">재생 속도</span>
+            {[0.5, 1, 2].map((speed) => <button key={speed} type="button" className={`bm-btn py-1 text-xs ${playbackSpeed === speed ? 'bm-btn-primary' : 'bm-btn-ghost'}`} onClick={() => setPlaybackSpeed(speed)}>{speed}×</button>)}
+            <label className="ml-2 flex items-center gap-2 text-xs"><input type="checkbox" checked={animationsEnabled} onChange={(e) => setAnimationsEnabled(e.target.checked)} /> 애니메이션</label>
+          </div>
 
           <GameManagementPanel />
 

@@ -219,6 +219,10 @@ try {
     }),
     '아웃·이닝·초말 상황 범위',
   )
+  assert(
+    situationGame.logs.filter((log) => log.eventType === 'plateAppearance').every((log) => log.visual && log.visual.ballAngle >= -58 && log.visual.ballAngle <= 58 && log.visual.distance > 0),
+    '타석 이벤트에 유효한 타구 시각 데이터',
+  )
   const finalSituation = situationGame.logs.at(-1)!.situationAfter!
   assert(
     finalSituation.homeScore === situationGame.homeScore && finalSituation.awayScore === situationGame.awayScore,
