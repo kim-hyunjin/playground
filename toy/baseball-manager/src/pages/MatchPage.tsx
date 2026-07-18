@@ -7,12 +7,16 @@ import { PlayerNameButton } from '../components/PlayerNameButton'
 import { GameSituationPanel } from '../components/GameSituationPanel'
 import { GameManagementPanel } from '../components/GameManagementPanel'
 import { ManagerTacticsPanel } from '../components/ManagerTacticsPanel'
+import { PitchLocationPanel } from '../components/PitchLocationPanel'
 import { useGame } from '../store/gameStore'
+import { createLivePitch, type LivePitch, type PitchCall } from '../engine/livePitch'
 
 interface PitchCount {
   balls: number
   strikes: number
 }
+
+const PITCH_INTERVAL_MS = 5000
 
 function nextPitchCount(count: PitchCount, outcome?: string): PitchCount | null {
   if (outcome === 'walk') {
@@ -51,6 +55,9 @@ export function MatchPage() {
   } = useGame()
   const [playbackSpeed, setPlaybackSpeed] = useState(1)
   const [pitchCount, setPitchCount] = useState<PitchCount>({ balls: 0, strikes: 0 })
+  const [pitchNumber, setPitchNumber] = useState(0)
+  const [lastPitch, setLastPitch] = useState<LivePitch>()
+  const [pendingResolution, setPendingResolution] = useState(false)
   const timerRef = useRef<number | null>(null)
   const result = lastResult
   const playing = activeGameSession?.status === 'playing'
@@ -81,21 +88,43 @@ export function MatchPage() {
   useEffect(() => {
     if (!result || !playing || !sessionInProgress) return
     timerRef.current = window.setTimeout(() => {
+      if (pendingResolution) {
+        setPitchCount({ balls: 0, strikes: 0 })
+        setPitchNumber(0)
+        setPendingResolution(false)
+        advanceActiveGame()
+        return
+      }
       const nextLog = result.logs.slice(sessionCursor)
         .find((log) => (log.eventType ?? 'plateAppearance') === 'plateAppearance')
       const nextCount = nextPitchCount(pitchCount, nextLog?.outcome)
+      const call: PitchCall = nextCount
+        ? nextCount.balls > pitchCount.balls ? 'ball' : 'strike'
+        : nextLog?.outcome === 'walk' ? 'ball' : nextLog?.outcome === 'strikeout' ? 'strike' : 'inPlay'
+      const pitcher = nextLog?.pitcherId ? findPlayerInLeague(state?.teams ?? [], nextLog.pitcherId)?.player : undefined
+      setLastPitch(createLivePitch({
+        seed: activeGameSession?.seed ?? 1,
+        cursor: sessionCursor,
+        pitchNumber,
+        pitcher,
+        call,
+        outcome: nextLog?.outcome,
+      }))
+      setPitchNumber((value) => value + 1)
       if (nextCount) {
         setPitchCount(nextCount)
       } else {
-        setPitchCount({ balls: 0, strikes: 0 })
-        advanceActiveGame()
+        setPendingResolution(true)
       }
-    }, 700 / playbackSpeed)
+    }, PITCH_INTERVAL_MS / playbackSpeed)
     return () => { if (timerRef.current) clearTimeout(timerRef.current) }
-  }, [result, playing, sessionInProgress, sessionCursor, advanceActiveGame, pitchCount, playbackSpeed])
+  }, [result, playing, sessionInProgress, sessionCursor, advanceActiveGame, pitchCount, playbackSpeed, pendingResolution, pitchNumber, state?.teams, activeGameSession?.seed])
 
   useEffect(() => {
     setPitchCount({ balls: 0, strikes: 0 })
+    setPitchNumber(0)
+    setLastPitch(undefined)
+    setPendingResolution(false)
   }, [activeGameId])
 
   if (!state || !userTeam) return null
@@ -261,6 +290,8 @@ export function MatchPage() {
             strikes={sessionInProgress ? pitchCount.strikes : 0}
             userSide={userSide}
           />
+
+          <PitchLocationPanel pitch={lastPitch} />
 
           {sessionInProgress ? <ManagerTacticsPanel /> : null}
 

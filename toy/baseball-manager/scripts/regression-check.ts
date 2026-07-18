@@ -38,6 +38,7 @@ import { buildStoveLeagueState } from '../src/engine/stoveLeague'
 import type { GameState } from '../types/game'
 import { changePitcher, createGameRoster, substituteBatter } from '../src/engine/substitutions'
 import { submitContractOffer } from '../src/engine/negotiations'
+import { createLivePitch } from '../src/engine/livePitch'
 
 let passed = 0
 let failed = 0
@@ -254,6 +255,12 @@ try {
   const commanded = applySessionCommand(interactiveSession, { offense: 'normal', pitching: 'intentionalWalk' })
   assert(commanded.ok && commanded.session.status === 'playing', '현재 경기 작전 적용 후 진행 상태 유지')
   assert(commanded.session.resolvedResult.logs.find((log) => log.eventType === 'plateAppearance')?.outcome === 'walk', '현재 경기 다음 타석에 고의사구 적용')
+  const pitchInput = { seed: interactiveSeed, cursor: 0, pitchNumber: 1, pitcher: userTeam.players.find((p) => p.role === 'SP'), call: 'strike' as const, outcome: 'strikeout' as const }
+  const displayedPitch = createLivePitch(pitchInput)
+  assert(JSON.stringify(displayedPitch) === JSON.stringify(createLivePitch(pitchInput)), '투구 정보 고정 seed 재현')
+  assert(displayedPitch.x >= 25 && displayedPitch.x <= 75 && displayedPitch.y >= 20 && displayedPitch.y <= 80, '스트라이크 투구 위치가 존 내부')
+  const displayedBall = createLivePitch({ ...pitchInput, call: 'ball' })
+  assert(displayedBall.x < 25 || displayedBall.x > 75 || displayedBall.y < 20 || displayedBall.y > 80, '볼 투구 위치가 존 외부')
   let progressed = interactiveSession
   for (let i = 0; i < 3; i++) progressed = advancePlateAppearance(progressed)
   const prefix = JSON.stringify(progressed.resolvedResult.logs.slice(0, progressed.cursor))
