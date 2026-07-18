@@ -1,9 +1,11 @@
-import type { GameResult, PlayLog } from '../types/game'
+import type { BullpenStrategy, FieldPosition, GameResult, ManagerCommand, PlayLog, ScheduledGame, Team } from '../types/game'
 import { computeScoreThroughLogs, type LiveScore } from './liveScore'
 import { normalizeSeed } from './sim/random'
 import { changePitcher, substituteBatter, substituteRunner, type GameRosterState } from './substitutions'
 import type { Player } from '../types/game'
 import { recordPitcherRuns, recordPlateAppearance, recordRunsScored, recordStolenBase } from './statsAccumulator'
+import { simulateGame } from './simulation'
+import { createSeededRandom } from './sim/random'
 
 function rebuildBoxScore(result: GameResult): GameResult {
   const original = result.boxScore
@@ -44,6 +46,30 @@ export interface GameSession {
   cursor: number
   resolvedResult: GameResult
   userRoster?: GameRosterState
+  simulationInput?: SessionSimulationInput
+  commandChanges?: SessionCommandChange[]
+}
+
+export interface SessionSimulationInput {
+  game: ScheduledGame
+  home: Team
+  away: Team
+  userTeamId: string
+  options: {
+    homeLineup?: Record<FieldPosition, string>
+    awayLineup?: Record<FieldPosition, string>
+    homeRotationIndex?: number
+    awayRotationIndex?: number
+    homeBullpenStrategy?: BullpenStrategy
+    awayBullpenStrategy?: BullpenStrategy
+    homeCommand?: ManagerCommand
+    awayCommand?: ManagerCommand
+  }
+}
+
+export interface SessionCommandChange {
+  fromPlateAppearance: number
+  command: ManagerCommand
 }
 
 export interface GameSessionView {
@@ -52,7 +78,7 @@ export interface GameSessionView {
   complete: boolean
 }
 
-export function createGameSession(result: GameResult, seed: number, userRoster?: GameRosterState): GameSession {
+export function createGameSession(result: GameResult, seed: number, userRoster?: GameRosterState, simulationInput?: SessionSimulationInput): GameSession {
   return {
     version: 1,
     gameId: result.gameId,
@@ -61,7 +87,40 @@ export function createGameSession(result: GameResult, seed: number, userRoster?:
     cursor: 0,
     resolvedResult: result,
     userRoster,
+    simulationInput,
+    commandChanges: [],
   }
+}
+
+export function applySessionCommand(session: GameSession, command: ManagerCommand): { session: GameSession; message: string; ok: boolean } {
+  const input = session.simulationInput
+  if (!input || session.status === 'complete') return { session, ok: false, message: '현재 경기에 작전을 적용할 수 없습니다.' }
+  const fromPlateAppearance = session.resolvedResult.logs.slice(0, session.cursor).filter((log) => (log.eventType ?? 'plateAppearance') === 'plateAppearance').length
+  const changes = [...(session.commandChanges ?? []).filter((change) => change.fromPlateAppearance !== fromPlateAppearance), { fromPlateAppearance, command }]
+    .sort((a, b) => a.fromPlateAppearance - b.fromPlateAppearance)
+  const result = simulateGame(input.game, input.home, input.away, {
+    ...input.options,
+    random: createSeededRandom({ seed: session.seed }),
+    commandProvider: ({ plateAppearanceIndex }) => {
+      const active = changes.filter((change) => change.fromPlateAppearance <= plateAppearanceIndex).at(-1)
+      if (!active) return {}
+      return input.game.homeId === input.userTeamId ? { homeCommand: active.command } : { awayCommand: active.command }
+    },
+  })
+  let next: GameSession = { ...session, status: 'paused', resolvedResult: result, commandChanges: changes }
+  if (session.userRoster) {
+    const originalLineup = input.game.homeId === input.userTeamId ? input.options.homeLineup : input.options.awayLineup
+    if (originalLineup) {
+      session.userRoster.lineup.forEach((slot) => {
+        const originalId = originalLineup[slot.position]
+        if (originalId && originalId !== slot.playerId) next = { ...next, resolvedResult: replaceFuturePlayer(next, 'batterId', originalId, slot.playerId) }
+      })
+    }
+    const originalStarter = input.game.homeId === input.userTeamId ? result.boxScore.homeStarterId : result.boxScore.awayStarterId
+    if (originalStarter !== session.userRoster.currentPitcherId) next = { ...next, resolvedResult: replaceFuturePlayer(next, 'pitcherId', originalStarter, session.userRoster.currentPitcherId) }
+    next = { ...next, resolvedResult: rebuildBoxScore(next.resolvedResult) }
+  }
+  return { session: next, ok: true, message: '작전이 다음 타석부터 적용됩니다.' }
 }
 
 function replaceFuturePlayer(
@@ -96,6 +155,7 @@ export function substituteSessionPitcher(session: GameSession, incoming: Player)
     message: changed.message,
     session: {
       ...session,
+      status: 'paused',
       userRoster: changed.roster,
       resolvedResult: rebuildBoxScore(replaceFuturePlayer(session, 'pitcherId', outgoingId, incoming.id)),
     },
@@ -113,6 +173,7 @@ export function substituteSessionBatter(session: GameSession, battingOrder: numb
     message: changed.message,
     session: {
       ...session,
+      status: 'paused',
       userRoster: changed.roster,
       resolvedResult: rebuildBoxScore(replaceFuturePlayer(session, 'batterId', outgoingId, incoming.id)),
     },
@@ -130,6 +191,7 @@ export function substituteSessionRunner(session: GameSession, outgoingId: string
     message: changed.message,
     session: {
       ...session,
+      status: 'paused',
       userRoster: changed.roster,
       resolvedResult: rebuildBoxScore({
         ...result,
@@ -206,5 +268,7 @@ export function restoreGameSession(value: unknown): GameSession | null {
       : candidate.status === 'paused' ? 'paused' : candidate.status === 'ready' ? 'ready' : 'playing',
     resolvedResult: candidate.resolvedResult,
     userRoster: candidate.userRoster,
+    simulationInput: candidate.simulationInput,
+    commandChanges: candidate.commandChanges ?? [],
   }
 }

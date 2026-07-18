@@ -69,16 +69,6 @@ const OUTCOME_TEXT: Record<AtBatOutcome, (b: string) => string> = {
   error: (b) => `${b} 실책 출루`,
 }
 
-function playVisual(outcome: AtBatOutcome, random: () => number) {
-  const distance = outcome === 'homerun' ? 92 + random() * 8
-    : outcome === 'triple' ? 78 + random() * 15
-      : outcome === 'double' ? 58 + random() * 25
-        : outcome === 'single' || outcome === 'error' ? 32 + random() * 38 : 18 + random() * 55
-  const trajectory = outcome === 'homerun' || outcome === 'triple' ? 'fly'
-    : outcome === 'double' ? 'line' : random() < 0.55 ? 'ground' : 'fly'
-  return { ballAngle: -58 + random() * 116, distance, trajectory } as const
-}
-
 export function cpuManagerCommand(
   inning: number,
   outs: number,
@@ -107,6 +97,17 @@ export interface SimOptions {
   awayBullpenStrategy?: BullpenStrategy
   homeCommand?: ManagerCommand
   awayCommand?: ManagerCommand
+  commandProvider?: (context: GameCommandContext) => { homeCommand?: ManagerCommand; awayCommand?: ManagerCommand }
+}
+
+export interface GameCommandContext {
+  plateAppearanceIndex: number
+  inning: number
+  half: 'top' | 'bottom'
+  outs: number
+  runners: RunnerState
+  homeScore: number
+  awayScore: number
 }
 
 function playHalfInning(
@@ -126,6 +127,8 @@ function playHalfInning(
   bullpenStrategy?: BullpenStrategy,
   battingCommand?: ManagerCommand,
   pitchingCommand?: ManagerCommand,
+  commandProvider?: SimOptions['commandProvider'],
+  plateAppearanceCounter?: { value: number },
 ): number {
   let outs = 0
   let runners: RunnerState = emptyRunners()
@@ -158,8 +161,16 @@ function playHalfInning(
 
   while (outs < 3) {
     const scoreDiff = battingScore + runs - pitchingScore
-    const offenseCommand = battingCommand ?? cpuManagerCommand(inning, outs, runners, scoreDiff)
-    const defenseCommand = pitchingCommand ?? cpuManagerCommand(inning, outs, runners, -scoreDiff)
+    const dynamic = commandProvider?.({
+      plateAppearanceIndex: plateAppearanceCounter?.value ?? 0,
+      inning, half, outs, runners,
+      homeScore: half === 'bottom' ? battingScore + runs : pitchingScore,
+      awayScore: half === 'top' ? battingScore + runs : pitchingScore,
+    })
+    const dynamicBatting = half === 'top' ? dynamic?.awayCommand : dynamic?.homeCommand
+    const dynamicPitching = half === 'top' ? dynamic?.homeCommand : dynamic?.awayCommand
+    const offenseCommand = dynamicBatting ?? battingCommand ?? cpuManagerCommand(inning, outs, runners, scoreDiff)
+    const defenseCommand = dynamicPitching ?? pitchingCommand ?? cpuManagerCommand(inning, outs, runners, -scoreDiff)
     const batter = ensureHandedness(battingTeam[idx % battingTeam.length]!)
     const pitcher = ensureHandedness(
       pickPitcher(pitchingTeam, {
@@ -239,8 +250,8 @@ function playHalfInning(
       eventType: 'plateAppearance',
       situationBefore,
       situationAfter: situation(outs, runners, runs, batter.id, pitcher.id),
-      visual: playVisual(outcome, random),
     })
+    if (plateAppearanceCounter) plateAppearanceCounter.value++
 
     if (half === 'bottom' && inning >= 9 && battingScore + runs > pitchingScore) break
     idx++
@@ -290,6 +301,7 @@ export function simulateGame(
   }
 
   const pitchCounts = new Map<string, number>()
+  const plateAppearanceCounter = { value: 0 }
   const MAX_INNINGS = 15
 
   for (let inning = 1; inning <= MAX_INNINGS; inning++) {
@@ -310,6 +322,8 @@ export function simulateGame(
       options.homeBullpenStrategy,
       options.awayCommand,
       options.homeCommand,
+      options.commandProvider,
+      plateAppearanceCounter,
     )
     innings[inning - 1] ??= {}
     innings[inning - 1]!.top = awayRuns
@@ -332,6 +346,8 @@ export function simulateGame(
       options.awayBullpenStrategy,
       options.homeCommand,
       options.awayCommand,
+      options.commandProvider,
+      plateAppearanceCounter,
     )
     innings[inning - 1]!.bottom = homeRuns
     homeTotal += homeRuns

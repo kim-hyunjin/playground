@@ -24,16 +24,14 @@ export function MatchPage() {
     advanceWeek,
     setView,
   } = useGame()
-  const [visibleLogs, setVisibleLogs] = useState(0)
-  const [playing, setPlaying] = useState(false)
   const [playbackSpeed, setPlaybackSpeed] = useState(1)
-  const [animationsEnabled, setAnimationsEnabled] = useState(true)
   const timerRef = useRef<number | null>(null)
+  const result = lastResult
+  const playing = activeGameSession?.status === 'playing'
   const sessionInProgress = Boolean(activeGameSession && activeGameSession.status !== 'complete')
   const gameFinished = !playing && !sessionInProgress
-  const replayCursor = sessionInProgress ? activeGameSession!.cursor : visibleLogs
+  const replayCursor = sessionInProgress ? activeGameSession!.cursor : result?.logs.length ?? 0
 
-  const result = lastResult
   const opponent = result
     ? state?.teams.find((t) => t.id === (result.homeId === userTeam?.id ? result.awayId : result.homeId))
     : upcomingGame
@@ -53,42 +51,30 @@ export function MatchPage() {
   }, [result, playing, replayCursor, sessionInProgress])
 
   useEffect(() => {
-    if (!result || !playing) return
-    const startingCursor = activeGameSession?.cursor ?? 0
-    setVisibleLogs(startingCursor)
-    let i = startingCursor
-    timerRef.current = window.setInterval(() => {
-      i++
-      setVisibleLogs(i)
+    if (!result || !playing || !sessionInProgress) return
+    timerRef.current = window.setTimeout(() => {
       advanceActiveGame()
-      if (i >= result.logs.length) {
-        if (timerRef.current) clearInterval(timerRef.current)
-        setPlaying(false)
-      }
-    }, 360 / playbackSpeed)
-    return () => { if (timerRef.current) clearInterval(timerRef.current) }
-    // cursor 변화마다 interval을 재시작하지 않고 시작 시점만 읽는다.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [result, playing, advanceActiveGame, playbackSpeed])
+    }, 1500 / playbackSpeed)
+    return () => { if (timerRef.current) clearTimeout(timerRef.current) }
+  }, [result, playing, sessionInProgress, activeGameSession?.cursor, advanceActiveGame, playbackSpeed])
 
   if (!state || !userTeam) return null
 
   const handlePlay = () => {
     const r = playUserGame()
-    if (r) {
-      setPlaying(true)
-      setVisibleLogs(0)
-    }
+    if (!r) return
   }
 
   const togglePlaying = () => {
     if (playing) {
-      setPlaying(false)
       pauseActiveGame()
     } else {
-      setPlaying(true)
       resumeActiveGame()
     }
+  }
+
+  const advanceOnce = () => {
+    advanceActiveGame(true)
   }
 
   const isHome = result ? result.homeId === userTeam.id : upcomingGame?.homeId === userTeam.id
@@ -121,10 +107,12 @@ export function MatchPage() {
 
   const hasMoreGamesThisWeek = Boolean(upcomingGame && result && gameFinished)
   const currentSituation = result
-    ? result.logs[Math.max(0, (sessionInProgress || playing ? replayCursor : result.logs.length) - 1)]?.situationAfter
+    ? (sessionInProgress ? result.logs[replayCursor]?.situationBefore : undefined)
+      ?? result.logs[Math.max(0, (sessionInProgress || playing ? replayCursor : result.logs.length) - 1)]?.situationAfter
       ?? result.logs[0]?.situationBefore
     : undefined
-  const currentLog = result?.logs[Math.max(0, (sessionInProgress || playing ? replayCursor : result.logs.length) - 1)]
+  const shownLogCount = sessionInProgress || playing ? replayCursor : result?.logs.length ?? 0
+  const currentLog = shownLogCount > 0 ? result?.logs[shownLogCount - 1] : undefined
 
   return (
     <div className="bm-animate-in space-y-6">
@@ -180,7 +168,7 @@ export function MatchPage() {
           <div className={`bm-card p-6 text-center ${gameFinished && userWon ? 'border-emerald-500/50' : gameFinished ? 'border-red-500/30' : ''}`}>
             <div className="mb-2 text-sm font-semibold tracking-wider text-[var(--text-muted)]">
               {playing || sessionInProgress
-                ? currentInningLabel(result.logs, visibleLogs)
+                ? currentInningLabel(result.logs, replayCursor)
                 : userWon
                   ? '승리!'
                   : '패배'}
@@ -226,12 +214,14 @@ export function MatchPage() {
             )}
           </div>
 
-          <GameSituationPanel situation={currentSituation} currentLog={currentLog} teams={state.teams} animationsEnabled={animationsEnabled} />
+          <GameSituationPanel situation={currentSituation} currentLog={currentLog} teams={state.teams} />
+
+          {sessionInProgress ? <ManagerTacticsPanel /> : null}
 
           <div className="flex flex-wrap items-center justify-center gap-2" aria-label="경기 재생 설정">
             <span className="text-xs text-[var(--text-muted)]">재생 속도</span>
             {[0.5, 1, 2].map((speed) => <button key={speed} type="button" className={`bm-btn py-1 text-xs ${playbackSpeed === speed ? 'bm-btn-primary' : 'bm-btn-ghost'}`} onClick={() => setPlaybackSpeed(speed)}>{speed}×</button>)}
-            <label className="ml-2 flex items-center gap-2 text-xs"><input type="checkbox" checked={animationsEnabled} onChange={(e) => setAnimationsEnabled(e.target.checked)} /> 애니메이션</label>
+            {sessionInProgress ? <button type="button" className="bm-btn bm-btn-ghost py-1 text-xs" onClick={advanceOnce}>다음 타석</button> : null}
           </div>
 
           <GameManagementPanel />

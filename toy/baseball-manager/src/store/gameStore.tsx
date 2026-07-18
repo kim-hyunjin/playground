@@ -43,6 +43,7 @@ import { sanitizeLineup, sanitizeRotation } from '../engine/rosterAvailability'
 import { cpuAcceptsTrade, executeTrade, validateTrade, type TradeProposal } from '../engine/trades'
 import {
   advancePlateAppearance,
+  applySessionCommand,
   createGameSession,
   pauseGameSession,
   restoreGameSession,
@@ -76,9 +77,10 @@ interface GameContextValue {
   advanceWeek: () => void
   lastResult: GameResult | null
   activeGameSession: GameSession | null
-  advanceActiveGame: () => void
+  advanceActiveGame: (stayPaused?: boolean) => void
   pauseActiveGame: () => void
   resumeActiveGame: () => void
+  applyCurrentGameCommand: (command: ManagerCommand) => string
   substitutePitcher: (playerId: string) => string
   substituteBatter: (battingOrder: number, playerId: string) => string
   substituteRunner: (outgoingId: string, playerId: string) => string
@@ -300,26 +302,38 @@ export function GameProvider({ children }: { children: ReactNode }) {
     const isHome = game.homeId === state.userTeamId
 
     const seed = (Date.now() ^ state.currentWeek ^ state.rotationIndex) >>> 0
-    const result = simulateGame(game, home, away, {
+    const sessionOptions = {
       homeLineup: isHome ? state.lineup : undefined,
       awayLineup: !isHome ? state.lineup : undefined,
       homeRotationIndex: isHome ? state.rotationIndex : undefined,
       awayRotationIndex: !isHome ? state.rotationIndex : undefined,
-      random: createSeededRandom({ seed }),
       homeBullpenStrategy: isHome ? state.bullpenStrategy : undefined,
       awayBullpenStrategy: !isHome ? state.bullpenStrategy : undefined,
       homeCommand: isHome ? state.managerCommand : undefined,
       awayCommand: !isHome ? state.managerCommand : undefined,
+    }
+    const result = simulateGame(game, home, away, {
+      ...sessionOptions,
+      random: createSeededRandom({ seed }),
     })
 
     setLastResult(result)
     const starterId = isHome ? result.boxScore.homeStarterId : result.boxScore.awayStarterId
-    setActiveGameSession(createGameSession(result, seed, createGameRoster(userTeam!, state.lineup, starterId)))
+    setActiveGameSession(resumeGameSession(createGameSession(
+      result,
+      seed,
+      createGameRoster(userTeam!, state.lineup, starterId),
+      { game, home, away, userTeamId: state.userTeamId, options: sessionOptions },
+    )))
     return result
   }, [state, userTeam])
 
-  const advanceActiveGame = useCallback(() => {
-    setActiveGameSession((session) => session ? advancePlateAppearance(session) : null)
+  const advanceActiveGame = useCallback((stayPaused = false) => {
+    setActiveGameSession((session) => {
+      if (!session) return null
+      const next = advancePlateAppearance(session)
+      return stayPaused && next.status !== 'complete' ? pauseGameSession(next) : next
+    })
   }, [])
   const pauseActiveGame = useCallback(() => {
     setActiveGameSession((session) => session ? pauseGameSession(session) : null)
@@ -327,6 +341,13 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const resumeActiveGame = useCallback(() => {
     setActiveGameSession((session) => session ? resumeGameSession(session) : null)
   }, [])
+  const applyCurrentGameCommand = useCallback((command: ManagerCommand): string => {
+    if (!activeGameSession) return '진행 중인 경기가 없습니다.'
+    const result = applySessionCommand(activeGameSession, command)
+    setActiveGameSession(result.session)
+    if (result.ok) setLastResult(result.session.resolvedResult)
+    return result.message
+  }, [activeGameSession])
   const substitutePitcher = useCallback((playerId: string): string => {
     const player = userTeam?.players.find((p) => p.id === playerId)
     if (!player) return '선수를 찾을 수 없습니다.'
@@ -728,6 +749,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     advanceActiveGame,
     pauseActiveGame,
     resumeActiveGame,
+    applyCurrentGameCommand,
     substitutePitcher,
     substituteBatter,
     substituteRunner,

@@ -26,6 +26,7 @@ import { cpuManagerCommand, simulateCpuGames, simulateGame } from '../src/engine
 import { createSeededRandom } from '../src/engine/sim/random'
 import {
   advancePlateAppearance,
+  applySessionCommand,
   createGameSession,
   gameSessionView,
   pauseGameSession,
@@ -218,10 +219,6 @@ try {
     }),
     '아웃·이닝·초말 상황 범위',
   )
-  assert(
-    situationGame.logs.filter((log) => log.eventType === 'plateAppearance').every((log) => log.visual && log.visual.ballAngle >= -58 && log.visual.ballAngle <= 58 && log.visual.distance > 0),
-    '타석 이벤트에 유효한 타구 시각 데이터',
-  )
   const finalSituation = situationGame.logs.at(-1)!.situationAfter!
   assert(
     finalSituation.homeScore === situationGame.homeScore && finalSituation.awayScore === situationGame.awayScore,
@@ -245,9 +242,22 @@ try {
   const managed = createGameSession(seededGame(), 20260718, gameRoster)
   const managedPitcher = userTeam.players.find((p) => gameRoster.bullpenIds.includes(p.id))!
   const managedChange = substituteSessionPitcher(managed, managedPitcher)
-  assert(managedChange.ok, '세션 투수 교체 반영')
+  assert(managedChange.ok && managedChange.session.status === 'paused', '세션 투수 교체 및 일시정지 반영')
   assert(managedChange.session.resolvedResult.logs.some((log) => log.pitcherId === managedPitcher.id), '교체 투수가 잔여 플레이에 등판')
   assert(Boolean(managedChange.session.resolvedResult.boxScore.pitchers[managedPitcher.id]), '교체 투수 박스스코어 재계산')
+  const interactiveSeed = 8844
+  const interactiveGame = { id: 'reg-interactive', week: 1, day: 'sat' as const, homeId: userTeam.id, awayId: teams[1]!.id, played: false }
+  const interactiveOptions = { homeLineup: lineup, homeRotationIndex: 0, homeCommand: { offense: 'normal' as const, pitching: 'normal' as const }, awayCommand: { offense: 'normal' as const, pitching: 'normal' as const } }
+  const interactiveResult = simulateGame(interactiveGame, userTeam, teams[1]!, { ...interactiveOptions, random: createSeededRandom({ seed: interactiveSeed }) })
+  const interactiveSession = createGameSession(interactiveResult, interactiveSeed, gameRoster, { game: interactiveGame, home: userTeam, away: teams[1]!, userTeamId: userTeam.id, options: interactiveOptions })
+  const commanded = applySessionCommand(interactiveSession, { offense: 'normal', pitching: 'intentionalWalk' })
+  assert(commanded.ok && commanded.session.status === 'paused', '현재 경기 작전 적용 시 일시정지')
+  assert(commanded.session.resolvedResult.logs.find((log) => log.eventType === 'plateAppearance')?.outcome === 'walk', '현재 경기 다음 타석에 고의사구 적용')
+  let progressed = interactiveSession
+  for (let i = 0; i < 3; i++) progressed = advancePlateAppearance(progressed)
+  const prefix = JSON.stringify(progressed.resolvedResult.logs.slice(0, progressed.cursor))
+  const changedLater = applySessionCommand(progressed, { offense: 'aggressive', pitching: 'challenge' })
+  assert(JSON.stringify(changedLater.session.resolvedResult.logs.slice(0, progressed.cursor)) === prefix, '작전 변경 전 플레이 기록 보존')
   while (session.status !== 'complete') session = advancePlateAppearance(session)
   assert(gameSessionView(session).complete, '세션을 경기 종료까지 진행')
   const commandSample = (offense: 'normal' | 'bunt' | 'steal', pitching: 'normal' | 'intentionalWalk') => {

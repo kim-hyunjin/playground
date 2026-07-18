@@ -227,13 +227,6 @@ export interface PlayLog {
   eventType?: 'plateAppearance' | 'stolenBase' | 'substitution'
   situationBefore?: GameSituation
   situationAfter?: GameSituation
-  visual?: PlayVisual
-}
-
-export interface PlayVisual {
-  ballAngle: number
-  distance: number
-  trajectory: 'ground' | 'line' | 'fly'
 }
 
 export interface BaseRunners {
