@@ -23,7 +23,7 @@ import {
   validateFarmRoster,
   validateFirstTeamRoster,
 } from '../src/engine/roster'
-import { simulateCpuGames, simulateGame } from '../src/engine/simulation'
+import { cpuManagerCommand, simulateCpuGames, simulateGame } from '../src/engine/simulation'
 import { createSeededRandom } from '../src/engine/sim/random'
 import {
   advancePlateAppearance,
@@ -233,6 +233,25 @@ try {
   assert(Boolean(managedChange.session.resolvedResult.boxScore.pitchers[managedPitcher.id]), '교체 투수 박스스코어 재계산')
   while (session.status !== 'complete') session = advancePlateAppearance(session)
   assert(gameSessionView(session).complete, '세션을 경기 종료까지 진행')
+  const commandSample = (offense: 'normal' | 'bunt' | 'steal', pitching: 'normal' | 'intentionalWalk') => {
+    const outcomes = { sacrifice: 0, stolenBase: 0, walk: 0 }
+    for (let i = 1; i <= 12; i++) {
+      const sampled = simulateGame(
+        { id: `cmd-${offense}-${pitching}-${i}`, week: 1, day: 'fri', homeId: userTeam.id, awayId: teams[1]!.id, played: false },
+        userTeam, teams[1]!,
+        { random: createSeededRandom({ seed: 7000 + i }), homeCommand: { offense, pitching }, awayCommand: { offense: 'normal', pitching: 'normal' } },
+      )
+      outcomes.sacrifice += sampled.logs.filter((log) => log.outcome === 'sacrifice' && log.half === 'bottom').length
+      outcomes.stolenBase += sampled.logs.filter((log) => log.eventType === 'stolenBase' && log.half === 'bottom').length
+      outcomes.walk += sampled.logs.filter((log) => log.outcome === 'walk' && log.half === 'top').length
+    }
+    return outcomes
+  }
+  const normalCommands = commandSample('normal', 'normal')
+  assert(commandSample('bunt', 'normal').sacrifice > normalCommands.sacrifice, '번트 지시가 희생타 빈도 증가')
+  assert(commandSample('steal', 'normal').stolenBase > normalCommands.stolenBase, '도루 지시가 도루 빈도 증가')
+  assert(commandSample('normal', 'intentionalWalk').walk > normalCommands.walk, '고의사구 지시가 볼넷 빈도 증가')
+  assert(cpuManagerCommand(8, 0, { first: true, second: false, third: false, firstId: 'runner' }, 1).offense === 'bunt', 'CPU 후반 접전 번트 판단')
 
   const withHand = userTeam.players.filter((p) => p.bats && p.throws)
   assert(withHand.length >= FIRST_TEAM_MAX, '1군 선수 투타 정보')

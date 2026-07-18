@@ -7,7 +7,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { DEFAULT_BULLPEN_STRATEGY, type BullpenStrategy, type FieldPosition, type GameResult, type GameState, type Player, type ScheduledGame, type Team, type View } from '../types/game'
+import { DEFAULT_BULLPEN_STRATEGY, DEFAULT_MANAGER_COMMAND, type BullpenStrategy, type ManagerCommand, type FieldPosition, type GameResult, type GameState, type Player, type ScheduledGame, type Team, type View } from '../types/game'
 import { loadLeague2026 } from '../data/rosterLoader'
 import { defaultLineup, defaultRotation } from '../engine/generator'
 import { generateSchedule, generateFarmSchedule, nextUserGame, normalizeSchedule, hasUnplayedUserGamesInWeek } from '../engine/schedule'
@@ -70,6 +70,7 @@ interface GameContextValue {
   setRotation: (rotation: string[]) => void
   swapRotation: (from: number, to: number) => void
   setBullpenStrategy: (strategy: BullpenStrategy) => void
+  setManagerCommand: (command: ManagerCommand) => void
   playUserGame: () => GameResult | null
   advanceWeek: () => void
   lastResult: GameResult | null
@@ -125,6 +126,7 @@ function createInitialState(teamIndex: number, managerName: string): GameState {
     rotation: defaultRotation(userTeam),
     rotationIndex: 0,
     bullpenStrategy: DEFAULT_BULLPEN_STRATEGY,
+    managerCommand: DEFAULT_MANAGER_COMMAND,
     results: [],
     farmResults: [],
     managerName,
@@ -150,6 +152,7 @@ function loadState(): GameState | null {
       schedule: normalizeSchedule(parsed.schedule ?? []),
       farmSchedule: normalizeSchedule(parsed.farmSchedule ?? []),
       bullpenStrategy: parsed.bullpenStrategy ?? DEFAULT_BULLPEN_STRATEGY,
+      managerCommand: parsed.managerCommand ?? DEFAULT_MANAGER_COMMAND,
     }
   } catch {
     return null
@@ -252,6 +255,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const setBullpenStrategy = useCallback((bullpenStrategy: BullpenStrategy) => {
     setState((s) => s ? { ...s, bullpenStrategy } : s)
   }, [])
+  const setManagerCommand = useCallback((managerCommand: ManagerCommand) => {
+    setState((s) => s ? { ...s, managerCommand } : s)
+  }, [])
 
   const playUserGame = useCallback((): GameResult | null => {
     if (!state || state.phase !== 'regular') return null
@@ -271,6 +277,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
       random: createSeededRandom({ seed }),
       homeBullpenStrategy: isHome ? state.bullpenStrategy : undefined,
       awayBullpenStrategy: !isHome ? state.bullpenStrategy : undefined,
+      homeCommand: isHome ? state.managerCommand : undefined,
+      awayCommand: !isHome ? state.managerCommand : undefined,
     })
 
     const applied = applyResult(state.teams, state.schedule, result)
@@ -694,6 +702,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setRotation,
     swapRotation,
     setBullpenStrategy,
+    setManagerCommand,
     playUserGame,
     advanceWeek,
     lastResult,

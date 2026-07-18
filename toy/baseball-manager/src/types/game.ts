@@ -313,6 +313,7 @@ export interface GameState {
   rotation: string[]
   rotationIndex: number
   bullpenStrategy?: BullpenStrategy
+  managerCommand?: ManagerCommand
   results: GameResult[]
   farmResults: GameResult[]
   managerName: string
@@ -324,6 +325,14 @@ export interface BullpenStrategy {
   closerInning: number
   useLeftyMatchups: boolean
 }
+
+export type OffensiveCommand = 'normal' | 'bunt' | 'steal' | 'aggressive' | 'patient'
+export type PitchingCommand = 'normal' | 'intentionalWalk' | 'challenge' | 'nibble'
+export interface ManagerCommand {
+  offense: OffensiveCommand
+  pitching: PitchingCommand
+}
+export const DEFAULT_MANAGER_COMMAND: ManagerCommand = { offense: 'normal', pitching: 'normal' }
 
 export const DEFAULT_BULLPEN_STRATEGY: BullpenStrategy = {
   starterPitchLimit: 95,

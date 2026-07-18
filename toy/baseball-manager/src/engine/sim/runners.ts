@@ -131,6 +131,7 @@ export function tryStealAttempt(
   pitcherControl: number,
   outs: number,
   rand = Math.random,
+  forceAttempt = false,
 ): { state: RunnerState; stolen: boolean; stealerId?: string } {
   if (outs >= 3 || !state.first || state.second) {
     return { state, stolen: false }
@@ -140,7 +141,10 @@ export function tryStealAttempt(
     0.012,
     Math.min(0.14, 0.025 + runnerSpeed / 380 - pitcherControl / 520),
   )
-  if (rand() >= chance) return { state, stolen: false }
+  if (!forceAttempt && rand() >= chance) return { state, stolen: false }
+  if (forceAttempt && rand() >= Math.min(0.9, 0.48 + runnerSpeed / 220 - pitcherControl / 500)) {
+    return { state, stolen: false }
+  }
 
   const stealerId = state.firstId
   return {

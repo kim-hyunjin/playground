@@ -6,6 +6,7 @@ import { DAY_LABELS } from '../types/game'
 import { PlayerNameButton } from '../components/PlayerNameButton'
 import { GameSituationPanel } from '../components/GameSituationPanel'
 import { GameManagementPanel } from '../components/GameManagementPanel'
+import { ManagerTacticsPanel } from '../components/ManagerTacticsPanel'
 import { useGame } from '../store/gameStore'
 
 export function MatchPage() {
@@ -131,7 +132,7 @@ export function MatchPage() {
       </div>
 
       {!result && upcomingGame && opponent && (
-        <div className="bm-card p-6 text-center">
+        <><ManagerTacticsPanel /><div className="bm-card p-6 text-center">
           <div className="mb-4 text-sm text-[var(--text-muted)]">
             <span className="font-semibold text-[var(--accent)]">{DAY_LABELS[upcomingGame.day]}요일</span>
             {' · '}
@@ -156,7 +157,7 @@ export function MatchPage() {
           <button type="button" className="bm-btn bm-btn-primary mt-6 px-8" onClick={handlePlay}>
             경기 시작
           </button>
-        </div>
+        </div></>
       )}
 
       {!result && !upcomingGame && (

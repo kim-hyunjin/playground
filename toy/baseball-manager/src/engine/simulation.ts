@@ -10,6 +10,7 @@ import type {
   ScheduledGame,
   Team,
   BullpenStrategy,
+  ManagerCommand,
 } from '../types/game'
 import { FIELD_POSITIONS } from '../types/game'
 import { parkForTeamAbbr } from '../data/parks/kbo2026'
@@ -68,6 +69,21 @@ const OUTCOME_TEXT: Record<AtBatOutcome, (b: string) => string> = {
   error: (b) => `${b} 실책 출루`,
 }
 
+export function cpuManagerCommand(
+  inning: number,
+  outs: number,
+  runners: RunnerState,
+  scoreDiff: number,
+): ManagerCommand {
+  const lateClose = inning >= 7 && Math.abs(scoreDiff) <= 2
+  const offense = lateClose && outs < 2 && Boolean(runners.firstId) ? 'bunt'
+    : Boolean(runners.firstId) && !runners.secondId && outs < 2 ? 'steal'
+      : scoreDiff < -2 ? 'aggressive' : 'normal'
+  const pitching = inning >= 8 && scoreDiff > 0 ? 'nibble'
+    : scoreDiff < -2 ? 'challenge' : 'normal'
+  return { offense, pitching }
+}
+
 export interface SimOptions {
   homeLineup?: Record<FieldPosition, string>
   awayLineup?: Record<FieldPosition, string>
@@ -79,6 +95,8 @@ export interface SimOptions {
   random?: () => number
   homeBullpenStrategy?: BullpenStrategy
   awayBullpenStrategy?: BullpenStrategy
+  homeCommand?: ManagerCommand
+  awayCommand?: ManagerCommand
 }
 
 function playHalfInning(
@@ -96,6 +114,8 @@ function playHalfInning(
   pitchingScore: number,
   random: () => number,
   bullpenStrategy?: BullpenStrategy,
+  battingCommand?: ManagerCommand,
+  pitchingCommand?: ManagerCommand,
 ): number {
   let outs = 0
   let runners: RunnerState = emptyRunners()
@@ -127,6 +147,9 @@ function playHalfInning(
   })
 
   while (outs < 3) {
+    const scoreDiff = battingScore + runs - pitchingScore
+    const offenseCommand = battingCommand ?? cpuManagerCommand(inning, outs, runners, scoreDiff)
+    const defenseCommand = pitchingCommand ?? cpuManagerCommand(inning, outs, runners, -scoreDiff)
     const batter = ensureHandedness(battingTeam[idx % battingTeam.length]!)
     const pitcher = ensureHandedness(
       pickPitcher(pitchingTeam, {
@@ -144,7 +167,7 @@ function playHalfInning(
         ? battingTeam.find((p) => p.id === runners.firstId)?.speed ?? batter.speed
         : batter.speed
 
-    const steal = tryStealAttempt(runners, runnerSpeed, pitcher.control, outs, random)
+    const steal = tryStealAttempt(runners, runnerSpeed, pitcher.control, outs, random, offenseCommand.offense === 'steal')
     if (steal.stolen && steal.stealerId) {
       const beforeSteal = situation(outs, runners, runs, batter.id, pitcher.id)
       runners = steal.state
@@ -165,9 +188,15 @@ function playHalfInning(
     }
 
     const pitcherGs = isStarterPitcher(pitchingTeam, pitcher, rotIndex, inning)
-    const outcome = resolveAtBat(
-      batter,
-      pitcher,
+    const managedBatter = offenseCommand.offense === 'patient' ? { ...batter, eye: Math.min(99, batter.eye + 8), power: Math.max(1, batter.power - 4) }
+      : offenseCommand.offense === 'aggressive' ? { ...batter, power: Math.min(99, batter.power + 7), eye: Math.max(1, batter.eye - 7) } : batter
+    const managedPitcher = defenseCommand.pitching === 'challenge' ? { ...pitcher, velocity: Math.min(99, pitcher.velocity + 5), control: Math.min(99, pitcher.control + 3), movement: Math.max(1, pitcher.movement - 3) }
+      : defenseCommand.pitching === 'nibble' ? { ...pitcher, movement: Math.min(99, pitcher.movement + 5), control: Math.max(1, pitcher.control - 6) } : pitcher
+    const forceWalk = defenseCommand.pitching === 'intentionalWalk' && runners.firstId === undefined
+    const forceBunt = offenseCommand.offense === 'bunt' && outs < 2 && Boolean(runners.firstId || runners.secondId)
+    const outcome = forceWalk ? 'walk' : forceBunt && random() < 0.72 ? 'sacrifice' : resolveAtBat(
+      managedBatter,
+      managedPitcher,
       ctx,
       random,
       { outs, runners },
@@ -268,6 +297,8 @@ export function simulateGame(
       homeTotal,
       random,
       options.homeBullpenStrategy,
+      options.awayCommand,
+      options.homeCommand,
     )
     innings[inning - 1] ??= {}
     innings[inning - 1]!.top = awayRuns
@@ -288,6 +319,8 @@ export function simulateGame(
       awayTotal,
       random,
       options.awayBullpenStrategy,
+      options.homeCommand,
+      options.awayCommand,
     )
     innings[inning - 1]!.bottom = homeRuns
     homeTotal += homeRuns
