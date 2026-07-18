@@ -2,12 +2,14 @@
 title: "효율적인 코딩과 디버깅: 실수를 줄이는 원칙"
 description: "좋은 코드를 짜기 위한 원칙과 프로그래밍 대회나 실무에서 자주 하는 실수들, 그리고 효과적인 디버깅/테스팅 기법"
 date: 2026-04-24
+category: "Algorithms"
 categories:
   - Programming
 tags:
   - Coding Tips
   - Debugging
   - Software Engineering
+summary: "좋은 코드를 짜기 위한 원칙과 프로그래밍 대회나 실무에서 자주 하는 실수들, 그리고 효과적인 디버깅/테스팅 기법"
 ---
 
 # 코딩과 디버깅

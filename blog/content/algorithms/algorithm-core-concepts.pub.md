@@ -2,12 +2,14 @@
 title: "알고리즘 핵심 개념 정리: 완전탐색부터 DP까지"
 description: "완전탐색, 탐욕법, 그래프, DFS/BFS, 백트래킹, 이진탐색, DP 등 주요 알고리즘의 핵심 개념과 특징 요약"
 date: 2026-04-24
+category: "Algorithms"
 categories:
   - Algorithms
 tags:
   - Coding Test
   - CS
   - Data Structure
+summary: "완전탐색, 탐욕법, 그래프, DFS/BFS, 백트래킹, 이진탐색, DP 등 주요 알고리즘의 핵심 개념과 특징 요약"
 ---
 
 # 알고리즘 핵심 개념 요약

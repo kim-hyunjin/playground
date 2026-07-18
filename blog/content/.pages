@@ -1,4 +1,5 @@
 nav:
+  - Home: index.md
   - Backend: backend
   - AI & LangChain: ai
   - Algorithms: algorithms

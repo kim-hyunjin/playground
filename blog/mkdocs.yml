@@ -15,9 +15,7 @@ theme:
   name: material
   language: ko
   custom_dir: overrides
-  font:
-    text: "Source Han Serif KR"
-    code: "JetBrains Mono"
+  font: false
   palette:
     - scheme: default
       primary: custom
@@ -43,7 +41,6 @@ theme:
 
 plugins:
   - search
-  - roamlinks
   - awesome-pages:
       collapse_single_pages: true
   - mkdocs-jupyter:
@@ -70,6 +67,9 @@ markdown_extensions:
   - pymdownx.snippets
   - toc:
       permalink: true
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
 
 extra_css:
   - assets/stylesheets/kami.css

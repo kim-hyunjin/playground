@@ -18,8 +18,8 @@
   --kami-deep-dark: #141413;
   --kami-dark-surface: #30302e;
   --kami-shot-bg: #141318;
-  --kami-serif: "Source Han Serif KR", "Noto Serif KR", "Nanum Myeongjo", Georgia, serif;
-  --kami-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --kami-serif: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", sans-serif;
+  --kami-ui: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", sans-serif;
   --kami-mono: "JetBrains Mono", "SF Mono", "Fira Code", Consolas, monospace;
   --kami-shadow-whisper: 0 1px 2px rgba(20, 20, 19, 0.04);
   --kami-shadow-ring: 0 0 0 1px var(--kami-border);
@@ -119,7 +119,7 @@ body {
 .md-typeset {
   font-size: 0.85rem;
   line-height: 1.55;
-  letter-spacing: 0.3pt;
+  letter-spacing: -0.02em;
 }
 
 .md-typeset h1,
@@ -130,7 +130,7 @@ body {
 .md-typeset h6 {
   font-weight: 500;
   color: var(--kami-near-black);
-  letter-spacing: 0;
+  letter-spacing: -0.02em;
 }
 
 [data-md-color-scheme="kami-dark"] .md-typeset h1,
@@ -182,7 +182,7 @@ body {
 .md-social,
 .md-footer-copyright {
   font-family: var(--kami-ui);
-  letter-spacing: 0;
+  letter-spacing: -0.02em;
 }
 
 /* ------------------------------------------------------------------ */
@@ -235,7 +235,7 @@ body {
   color: var(--kami-brand);
   font-size: 0.78rem;
   font-weight: 600;
-  letter-spacing: 0.02em;
+  letter-spacing: -0.02em;
   line-height: 1.4;
   text-transform: lowercase;
 }
@@ -281,7 +281,7 @@ body {
   color: var(--kami-olive);
   font-size: 0.75rem;
   font-weight: 500;
-  letter-spacing: 0.4px;
+  letter-spacing: -0.02em;
   opacity: 1;
 }
 
@@ -326,7 +326,7 @@ body {
   border-bottom: 1px solid var(--kami-border);
   box-shadow: none;
   font-weight: 600;
-  letter-spacing: 0.2px;
+  letter-spacing: -0.02em;
   padding-left: calc(0.8rem - 3px);
   margin-top: 0;
   position: sticky;
@@ -383,7 +383,7 @@ body {
   color: var(--kami-stone);
   font-size: 0.7rem;
   font-weight: 600;
-  letter-spacing: 0.4px;
+  letter-spacing: -0.02em;
   text-transform: uppercase;
 }
 

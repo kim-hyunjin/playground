@@ -2,11 +2,13 @@
 title: "문제 해결의 정석: 체계적인 접근과 전략"
 description: "문제를 해결하는 6단계 알고리즘과 직관을 얻기 위한 다양한 문제 변형 기법 및 접근 전략 가이드"
 date: 2026-04-24
+category: "Algorithms"
 categories:
   - Algorithms
 tags:
   - Problem Solving
   - Strategy
+summary: "문제를 해결하는 6단계 알고리즘과 직관을 얻기 위한 다양한 문제 변형 기법 및 접근 전략 가이드"
 ---
 
 # 문제 해결 개관
