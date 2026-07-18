@@ -164,6 +164,29 @@ try {
   assert(parkGame.innings.length >= 9, '최소 9이닝 기록')
   assert(parkGame.homeScore !== parkGame.awayScore, '경기 승패 확정 (동점 타breaker)')
 
+  const situationGame = simulateGame(
+    { id: 'reg-situation', week: 1, day: 'wed', homeId: userTeam.id, awayId: teams[1]!.id, played: false },
+    userTeam,
+    teams[1]!,
+  )
+  assert(situationGame.logs.length > 0, '상황 스냅샷용 플레이 로그 생성')
+  assert(
+    situationGame.logs.every((log) => log.situationBefore && log.situationAfter),
+    '모든 플레이에 전후 상황 스냅샷',
+  )
+  assert(
+    situationGame.logs.every((log) => {
+      const after = log.situationAfter!
+      return after.outs >= 0 && after.outs <= 3 && after.inning === log.inning && after.half === log.half
+    }),
+    '아웃·이닝·초말 상황 범위',
+  )
+  const finalSituation = situationGame.logs.at(-1)!.situationAfter!
+  assert(
+    finalSituation.homeScore === situationGame.homeScore && finalSituation.awayScore === situationGame.awayScore,
+    '최종 상황 스코어와 경기 결과 일치',
+  )
+
   const withHand = userTeam.players.filter((p) => p.bats && p.throws)
   assert(withHand.length >= FIRST_TEAM_MAX, '1군 선수 투타 정보')
 

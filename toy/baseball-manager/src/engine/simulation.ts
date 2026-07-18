@@ -3,6 +3,7 @@ import type {
   FieldPosition,
   GameBoxScore,
   GameResult,
+  GameSituation,
   InningScore,
   PlayLog,
   Player,
@@ -97,6 +98,27 @@ function playHalfInning(
   const ctx = createSimContext(leagueLevel, parkForTeamAbbr(homeAbbr), inning, half)
   const defenseFielding = teamDefenseFielding(pitchingTeam.players)
 
+  const situation = (
+    currentOuts: number,
+    currentRunners: RunnerState,
+    currentRuns: number,
+    batterId?: string,
+    pitcherId?: string,
+  ): GameSituation => ({
+    inning,
+    half,
+    outs: currentOuts,
+    runners: {
+      firstId: currentRunners.firstId,
+      secondId: currentRunners.secondId,
+      thirdId: currentRunners.thirdId,
+    },
+    homeScore: half === 'bottom' ? battingScore + currentRuns : pitchingScore,
+    awayScore: half === 'top' ? battingScore + currentRuns : pitchingScore,
+    batterId,
+    pitcherId,
+  })
+
   while (outs < 3) {
     const batter = ensureHandedness(battingTeam[idx % battingTeam.length]!)
     const pitcher = ensureHandedness(
@@ -116,6 +138,7 @@ function playHalfInning(
 
     const steal = tryStealAttempt(runners, runnerSpeed, pitcher.control, outs)
     if (steal.stolen && steal.stealerId) {
+      const beforeSteal = situation(outs, runners, runs, batter.id, pitcher.id)
       runners = steal.state
       recordStolenBase(box, steal.stealerId)
       logs.push({
@@ -127,6 +150,9 @@ function playHalfInning(
         batterId: steal.stealerId,
         pitcherId: pitcher.id,
         rbi: 0,
+        eventType: 'stolenBase',
+        situationBefore: beforeSteal,
+        situationAfter: situation(outs, runners, runs, batter.id, pitcher.id),
       })
     }
 
@@ -141,6 +167,7 @@ function playHalfInning(
     )
     recordPitchCount(pitchCounts, pitcher.id, outcome === 'walk' ? 4 : 1)
 
+    const situationBefore = situation(outs, runners, runs, batter.id, pitcher.id)
     if (outcome === 'out' || outcome === 'strikeout' || outcome === 'sacrifice') outs++
 
     const { runs: scored, state } = advanceRunners(runners, outcome, batter.id)
@@ -153,10 +180,6 @@ function playHalfInning(
     runs += scored
     runners = state
 
-    if (half === 'bottom' && inning >= 9 && battingScore + runs > pitchingScore) {
-      break
-    }
-
     logs.push({
       inning,
       half,
@@ -166,7 +189,12 @@ function playHalfInning(
       batterId: batter.id,
       pitcherId: pitcher.id,
       rbi,
+      eventType: 'plateAppearance',
+      situationBefore,
+      situationAfter: situation(outs, runners, runs, batter.id, pitcher.id),
     })
+
+    if (half === 'bottom' && inning >= 9 && battingScore + runs > pitchingScore) break
     idx++
   }
 

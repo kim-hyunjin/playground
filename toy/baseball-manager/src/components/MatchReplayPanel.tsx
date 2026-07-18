@@ -3,6 +3,7 @@ import { ipFromOuts } from '../engine/sabermetrics'
 import { DAY_LABELS } from '../types/game'
 import type { GameResult, Team } from '../types/game'
 import { PlayerNameButton } from './PlayerNameButton'
+import { GameSituationPanel } from './GameSituationPanel'
 
 interface MatchReplayPanelProps {
   result: GameResult
@@ -47,6 +48,11 @@ export function MatchReplayPanel({ result, teams, userTeamId }: MatchReplayPanel
           </div>
         ) : null}
       </div>
+
+      <GameSituationPanel
+        situation={result.logs[result.logs.length - 1]?.situationAfter ?? result.logs[0]?.situationBefore}
+        teams={teams}
+      />
 
       {result.boxScore ? (
         <div className="bm-card p-4">

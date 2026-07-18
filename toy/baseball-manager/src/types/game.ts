@@ -208,6 +208,28 @@ export interface PlayLog {
   batterId?: string
   pitcherId?: string
   rbi?: number
+  /** 구조화된 이벤트 분류. 이전 저장 데이터에는 없을 수 있다. */
+  eventType?: 'plateAppearance' | 'stolenBase'
+  situationBefore?: GameSituation
+  situationAfter?: GameSituation
+}
+
+export interface BaseRunners {
+  firstId?: string
+  secondId?: string
+  thirdId?: string
+}
+
+/** 한 플레이 전후의 화면 표시 및 경기 재생에 사용하는 상황 스냅샷 */
+export interface GameSituation {
+  inning: number
+  half: 'top' | 'bottom'
+  outs: number
+  runners: BaseRunners
+  homeScore: number
+  awayScore: number
+  batterId?: string
+  pitcherId?: string
 }
 
 export interface InningScore {

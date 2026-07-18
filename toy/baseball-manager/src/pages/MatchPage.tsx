@@ -4,6 +4,7 @@ import { findPlayerInLeague } from '../engine/playerLookup'
 import { ipFromOuts } from '../engine/sabermetrics'
 import { DAY_LABELS } from '../types/game'
 import { PlayerNameButton } from '../components/PlayerNameButton'
+import { GameSituationPanel } from '../components/GameSituationPanel'
 import { useGame } from '../store/gameStore'
 
 export function MatchPage() {
@@ -94,6 +95,10 @@ export function MatchPage() {
     : 9
 
   const hasMoreGamesThisWeek = Boolean(upcomingGame && result && !playing)
+  const currentSituation = result
+    ? result.logs[Math.max(0, (playing ? visibleLogs : result.logs.length) - 1)]?.situationAfter
+      ?? result.logs[0]?.situationBefore
+    : undefined
 
   return (
     <div className="bm-animate-in space-y-6">
@@ -194,6 +199,8 @@ export function MatchPage() {
               </div>
             )}
           </div>
+
+          <GameSituationPanel situation={currentSituation} teams={state.teams} />
 
           {!playing && result.boxScore ? (
             <div className="bm-card p-4">
