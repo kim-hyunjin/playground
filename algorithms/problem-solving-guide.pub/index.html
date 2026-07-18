@@ -18,7 +18,7 @@
         <link rel="prev" href="../coding-and-debugging-principles.pub/">
       
       
-        <link rel="next" href="../../frontend/react/redux/vanilla-react-redux-basics.pub/">
+        <link rel="next" href="../../frontend/react/react-guide/03-component-basics.pub/">
       
       
         
@@ -47,12 +47,6 @@
     
     
       
-        
-        
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Han+Serif+KR:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
-        <style>:root{--md-text-font:"Source Han Serif KR";--md-code-font:"JetBrains Mono"}</style>
-      
     
     
       <link rel="stylesheet" href="../../assets/stylesheets/kami.css">
@@ -64,8 +58,10 @@
     
     
   
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Han+Serif+KR:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap">
 
   </head>
   
@@ -86,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#_1" class="md-skip">
+        <a href="#문제-해결-개관" class="md-skip">
           콘텐츠로 이동
         </a>
       
@@ -222,6 +218,32 @@
   
   
   
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
     
     
       
@@ -232,7 +254,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../backend/backend-engineering/resources/A%20Client-Side%20Argument%20for%20Changing%20TCP%20Slow%20Start.pub/" class="md-tabs__link">
+        <a href="../../backend/backend-engineering/communications/backend-communications-and-protocols.pub/" class="md-tabs__link">
           
   
   
@@ -240,6 +262,9 @@
 
         </a>
       </li>
+    
+  
+
     
   
 
@@ -259,7 +284,7 @@
           
   
   
-  AI & LangChain
+  AI & Machine Learning
 
         </a>
       </li>
@@ -303,8 +328,15 @@
   
     
     
+      
+  
+  
+  
+  
+    
+    
       <li class="md-tabs__item">
-        <a href="../../frontend/react/redux/vanilla-react-redux-basics.pub/" class="md-tabs__link">
+        <a href="../../frontend/react/react-guide/03-component-basics.pub/" class="md-tabs__link">
           
   
   
@@ -312,6 +344,9 @@
 
         </a>
       </li>
+    
+  
+
     
   
 
@@ -334,7 +369,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../language/java/note/java-basic-review.pub/" class="md-tabs__link">
+        <a href="../../language/java/fundamentals/java-basic-review.pub/" class="md-tabs__link">
           
   
   
@@ -377,7 +412,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../mobile/android/test/qr-scanning-zxing-vs-mlkit.pub/" class="md-tabs__link">
+        <a href="../../mobile/android/qr-scanning-zxing-vs-mlkit.pub/" class="md-tabs__link">
           
   
   
@@ -404,7 +439,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../design-architecture/design-pattern-and-refactoring/%EB%94%94%EC%9E%90%EC%9D%B8%20%EC%9B%90%EC%B9%99.pub/" class="md-tabs__link">
+        <a href="../../design-architecture/design-patterns-refactoring/code-smells.pub/" class="md-tabs__link">
           
   
   
@@ -471,6 +506,33 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
     
     
     
@@ -487,10 +549,10 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
         
           
-          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
             
   
   
@@ -508,8 +570,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_1">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -541,10 +603,10 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_1" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_1" >
         
           
-          <label class="md-nav__link" for="__nav_1_1" id="__nav_1_1_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
             
   
   
@@ -562,8 +624,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_1_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_1_1">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -579,15 +641,33 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="../../backend/backend-engineering/resources/A%20Client-Side%20Argument%20for%20Changing%20TCP%20Slow%20Start.pub/" class="md-nav__link">
+    
+    
+    
+    
+      
+      
         
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_1_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_1_1" id="__nav_2_1_1_label" tabindex="0">
+            
   
   
   <span class="md-ellipsis">
     
   
-    TCP Slow Start 변경에 대한 클라이언트 측 주장
+    Communications & Protocols
   
 
     
@@ -595,11 +675,19 @@
   
   
 
-      </a>
-    </li>
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Communications & Protocols
   
 
-              
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
                 
@@ -608,35 +696,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/backend-engineering/resources/Apache-kafka-long-polling.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Apache Kafka Long Polling 완전 가이드
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/backend-engineering/resources/Fundamentals%2Bof%2BBackend%2BCommunications%2Band%2BProtocols.pub/" class="md-nav__link">
+      <a href="../../backend/backend-engineering/communications/backend-communications-and-protocols.pub/" class="md-nav__link">
         
   
   
@@ -664,7 +724,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/backend-engineering/resources/IP-TCP-UDP-TLS-Slides.pub/" class="md-nav__link">
+      <a href="../../backend/backend-engineering/communications/ip-tcp-udp-tls.pub/" class="md-nav__link">
         
   
   
@@ -692,35 +752,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/backend-engineering/resources/Postgres-Pipelining.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    34.5. 파이프라인 모드 (Pipeline Mode)
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/backend-engineering/resources/The_Journey_of_a_Request_to_the_Backend.pub/" class="md-nav__link">
+      <a href="../../backend/backend-engineering/communications/request-journey-to-backend.pub/" class="md-nav__link">
         
   
   
@@ -748,7 +780,97 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/backend-engineering/resources/asynchronous-commits-postgres.pub/" class="md-nav__link">
+      <a href="../../backend/backend-engineering/communications/tcp-slow-start-client-side.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TCP Slow Start 변경에 대한 클라이언트 측 주장
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_1_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_1_2" id="__nav_2_1_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Asynchronous Processing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Asynchronous Processing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/backend-engineering/asynchronous-processing/asynchronous-commits-postgres.pub/" class="md-nav__link">
         
   
   
@@ -776,7 +898,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/backend-engineering/resources/asynchronous-io-linux-thread.pub/" class="md-nav__link">
+      <a href="../../backend/backend-engineering/asynchronous-processing/asynchronous-io-linux-thread.pub/" class="md-nav__link">
         
   
   
@@ -804,7 +926,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/backend-engineering/resources/asynchronous-replication-postgres.pub/" class="md-nav__link">
+      <a href="../../backend/backend-engineering/asynchronous-processing/asynchronous-replication-postgres.pub/" class="md-nav__link">
         
   
   
@@ -832,7 +954,125 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/backend-engineering/resources/rabbitMQ-pushAPI.pub/" class="md-nav__link">
+      <a href="../../backend/backend-engineering/asynchronous-processing/postgres-pipelining.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    34.5. 파이프라인 모드 (Pipeline Mode)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_1_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_1_3" id="__nav_2_1_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Messaging & Streaming
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_1_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Messaging & Streaming
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/backend-engineering/messaging-streaming/apache-kafka-long-polling.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Apache Kafka Long Polling 완전 가이드
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/backend-engineering/messaging-streaming/rabbitmq-push-api.pub/" class="md-nav__link">
         
   
   
@@ -861,6 +1101,14 @@
 
               
             
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
               
                 
   
@@ -883,17 +1131,17 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_2" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2" >
         
           
-          <label class="md-nav__link" for="__nav_1_2" id="__nav_1_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
     
   
-    Database engineering
+    Database
   
 
     
@@ -904,12 +1152,12 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_1_2">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
             <span class="md-nav__icon md-icon"></span>
             
   
-    Database engineering
+    Database
   
 
           </label>
@@ -937,17 +1185,17 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_2_1" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2_1" >
         
           
-          <label class="md-nav__link" for="__nav_1_2_1" id="__nav_1_2_1_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_2_1" id="__nav_2_2_1_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
     
   
-    Resources
+    Fundamentals
   
 
     
@@ -958,12 +1206,12 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_1_2_1_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_1_2_1">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2_1">
             <span class="md-nav__icon md-icon"></span>
             
   
-    Resources
+    Fundamentals
   
 
           </label>
@@ -976,7 +1224,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/database-engineering/resources/ACID.pub/" class="md-nav__link">
+      <a href="../../backend/database/fundamentals/acid.pub/" class="md-nav__link">
         
   
   
@@ -1004,35 +1252,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/database-engineering/resources/B-trees-vs-B%2Btrees.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    B-Trees vs B+Trees
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/resources/Database-Engines.pub/" class="md-nav__link">
+      <a href="../../backend/database/fundamentals/database-engines.pub/" class="md-nav__link">
         
   
   
@@ -1060,455 +1280,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/database-engineering/resources/Eventual-Consistency.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Eventual Consistency
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/resources/How-tables-and-indexes-are-stored-on-disk.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    How Tables and Indexes Are Stored on Disk
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/resources/IF%20NOT%20EXISTS%20%EA%B5%AC%EB%AC%B8%20%EC%82%AC%EC%9A%A9%EC%8B%9C%20%EC%A3%BC%EC%9D%98%EC%A0%90.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    IF NOT EXISTS 구문 사용시 주의점
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/resources/MongoDB%20architecture.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    MongoDB architecture
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/resources/Partitioning.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Partitioning
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/resources/Replication.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Replication
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/resources/Row-Based-vs-Column-Based-Databases.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Row vs Column Oriented Databases
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/resources/Sharding.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Sharding
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/resources/bloom-filter.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Bloom Filters
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/resources/non-key%20column%20index%EC%9D%98%20%EC%9D%B4%ED%95%B4.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    non-key column index의 이해
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/resources/offset%EC%9D%80%20%EB%8A%90%EB%A6%AC%EB%8B%A4.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    OFFSET/LIMIT가 느린 이유와 대안 전략 (예제 포함)
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/resources/repeatable%20read%20isolation%20and%20snapshot.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    PostgresSQL의 MVCC 구현
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/resources/select%20for%20update%EC%99%80%20serializable%20%EA%B2%A9%EB%A6%AC%EC%88%98%EC%A4%80.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    select for update와 serializable 격리수준
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/resources/xmin%EA%B3%BC%20xmax.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    인덱스 스캔 vs 비트맵 스캔 xmin/xmax의 역할
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/resources/%EA%B8%B0%EB%B3%B8%ED%82%A4%20uuid%20vs%20serial%20id.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    기본키 uuid vs serial id
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/resources/%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4%EA%B0%80%20%ED%96%89%20%EB%8C%80%EC%8B%A0%EC%97%90%20%ED%8E%98%EC%9D%B4%EC%A7%80%EB%A5%BC%20%EC%9D%BD%EB%8A%94%20%EC%9D%B4%EC%9C%A0.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    📝 데이터베이스 강의 노트 인덱스와 데이터 저장 구조의 이해
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/resources/%EB%8F%99%ED%98%95%20%EC%95%94%ED%98%B8%ED%99%94.pub/" class="md-nav__link">
+      <a href="../../backend/database/fundamentals/homomorphic-encryption.pub/" class="md-nav__link">
         
   
   
@@ -1536,7 +1308,209 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/database-engineering/resources/%EB%B3%B5%ED%95%A9%EC%9D%B8%EB%8D%B1%EC%8A%A4%2C%20%ED%9A%A8%EC%9C%A8%EC%A0%81%EC%9D%B8%20%EC%BF%BC%EB%A6%AC.pub/" class="md-nav__link">
+      <a href="../../backend/database/fundamentals/mongodb-architecture.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MongoDB architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/fundamentals/row-vs-column-databases.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Row vs Column Oriented Databases
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/fundamentals/webapp-security-performance-best-practices.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    웹앱에서 보안과 성능을 높이기 위한 best practice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2_2" id="__nav_2_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Indexes & Storage
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Indexes & Storage
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/indexes-storage/b-trees-vs-b-plus-trees.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    B-Trees vs B+Trees
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/indexes-storage/bloom-filter.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bloom Filters
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/indexes-storage/composite-index-efficient-query.pub/" class="md-nav__link">
         
   
   
@@ -1564,35 +1538,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/database-engineering/resources/%EB%B9%84%ED%8A%B8%EB%A7%B5%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%20%EC%8A%A4%EC%BA%94%20vs%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%20%EC%8A%A4%EC%BA%94%20vs%20%ED%85%8C%EC%9D%B4%EB%B8%94%20%EC%8A%A4%EC%BA%94.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    비트맵 인덱스 스캔 vs 인덱스 스캔 vs 테이블 스캔
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/resources/%EC%8B%9D%EB%B3%84%EC%9E%90%EC%99%80%20%EB%B9%84%EC%8B%9D%EB%B3%84%EC%9E%90%20%EC%9D%B8%EB%8D%B1%EC%8B%B1%2C%20Index%20%EC%8A%A4%EC%BA%94%EA%B3%BC%20Index%20Only%20%EC%8A%A4%EC%BA%94.pub/" class="md-nav__link">
+      <a href="../../backend/database/indexes-storage/identifier-index-and-index-only-scan.pub/" class="md-nav__link">
         
   
   
@@ -1620,14 +1566,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/database-engineering/resources/%EC%9B%B9%EC%95%B1%EC%97%90%EC%84%9C%20%EB%B3%B4%EC%95%88%EA%B3%BC%20%EC%84%B1%EB%8A%A5%EC%9D%84%20%EB%86%92%EC%9D%B4%EA%B8%B0%20%EC%9C%84%ED%95%9C%20best%20practice.pub/" class="md-nav__link">
+      <a href="../../backend/database/indexes-storage/index-scan-comparison.pub/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    웹앱에서 보안과 성능을 높이기 위한 best practice
+    비트맵 인덱스 스캔 vs 인덱스 스캔 vs 테이블 스캔
   
 
     
@@ -1648,7 +1594,119 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/database-engineering/resources/%EC%9D%B8%EB%8D%B1%EC%8A%A4%EA%B0%80%20%EC%9E%88%EB%8A%94%EB%8D%B0%20%EC%99%9C%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4%EC%97%90%EC%84%9C%20%EC%A0%84%EC%B2%B4%20%ED%85%8C%EC%9D%B4%EB%B8%94%20%EC%8A%A4%EC%BA%94%EC%9D%84%20%ED%95%98%EB%82%98%EC%9A%94.pub/" class="md-nav__link">
+      <a href="../../backend/database/indexes-storage/indexing-low-cardinality-columns.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    중복된 값이 있는 열에 인덱싱하는 방법
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/indexes-storage/non-key-column-index.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    non-key column index의 이해
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/indexes-storage/table-index-disk-storage.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How Tables and Indexes Are Stored on Disk
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/indexes-storage/why-database-reads-pages.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    📝 데이터베이스 강의 노트 인덱스와 데이터 저장 구조의 이해
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/indexes-storage/why-database-uses-full-table-scan.pub/" class="md-nav__link">
         
   
   
@@ -1669,6 +1727,68 @@
 
               
             
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2_3" id="__nav_2_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transactions & Concurrency
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Transactions & Concurrency
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
               
                 
   
@@ -1676,7 +1796,35 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/database-engineering/resources/%EC%9D%BD%EA%B8%B0%20%EC%A0%84%EC%9A%A9%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98.pub/" class="md-nav__link">
+      <a href="../../backend/database/transactions-concurrency/if-not-exists-caveats.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IF NOT EXISTS 구문 사용시 주의점
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/transactions-concurrency/read-only-transaction.pub/" class="md-nav__link">
         
   
   
@@ -1704,14 +1852,98 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/database-engineering/resources/%EC%A4%91%EB%B3%B5%EB%90%9C%20%EA%B0%92%EC%9D%B4%20%EC%9E%88%EB%8A%94%20%EC%97%B4%EC%97%90%20%EC%9D%B8%EB%8D%B1%EC%8B%B1%ED%95%98%EB%8A%94%20%EB%B0%A9%EB%B2%95.pub/" class="md-nav__link">
+      <a href="../../backend/database/transactions-concurrency/repeatable-read-and-snapshot.pub/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    중복된 값이 있는 열에 인덱싱하는 방법
+    PostgresSQL의 MVCC 구현
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/transactions-concurrency/select-for-update-and-serializable.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    select for update와 serializable 격리수준
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/transactions-concurrency/uuid-vs-serial-primary-key.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    기본키 uuid vs serial id
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/transactions-concurrency/xmin-and-xmax.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    인덱스 스캔 vs 비트맵 스캔 xmin/xmax의 역할
   
 
     
@@ -1755,17 +1987,17 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_2_2" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2_4" >
         
           
-          <label class="md-nav__link" for="__nav_1_2_2" id="__nav_1_2_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_2_4" id="__nav_2_2_4_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
     
   
-    Tune
+    Replication & Distribution
   
 
     
@@ -1776,12 +2008,12 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_1_2_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_1_2_2">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2_4">
             <span class="md-nav__icon md-icon"></span>
             
   
-    Tune
+    Replication & Distribution
   
 
           </label>
@@ -1794,7 +2026,209 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/database-engineering/tune/README.pub/" class="md-nav__link">
+      <a href="../../backend/database/replication-distribution/eventual-consistency.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Eventual Consistency
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/replication-distribution/offset-pagination-is-slow.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OFFSET/LIMIT가 느린 이유와 대안 전략 (예제 포함)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/replication-distribution/partitioning.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Partitioning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/replication-distribution/replication.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Replication
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/replication-distribution/sharding.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sharding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2_5" id="__nav_2_2_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQL Tuning
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    SQL Tuning
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/sql-tuning/00-sql-tuning-overview.pub/" class="md-nav__link">
         
   
   
@@ -1822,7 +2256,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/database-engineering/tune/info.pub/" class="md-nav__link">
+      <a href="../../backend/database/sql-tuning/01-sql-tuning-environment.pub/" class="md-nav__link">
         
   
   
@@ -1850,511 +2284,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/database-engineering/tune/%EA%B8%B0%EB%B3%B8%20%ED%82%A4%EB%A5%BC%20%EB%B3%80%ED%98%95%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SQL Tuning Report 인덱스 컬럼 가공 개선
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/tune/%EB%8B%A4%EC%88%98%20%EC%BF%BC%EB%A6%AC%EB%A5%BC%20UNION%20%EC%97%B0%EC%82%B0%EC%9E%90%EB%A1%9C%EB%A7%8C%20%ED%95%A9%EC%B9%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    불필요한 UNION 연산 제거
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/tune/%EB%8C%80%EB%9F%89%EC%9D%98%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC%20%EA%B0%80%EC%A0%B8%EC%99%80%20%EC%A1%B0%EC%9D%B8%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    대량의 데이터를 가져와 조인하는 나쁜 SQL문 튜닝 보고서
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/tune/%EB%8C%80%EC%86%8C%EB%AC%B8%EC%9E%90%EA%B0%80%20%EC%84%9E%EC%9D%B8%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EC%99%80%20%EB%B9%84%EA%B5%90%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SQL Performance Tuning Report
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/tune/%EB%A9%94%EC%9D%B8%20%ED%85%8C%EC%9D%B4%EB%B8%94%EC%97%90%20%EA%B3%84%EC%86%8D%20%EC%9D%98%EC%A1%B4%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SQL Tuning Report 서브쿼리 조인 변환 개선
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/tune/%EB%B6%84%EC%82%B0%20%EC%97%86%EC%9D%B4%20%ED%81%B0%20%EA%B7%9C%EB%AA%A8%EC%9D%98%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC%20%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SQL 튜닝 리포트 파티셔닝을 이용한 급여 조회 최적화
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/tune/%EB%B6%88%ED%95%84%EC%9A%94%ED%95%9C%20%EC%A1%B0%EC%9D%B8%EC%9D%84%20%EC%88%98%ED%96%89%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    불필요한 조인 제거를 통한 성능 개선
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/tune/%EB%B9%84%ED%9A%A8%EC%9C%A8%EC%A0%81%EC%9D%B8%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%EB%A5%BC%20%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SQL Performance Tuning Report 사원 정보 조회 쿼리
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/tune/%EB%B9%84%ED%9A%A8%EC%9C%A8%EC%A0%81%EC%9D%B8%20%ED%8E%98%EC%9D%B4%EC%A7%95%EC%9D%84%20%EC%88%98%ED%96%89%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    튜닝 보고서 집계 쿼리 내 인라인 뷰를 통한 조인 최적화
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/tune/%EC%82%AC%EC%9A%A9%ED%95%98%EC%A7%80%20%EC%95%8A%EB%8A%94%20%ED%95%A8%EC%88%98%EB%A5%BC%20%ED%8F%AC%ED%95%A8%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    GROUP BY 절의 컬럼 가공 개선 보고서
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/tune/%EC%8A%B5%EA%B4%80%EC%A0%81%EC%9C%BC%EB%A1%9C%20%EC%A4%91%EB%B3%B5%EC%9D%84%20%EC%A0%9C%EA%B1%B0%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    습관적인 중복 제거(DISTINCT) 개선
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/tune/%EC%97%89%EB%9A%B1%ED%95%9C%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%EB%A5%BC%20%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    묵시적 형변환 제거를 통한 인덱스 범위 스캔 유도
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/tune/%EC%97%B4%EC%9D%84%20%EA%B2%B0%ED%95%A9%ED%95%98%EC%97%AC%20%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    인덱스 컬럼 가공 개선 (Composite Index)
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/tune/%EC%9D%B8%EB%8D%B1%EC%8A%A4%20%EA%B3%A0%EB%A0%A4%20%EC%97%86%EC%9D%B4%20%EC%97%B4%EC%9D%84%20%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    GROUP BY 순서 불일치에 의한 정렬 부하 개선
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/tune/%EC%9D%B8%EB%8D%B1%EC%8A%A4%20%EC%97%86%EC%9D%B4%20%EC%9E%91%EC%9D%80%20%EA%B7%9C%EB%AA%A8%EC%9D%98%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC%20%EC%A1%B0%ED%9A%8C%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SQL Performance Tuning Report
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/tune/%EC%9D%B8%EB%8D%B1%EC%8A%A4%EB%A5%BC%20%ED%95%98%EB%82%98%EB%A7%8C%20%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SQL Performance Tuning Report
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/tune/%EC%9E%91%EC%9D%80%20%ED%85%8C%EC%9D%B4%EB%B8%94%EC%9D%B4%20%EB%A8%BC%EC%A0%80%20%EC%A1%B0%EC%9D%B8%EC%97%90%20%EC%B0%B8%EC%97%AC%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SQL Tuning Report 조인 순서 및 인덱스 활용 개선
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/tune/%EC%9E%98%EB%AA%BB%EB%90%9C%20%EC%97%B4%20%EC%86%8D%EC%84%B1%EC%9C%BC%EB%A1%9C%20%EB%B9%84%ED%9A%A8%EC%9C%A8%EC%A0%81%EC%9C%BC%EB%A1%9C%20%EC%9E%91%EC%84%B1%ED%95%9C%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SQL Performance Tuning Report (V3) 부서 상태 조회 쿼리
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/tune/%EC%B2%98%EC%9D%8C%EB%B6%80%ED%84%B0%20%EB%AA%A8%EB%93%A0%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC%20%EA%B0%80%EC%A0%B8%EC%98%A4%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+      <a href="../../backend/database/sql-tuning/02-avoid-selecting-all-data.pub/" class="md-nav__link">
         
   
   
@@ -2382,35 +2312,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/database-engineering/tune/%ED%81%B0%20%EA%B7%9C%EB%AA%A8%EC%9D%98%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EB%B3%80%EA%B2%BD%EC%9C%BC%EB%A1%9C%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%EC%97%90%20%EC%98%81%ED%96%A5%EC%9D%84%20%EC%A3%BC%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SQL Performance Tuning Report 인덱스 제거를 통한 대량 업데이트 성능 개선
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/database-engineering/tune/%ED%95%84%EC%9A%94%20%EC%9D%B4%EC%83%81%EC%9C%BC%EB%A1%9C%20%EB%A7%8E%EC%9D%80%20%EC%A0%95%EB%B3%B4%EB%A5%BC%20%EA%B0%80%EC%A0%B8%EC%98%A4%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+      <a href="../../backend/database/sql-tuning/03-select-only-required-columns.pub/" class="md-nav__link">
         
   
   
@@ -2438,7 +2340,119 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/database-engineering/tune/%ED%98%95%EB%B3%80%ED%99%98%EC%9C%BC%EB%A1%9C%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%EB%A5%BC%20%ED%99%9C%EC%9A%A9%ED%95%98%EC%A7%80%20%EB%AA%BB%ED%95%98%EB%8A%94%20%EB%82%98%EC%81%9C%20sql%EB%AC%B8%20%ED%8A%9C%EB%8B%9D.pub/" class="md-nav__link">
+      <a href="../../backend/database/sql-tuning/04-remove-unused-functions.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GROUP BY 절의 컬럼 가공 개선 보고서
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/sql-tuning/05-avoid-concatenating-columns.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    인덱스 컬럼 가공 개선 (Composite Index)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/sql-tuning/06-do-not-transform-primary-key.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQL Tuning Report 인덱스 컬럼 가공 개선
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/sql-tuning/07-case-sensitive-comparison.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQL Performance Tuning Report
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/sql-tuning/08-type-conversion-and-indexes.pub/" class="md-nav__link">
         
   
   
@@ -2466,14 +2480,406 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/database-engineering/tune/.agents/skills/sql-optimizer/SKILL.pub/" class="md-nav__link">
+      <a href="../../backend/database/sql-tuning/09-small-data-without-index.pub/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    SQL Performance Optimizer
+    SQL Performance Tuning Report
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/sql-tuning/10-design-columns-for-indexes.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GROUP BY 순서 불일치에 의한 정렬 부하 개선
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/sql-tuning/11-inefficient-indexes.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQL Performance Tuning Report 사원 정보 조회 쿼리
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/sql-tuning/12-wrong-index-selection.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    묵시적 형변환 제거를 통한 인덱스 범위 스캔 유도
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/sql-tuning/13-using-only-one-index.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQL Performance Tuning Report
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/sql-tuning/14-large-data-changes-and-indexes.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQL Performance Tuning Report 인덱스 제거를 통한 대량 업데이트 성능 개선
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/sql-tuning/15-join-order-small-table.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQL Tuning Report 조인 순서 및 인덱스 활용 개선
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/sql-tuning/16-avoid-joining-large-result-sets.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    대량의 데이터를 가져와 조인하는 나쁜 SQL문 튜닝 보고서
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/sql-tuning/17-remove-unnecessary-joins.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    불필요한 조인 제거를 통한 성능 개선
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/sql-tuning/18-reduce-main-table-dependency.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQL Tuning Report 서브쿼리 조인 변환 개선
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/sql-tuning/19-union-query-optimization.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    불필요한 UNION 연산 제거
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/sql-tuning/20-avoid-unnecessary-distinct.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    습관적인 중복 제거(DISTINCT) 개선
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/sql-tuning/21-efficient-pagination.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    튜닝 보고서 집계 쿼리 내 인라인 뷰를 통한 조인 최적화
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/sql-tuning/22-partition-large-data.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQL 튜닝 리포트 파티셔닝을 이용한 급여 조회 최적화
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/database/sql-tuning/23-correct-column-types.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQL Performance Tuning Report (V3) 부서 상태 조회 쿼리
   
 
     
@@ -2525,17 +2931,17 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_3" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3" >
         
           
-          <label class="md-nav__link" for="__nav_1_3" id="__nav_1_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
     
   
-    Distributed system
+    Distributed Systems
   
 
     
@@ -2546,100 +2952,16 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_1_3">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
             <span class="md-nav__icon md-icon"></span>
             
   
-    Distributed system
+    Distributed Systems
   
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/distributed-system/%EB%B6%84%EC%82%B0%20%EC%8B%9C%EC%8A%A4%ED%85%9C%EC%9D%B4%EB%9E%80%20%EB%AC%B4%EC%97%87%EC%9D%B8%EA%B0%80.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    분산 시스템이란 무엇인가
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/distributed-system/coordination/%EB%B6%84%EC%82%B0%20%EC%8B%9C%EC%8A%A4%ED%85%9C%EA%B3%BC%20%EC%A3%BC%ED%82%A4%ED%8D%BC.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    분산 시스템과 주키퍼
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/distributed-system/document-search-service/TF-IDF.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    TF-IDF
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
             
               
                 
@@ -2663,17 +2985,17 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_3_4" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3_1" >
         
           
-          <label class="md-nav__link" for="__nav_1_3_4" id="__nav_1_3_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_3_1" id="__nav_2_3_1_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
     
   
-    Httpserver
+    Fundamentals
   
 
     
@@ -2684,12 +3006,12 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_1_3_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_1_3_4">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3_1">
             <span class="md-nav__icon md-icon"></span>
             
   
-    Httpserver
+    Fundamentals
   
 
           </label>
@@ -2702,7 +3024,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/distributed-system/httpserver/%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EC%A7%81%EB%A0%AC%ED%99%94%20%EB%B0%A9%EC%8B%9D.pub/" class="md-nav__link">
+      <a href="../../backend/distributed-systems/fundamentals/data-serialization.pub/" class="md-nav__link">
         
   
   
@@ -2730,7 +3052,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/distributed-system/httpserver/%EB%B6%84%EC%82%B0%20%EC%8B%9C%EC%8A%A4%ED%85%9C%EC%9D%98%20%EB%A9%94%EC%8B%9C%EC%A7%80%20%EC%A0%84%EB%8B%AC%20%EA%B8%B0%EB%B2%95%EA%B3%BC%20%EC%8B%A4%ED%8C%A8%20%EB%8C%80%EC%9D%91%20%EC%A0%84%EB%9E%B5.pub/" class="md-nav__link">
+      <a href="../../backend/distributed-systems/fundamentals/message-delivery-and-failure-handling.pub/" class="md-nav__link">
         
   
   
@@ -2738,6 +3060,34 @@
     
   
     분산 시스템의 메시지 전달 기법과 실패 대응 전략
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/distributed-systems/fundamentals/what-is-distributed-system.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    분산 시스템이란 무엇인가
   
 
     
@@ -2781,17 +3131,17 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_3_5" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3_2" >
         
           
-          <label class="md-nav__link" for="__nav_1_3_5" id="__nav_1_3_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_3_2" id="__nav_2_3_2_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
     
   
-    Load balancing
+    Messaging
   
 
     
@@ -2802,12 +3152,12 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_1_3_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_1_3_5">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3_2">
             <span class="md-nav__icon md-icon"></span>
             
   
-    Load balancing
+    Messaging
   
 
           </label>
@@ -2820,7 +3170,125 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/distributed-system/load-balancing/%EB%B6%80%ED%95%98%20%EB%B6%84%EC%82%B0%20%EA%B0%9C%EC%9A%94.pub/" class="md-nav__link">
+      <a href="../../backend/distributed-systems/messaging/kafka-overview.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    KRaft(Kafka Raft)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/distributed-systems/messaging/message-broker-overview.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    연쇄적 종속성은 해결하면서 트랜잭션의 원자성을 지켜야 한다면?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3_3" id="__nav_2_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Load Balancing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Load Balancing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/distributed-systems/load-balancing/00-load-balancing-overview.pub/" class="md-nav__link">
         
   
   
@@ -2848,35 +3316,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/distributed-system/load-balancing/%EB%B6%80%ED%95%98%20%EB%B6%84%EC%82%B0%20%EB%B0%A9%EC%8B%9D%20%EB%B0%8F%20%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    부하 분산 방식 및 알고리즘
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../backend/distributed-system/load-balancing/%EB%B6%80%ED%95%98%20%EB%B6%84%EC%82%B0%EA%B3%BC%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC%20%EA%B3%84%EC%B8%B5.pub/" class="md-nav__link">
+      <a href="../../backend/distributed-systems/load-balancing/01-load-balancing-network-layers.pub/" class="md-nav__link">
         
   
   
@@ -2897,6 +3337,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/distributed-systems/load-balancing/02-load-balancing-algorithms.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    부하 분산 방식 및 알고리즘
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2911,69 +3379,15 @@
   
   
   
-    
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_3_6" >
-        
-          
-          <label class="md-nav__link" for="__nav_1_3_6" id="__nav_1_3_6_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Message broker
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_1_3_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_1_3_6">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Message broker
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
     <li class="md-nav__item">
-      <a href="../../backend/distributed-system/message-broker/%EB%A9%94%EC%8B%9C%EC%A7%80%20%EB%B8%8C%EB%A1%9C%EC%BB%A4%20%EA%B0%9C%EC%9A%94.pub/" class="md-nav__link">
+      <a href="../../backend/distributed-systems/coordination/distributed-systems-and-zookeeper.pub/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    연쇄적 종속성은 해결하면서 트랜잭션의 원자성을 지켜야 한다면?
+    분산 시스템과 주키퍼
   
 
     
@@ -2994,14 +3408,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/distributed-system/message-broker/%EC%B9%B4%ED%94%84%EC%B9%B4%20%EA%B0%9C%EC%9A%94.pub/" class="md-nav__link">
+      <a href="../../backend/distributed-systems/search-data/tf-idf.pub/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    KRaft(Kafka Raft)
+    TF-IDF
   
 
     
@@ -3010,14 +3424,6 @@
   
 
       </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
     </li>
   
 
@@ -3053,17 +3459,17 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_4" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_4" >
         
           
-          <label class="md-nav__link" for="__nav_1_4" id="__nav_1_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
     
   
-    rust로 게시판 만들기
+    Rust Board API
   
 
     
@@ -3074,12 +3480,12 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_1_4">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
             <span class="md-nav__icon md-icon"></span>
             
   
-    rust로 게시판 만들기
+    Rust Board API
   
 
           </label>
@@ -3092,7 +3498,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/rust/board-api/blog/00-rust-board-overview.pub/" class="md-nav__link">
+      <a href="../../backend/rust/board-api/00-rust-board-overview.pub/" class="md-nav__link">
         
   
   
@@ -3120,7 +3526,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/rust/board-api/blog/01-cargo-and-module-system.pub/" class="md-nav__link">
+      <a href="../../backend/rust/board-api/01-cargo-and-module-system.pub/" class="md-nav__link">
         
   
   
@@ -3148,7 +3554,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/rust/board-api/blog/02-rust-types-and-structs.pub/" class="md-nav__link">
+      <a href="../../backend/rust/board-api/02-rust-types-and-structs.pub/" class="md-nav__link">
         
   
   
@@ -3176,7 +3582,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/rust/board-api/blog/03-ownership-option-result.pub/" class="md-nav__link">
+      <a href="../../backend/rust/board-api/03-ownership-option-result.pub/" class="md-nav__link">
         
   
   
@@ -3204,7 +3610,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/rust/board-api/blog/04-async-tokio-and-main.pub/" class="md-nav__link">
+      <a href="../../backend/rust/board-api/04-async-tokio-and-main.pub/" class="md-nav__link">
         
   
   
@@ -3232,7 +3638,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/rust/board-api/blog/05-app-state-and-routing.pub/" class="md-nav__link">
+      <a href="../../backend/rust/board-api/05-app-state-and-routing.pub/" class="md-nav__link">
         
   
   
@@ -3260,7 +3666,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/rust/board-api/blog/06-seaorm-entity-and-db.pub/" class="md-nav__link">
+      <a href="../../backend/rust/board-api/06-seaorm-entity-and-db.pub/" class="md-nav__link">
         
   
   
@@ -3288,7 +3694,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/rust/board-api/blog/07-service-layer-crud.pub/" class="md-nav__link">
+      <a href="../../backend/rust/board-api/07-service-layer-crud.pub/" class="md-nav__link">
         
   
   
@@ -3316,7 +3722,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/rust/board-api/blog/08-error-handling-with-thiserror.pub/" class="md-nav__link">
+      <a href="../../backend/rust/board-api/08-error-handling-with-thiserror.pub/" class="md-nav__link">
         
   
   
@@ -3344,7 +3750,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/rust/board-api/blog/09-dto-and-serde.pub/" class="md-nav__link">
+      <a href="../../backend/rust/board-api/09-dto-and-serde.pub/" class="md-nav__link">
         
   
   
@@ -3372,7 +3778,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/rust/board-api/blog/10-rest-api-handlers.pub/" class="md-nav__link">
+      <a href="../../backend/rust/board-api/10-rest-api-handlers.pub/" class="md-nav__link">
         
   
   
@@ -3400,7 +3806,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/rust/board-api/blog/11-server-side-rendering-askama.pub/" class="md-nav__link">
+      <a href="../../backend/rust/board-api/11-server-side-rendering-askama.pub/" class="md-nav__link">
         
   
   
@@ -3428,7 +3834,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/rust/board-api/blog/12-integration-tests.pub/" class="md-nav__link">
+      <a href="../../backend/rust/board-api/12-integration-tests.pub/" class="md-nav__link">
         
   
   
@@ -3456,7 +3862,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../backend/rust/board-api/blog/13-putting-it-all-together.pub/" class="md-nav__link">
+      <a href="../../backend/rust/board-api/13-putting-it-all-together.pub/" class="md-nav__link">
         
   
   
@@ -3514,17 +3920,17 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
     
   
-    AI & LangChain
+    AI & Machine Learning
   
 
     
@@ -3535,12 +3941,12 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
   
-    AI & LangChain
+    AI & Machine Learning
   
 
           </label>
@@ -3596,17 +4002,17 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_2" >
         
           
-          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
     
   
-    Deeplearning master
+    Deep Learning Master
   
 
     
@@ -3617,12 +4023,12 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_2">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
             <span class="md-nav__icon md-icon"></span>
             
   
-    Deeplearning master
+    Deep Learning Master
   
 
           </label>
@@ -3635,7 +4041,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ai/deeplearning-master/ch02%20%EB%94%A5%EB%9F%AC%EB%8B%9D%EC%9D%98%20%ED%95%B5%EC%8B%AC%20%EB%AF%B8%EB%A6%AC%EB%B3%B4%EA%B8%B0.pub/" class="md-nav__link">
+      <a href="../../ai/deeplearning-master/02-deep-learning-preview.pub/" class="md-nav__link">
         
   
   
@@ -3663,7 +4069,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ai/deeplearning-master/ch04%20%EA%B0%80%EC%9E%A5%20%ED%9B%8C%EB%A5%AD%ED%95%9C%20%EC%98%88%EC%B8%A1%EC%84%A0.pub/" class="md-nav__link">
+      <a href="../../ai/deeplearning-master/04-best-fit-line.pub/" class="md-nav__link">
         
   
   
@@ -3691,7 +4097,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ai/deeplearning-master/ch05%20%EC%84%A0%ED%98%95%ED%9A%8C%EA%B7%80%20%EB%AA%A8%EB%8D%B8.pub/" class="md-nav__link">
+      <a href="../../ai/deeplearning-master/05-linear-regression.pub/" class="md-nav__link">
         
   
   
@@ -3719,7 +4125,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ai/deeplearning-master/ch06%20%EB%A1%9C%EC%A7%80%EC%8A%A4%ED%8B%B1%20%ED%9A%8C%EA%B7%80%20%EB%AA%A8%EB%8D%B8.pub/" class="md-nav__link">
+      <a href="../../ai/deeplearning-master/06-logistic-regression.pub/" class="md-nav__link">
         
   
   
@@ -3747,7 +4153,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ai/deeplearning-master/ch08%20%EB%8B%A4%EC%B8%B5%20%ED%8D%BC%EC%85%89%ED%8A%B8%EB%A1%A0.pub/" class="md-nav__link">
+      <a href="../../ai/deeplearning-master/08-multilayer-perceptron.pub/" class="md-nav__link">
         
   
   
@@ -3775,7 +4181,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ai/deeplearning-master/ch10%20%EB%94%A5%EB%9F%AC%EB%8B%9D%20%EB%AA%A8%EB%8D%B8%20%EC%84%A4%EA%B3%84%ED%95%98%EA%B8%B0.pub/" class="md-nav__link">
+      <a href="../../ai/deeplearning-master/10-deep-learning-model-design.pub/" class="md-nav__link">
         
   
   
@@ -3803,7 +4209,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ai/deeplearning-master/ch11%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EB%8B%A4%EB%A3%A8%EA%B8%B0.pub/" class="md-nav__link">
+      <a href="../../ai/deeplearning-master/11-data-processing.pub/" class="md-nav__link">
         
   
   
@@ -3831,7 +4237,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ai/deeplearning-master/ch12%20%EB%8B%A4%EC%A4%91%20%EB%B6%84%EB%A5%98%20%EB%AC%B8%EC%A0%9C%20%ED%95%B4%EA%B2%B0%ED%95%98%EA%B8%B0.pub/" class="md-nav__link">
+      <a href="../../ai/deeplearning-master/12-multiclass-classification.pub/" class="md-nav__link">
         
   
   
@@ -3859,7 +4265,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ai/deeplearning-master/ch13%20%EB%AA%A8%EB%8D%B8%20%EC%84%B1%EB%8A%A5%20%EA%B2%80%EC%A6%9D%ED%95%98%EA%B8%B0.pub/" class="md-nav__link">
+      <a href="../../ai/deeplearning-master/13-model-validation.pub/" class="md-nav__link">
         
   
   
@@ -3887,7 +4293,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ai/deeplearning-master/ch14%20%EB%AA%A8%EB%8D%B8%20%EC%84%B1%EB%8A%A5%20%ED%96%A5%EC%83%81%EC%8B%9C%ED%82%A4%EA%B8%B0.pub/" class="md-nav__link">
+      <a href="../../ai/deeplearning-master/14-model-performance.pub/" class="md-nav__link">
         
   
   
@@ -3915,7 +4321,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ai/deeplearning-master/ch15%20%EC%8B%A4%EC%A0%9C%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A1%9C%20%EB%A7%8C%EB%93%A4%EC%96%B4%20%EB%B3%B4%EB%8A%94%20%EB%AA%A8%EB%8D%B8.pub/" class="md-nav__link">
+      <a href="../../ai/deeplearning-master/15-real-world-data-model.pub/" class="md-nav__link">
         
   
   
@@ -3943,7 +4349,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ai/deeplearning-master/ch16%20%EC%9D%B4%EB%AF%B8%EC%A7%80%20%EC%9D%B8%EC%8B%9D%20%EC%BB%A8%EB%B3%BC%EB%A3%A8%EC%85%98%20%EC%8B%A0%EA%B2%BD%EB%A7%9D%20CNN.pub/" class="md-nav__link">
+      <a href="../../ai/deeplearning-master/16-convolutional-neural-network.pub/" class="md-nav__link">
         
   
   
@@ -3971,7 +4377,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ai/deeplearning-master/ch17%20%EC%9E%90%EC%97%B0%EC%96%B4%20%EC%B2%98%EB%A6%AC%EC%99%80%20%EB%8B%A8%EC%96%B4%20%EC%9E%84%EB%B2%A0%EB%94%A9.pub/" class="md-nav__link">
+      <a href="../../ai/deeplearning-master/17-nlp-word-embedding.pub/" class="md-nav__link">
         
   
   
@@ -3999,7 +4405,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ai/deeplearning-master/ch18%20%EC%8B%9C%ED%80%80%EC%8A%A4%20%EB%B0%B0%EC%97%B4%EB%A1%9C%20%EB%8B%A4%EB%A3%A8%EB%8A%94%20%EC%88%9C%ED%99%98%20%EC%8B%A0%EA%B2%BD%EB%A7%9D%20RNN.pub/" class="md-nav__link">
+      <a href="../../ai/deeplearning-master/18-recurrent-neural-network.pub/" class="md-nav__link">
         
   
   
@@ -4027,7 +4433,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ai/deeplearning-master/ch19%20GAN%20%EC%98%A4%ED%86%A0%EC%9D%B8%EC%BD%94%EB%8D%94.pub/" class="md-nav__link">
+      <a href="../../ai/deeplearning-master/19-gan-autoencoder.pub/" class="md-nav__link">
         
   
   
@@ -4055,7 +4461,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ai/deeplearning-master/ch20%20%EC%A0%84%EC%9D%B4%ED%95%99%EC%8A%B5%EC%9D%84%20%ED%86%B5%ED%95%B4%20%EC%84%B1%EB%8A%A5%20%EA%B7%B9%EB%8C%80%ED%99%94%ED%95%98%EA%B8%B0.pub/" class="md-nav__link">
+      <a href="../../ai/deeplearning-master/20-transfer-learning.pub/" class="md-nav__link">
         
   
   
@@ -4083,7 +4489,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ai/deeplearning-master/ch21%20%EC%84%A4%EB%AA%85%20%EA%B0%80%EB%8A%A5%ED%95%9C%20%EB%94%A5%EB%9F%AC%EB%8B%9D%20%EB%AA%A8%EB%8D%B8%20%EB%A7%8C%EB%93%A4%EA%B8%B0.pub/" class="md-nav__link">
+      <a href="../../ai/deeplearning-master/21-explainable-deep-learning.pub/" class="md-nav__link">
         
   
   
@@ -4111,7 +4517,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ai/deeplearning-master/ch22%20%EC%BA%90%EA%B8%80%EB%A1%9C%20%EC%8B%9C%EC%9E%91%ED%95%98%EB%8A%94%20%EC%83%88%EB%A1%9C%EC%9A%B4%20%EB%8F%84%EC%A0%84.pub/" class="md-nav__link">
+      <a href="../../ai/deeplearning-master/22-kaggle-challenge.pub/" class="md-nav__link">
         
   
   
@@ -4139,7 +4545,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ai/deeplearning-master/post_ml_top10.pub/" class="md-nav__link">
+      <a href="../../ai/deeplearning-master/machine-learning-top-10-summary.pub/" class="md-nav__link">
         
   
   
@@ -4167,119 +4573,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ai/deeplearning-master/post_model_design.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    딥러닝 모델 설계와 데이터 전처리 파이프라인
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../ai/deeplearning-master/post_nlp.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    자연어 처리(NLP)와 단어 임베딩의 이해
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../ai/deeplearning-master/post_regression.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    딥러닝의 기초 선형 회귀와 로지스틱 회귀 모델
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../ai/deeplearning-master/post_rnn.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    순환 신경망(RNN)과 어텐션(Attention)의 이해
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../ai/deeplearning-master/%EA%B0%80%EC%9E%A5%20%EB%A7%8E%EC%9D%B4%20%EC%93%B0%EC%9D%B4%EB%8A%94%20%EB%A8%B8%EC%8B%A0%20%EB%9F%AC%EB%8B%9D%20%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98%20TOP%2010.pub/" class="md-nav__link">
+      <a href="../../ai/deeplearning-master/machine-learning-top-10.pub/" class="md-nav__link">
         
   
   
@@ -4307,7 +4601,91 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ai/deeplearning-master/%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B6%84%EC%84%9D%EC%9D%84%20%EC%9C%84%ED%95%9C%20%ED%8C%90%EB%8B%A4%EC%8A%A4.pub/" class="md-nav__link">
+      <a href="../../ai/deeplearning-master/model-design-summary.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    딥러닝 모델 설계와 데이터 전처리 파이프라인
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ai/deeplearning-master/neural-network-with-python.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    심화학습 2. 파이썬 코딩으로 짜는 신경망
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ai/deeplearning-master/nlp-summary.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    자연어 처리(NLP)와 단어 임베딩의 이해
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ai/deeplearning-master/pandas-for-data-analysis.pub/" class="md-nav__link">
         
   
   
@@ -4335,14 +4713,42 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ai/deeplearning-master/%ED%8C%8C%EC%9D%B4%EC%8D%AC%EC%BD%94%EB%94%A9%EC%9C%BC%EB%A1%9C%20%EC%A7%9C%EB%B3%B4%EB%8A%94%20%EC%8B%A0%EA%B2%BD%EB%A7%9D.pub/" class="md-nav__link">
+      <a href="../../ai/deeplearning-master/regression-summary.pub/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    심화학습 2. 파이썬 코딩으로 짜는 신경망
+    딥러닝의 기초 선형 회귀와 로지스틱 회귀 모델
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ai/deeplearning-master/rnn-summary.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    순환 신경망(RNN)과 어텐션(Attention)의 이해
   
 
     
@@ -4396,10 +4802,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
             
   
   
@@ -4417,8 +4823,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_3">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -4551,7 +4957,7 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1" class="md-nav__link">
+  <a href="#1-여섯-단계-문제-해결-알고리즘" class="md-nav__link">
     <span class="md-ellipsis">
       
         1. 여섯 단계 문제 해결 알고리즘
@@ -4563,7 +4969,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1_1" class="md-nav__link">
+  <a href="#1단계-문제를-읽고-이해하기" class="md-nav__link">
     <span class="md-ellipsis">
       
         1단계: 문제를 읽고 이해하기
@@ -4574,7 +4980,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2" class="md-nav__link">
+  <a href="#2단계-재정의와-추상화" class="md-nav__link">
     <span class="md-ellipsis">
       
         2단계: 재정의와 추상화
@@ -4585,7 +4991,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3" class="md-nav__link">
+  <a href="#3단계-계획-세우기" class="md-nav__link">
     <span class="md-ellipsis">
       
         3단계: 계획 세우기
@@ -4596,7 +5002,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#4" class="md-nav__link">
+  <a href="#4단계-계획-검증하기" class="md-nav__link">
     <span class="md-ellipsis">
       
         4단계: 계획 검증하기
@@ -4607,7 +5013,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#5" class="md-nav__link">
+  <a href="#5단계-계획-수행하기" class="md-nav__link">
     <span class="md-ellipsis">
       
         5단계: 계획 수행하기
@@ -4618,7 +5024,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#6" class="md-nav__link">
+  <a href="#6단계-회고하기" class="md-nav__link">
     <span class="md-ellipsis">
       
         6단계: 회고하기
@@ -4634,7 +5040,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2_1" class="md-nav__link">
+  <a href="#2-문제-해결-전략" class="md-nav__link">
     <span class="md-ellipsis">
       
         2. 문제 해결 전략
@@ -4646,7 +5052,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#intuition" class="md-nav__link">
+  <a href="#직관-intuition" class="md-nav__link">
     <span class="md-ellipsis">
       
         직관 (Intuition)
@@ -4657,7 +5063,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#체계적인-접근을-위한-질문들" class="md-nav__link">
     <span class="md-ellipsis">
       
         체계적인 접근을 위한 질문들
@@ -4668,7 +5074,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#직관을-얻기-위한-도구" class="md-nav__link">
     <span class="md-ellipsis">
       
         직관을 얻기 위한 도구
@@ -4721,10 +5127,10 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
         
           
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
             
   
   
@@ -4742,8 +5148,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -4775,10 +5181,10 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_1" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_1" >
         
           
-          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
             
   
   
@@ -4796,8 +5202,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_1">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -4806,6 +5212,460 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_1_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_1_1" id="__nav_5_1_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    React Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    React Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../frontend/react/react-guide/03-component-basics.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    [React] 컴포넌트의 기초: 클래스형 vs 함수형, 그리고 Props와 State
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../frontend/react/react-guide/04-event-handling.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    React 이벤트 핸들링 (Event Handling)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../frontend/react/react-guide/05-ref-dom-naming.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    React ref: DOM에 이름 달기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../frontend/react/react-guide/06-component-iteration.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    컴포넌트 반복
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../frontend/react/react-guide/07-component-lifecycle.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    컴포넌트의 라이프사이클
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../frontend/react/react-guide/08-hooks.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hooks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../frontend/react/react-guide/09-component-styling.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    컴포넌트 스타일링
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../frontend/react/react-guide/10-project-todo-app.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Todo 앱 만들기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../frontend/react/react-guide/11-component-optimization.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    컴포넌트 성능 최적화
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../frontend/react/react-guide/12-immer-immutability.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    immer를 사용해 불변성 더 쉽게 유지하기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../frontend/react/react-guide/13-spa-react-router.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SPA와 리액트 라우터
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../frontend/react/react-guide/14-news-viewer-api.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    외부 API 연동 뉴스 뷰어 만들기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../frontend/react/react-guide/15-context-api.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Context API를 통한 전역 상태 관리
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../frontend/react/react-guide/16-redux-basics.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    리덕스를 사용한 상태 관리
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
             
               
                 
@@ -4835,460 +5695,6 @@
 
               
             
-              
-                
-  
-  
-  
-  
-    
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_1_2" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_1_2" id="__nav_4_1_2_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    리액트를 다루는 기술
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_1_2">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    리액트를 다루는 기술
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../frontend/react/%EB%A6%AC%EC%95%A1%ED%8A%B8%EB%A5%BC%20%EB%8B%A4%EB%A3%A8%EB%8A%94%20%EA%B8%B0%EC%88%A0/03_component/03-component-basics.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    [React] 컴포넌트의 기초: 클래스형 vs 함수형, 그리고 Props와 State
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../frontend/react/%EB%A6%AC%EC%95%A1%ED%8A%B8%EB%A5%BC%20%EB%8B%A4%EB%A3%A8%EB%8A%94%20%EA%B8%B0%EC%88%A0/04_eventHandling/04-event-handling.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    React 이벤트 핸들링 (Event Handling)
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../frontend/react/%EB%A6%AC%EC%95%A1%ED%8A%B8%EB%A5%BC%20%EB%8B%A4%EB%A3%A8%EB%8A%94%20%EA%B8%B0%EC%88%A0/05_ref/05-ref-dom-naming.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    React ref: DOM에 이름 달기
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../frontend/react/%EB%A6%AC%EC%95%A1%ED%8A%B8%EB%A5%BC%20%EB%8B%A4%EB%A3%A8%EB%8A%94%20%EA%B8%B0%EC%88%A0/06_map_key_filter/06-component-iteration.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    컴포넌트 반복
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../frontend/react/%EB%A6%AC%EC%95%A1%ED%8A%B8%EB%A5%BC%20%EB%8B%A4%EB%A3%A8%EB%8A%94%20%EA%B8%B0%EC%88%A0/07_lifeCycle/07-component-lifecycle.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    컴포넌트의 라이프사이클
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../frontend/react/%EB%A6%AC%EC%95%A1%ED%8A%B8%EB%A5%BC%20%EB%8B%A4%EB%A3%A8%EB%8A%94%20%EA%B8%B0%EC%88%A0/08_Hooks/08-hooks.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Hooks
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../frontend/react/%EB%A6%AC%EC%95%A1%ED%8A%B8%EB%A5%BC%20%EB%8B%A4%EB%A3%A8%EB%8A%94%20%EA%B8%B0%EC%88%A0/09_styling/09-component-styling.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    컴포넌트 스타일링
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../frontend/react/%EB%A6%AC%EC%95%A1%ED%8A%B8%EB%A5%BC%20%EB%8B%A4%EB%A3%A8%EB%8A%94%20%EA%B8%B0%EC%88%A0/10_project_todo-app/10-project-todo-app.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Todo 앱 만들기
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../frontend/react/%EB%A6%AC%EC%95%A1%ED%8A%B8%EB%A5%BC%20%EB%8B%A4%EB%A3%A8%EB%8A%94%20%EA%B8%B0%EC%88%A0/11_component_optimization/11-component-optimization.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    컴포넌트 성능 최적화
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../frontend/react/%EB%A6%AC%EC%95%A1%ED%8A%B8%EB%A5%BC%20%EB%8B%A4%EB%A3%A8%EB%8A%94%20%EA%B8%B0%EC%88%A0/12_immer/12-immer-immutability.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    immer를 사용해 불변성 더 쉽게 유지하기
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../frontend/react/%EB%A6%AC%EC%95%A1%ED%8A%B8%EB%A5%BC%20%EB%8B%A4%EB%A3%A8%EB%8A%94%20%EA%B8%B0%EC%88%A0/13_spa/13-spa-react-router.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SPA와 리액트 라우터
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../frontend/react/%EB%A6%AC%EC%95%A1%ED%8A%B8%EB%A5%BC%20%EB%8B%A4%EB%A3%A8%EB%8A%94%20%EA%B8%B0%EC%88%A0/14_news_viewer/14-news-viewer-api.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    외부 API 연동 뉴스 뷰어 만들기
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../frontend/react/%EB%A6%AC%EC%95%A1%ED%8A%B8%EB%A5%BC%20%EB%8B%A4%EB%A3%A8%EB%8A%94%20%EA%B8%B0%EC%88%A0/15_context_api/15-context-api.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Context API를 통한 전역 상태 관리
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../frontend/react/%EB%A6%AC%EC%95%A1%ED%8A%B8%EB%A5%BC%20%EB%8B%A4%EB%A3%A8%EB%8A%94%20%EA%B8%B0%EC%88%A0/16_redux/16-redux-basics.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    리덕스를 사용한 상태 관리
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
           </ul>
         </nav>
       
@@ -5319,10 +5725,10 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_2" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_2" >
         
           
-          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
             
   
   
@@ -5340,8 +5746,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_2">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -5416,10 +5822,10 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
             
   
   
@@ -5437,8 +5843,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -5470,17 +5876,17 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_1" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6_1" >
         
           
-          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_6_1" id="__nav_6_1_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
     
   
-    Java
+    Java Fundamentals
   
 
     
@@ -5491,12 +5897,12 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5_1">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_1">
             <span class="md-nav__icon md-icon"></span>
             
   
-    Java
+    Java Fundamentals
   
 
           </label>
@@ -5509,7 +5915,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../language/java/note/java-basic-review.pub/" class="md-nav__link">
+      <a href="../../language/java/fundamentals/java-basic-review.pub/" class="md-nav__link">
         
   
   
@@ -5537,7 +5943,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../language/java/note/java-compiler-vs-interpreter.pub/" class="md-nav__link">
+      <a href="../../language/java/fundamentals/java-compiler-vs-interpreter.pub/" class="md-nav__link">
         
   
   
@@ -5565,7 +5971,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../language/java/note/java-git-and-software.pub/" class="md-nav__link">
+      <a href="../../language/java/fundamentals/java-git-and-software.pub/" class="md-nav__link">
         
   
   
@@ -5593,7 +5999,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../language/java/note/java-gradle-build-guide.pub/" class="md-nav__link">
+      <a href="../../language/java/fundamentals/java-gradle-build-guide.pub/" class="md-nav__link">
         
   
   
@@ -5621,7 +6027,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../language/java/note/java-literals-advanced.pub/" class="md-nav__link">
+      <a href="../../language/java/fundamentals/java-literals-advanced.pub/" class="md-nav__link">
         
   
   
@@ -5649,7 +6055,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../language/java/note/java-literals-basic.pub/" class="md-nav__link">
+      <a href="../../language/java/fundamentals/java-literals-basic.pub/" class="md-nav__link">
         
   
   
@@ -5677,7 +6083,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../language/java/note/java-literals-practice.pub/" class="md-nav__link">
+      <a href="../../language/java/fundamentals/java-literals-practice.pub/" class="md-nav__link">
         
   
   
@@ -5705,7 +6111,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../language/java/note/java-reference-type.pub/" class="md-nav__link">
+      <a href="../../language/java/fundamentals/java-reference-type.pub/" class="md-nav__link">
         
   
   
@@ -5733,7 +6139,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../language/java/note/java-sandbox-environment.pub/" class="md-nav__link">
+      <a href="../../language/java/fundamentals/java-sandbox-environment.pub/" class="md-nav__link">
         
   
   
@@ -5769,7 +6175,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../language/kotlin/kotlin-in-action/kotlin-in-action-summary.pub/" class="md-nav__link">
+      <a href="../../language/kotlin/kotlin-in-action-summary.pub/" class="md-nav__link">
         
   
   
@@ -5819,10 +6225,10 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
         
           
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
             
   
   
@@ -5840,8 +6246,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -5936,10 +6342,10 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
         
           
-          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
             
   
   
@@ -5957,8 +6363,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_7">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -5975,7 +6381,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../mobile/android/test/qr-scanning-zxing-vs-mlkit.pub/" class="md-nav__link">
+      <a href="../../mobile/android/qr-scanning-zxing-vs-mlkit.pub/" class="md-nav__link">
         
   
   
@@ -6003,7 +6409,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../mobile/ios/udemy/uikit-vs-swiftui-comparison.pub/" class="md-nav__link">
+      <a href="../../mobile/ios/uikit-vs-swiftui-comparison.pub/" class="md-nav__link">
         
   
   
@@ -6011,241 +6417,6 @@
     
   
     iOS 개발의 패러다임 변화: UIKit vs SwiftUI 완벽 비교 (feat. AI 시대의 개발)
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
-        
-          
-          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Design & Architecture
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_8">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Design & Architecture
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8_1" >
-        
-          
-          <label class="md-nav__link" for="__nav_8_1" id="__nav_8_1_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Design pattern and refactoring
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_1_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_8_1">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Design pattern and refactoring
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../design-architecture/design-pattern-and-refactoring/%EB%94%94%EC%9E%90%EC%9D%B8%20%EC%9B%90%EC%B9%99.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    디자인 원칙
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../design-architecture/design-pattern-and-refactoring/%EB%94%94%EC%9E%90%EC%9D%B8%ED%8C%A8%ED%84%B4.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    디자인 패턴
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../design-architecture/design-pattern-and-refactoring/%EC%BD%94%EB%93%9C%EC%9D%98%20%EA%B5%AC%EB%A6%B0%EB%82%B4.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    코드의 구린내(Code Smell)와 리팩토링 전략
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../design-architecture/ooad/ooad.pub/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Object-Oriented Analysis &amp; Design
   
 
     
@@ -6298,7 +6469,7 @@
   <span class="md-ellipsis">
     
   
-    Security
+    Design & Architecture
   
 
     
@@ -6311,6 +6482,241 @@
         
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Design & Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_9_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_9_1" id="__nav_9_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Patterns & Refactoring
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Design Patterns & Refactoring
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../design-architecture/design-patterns-refactoring/code-smells.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    코드의 구린내(Code Smell)와 리팩토링 전략
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../design-architecture/design-patterns-refactoring/design-patterns.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    디자인 패턴
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../design-architecture/design-patterns-refactoring/design-principles.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    디자인 원칙
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../design-architecture/ooad.pub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Object-Oriented Analysis & Design
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -6382,7 +6788,7 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1" class="md-nav__link">
+  <a href="#1-여섯-단계-문제-해결-알고리즘" class="md-nav__link">
     <span class="md-ellipsis">
       
         1. 여섯 단계 문제 해결 알고리즘
@@ -6394,7 +6800,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1_1" class="md-nav__link">
+  <a href="#1단계-문제를-읽고-이해하기" class="md-nav__link">
     <span class="md-ellipsis">
       
         1단계: 문제를 읽고 이해하기
@@ -6405,7 +6811,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2" class="md-nav__link">
+  <a href="#2단계-재정의와-추상화" class="md-nav__link">
     <span class="md-ellipsis">
       
         2단계: 재정의와 추상화
@@ -6416,7 +6822,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3" class="md-nav__link">
+  <a href="#3단계-계획-세우기" class="md-nav__link">
     <span class="md-ellipsis">
       
         3단계: 계획 세우기
@@ -6427,7 +6833,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#4" class="md-nav__link">
+  <a href="#4단계-계획-검증하기" class="md-nav__link">
     <span class="md-ellipsis">
       
         4단계: 계획 검증하기
@@ -6438,7 +6844,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#5" class="md-nav__link">
+  <a href="#5단계-계획-수행하기" class="md-nav__link">
     <span class="md-ellipsis">
       
         5단계: 계획 수행하기
@@ -6449,7 +6855,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#6" class="md-nav__link">
+  <a href="#6단계-회고하기" class="md-nav__link">
     <span class="md-ellipsis">
       
         6단계: 회고하기
@@ -6465,7 +6871,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2_1" class="md-nav__link">
+  <a href="#2-문제-해결-전략" class="md-nav__link">
     <span class="md-ellipsis">
       
         2. 문제 해결 전략
@@ -6477,7 +6883,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#intuition" class="md-nav__link">
+  <a href="#직관-intuition" class="md-nav__link">
     <span class="md-ellipsis">
       
         직관 (Intuition)
@@ -6488,7 +6894,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#체계적인-접근을-위한-질문들" class="md-nav__link">
     <span class="md-ellipsis">
       
         체계적인 접근을 위한 질문들
@@ -6499,7 +6905,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#직관을-얻기-위한-도구" class="md-nav__link">
     <span class="md-ellipsis">
       
         직관을 얻기 위한 도구
@@ -6531,22 +6937,22 @@
 
 
 
-<h1 id="_1">문제 해결 개관<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
+<h1 id="문제-해결-개관">문제 해결 개관<a class="headerlink" href="#문제-해결-개관" title="Permanent link">&para;</a></h1>
 <p>효율적인 문제 해결을 위한 체계적인 접근법과 전략을 정리했습니다.</p>
 <hr />
-<h2 id="1">1. 여섯 단계 문제 해결 알고리즘<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
+<h2 id="1-여섯-단계-문제-해결-알고리즘">1. 여섯 단계 문제 해결 알고리즘<a class="headerlink" href="#1-여섯-단계-문제-해결-알고리즘" title="Permanent link">&para;</a></h2>
 <p>문제 풀이의 각 단계를 명확히 인지하고 실천하는 것이 중요합니다.</p>
-<h3 id="1_1">1단계: 문제를 읽고 이해하기<a class="headerlink" href="#1_1" title="Permanent link">&para;</a></h3>
+<h3 id="1단계-문제를-읽고-이해하기">1단계: 문제를 읽고 이해하기<a class="headerlink" href="#1단계-문제를-읽고-이해하기" title="Permanent link">&para;</a></h3>
 <p>조급해하지 말고 문제를 완전히 이해하는 데 충분한 시간을 들이세요. 문제를 잘못 이해하고 시작하면 나중에 코드를 전부 버려야 하는 상황이 생길 수 있습니다.</p>
-<h3 id="2">2단계: 재정의와 추상화<a class="headerlink" href="#2" title="Permanent link">&para;</a></h3>
+<h3 id="2단계-재정의와-추상화">2단계: 재정의와 추상화<a class="headerlink" href="#2단계-재정의와-추상화" title="Permanent link">&para;</a></h3>
 <p>자신의 언어로 문제를 다시 정의하세요. 복잡한 문제를 다루기 쉬운 수학적/전산학적 개념으로 추상화하는 과정이 필요합니다. 어떤 방식으로 추상화하느냐에 따라 난이도가 결정됩니다.</p>
-<h3 id="3">3단계: 계획 세우기<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
+<h3 id="3단계-계획-세우기">3단계: 계획 세우기<a class="headerlink" href="#3단계-계획-세우기" title="Permanent link">&para;</a></h3>
 <p>사용할 알고리즘과 자료구조를 선택합니다. 문제 해결에서 가장 핵심적인 단계입니다.</p>
-<h3 id="4">4단계: 계획 검증하기<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
+<h3 id="4단계-계획-검증하기">4단계: 계획 검증하기<a class="headerlink" href="#4단계-계획-검증하기" title="Permanent link">&para;</a></h3>
 <p>설계한 알고리즘이 모든 경우(Corner cases 포함)에 정확히 동작하는지, 시간과 메모리 제한을 충족하는지 확인합니다.</p>
-<h3 id="5">5단계: 계획 수행하기<a class="headerlink" href="#5" title="Permanent link">&para;</a></h3>
+<h3 id="5단계-계획-수행하기">5단계: 계획 수행하기<a class="headerlink" href="#5단계-계획-수행하기" title="Permanent link">&para;</a></h3>
 <p>결정된 계획을 바탕으로 실제 코드를 작성합니다.</p>
-<h3 id="6">6단계: 회고하기<a class="headerlink" href="#6" title="Permanent link">&para;</a></h3>
+<h3 id="6단계-회고하기">6단계: 회고하기<a class="headerlink" href="#6단계-회고하기" title="Permanent link">&para;</a></h3>
 <p>해결 과정을 돌이켜보며 개선점을 찾습니다.
 - 더 효율적인 알고리즘이나 간결한 코드가 있는가?
 - 오답 원인이 무엇이었는가?
@@ -6556,10 +6962,10 @@
 <p><strong>💡 문제를 풀지 못할 때:</strong> 일정 시간 고민해도 답이 나오지 않는다면 풀이를 참고하되, 반드시 <strong>왜 떠올리지 못했는지</strong> 복기해야 합니다.</p>
 </blockquote>
 <hr />
-<h2 id="2_1">2. 문제 해결 전략<a class="headerlink" href="#2_1" title="Permanent link">&para;</a></h2>
-<h3 id="intuition">직관 (Intuition)<a class="headerlink" href="#intuition" title="Permanent link">&para;</a></h3>
+<h2 id="2-문제-해결-전략">2. 문제 해결 전략<a class="headerlink" href="#2-문제-해결-전략" title="Permanent link">&para;</a></h2>
+<h3 id="직관-intuition">직관 (Intuition)<a class="headerlink" href="#직관-intuition" title="Permanent link">&para;</a></h3>
 <p>직관은 문제의 전체적인 얼개를 그릴 수 있게 해줍니다. 풍부한 경험을 통해 발달시킬 수 있습니다.</p>
-<h3 id="_2">체계적인 접근을 위한 질문들<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<h3 id="체계적인-접근을-위한-질문들">체계적인 접근을 위한 질문들<a class="headerlink" href="#체계적인-접근을-위한-질문들" title="Permanent link">&para;</a></h3>
 <p>직관적으로 풀이가 떠오르지 않을 때 스스로에게 던져볼 질문들입니다.</p>
 <ol>
 <li><strong>비슷한 문제를 풀어본 적이 있는가?</strong></li>
@@ -6576,7 +6982,7 @@
 </ul>
 </li>
 </ol>
-<h3 id="_3">직관을 얻기 위한 도구<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<h3 id="직관을-얻기-위한-도구">직관을 얻기 위한 도구<a class="headerlink" href="#직관을-얻기-위한-도구" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>직접 손으로 풀어보기:</strong> 알고리즘의 흐름을 파악하고 예외 상황을 미리 확인할 수 있습니다.</li>
 <li><strong>그림 그려보기:</strong> 시각화를 통해 문제의 핵심을 파악할 수 있습니다.</li>
