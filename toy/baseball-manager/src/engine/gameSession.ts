@@ -1,6 +1,8 @@
 import type { GameResult, PlayLog } from '../types/game'
 import { computeScoreThroughLogs, type LiveScore } from './liveScore'
 import { normalizeSeed } from './sim/random'
+import { changePitcher, substituteBatter, type GameRosterState } from './substitutions'
+import type { Player } from '../types/game'
 
 export type GameSessionStatus = 'ready' | 'playing' | 'paused' | 'complete'
 
@@ -15,6 +17,7 @@ export interface GameSession {
   status: GameSessionStatus
   cursor: number
   resolvedResult: GameResult
+  userRoster?: GameRosterState
 }
 
 export interface GameSessionView {
@@ -23,7 +26,7 @@ export interface GameSessionView {
   complete: boolean
 }
 
-export function createGameSession(result: GameResult, seed: number): GameSession {
+export function createGameSession(result: GameResult, seed: number, userRoster?: GameRosterState): GameSession {
   return {
     version: 1,
     gameId: result.gameId,
@@ -31,6 +34,62 @@ export function createGameSession(result: GameResult, seed: number): GameSession
     status: 'ready',
     cursor: 0,
     resolvedResult: result,
+    userRoster,
+  }
+}
+
+function replaceFuturePlayer(
+  session: GameSession,
+  field: 'batterId' | 'pitcherId',
+  outgoingId: string,
+  incomingId: string,
+): GameResult {
+  return {
+    ...session.resolvedResult,
+    logs: session.resolvedResult.logs.map((log, index) => {
+      if (index < session.cursor || log[field] !== outgoingId) return log
+      const before = log.situationBefore
+      const after = log.situationAfter
+      return {
+        ...log,
+        [field]: incomingId,
+        situationBefore: before ? { ...before, [field]: incomingId } : before,
+        situationAfter: after ? { ...after, [field]: incomingId } : after,
+      }
+    }),
+  }
+}
+
+export function substituteSessionPitcher(session: GameSession, incoming: Player): { session: GameSession; message: string; ok: boolean } {
+  if (!session.userRoster) return { session, ok: false, message: '경기 엔트리가 없습니다.' }
+  const outgoingId = session.userRoster.currentPitcherId
+  const changed = changePitcher(session.userRoster, incoming)
+  if (!changed.ok) return { session, ok: false, message: changed.message }
+  return {
+    ok: true,
+    message: changed.message,
+    session: {
+      ...session,
+      userRoster: changed.roster,
+      resolvedResult: replaceFuturePlayer(session, 'pitcherId', outgoingId, incoming.id),
+    },
+  }
+}
+
+export function substituteSessionBatter(session: GameSession, battingOrder: number, incoming: Player): { session: GameSession; message: string; ok: boolean } {
+  if (!session.userRoster) return { session, ok: false, message: '경기 엔트리가 없습니다.' }
+  const outgoingId = session.userRoster.lineup.find((slot) => slot.battingOrder === battingOrder)?.playerId
+  if (!outgoingId) return { session, ok: false, message: '해당 타순이 없습니다.' }
+  const changed = substituteBatter(session.userRoster, battingOrder, incoming)
+  if (!changed.ok) return { session, ok: false, message: changed.message }
+  return {
+    ok: true,
+    message: changed.message,
+    session: {
+      ...session,
+      userRoster: changed.roster,
+      resolvedResult: replaceFuturePlayer(session, 'batterId', outgoingId, incoming.id),
+    },
   }
 }
 
@@ -92,5 +151,6 @@ export function restoreGameSession(value: unknown): GameSession | null {
       ? 'complete'
       : candidate.status === 'paused' ? 'paused' : candidate.status === 'ready' ? 'ready' : 'playing',
     resolvedResult: candidate.resolvedResult,
+    userRoster: candidate.userRoster,
   }
 }

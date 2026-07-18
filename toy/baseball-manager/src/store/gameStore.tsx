@@ -48,8 +48,11 @@ import {
   restoreGameSession,
   resumeGameSession,
   type GameSession,
+  substituteSessionBatter,
+  substituteSessionPitcher,
 } from '../engine/gameSession'
 import { createSeededRandom } from '../engine/sim/random'
+import { createGameRoster } from '../engine/substitutions'
 
 const STORAGE_KEY = 'baseball-manager'
 const ACTIVE_GAME_KEY = 'baseball-manager-active-game'
@@ -72,6 +75,8 @@ interface GameContextValue {
   advanceActiveGame: () => void
   pauseActiveGame: () => void
   resumeActiveGame: () => void
+  substitutePitcher: (playerId: string) => string
+  substituteBatter: (battingOrder: number, playerId: string) => string
   clearLastResult: () => void
   upcomingGame: ScheduledGame | null
   buyPlayer: (player: Player, fromTeamId: string) => boolean
@@ -278,7 +283,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
       rotationIndex: state.rotationIndex + 1,
     })
     setLastResult(result)
-    setActiveGameSession(createGameSession(result, seed))
+    const starterId = isHome ? result.boxScore.homeStarterId : result.boxScore.awayStarterId
+    setActiveGameSession(createGameSession(result, seed, createGameRoster(userTeam!, state.lineup, starterId)))
     return result
   }, [state])
 
@@ -291,6 +297,32 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const resumeActiveGame = useCallback(() => {
     setActiveGameSession((session) => session ? resumeGameSession(session) : null)
   }, [])
+  const substitutePitcher = useCallback((playerId: string): string => {
+    const player = userTeam?.players.find((p) => p.id === playerId)
+    if (!player) return '선수를 찾을 수 없습니다.'
+    let message = '진행 중인 경기가 없습니다.'
+    setActiveGameSession((session) => {
+      if (!session) return session
+      const result = substituteSessionPitcher(session, player)
+      message = result.message
+      if (result.ok) setLastResult(result.session.resolvedResult)
+      return result.session
+    })
+    return message
+  }, [userTeam])
+  const substituteBatter = useCallback((battingOrder: number, playerId: string): string => {
+    const player = userTeam?.players.find((p) => p.id === playerId)
+    if (!player) return '선수를 찾을 수 없습니다.'
+    let message = '진행 중인 경기가 없습니다.'
+    setActiveGameSession((session) => {
+      if (!session) return session
+      const result = substituteSessionBatter(session, battingOrder, player)
+      message = result.message
+      if (result.ok) setLastResult(result.session.resolvedResult)
+      return result.session
+    })
+    return message
+  }, [userTeam])
 
   const advanceWeek = useCallback(() => {
     setState((s) => {
@@ -657,6 +689,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
     advanceActiveGame,
     pauseActiveGame,
     resumeActiveGame,
+    substitutePitcher,
+    substituteBatter,
     clearLastResult,
     upcomingGame,
     buyPlayer,

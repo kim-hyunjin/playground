@@ -209,7 +209,7 @@ export interface PlayLog {
   pitcherId?: string
   rbi?: number
   /** 구조화된 이벤트 분류. 이전 저장 데이터에는 없을 수 있다. */
-  eventType?: 'plateAppearance' | 'stolenBase'
+  eventType?: 'plateAppearance' | 'stolenBase' | 'substitution'
   situationBefore?: GameSituation
   situationAfter?: GameSituation
 }

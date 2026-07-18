@@ -34,6 +34,7 @@ import {
 } from '../src/engine/gameSession'
 import { buildStoveLeagueState } from '../src/engine/stoveLeague'
 import type { GameState } from '../types/game'
+import { changePitcher, createGameRoster, substituteBatter } from '../src/engine/substitutions'
 
 let passed = 0
 let failed = 0
@@ -104,6 +105,20 @@ try {
   }
   for (const id of rotation) {
     assert(firstIds.has(id), `rotation uses 1군 투수 (${id})`)
+  }
+
+  section('Game roster / substitutions')
+  const gameRoster = createGameRoster(userTeam, lineup, rotation[0]!)
+  assert(gameRoster.lineup.length === 9, '경기 타순 9명 생성')
+  const reliever = userTeam.players.find((p) => gameRoster.bullpenIds.includes(p.id))!
+  const pitchingChange = changePitcher(gameRoster, reliever)
+  assert(pitchingChange.ok && pitchingChange.roster.currentPitcherId === reliever.id, '불펜 투수 교체')
+  assert(!changePitcher(pitchingChange.roster, reliever).ok, '등판 투수 재투입 방지')
+  const matchingBench = userTeam.players.find((p) => gameRoster.benchIds.includes(p.id) && p.role === gameRoster.lineup[0]!.position)
+  if (matchingBench) {
+    const batterChange = substituteBatter(gameRoster, 0, matchingBench)
+    assert(batterChange.ok && batterChange.roster.lineup[0]!.playerId === matchingBench.id, '대타가 기존 타순 계승')
+    assert(!substituteBatter(batterChange.roster, 1, matchingBench).ok, '교체 타자 재출전 방지')
   }
 
   section('Promote / demote')
