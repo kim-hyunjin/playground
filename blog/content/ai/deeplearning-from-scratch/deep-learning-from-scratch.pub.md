@@ -2,6 +2,7 @@
 title: "밑바닥부터 시작하는 딥러닝 딥러닝의 근본 원리 이해"
 description: "외부 라이브러리 없이 Python과 NumPy만으로 구현하며 파헤치는 신경망의 동작 원리와 핵심 알고리즘 요약"
 date: 2026-04-21
+category: "AI"
 categories:
   - AI
   - Deep Learning
@@ -10,6 +11,7 @@ tags:
   - NumPy
   - Perceptron
   - NeuralNetwork
+summary: "외부 라이브러리 없이 Python과 NumPy만으로 구현하며 파헤치는 신경망의 동작 원리와 핵심 알고리즘 요약"
 ---
 
 # 밑바닥부터 시작하는 딥러닝: 딥러닝의 근본 원리 이해
