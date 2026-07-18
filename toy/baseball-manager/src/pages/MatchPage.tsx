@@ -13,6 +13,10 @@ export function MatchPage() {
     userTeam,
     upcomingGame,
     lastResult,
+    activeGameSession,
+    advanceActiveGame,
+    pauseActiveGame,
+    resumeActiveGame,
     playUserGame,
     clearLastResult,
     advanceWeek,
@@ -21,6 +25,8 @@ export function MatchPage() {
   const [visibleLogs, setVisibleLogs] = useState(0)
   const [playing, setPlaying] = useState(false)
   const timerRef = useRef<number | null>(null)
+  const sessionInProgress = Boolean(activeGameSession && activeGameSession.status !== 'complete')
+  const replayCursor = sessionInProgress ? activeGameSession!.cursor : visibleLogs
 
   const result = lastResult
   const opponent = result
@@ -31,30 +37,32 @@ export function MatchPage() {
 
   const liveScore = useMemo(() => {
     if (!result) return null
-    if (!playing) {
+    if (!playing && !sessionInProgress) {
       return {
         homeScore: result.homeScore,
         awayScore: result.awayScore,
         innings: result.innings,
       }
     }
-    return computeScoreThroughLogs(result.logs, visibleLogs)
-  }, [result, playing, visibleLogs])
+    return computeScoreThroughLogs(result.logs, replayCursor)
+  }, [result, playing, replayCursor, sessionInProgress])
 
   useEffect(() => {
     if (!result || !playing) return
-    setVisibleLogs(0)
-    let i = 0
+    const startingCursor = activeGameSession?.cursor ?? 0
+    setVisibleLogs(startingCursor)
+    let i = startingCursor
     timerRef.current = window.setInterval(() => {
       i++
       setVisibleLogs(i)
+      advanceActiveGame()
       if (i >= result.logs.length) {
         if (timerRef.current) clearInterval(timerRef.current)
         setPlaying(false)
       }
     }, 120)
     return () => { if (timerRef.current) clearInterval(timerRef.current) }
-  }, [result, playing])
+  }, [result, playing, advanceActiveGame])
 
   if (!state || !userTeam) return null
 
@@ -63,6 +71,16 @@ export function MatchPage() {
     if (r) {
       setPlaying(true)
       setVisibleLogs(0)
+    }
+  }
+
+  const togglePlaying = () => {
+    if (playing) {
+      setPlaying(false)
+      pauseActiveGame()
+    } else {
+      setPlaying(true)
+      resumeActiveGame()
     }
   }
 
@@ -96,7 +114,7 @@ export function MatchPage() {
 
   const hasMoreGamesThisWeek = Boolean(upcomingGame && result && !playing)
   const currentSituation = result
-    ? result.logs[Math.max(0, (playing ? visibleLogs : result.logs.length) - 1)]?.situationAfter
+    ? result.logs[Math.max(0, (sessionInProgress || playing ? replayCursor : result.logs.length) - 1)]?.situationAfter
       ?? result.logs[0]?.situationBefore
     : undefined
 
@@ -201,6 +219,14 @@ export function MatchPage() {
           </div>
 
           <GameSituationPanel situation={currentSituation} teams={state.teams} />
+
+          {activeGameSession && activeGameSession.status !== 'complete' ? (
+            <div className="flex justify-center">
+              <button type="button" className="bm-btn bm-btn-ghost" onClick={togglePlaying}>
+                {playing ? '일시정지' : '계속 진행'}
+              </button>
+            </div>
+          ) : null}
 
           {!playing && result.boxScore ? (
             <div className="bm-card p-4">
@@ -341,7 +367,7 @@ export function MatchPage() {
           <div className="bm-card max-h-96 overflow-y-auto p-4">
             <h2 className="mb-3 font-semibold text-[var(--text-h)]">플레이-by-플레이</h2>
             <ul className="space-y-1 font-mono text-sm">
-              {result.logs.slice(0, playing ? visibleLogs : result.logs.length).map((log, i) => {
+              {result.logs.slice(0, sessionInProgress || playing ? replayCursor : result.logs.length).map((log, i) => {
                 const batter = log.batterId
                   ? findPlayerInLeague(state.teams, log.batterId)?.player
                   : null

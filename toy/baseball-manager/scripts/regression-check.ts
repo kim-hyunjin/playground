@@ -24,6 +24,14 @@ import {
   validateFirstTeamRoster,
 } from '../src/engine/roster'
 import { simulateCpuGames, simulateGame } from '../src/engine/simulation'
+import { createSeededRandom } from '../src/engine/sim/random'
+import {
+  advancePlateAppearance,
+  createGameSession,
+  gameSessionView,
+  pauseGameSession,
+  restoreGameSession,
+} from '../src/engine/gameSession'
 import { buildStoveLeagueState } from '../src/engine/stoveLeague'
 import type { GameState } from '../types/game'
 
@@ -186,6 +194,23 @@ try {
     finalSituation.homeScore === situationGame.homeScore && finalSituation.awayScore === situationGame.awayScore,
     '최종 상황 스코어와 경기 결과 일치',
   )
+  const seededGame = () => simulateGame(
+    { id: 'reg-seeded', week: 1, day: 'thu', homeId: userTeam.id, awayId: teams[1]!.id, played: false },
+    userTeam,
+    teams[1]!,
+    { random: createSeededRandom({ seed: 20260718 }) },
+  )
+  assert(JSON.stringify(seededGame()) === JSON.stringify(seededGame()), '고정 seed 경기 결과 재현')
+  let session = createGameSession(seededGame(), 20260718)
+  session = advancePlateAppearance(session)
+  assert(session.cursor > 0, '세션 한 타석 진행')
+  assert(session.resolvedResult.logs[session.cursor - 1]?.eventType === 'plateAppearance', '타석 이벤트 경계에서 정지')
+  const paused = pauseGameSession(session)
+  const restored = restoreGameSession(JSON.parse(JSON.stringify(paused)))
+  assert(restored?.status === 'paused' && restored.cursor === session.cursor, '세션 JSON 저장·복원')
+  assert(gameSessionView(restored!).logs.length === session.cursor, '세션 cursor까지만 로그 공개')
+  while (session.status !== 'complete') session = advancePlateAppearance(session)
+  assert(gameSessionView(session).complete, '세션을 경기 종료까지 진행')
 
   const withHand = userTeam.players.filter((p) => p.bats && p.throws)
   assert(withHand.length >= FIRST_TEAM_MAX, '1군 선수 투타 정보')

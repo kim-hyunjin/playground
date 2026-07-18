@@ -74,6 +74,8 @@ export interface SimOptions {
   awayRotationIndex?: number
   skipLogs?: boolean
   rosterLevel?: SimLeagueLevel
+  /** 테스트·저장 경기 재현을 위한 난수 공급자 */
+  random?: () => number
 }
 
 function playHalfInning(
@@ -89,6 +91,7 @@ function playHalfInning(
   pitchCounts: Map<string, number>,
   battingScore: number,
   pitchingScore: number,
+  random: () => number,
 ): number {
   let outs = 0
   let runners: RunnerState = emptyRunners()
@@ -136,7 +139,7 @@ function playHalfInning(
         ? battingTeam.find((p) => p.id === runners.firstId)?.speed ?? batter.speed
         : batter.speed
 
-    const steal = tryStealAttempt(runners, runnerSpeed, pitcher.control, outs)
+    const steal = tryStealAttempt(runners, runnerSpeed, pitcher.control, outs, random)
     if (steal.stolen && steal.stealerId) {
       const beforeSteal = situation(outs, runners, runs, batter.id, pitcher.id)
       runners = steal.state
@@ -161,7 +164,7 @@ function playHalfInning(
       batter,
       pitcher,
       ctx,
-      Math.random,
+      random,
       { outs, runners },
       defenseFielding,
     )
@@ -170,7 +173,7 @@ function playHalfInning(
     const situationBefore = situation(outs, runners, runs, batter.id, pitcher.id)
     if (outcome === 'out' || outcome === 'strikeout' || outcome === 'sacrifice') outs++
 
-    const { runs: scored, state } = advanceRunners(runners, outcome, batter.id)
+    const { runs: scored, state } = advanceRunners(runners, outcome, batter.id, random)
     const rbi = calcRbi(outcome, scored)
 
     recordPlateAppearance(box, batter.id, pitcher.id, outcome, rbi, pitcherGs)
@@ -219,6 +222,7 @@ export function simulateGame(
 
   const homeOrder = battingOrder(homeTeam, options.homeLineup)
   const awayOrder = battingOrder(awayTeam, options.awayLineup)
+  const random = options.random ?? Math.random
 
   const awayStarter = pickPitcher(homeTeam, {
     inning: 1,
@@ -257,6 +261,7 @@ export function simulateGame(
       pitchCounts,
       awayTotal,
       homeTotal,
+      random,
     )
     innings[inning - 1] ??= {}
     innings[inning - 1]!.top = awayRuns
@@ -275,6 +280,7 @@ export function simulateGame(
       pitchCounts,
       homeTotal,
       awayTotal,
+      random,
     )
     innings[inning - 1]!.bottom = homeRuns
     homeTotal += homeRuns

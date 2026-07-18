@@ -41,8 +41,18 @@ import {
 import { recoverTeamInjuries, rollWeeklyInjuries } from '../engine/injury'
 import { sanitizeLineup, sanitizeRotation } from '../engine/rosterAvailability'
 import { cpuAcceptsTrade, executeTrade, validateTrade, type TradeProposal } from '../engine/trades'
+import {
+  advancePlateAppearance,
+  createGameSession,
+  pauseGameSession,
+  restoreGameSession,
+  resumeGameSession,
+  type GameSession,
+} from '../engine/gameSession'
+import { createSeededRandom } from '../engine/sim/random'
 
 const STORAGE_KEY = 'baseball-manager'
+const ACTIVE_GAME_KEY = 'baseball-manager-active-game'
 
 interface GameContextValue {
   state: GameState | null
@@ -58,6 +68,10 @@ interface GameContextValue {
   playUserGame: () => GameResult | null
   advanceWeek: () => void
   lastResult: GameResult | null
+  activeGameSession: GameSession | null
+  advanceActiveGame: () => void
+  pauseActiveGame: () => void
+  resumeActiveGame: () => void
   clearLastResult: () => void
   upcomingGame: ScheduledGame | null
   buyPlayer: (player: Player, fromTeamId: string) => boolean
@@ -136,12 +150,28 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<GameState | null>(null)
   const [view, setView] = useState<View>('dashboard')
   const [lastResult, setLastResult] = useState<GameResult | null>(null)
+  const [activeGameSession, setActiveGameSession] = useState<GameSession | null>(null)
   const [focusedPlayerId, setFocusedPlayerId] = useState<string | null>(null)
 
   useEffect(() => {
     const loaded = loadState()
     if (loaded) setState(loaded)
+    let restored: GameSession | null = null
+    try {
+      restored = restoreGameSession(JSON.parse(localStorage.getItem(ACTIVE_GAME_KEY) ?? 'null'))
+    } catch {
+      localStorage.removeItem(ACTIVE_GAME_KEY)
+    }
+    if (restored && restored.status !== 'complete') {
+      setActiveGameSession(restored)
+      setLastResult(restored.resolvedResult)
+    }
   }, [])
+
+  useEffect(() => {
+    if (activeGameSession) localStorage.setItem(ACTIVE_GAME_KEY, JSON.stringify(activeGameSession))
+    else localStorage.removeItem(ACTIVE_GAME_KEY)
+  }, [activeGameSession])
 
   useEffect(() => {
     if (state) saveState(state)
@@ -177,9 +207,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
   const resetGame = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY)
+    localStorage.removeItem(ACTIVE_GAME_KEY)
     setState(null)
     setView('dashboard')
     setLastResult(null)
+    setActiveGameSession(null)
     setFocusedPlayerId(null)
   }, [])
 
@@ -217,11 +249,13 @@ export function GameProvider({ children }: { children: ReactNode }) {
     const away = state.teams.find((t) => t.id === game.awayId)!
     const isHome = game.homeId === state.userTeamId
 
+    const seed = (Date.now() ^ state.currentWeek ^ state.rotationIndex) >>> 0
     const result = simulateGame(game, home, away, {
       homeLineup: isHome ? state.lineup : undefined,
       awayLineup: !isHome ? state.lineup : undefined,
       homeRotationIndex: isHome ? state.rotationIndex : undefined,
       awayRotationIndex: !isHome ? state.rotationIndex : undefined,
+      random: createSeededRandom({ seed }),
     })
 
     const applied = applyResult(state.teams, state.schedule, result)
@@ -244,8 +278,19 @@ export function GameProvider({ children }: { children: ReactNode }) {
       rotationIndex: state.rotationIndex + 1,
     })
     setLastResult(result)
+    setActiveGameSession(createGameSession(result, seed))
     return result
   }, [state])
+
+  const advanceActiveGame = useCallback(() => {
+    setActiveGameSession((session) => session ? advancePlateAppearance(session) : null)
+  }, [])
+  const pauseActiveGame = useCallback(() => {
+    setActiveGameSession((session) => session ? pauseGameSession(session) : null)
+  }, [])
+  const resumeActiveGame = useCallback(() => {
+    setActiveGameSession((session) => session ? resumeGameSession(session) : null)
+  }, [])
 
   const advanceWeek = useCallback(() => {
     setState((s) => {
@@ -589,7 +634,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setView('dashboard')
   }, [])
 
-  const clearLastResult = useCallback(() => setLastResult(null), [])
+  const clearLastResult = useCallback(() => {
+    setLastResult(null)
+    setActiveGameSession(null)
+  }, [])
 
   const value: GameContextValue = {
     state,
@@ -605,6 +653,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
     playUserGame,
     advanceWeek,
     lastResult,
+    activeGameSession,
+    advanceActiveGame,
+    pauseActiveGame,
+    resumeActiveGame,
     clearLastResult,
     upcomingGame,
     buyPlayer,
