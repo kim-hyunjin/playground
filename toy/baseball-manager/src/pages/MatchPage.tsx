@@ -9,6 +9,31 @@ import { GameManagementPanel } from '../components/GameManagementPanel'
 import { ManagerTacticsPanel } from '../components/ManagerTacticsPanel'
 import { useGame } from '../store/gameStore'
 
+interface PitchCount {
+  balls: number
+  strikes: number
+}
+
+function nextPitchCount(count: PitchCount, outcome?: string): PitchCount | null {
+  if (outcome === 'walk') {
+    if (count.balls === 1 && count.strikes === 0) return { ...count, strikes: 1 }
+    if (count.balls === 3 && count.strikes === 1) return { ...count, strikes: 2 }
+    if (count.balls >= 3) return null
+    return { ...count, balls: count.balls + 1 }
+  }
+
+  if (outcome === 'strikeout') {
+    if (count.strikes >= 2) return null
+    if (count.strikes === 1 && count.balls === 0) return { ...count, balls: 1 }
+    return { ...count, strikes: count.strikes + 1 }
+  }
+
+  // 인플레이 타석도 최소한의 투구 과정을 거친 뒤 결과를 공개한다.
+  if (count.balls === 0 && count.strikes === 0) return { balls: 0, strikes: 1 }
+  if (count.balls === 0) return { balls: 1, strikes: count.strikes }
+  return null
+}
+
 export function MatchPage() {
   const {
     state,
@@ -25,12 +50,15 @@ export function MatchPage() {
     setView,
   } = useGame()
   const [playbackSpeed, setPlaybackSpeed] = useState(1)
+  const [pitchCount, setPitchCount] = useState<PitchCount>({ balls: 0, strikes: 0 })
   const timerRef = useRef<number | null>(null)
   const result = lastResult
   const playing = activeGameSession?.status === 'playing'
   const sessionInProgress = Boolean(activeGameSession && activeGameSession.status !== 'complete')
+  const sessionCursor = activeGameSession?.cursor ?? 0
+  const activeGameId = activeGameSession?.gameId
   const gameFinished = !playing && !sessionInProgress
-  const replayCursor = sessionInProgress ? activeGameSession!.cursor : result?.logs.length ?? 0
+  const replayCursor = sessionInProgress ? sessionCursor : result?.logs.length ?? 0
 
   const opponent = result
     ? state?.teams.find((t) => t.id === (result.homeId === userTeam?.id ? result.awayId : result.homeId))
@@ -53,10 +81,22 @@ export function MatchPage() {
   useEffect(() => {
     if (!result || !playing || !sessionInProgress) return
     timerRef.current = window.setTimeout(() => {
-      advanceActiveGame()
-    }, 1500 / playbackSpeed)
+      const nextLog = result.logs.slice(sessionCursor)
+        .find((log) => (log.eventType ?? 'plateAppearance') === 'plateAppearance')
+      const nextCount = nextPitchCount(pitchCount, nextLog?.outcome)
+      if (nextCount) {
+        setPitchCount(nextCount)
+      } else {
+        setPitchCount({ balls: 0, strikes: 0 })
+        advanceActiveGame()
+      }
+    }, 700 / playbackSpeed)
     return () => { if (timerRef.current) clearTimeout(timerRef.current) }
-  }, [result, playing, sessionInProgress, activeGameSession?.cursor, advanceActiveGame, playbackSpeed])
+  }, [result, playing, sessionInProgress, sessionCursor, advanceActiveGame, pitchCount, playbackSpeed])
+
+  useEffect(() => {
+    setPitchCount({ balls: 0, strikes: 0 })
+  }, [activeGameId])
 
   if (!state || !userTeam) return null
 
@@ -109,6 +149,9 @@ export function MatchPage() {
     : undefined
   const shownLogCount = sessionInProgress || playing ? replayCursor : result?.logs.length ?? 0
   const currentLog = shownLogCount > 0 ? result?.logs[shownLogCount - 1] : undefined
+  const userSide = currentSituation
+    ? ((currentSituation.half === 'bottom') === Boolean(isHome) ? 'offense' : 'defense')
+    : undefined
 
   return (
     <div className="bm-animate-in space-y-6">
@@ -210,7 +253,14 @@ export function MatchPage() {
             )}
           </div>
 
-          <GameSituationPanel situation={currentSituation} currentLog={currentLog} teams={state.teams} />
+          <GameSituationPanel
+            situation={currentSituation}
+            currentLog={currentLog}
+            teams={state.teams}
+            balls={sessionInProgress ? pitchCount.balls : 0}
+            strikes={sessionInProgress ? pitchCount.strikes : 0}
+            userSide={userSide}
+          />
 
           {sessionInProgress ? <ManagerTacticsPanel /> : null}
 
