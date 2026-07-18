@@ -3,7 +3,7 @@ import type { Player } from '../types/game'
 export function CallUpBadge({ compact = false }: { compact?: boolean }) {
   return (
     <span
-      className={`inline-flex items-center rounded-full border border-amber-500/40 bg-amber-500/15 font-medium text-amber-400 ${
+      className={`inline-flex items-center rounded-full border border-amber-500/40 bg-amber-500/15 font-medium text-[var(--warning)] ${
         compact ? 'px-1.5 py-0.5 text-[10px]' : 'px-2 py-0.5 text-xs'
       }`}
     >
@@ -46,7 +46,7 @@ export function InjuryBadge({
   if (!player.injuryDays || player.injuryDays <= 0) return null
   return (
     <span
-      className={`inline-flex items-center rounded-full border border-red-500/40 bg-red-500/15 font-medium text-red-300 ${
+      className={`inline-flex items-center rounded-full border border-red-500/40 bg-red-500/15 font-medium text-[var(--danger)] ${
         compact ? 'px-1.5 py-0.5 text-[10px]' : 'px-2 py-0.5 text-xs'
       }`}
       title={player.injuryType ?? '부상'}

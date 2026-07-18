@@ -19,9 +19,9 @@ export function StatBar({ label, value }: { label: string; value: number }) {
 export function OvrBadge({ player }: { player: Player }) {
   const ovr = overallRating(player)
   const color =
-    ovr >= 80 ? 'bg-emerald-500/20 text-emerald-400' :
+    ovr >= 80 ? 'bg-emerald-500/20 text-[var(--success)]' :
     ovr >= 65 ? 'bg-sky-500/20 text-sky-400' :
-    'bg-slate-500/20 text-slate-400'
+    'bg-slate-500/20 text-[var(--text-muted)]'
 
   return <span className={`bm-badge ${color}`}>{ovr}</span>
 }

@@ -7,11 +7,11 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import type { FieldPosition, GameResult, GameState, Player, ScheduledGame, Team, View } from '../types/game'
+import { DEFAULT_BULLPEN_STRATEGY, DEFAULT_MANAGER_COMMAND, type BullpenStrategy, type ManagerCommand, type FieldPosition, type GameResult, type GameState, type Player, type ScheduledGame, type Team, type View } from '../types/game'
 import { loadLeague2026 } from '../data/rosterLoader'
 import { defaultLineup, defaultRotation } from '../engine/generator'
 import { generateSchedule, generateFarmSchedule, nextUserGame, normalizeSchedule, hasUnplayedUserGamesInWeek } from '../engine/schedule'
-import { applyResult, simulateCpuGames, simulateGame } from '../engine/simulation'
+import { applyResult, simulateCpuGames, simulateCpuGamesForDay, simulateGame } from '../engine/simulation'
 import { simulateFarmWeek } from '../engine/farmSimulation'
 import {
   countByLevel,
@@ -41,8 +41,24 @@ import {
 import { recoverTeamInjuries, rollWeeklyInjuries } from '../engine/injury'
 import { sanitizeLineup, sanitizeRotation } from '../engine/rosterAvailability'
 import { cpuAcceptsTrade, executeTrade, validateTrade, type TradeProposal } from '../engine/trades'
+import {
+  advancePlateAppearance,
+  applySessionCommand,
+  createGameSession,
+  pauseGameSession,
+  restoreGameSession,
+  resumeGameSession,
+  type GameSession,
+  substituteSessionBatter,
+  substituteSessionPitcher,
+  substituteSessionRunner,
+} from '../engine/gameSession'
+import { createSeededRandom } from '../engine/sim/random'
+import { createGameRoster } from '../engine/substitutions'
+import { submitContractOffer } from '../engine/negotiations'
 
 const STORAGE_KEY = 'baseball-manager'
+const ACTIVE_GAME_KEY = 'baseball-manager-active-game'
 
 interface GameContextValue {
   state: GameState | null
@@ -55,9 +71,19 @@ interface GameContextValue {
   setLineup: (lineup: Record<FieldPosition, string>) => void
   setRotation: (rotation: string[]) => void
   swapRotation: (from: number, to: number) => void
+  setBullpenStrategy: (strategy: BullpenStrategy) => void
+  setManagerCommand: (command: ManagerCommand) => void
   playUserGame: () => GameResult | null
   advanceWeek: () => void
   lastResult: GameResult | null
+  activeGameSession: GameSession | null
+  advanceActiveGame: (stayPaused?: boolean) => void
+  pauseActiveGame: () => void
+  resumeActiveGame: () => void
+  applyCurrentGameCommand: (command: ManagerCommand) => string
+  substitutePitcher: (playerId: string) => string
+  substituteBatter: (battingOrder: number, playerId: string) => string
+  substituteRunner: (outgoingId: string, playerId: string) => string
   clearLastResult: () => void
   upcomingGame: ScheduledGame | null
   buyPlayer: (player: Player, fromTeamId: string) => boolean
@@ -68,6 +94,7 @@ interface GameContextValue {
   sendToRehab: (playerId: string) => boolean
   hireCoach: (coachId: string) => boolean
   fireCoach: (coachId: string) => boolean
+  negotiateContract: (negotiationId: string, salary: number, years: number) => string
   acceptCallUp: (suggestionId: string) => boolean
   dismissCallUp: (suggestionId: string) => void
   enterStoveLeague: () => void
@@ -102,6 +129,8 @@ function createInitialState(teamIndex: number, managerName: string): GameState {
     lineup: defaultLineup(userTeam),
     rotation: defaultRotation(userTeam),
     rotationIndex: 0,
+    bullpenStrategy: DEFAULT_BULLPEN_STRATEGY,
+    managerCommand: DEFAULT_MANAGER_COMMAND,
     results: [],
     farmResults: [],
     managerName,
@@ -124,8 +153,16 @@ function loadState(): GameState | null {
     if (!parsed?.teams?.length || !parsed.userTeamId) return null
     return {
       ...parsed,
+      teams: parsed.teams.map((team) => ({
+        ...team,
+        players: team.players.map((player) => ({ ...player, contractYears: player.contractYears ?? 1 })),
+        coaches: (team.coaches ?? []).map((coach) => ({ ...coach, contractYears: coach.contractYears ?? 1 })),
+      })),
       schedule: normalizeSchedule(parsed.schedule ?? []),
       farmSchedule: normalizeSchedule(parsed.farmSchedule ?? []),
+      bullpenStrategy: parsed.bullpenStrategy ?? DEFAULT_BULLPEN_STRATEGY,
+      managerCommand: parsed.managerCommand ?? DEFAULT_MANAGER_COMMAND,
+      contractNegotiations: parsed.contractNegotiations ?? [],
     }
   } catch {
     return null
@@ -136,16 +173,55 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<GameState | null>(null)
   const [view, setView] = useState<View>('dashboard')
   const [lastResult, setLastResult] = useState<GameResult | null>(null)
+  const [activeGameSession, setActiveGameSession] = useState<GameSession | null>(null)
   const [focusedPlayerId, setFocusedPlayerId] = useState<string | null>(null)
 
   useEffect(() => {
     const loaded = loadState()
     if (loaded) setState(loaded)
+    let restored: GameSession | null = null
+    try {
+      restored = restoreGameSession(JSON.parse(localStorage.getItem(ACTIVE_GAME_KEY) ?? 'null'))
+    } catch {
+      localStorage.removeItem(ACTIVE_GAME_KEY)
+    }
+    if (restored) {
+      setActiveGameSession(restored)
+      setLastResult(restored.resolvedResult)
+    }
   }, [])
+
+  useEffect(() => {
+    if (activeGameSession) localStorage.setItem(ACTIVE_GAME_KEY, JSON.stringify(activeGameSession))
+    else localStorage.removeItem(ACTIVE_GAME_KEY)
+  }, [activeGameSession])
 
   useEffect(() => {
     if (state) saveState(state)
   }, [state])
+
+  useEffect(() => {
+    if (!activeGameSession || activeGameSession.status !== 'complete') return
+    const result = activeGameSession.resolvedResult
+    setState((current) => {
+      if (!current || current.schedule.find((game) => game.id === result.gameId)?.played) return current
+      const applied = applyResult(current.teams, current.schedule, result)
+      const teams = applied.teams.map((team) => team.id !== current.userTeamId ? team : {
+        ...team,
+        players: team.players.map((player) => ({
+          ...player,
+          fatigue: Math.min(100, player.fatigue + (player.role === 'SP' ? 18 : 6)),
+        })),
+      })
+      return {
+        ...current,
+        teams,
+        schedule: applied.schedule,
+        results: [...current.results, result],
+        rotationIndex: current.rotationIndex + 1,
+      }
+    })
+  }, [activeGameSession])
 
   const userTeam = useMemo(
     () => state?.teams.find((t) => t.id === state.userTeamId) ?? null,
@@ -177,9 +253,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
   const resetGame = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY)
+    localStorage.removeItem(ACTIVE_GAME_KEY)
     setState(null)
     setView('dashboard')
     setLastResult(null)
+    setActiveGameSession(null)
     setFocusedPlayerId(null)
   }, [])
 
@@ -207,6 +285,12 @@ export function GameProvider({ children }: { children: ReactNode }) {
       return { ...s, rotation }
     })
   }, [])
+  const setBullpenStrategy = useCallback((bullpenStrategy: BullpenStrategy) => {
+    setState((s) => s ? { ...s, bullpenStrategy } : s)
+  }, [])
+  const setManagerCommand = useCallback((managerCommand: ManagerCommand) => {
+    setState((s) => s ? { ...s, managerCommand } : s)
+  }, [])
 
   const playUserGame = useCallback((): GameResult | null => {
     if (!state || state.phase !== 'regular') return null
@@ -217,35 +301,91 @@ export function GameProvider({ children }: { children: ReactNode }) {
     const away = state.teams.find((t) => t.id === game.awayId)!
     const isHome = game.homeId === state.userTeamId
 
-    const result = simulateGame(game, home, away, {
+    const seed = (Date.now() ^ state.currentWeek ^ state.rotationIndex) >>> 0
+    const sessionOptions = {
       homeLineup: isHome ? state.lineup : undefined,
       awayLineup: !isHome ? state.lineup : undefined,
       homeRotationIndex: isHome ? state.rotationIndex : undefined,
       awayRotationIndex: !isHome ? state.rotationIndex : undefined,
+      homeBullpenStrategy: isHome ? state.bullpenStrategy : undefined,
+      awayBullpenStrategy: !isHome ? state.bullpenStrategy : undefined,
+      homeCommand: isHome ? state.managerCommand : undefined,
+      awayCommand: !isHome ? state.managerCommand : undefined,
+    }
+    const result = simulateGame(game, home, away, {
+      ...sessionOptions,
+      random: createSeededRandom({ seed }),
     })
 
-    const applied = applyResult(state.teams, state.schedule, result)
-    const fatigueTeams = applied.teams.map((t) => {
-      if (t.id !== state.userTeamId) return t
+    setState((current) => {
+      if (!current) return current
+      const cpu = simulateCpuGamesForDay(current.schedule, current.teams, game.week, game.day, current.userTeamId)
       return {
-        ...t,
-        players: t.players.map((p) => ({
-          ...p,
-          fatigue: Math.min(100, p.fatigue + (p.role === 'SP' ? 18 : 6)),
-        })),
+        ...current,
+        teams: cpu.teams,
+        schedule: cpu.schedule,
+        results: [...current.results, ...cpu.results],
       }
     })
 
-    setState({
-      ...state,
-      teams: fatigueTeams,
-      schedule: applied.schedule,
-      results: [...state.results, result],
-      rotationIndex: state.rotationIndex + 1,
-    })
     setLastResult(result)
+    const starterId = isHome ? result.boxScore.homeStarterId : result.boxScore.awayStarterId
+    setActiveGameSession(resumeGameSession(createGameSession(
+      result,
+      seed,
+      createGameRoster(userTeam!, state.lineup, starterId),
+      { game, home, away, userTeamId: state.userTeamId, options: sessionOptions },
+    )))
     return result
-  }, [state])
+  }, [state, userTeam])
+
+  const advanceActiveGame = useCallback((stayPaused = false) => {
+    setActiveGameSession((session) => {
+      if (!session) return null
+      const next = advancePlateAppearance(session)
+      return stayPaused && next.status !== 'complete' ? pauseGameSession(next) : next
+    })
+  }, [])
+  const pauseActiveGame = useCallback(() => {
+    setActiveGameSession((session) => session ? pauseGameSession(session) : null)
+  }, [])
+  const resumeActiveGame = useCallback(() => {
+    setActiveGameSession((session) => session ? resumeGameSession(session) : null)
+  }, [])
+  const applyCurrentGameCommand = useCallback((command: ManagerCommand): string => {
+    if (!activeGameSession) return '진행 중인 경기가 없습니다.'
+    const result = applySessionCommand(activeGameSession, command)
+    setActiveGameSession(result.session)
+    if (result.ok) setLastResult(result.session.resolvedResult)
+    return result.message
+  }, [activeGameSession])
+  const substitutePitcher = useCallback((playerId: string): string => {
+    const player = userTeam?.players.find((p) => p.id === playerId)
+    if (!player) return '선수를 찾을 수 없습니다.'
+    if (!activeGameSession) return '진행 중인 경기가 없습니다.'
+    const result = substituteSessionPitcher(activeGameSession, player)
+    setActiveGameSession(result.session)
+    if (result.ok) setLastResult(result.session.resolvedResult)
+    return result.message
+  }, [activeGameSession, userTeam])
+  const substituteBatter = useCallback((battingOrder: number, playerId: string): string => {
+    const player = userTeam?.players.find((p) => p.id === playerId)
+    if (!player) return '선수를 찾을 수 없습니다.'
+    if (!activeGameSession) return '진행 중인 경기가 없습니다.'
+    const result = substituteSessionBatter(activeGameSession, battingOrder, player)
+    setActiveGameSession(result.session)
+    if (result.ok) setLastResult(result.session.resolvedResult)
+    return result.message
+  }, [activeGameSession, userTeam])
+  const substituteRunner = useCallback((outgoingId: string, playerId: string): string => {
+    const player = userTeam?.players.find((p) => p.id === playerId)
+    if (!player) return '선수를 찾을 수 없습니다.'
+    if (!activeGameSession) return '진행 중인 경기가 없습니다.'
+    const result = substituteSessionRunner(activeGameSession, outgoingId, player)
+    setActiveGameSession(result.session)
+    if (result.ok) setLastResult(result.session.resolvedResult)
+    return result.message
+  }, [activeGameSession, userTeam])
 
   const advanceWeek = useCallback(() => {
     setState((s) => {
@@ -475,13 +615,19 @@ export function GameProvider({ children }: { children: ReactNode }) {
         coachMarket: [...(s.coachMarket ?? []), coach],
         teams: s.teams.map((t) =>
           t.id === s.userTeamId
-            ? { ...t, coaches: t.coaches.filter((c) => c.id !== coachId) }
+            ? { ...t, budget: Math.max(0, t.budget - Math.round(coach.salary * 0.5)), coaches: t.coaches.filter((c) => c.id !== coachId) }
             : t,
         ),
       }
     })
     return ok
   }, [])
+  const negotiateContract = useCallback((negotiationId: string, salary: number, years: number): string => {
+    if (!state || state.phase !== 'stove') return '스토브리그에서만 협상할 수 있습니다.'
+    const result = submitContractOffer(state, negotiationId, salary, years)
+    setState(result.state)
+    return result.message
+  }, [state])
 
   const acceptCallUp = useCallback((suggestionId: string): boolean => {
     let ok = false
@@ -589,7 +735,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setView('dashboard')
   }, [])
 
-  const clearLastResult = useCallback(() => setLastResult(null), [])
+  const clearLastResult = useCallback(() => {
+    setLastResult(null)
+    setActiveGameSession(null)
+  }, [])
 
   const value: GameContextValue = {
     state,
@@ -602,9 +751,19 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setLineup,
     setRotation,
     swapRotation,
+    setBullpenStrategy,
+    setManagerCommand,
     playUserGame,
     advanceWeek,
     lastResult,
+    activeGameSession,
+    advanceActiveGame,
+    pauseActiveGame,
+    resumeActiveGame,
+    applyCurrentGameCommand,
+    substitutePitcher,
+    substituteBatter,
+    substituteRunner,
     clearLastResult,
     upcomingGame,
     buyPlayer,
@@ -615,6 +774,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     sendToRehab,
     hireCoach,
     fireCoach,
+    negotiateContract,
     acceptCallUp,
     dismissCallUp,
     enterStoveLeague,

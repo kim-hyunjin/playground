@@ -175,7 +175,7 @@ function applyOnePick(state: GameState, playerId: string | null): GameState {
 
   const team = state.teams[teamIdx]!
   let nextDraft = draft
-  let nextTeams = [...state.teams]
+  const nextTeams = [...state.teams]
 
   if (playerId) {
     const prospect = draft.pool.find((p) => p.id === playerId)

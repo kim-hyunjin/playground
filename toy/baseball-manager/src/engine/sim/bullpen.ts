@@ -1,4 +1,4 @@
-import type { Player, Team } from '../../types/game'
+import { DEFAULT_BULLPEN_STRATEGY, type BullpenStrategy, type Player, type Team } from '../../types/game'
 import type { Hand } from './handedness'
 import { inferThrows } from './handedness'
 
@@ -10,9 +10,9 @@ export interface PickPitcherContext {
   /** 이번 타석 타자 투타 (platoon·좌완 전문) */
   batterHand?: Hand
   pitchCounts: Map<string, number>
+  strategy?: BullpenStrategy
 }
 
-const SP_MAX_PITCHES = 95
 const RP_MAX_PITCHES = 45
 
 function pitcherRating(p: Player): number {
@@ -40,26 +40,27 @@ export function pickPitcher(team: Team, ctx: PickPitcherContext): Player {
   const starters = pool.filter((p) => p.role === 'SP')
   const relievers = pool.filter((p) => p.role === 'RP')
   const { closer, setup, lefties, sorted } = classifyRelievers(relievers)
+  const strategy = ctx.strategy ?? DEFAULT_BULLPEN_STRATEGY
 
   const saveSituation =
-    ctx.inning >= 9 && ctx.pitchingLead >= 1 && ctx.pitchingLead <= 3
+    ctx.inning >= strategy.closerInning && ctx.pitchingLead >= 1 && ctx.pitchingLead <= 3
 
   if (saveSituation && closer && underPitchLimit(closer, ctx.pitchCounts, RP_MAX_PITCHES)) {
     return closer
   }
 
-  if (ctx.inning >= 8 && setup && underPitchLimit(setup, ctx.pitchCounts, RP_MAX_PITCHES)) {
+  if (ctx.inning >= strategy.setupInning && setup && underPitchLimit(setup, ctx.pitchCounts, RP_MAX_PITCHES)) {
     return setup
   }
 
-  if (ctx.batterHand === 'L' && lefties.length > 0) {
+  if (strategy.useLeftyMatchups && ctx.batterHand === 'L' && lefties.length > 0) {
     const lefty = pickFromPool(lefties, ctx.pitchCounts, RP_MAX_PITCHES)
     if (lefty) return lefty
   }
 
   if (ctx.inning <= 6 && starters.length > 0) {
     const sp = starters[ctx.rotationIndex % starters.length]!
-    if (underPitchLimit(sp, ctx.pitchCounts, SP_MAX_PITCHES)) return sp
+    if (underPitchLimit(sp, ctx.pitchCounts, strategy.starterPitchLimit)) return sp
   }
 
   if (relievers.length > 0) {

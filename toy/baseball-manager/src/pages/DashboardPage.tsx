@@ -97,7 +97,7 @@ export function DashboardPage() {
 
       {injuredFirst.length > 0 && (
         <div className="bm-card border border-red-500/30 p-5">
-          <h2 className="mb-3 font-semibold text-red-300">1군 부상자 — 2군 재활 권장</h2>
+          <h2 className="mb-3 font-semibold text-[var(--danger)]">1군 부상자 — 2군 재활 권장</h2>
           <ul className="space-y-3">
             {injuredFirst.map((p) => (
               <li
@@ -268,7 +268,7 @@ export function DashboardPage() {
             {standings.slice(0, 5).map((t, i) => (
               <tr key={t.id} className={t.id === userTeam.id ? 'bg-[var(--accent-dim)]' : ''}>
                 <td>{i + 1}</td>
-                <td style={{ color: t.id === userTeam.id ? userTeam.color : undefined }}>
+                <td className={t.id === userTeam.id ? 'font-semibold text-[var(--accent)]' : undefined}>
                   {t.name}
                 </td>
                 <td>{t.wins}</td>

@@ -3,11 +3,14 @@ import type {
   FieldPosition,
   GameBoxScore,
   GameResult,
+  GameSituation,
   InningScore,
   PlayLog,
   Player,
   ScheduledGame,
   Team,
+  BullpenStrategy,
+  ManagerCommand,
 } from '../types/game'
 import { FIELD_POSITIONS } from '../types/game'
 import { parkForTeamAbbr } from '../data/parks/kbo2026'
@@ -66,6 +69,21 @@ const OUTCOME_TEXT: Record<AtBatOutcome, (b: string) => string> = {
   error: (b) => `${b} 실책 출루`,
 }
 
+export function cpuManagerCommand(
+  inning: number,
+  outs: number,
+  runners: RunnerState,
+  scoreDiff: number,
+): ManagerCommand {
+  const lateClose = inning >= 7 && Math.abs(scoreDiff) <= 2
+  const offense = lateClose && outs < 2 && Boolean(runners.firstId) ? 'bunt'
+    : Boolean(runners.firstId) && !runners.secondId && outs < 2 ? 'steal'
+      : scoreDiff < -2 ? 'aggressive' : 'normal'
+  const pitching = inning >= 8 && scoreDiff > 0 ? 'nibble'
+    : scoreDiff < -2 ? 'challenge' : 'normal'
+  return { offense, pitching }
+}
+
 export interface SimOptions {
   homeLineup?: Record<FieldPosition, string>
   awayLineup?: Record<FieldPosition, string>
@@ -73,6 +91,23 @@ export interface SimOptions {
   awayRotationIndex?: number
   skipLogs?: boolean
   rosterLevel?: SimLeagueLevel
+  /** 테스트·저장 경기 재현을 위한 난수 공급자 */
+  random?: () => number
+  homeBullpenStrategy?: BullpenStrategy
+  awayBullpenStrategy?: BullpenStrategy
+  homeCommand?: ManagerCommand
+  awayCommand?: ManagerCommand
+  commandProvider?: (context: GameCommandContext) => { homeCommand?: ManagerCommand; awayCommand?: ManagerCommand }
+}
+
+export interface GameCommandContext {
+  plateAppearanceIndex: number
+  inning: number
+  half: 'top' | 'bottom'
+  outs: number
+  runners: RunnerState
+  homeScore: number
+  awayScore: number
 }
 
 function playHalfInning(
@@ -88,6 +123,12 @@ function playHalfInning(
   pitchCounts: Map<string, number>,
   battingScore: number,
   pitchingScore: number,
+  random: () => number,
+  bullpenStrategy?: BullpenStrategy,
+  battingCommand?: ManagerCommand,
+  pitchingCommand?: ManagerCommand,
+  commandProvider?: SimOptions['commandProvider'],
+  plateAppearanceCounter?: { value: number },
 ): number {
   let outs = 0
   let runners: RunnerState = emptyRunners()
@@ -97,7 +138,39 @@ function playHalfInning(
   const ctx = createSimContext(leagueLevel, parkForTeamAbbr(homeAbbr), inning, half)
   const defenseFielding = teamDefenseFielding(pitchingTeam.players)
 
+  const situation = (
+    currentOuts: number,
+    currentRunners: RunnerState,
+    currentRuns: number,
+    batterId?: string,
+    pitcherId?: string,
+  ): GameSituation => ({
+    inning,
+    half,
+    outs: currentOuts,
+    runners: {
+      firstId: currentRunners.firstId,
+      secondId: currentRunners.secondId,
+      thirdId: currentRunners.thirdId,
+    },
+    homeScore: half === 'bottom' ? battingScore + currentRuns : pitchingScore,
+    awayScore: half === 'top' ? battingScore + currentRuns : pitchingScore,
+    batterId,
+    pitcherId,
+  })
+
   while (outs < 3) {
+    const scoreDiff = battingScore + runs - pitchingScore
+    const dynamic = commandProvider?.({
+      plateAppearanceIndex: plateAppearanceCounter?.value ?? 0,
+      inning, half, outs, runners,
+      homeScore: half === 'bottom' ? battingScore + runs : pitchingScore,
+      awayScore: half === 'top' ? battingScore + runs : pitchingScore,
+    })
+    const dynamicBatting = half === 'top' ? dynamic?.awayCommand : dynamic?.homeCommand
+    const dynamicPitching = half === 'top' ? dynamic?.homeCommand : dynamic?.awayCommand
+    const offenseCommand = dynamicBatting ?? battingCommand ?? cpuManagerCommand(inning, outs, runners, scoreDiff)
+    const defenseCommand = dynamicPitching ?? pitchingCommand ?? cpuManagerCommand(inning, outs, runners, -scoreDiff)
     const batter = ensureHandedness(battingTeam[idx % battingTeam.length]!)
     const pitcher = ensureHandedness(
       pickPitcher(pitchingTeam, {
@@ -106,6 +179,7 @@ function playHalfInning(
         pitchingLead,
         batterHand: batter.bats,
         pitchCounts,
+        strategy: bullpenStrategy,
       }),
     )
 
@@ -114,8 +188,9 @@ function playHalfInning(
         ? battingTeam.find((p) => p.id === runners.firstId)?.speed ?? batter.speed
         : batter.speed
 
-    const steal = tryStealAttempt(runners, runnerSpeed, pitcher.control, outs)
+    const steal = tryStealAttempt(runners, runnerSpeed, pitcher.control, outs, random, offenseCommand.offense === 'steal')
     if (steal.stolen && steal.stealerId) {
+      const beforeSteal = situation(outs, runners, runs, batter.id, pitcher.id)
       runners = steal.state
       recordStolenBase(box, steal.stealerId)
       logs.push({
@@ -127,23 +202,33 @@ function playHalfInning(
         batterId: steal.stealerId,
         pitcherId: pitcher.id,
         rbi: 0,
+        eventType: 'stolenBase',
+        situationBefore: beforeSteal,
+        situationAfter: situation(outs, runners, runs, batter.id, pitcher.id),
       })
     }
 
     const pitcherGs = isStarterPitcher(pitchingTeam, pitcher, rotIndex, inning)
-    const outcome = resolveAtBat(
-      batter,
-      pitcher,
+    const managedBatter = offenseCommand.offense === 'patient' ? { ...batter, eye: Math.min(99, batter.eye + 8), power: Math.max(1, batter.power - 4) }
+      : offenseCommand.offense === 'aggressive' ? { ...batter, power: Math.min(99, batter.power + 7), eye: Math.max(1, batter.eye - 7) } : batter
+    const managedPitcher = defenseCommand.pitching === 'challenge' ? { ...pitcher, velocity: Math.min(99, pitcher.velocity + 5), control: Math.min(99, pitcher.control + 3), movement: Math.max(1, pitcher.movement - 3) }
+      : defenseCommand.pitching === 'nibble' ? { ...pitcher, movement: Math.min(99, pitcher.movement + 5), control: Math.max(1, pitcher.control - 6) } : pitcher
+    const forceWalk = defenseCommand.pitching === 'intentionalWalk' && runners.firstId === undefined
+    const forceBunt = offenseCommand.offense === 'bunt' && outs < 2 && Boolean(runners.firstId || runners.secondId)
+    const outcome = forceWalk ? 'walk' : forceBunt && random() < 0.72 ? 'sacrifice' : resolveAtBat(
+      managedBatter,
+      managedPitcher,
       ctx,
-      Math.random,
+      random,
       { outs, runners },
       defenseFielding,
     )
     recordPitchCount(pitchCounts, pitcher.id, outcome === 'walk' ? 4 : 1)
 
+    const situationBefore = situation(outs, runners, runs, batter.id, pitcher.id)
     if (outcome === 'out' || outcome === 'strikeout' || outcome === 'sacrifice') outs++
 
-    const { runs: scored, state } = advanceRunners(runners, outcome, batter.id)
+    const { runs: scored, state } = advanceRunners(runners, outcome, batter.id, random)
     const rbi = calcRbi(outcome, scored)
 
     recordPlateAppearance(box, batter.id, pitcher.id, outcome, rbi, pitcherGs)
@@ -152,10 +237,6 @@ function playHalfInning(
 
     runs += scored
     runners = state
-
-    if (half === 'bottom' && inning >= 9 && battingScore + runs > pitchingScore) {
-      break
-    }
 
     logs.push({
       inning,
@@ -166,7 +247,13 @@ function playHalfInning(
       batterId: batter.id,
       pitcherId: pitcher.id,
       rbi,
+      eventType: 'plateAppearance',
+      situationBefore,
+      situationAfter: situation(outs, runners, runs, batter.id, pitcher.id),
     })
+    if (plateAppearanceCounter) plateAppearanceCounter.value++
+
+    if (half === 'bottom' && inning >= 9 && battingScore + runs > pitchingScore) break
     idx++
   }
 
@@ -191,6 +278,7 @@ export function simulateGame(
 
   const homeOrder = battingOrder(homeTeam, options.homeLineup)
   const awayOrder = battingOrder(awayTeam, options.awayLineup)
+  const random = options.random ?? Math.random
 
   const awayStarter = pickPitcher(homeTeam, {
     inning: 1,
@@ -213,6 +301,7 @@ export function simulateGame(
   }
 
   const pitchCounts = new Map<string, number>()
+  const plateAppearanceCounter = { value: 0 }
   const MAX_INNINGS = 15
 
   for (let inning = 1; inning <= MAX_INNINGS; inning++) {
@@ -229,6 +318,12 @@ export function simulateGame(
       pitchCounts,
       awayTotal,
       homeTotal,
+      random,
+      options.homeBullpenStrategy,
+      options.awayCommand,
+      options.homeCommand,
+      options.commandProvider,
+      plateAppearanceCounter,
     )
     innings[inning - 1] ??= {}
     innings[inning - 1]!.top = awayRuns
@@ -247,6 +342,12 @@ export function simulateGame(
       pitchCounts,
       homeTotal,
       awayTotal,
+      random,
+      options.awayBullpenStrategy,
+      options.homeCommand,
+      options.awayCommand,
+      options.commandProvider,
+      plateAppearanceCounter,
     )
     innings[inning - 1]!.bottom = homeRuns
     homeTotal += homeRuns
@@ -346,6 +447,27 @@ export function simulateCpuGames(
   }
 
   return { results, teams: currentTeams, schedule: currentSchedule }
+}
+
+/** 사용자 경기와 같은 경기일에 열리는 다른 구단 경기를 함께 진행한다. */
+export function simulateCpuGamesForDay(
+  schedule: ScheduledGame[],
+  teams: Team[],
+  week: number,
+  day: ScheduledGame['day'],
+  userTeamId: string,
+): { results: GameResult[]; teams: Team[]; schedule: ScheduledGame[] } {
+  const targetSchedule = schedule.map((game) => game.day === day ? game : { ...game, played: true })
+  const simulated = simulateCpuGames(targetSchedule, teams, week, userTeamId)
+  const playedIds = new Set(simulated.results.map((result) => result.gameId))
+  return {
+    results: simulated.results,
+    teams: simulated.teams,
+    schedule: schedule.map((game) => {
+      if (!playedIds.has(game.id)) return game
+      return simulated.schedule.find((item) => item.id === game.id) ?? game
+    }),
+  }
 }
 
 // Re-export for tests / sanity scripts

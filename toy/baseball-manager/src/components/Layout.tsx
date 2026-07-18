@@ -2,6 +2,7 @@ import { useGame } from '../store/gameStore'
 import type { View } from '../types/game'
 import { stoveWeekLabel } from '../engine/stoveLeague'
 import { PlayerDetailModal } from './PlayerDetailModal'
+import { ThemeToggle } from './ThemeToggle'
 
 const REGULAR_NAV: { id: View; label: string; icon: string }[] = [
   { id: 'dashboard', label: '대시보드', icon: '📊' },
@@ -29,24 +30,25 @@ const STOVE_NAV: { id: View; label: string; icon: string }[] = [
 ]
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const { view, setView, userTeam, state, resetGame } = useGame()
+  const { view, setView, userTeam, state, activeGameSession, resetGame } = useGame()
 
   if (!state || !userTeam) return null
 
   const inStove = state.phase === 'stove'
   const nav = inStove ? STOVE_NAV : REGULAR_NAV
+  const liveMatch = view === 'match' && Boolean(activeGameSession && activeGameSession.status !== 'complete')
   const subLabel = inStove
     ? `${state.seasonYear} · ${stoveWeekLabel(state)}`
     : `${state.seasonYear} 시즌 · ${state.currentWeek}/${state.totalWeeks}주차`
 
   return (
-    <div className="flex min-h-screen">
+    <div className={`flex ${liveMatch ? 'h-screen overflow-hidden' : 'min-h-screen'}`}>
       <aside className="flex w-56 shrink-0 flex-col border-r border-[var(--border)] bg-[var(--panel)] p-4">
         <div className="mb-6">
           <div className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
             Baseball Manager
           </div>
-          <div className="mt-1 text-lg font-bold" style={{ color: userTeam.color }}>
+          <div className="mt-1 text-lg font-bold text-[var(--text-h)]">
             {userTeam.name}
           </div>
           <div className="text-xs text-[var(--text-muted)]">
@@ -68,12 +70,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
 
-        <button type="button" className="bm-btn bm-btn-ghost mt-4 w-full text-xs" onClick={resetGame}>
+        <ThemeToggle className="mt-4 w-full" />
+        <button type="button" className="bm-btn bm-btn-ghost mt-2 w-full text-xs" onClick={resetGame}>
           새 게임
         </button>
       </aside>
 
-      <main className="flex-1 overflow-auto p-6">{children}</main>
+      <main className={`flex-1 ${liveMatch ? 'h-screen overflow-hidden p-3' : 'overflow-auto p-6'}`}>{children}</main>
       <PlayerDetailModal />
     </div>
   )

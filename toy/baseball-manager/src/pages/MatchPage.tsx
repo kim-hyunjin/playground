@@ -4,7 +4,40 @@ import { findPlayerInLeague } from '../engine/playerLookup'
 import { ipFromOuts } from '../engine/sabermetrics'
 import { DAY_LABELS } from '../types/game'
 import { PlayerNameButton } from '../components/PlayerNameButton'
+import { GameSituationPanel } from '../components/GameSituationPanel'
+import { GameManagementPanel } from '../components/GameManagementPanel'
+import { ManagerTacticsPanel } from '../components/ManagerTacticsPanel'
+import { PitchLocationPanel } from '../components/PitchLocationPanel'
+import { LiveGameStatsPanel } from '../components/LiveGameStatsPanel'
 import { useGame } from '../store/gameStore'
+import { createLivePitch, type LivePitch, type PitchCall } from '../engine/livePitch'
+
+interface PitchCount {
+  balls: number
+  strikes: number
+}
+
+const PITCH_INTERVAL_MS = 5000
+
+function nextPitchCount(count: PitchCount, outcome?: string): PitchCount | null {
+  if (outcome === 'walk') {
+    if (count.balls === 1 && count.strikes === 0) return { ...count, strikes: 1 }
+    if (count.balls === 3 && count.strikes === 1) return { ...count, strikes: 2 }
+    if (count.balls >= 3) return null
+    return { ...count, balls: count.balls + 1 }
+  }
+
+  if (outcome === 'strikeout') {
+    if (count.strikes >= 2) return null
+    if (count.strikes === 1 && count.balls === 0) return { ...count, balls: 1 }
+    return { ...count, strikes: count.strikes + 1 }
+  }
+
+  // 인플레이 타석도 최소한의 투구 과정을 거친 뒤 결과를 공개한다.
+  if (count.balls === 0 && count.strikes === 0) return { balls: 0, strikes: 1 }
+  if (count.balls === 0) return { balls: 1, strikes: count.strikes }
+  return null
+}
 
 export function MatchPage() {
   const {
@@ -12,16 +45,30 @@ export function MatchPage() {
     userTeam,
     upcomingGame,
     lastResult,
+    activeGameSession,
+    advanceActiveGame,
+    pauseActiveGame,
+    resumeActiveGame,
     playUserGame,
     clearLastResult,
     advanceWeek,
     setView,
   } = useGame()
-  const [visibleLogs, setVisibleLogs] = useState(0)
-  const [playing, setPlaying] = useState(false)
+  const [playbackSpeed, setPlaybackSpeed] = useState(1)
+  const [pitchCount, setPitchCount] = useState<PitchCount>({ balls: 0, strikes: 0 })
+  const [pitchNumber, setPitchNumber] = useState(0)
+  const [lastPitch, setLastPitch] = useState<LivePitch>()
+  const [pendingResolution, setPendingResolution] = useState(false)
+  const [showPlayLog, setShowPlayLog] = useState(false)
   const timerRef = useRef<number | null>(null)
-
   const result = lastResult
+  const playing = activeGameSession?.status === 'playing'
+  const sessionInProgress = Boolean(activeGameSession && activeGameSession.status !== 'complete')
+  const sessionCursor = activeGameSession?.cursor ?? 0
+  const activeGameId = activeGameSession?.gameId
+  const gameFinished = !playing && !sessionInProgress
+  const replayCursor = sessionInProgress ? sessionCursor : result?.logs.length ?? 0
+
   const opponent = result
     ? state?.teams.find((t) => t.id === (result.homeId === userTeam?.id ? result.awayId : result.homeId))
     : upcomingGame
@@ -30,38 +77,70 @@ export function MatchPage() {
 
   const liveScore = useMemo(() => {
     if (!result) return null
-    if (!playing) {
+    if (!playing && !sessionInProgress) {
       return {
         homeScore: result.homeScore,
         awayScore: result.awayScore,
         innings: result.innings,
       }
     }
-    return computeScoreThroughLogs(result.logs, visibleLogs)
-  }, [result, playing, visibleLogs])
+    return computeScoreThroughLogs(result.logs, replayCursor)
+  }, [result, playing, replayCursor, sessionInProgress])
 
   useEffect(() => {
-    if (!result || !playing) return
-    setVisibleLogs(0)
-    let i = 0
-    timerRef.current = window.setInterval(() => {
-      i++
-      setVisibleLogs(i)
-      if (i >= result.logs.length) {
-        if (timerRef.current) clearInterval(timerRef.current)
-        setPlaying(false)
+    if (!result || !playing || !sessionInProgress) return
+    timerRef.current = window.setTimeout(() => {
+      if (pendingResolution) {
+        setPitchCount({ balls: 0, strikes: 0 })
+        setPitchNumber(0)
+        setPendingResolution(false)
+        advanceActiveGame()
+        return
       }
-    }, 120)
-    return () => { if (timerRef.current) clearInterval(timerRef.current) }
-  }, [result, playing])
+      const nextLog = result.logs.slice(sessionCursor)
+        .find((log) => (log.eventType ?? 'plateAppearance') === 'plateAppearance')
+      const nextCount = nextPitchCount(pitchCount, nextLog?.outcome)
+      const call: PitchCall = nextCount
+        ? nextCount.balls > pitchCount.balls ? 'ball' : 'strike'
+        : nextLog?.outcome === 'walk' ? 'ball' : nextLog?.outcome === 'strikeout' ? 'strike' : 'inPlay'
+      const pitcher = nextLog?.pitcherId ? findPlayerInLeague(state?.teams ?? [], nextLog.pitcherId)?.player : undefined
+      setLastPitch(createLivePitch({
+        seed: activeGameSession?.seed ?? 1,
+        cursor: sessionCursor,
+        pitchNumber,
+        pitcher,
+        call,
+        outcome: nextLog?.outcome,
+      }))
+      setPitchNumber((value) => value + 1)
+      if (nextCount) {
+        setPitchCount(nextCount)
+      } else {
+        setPendingResolution(true)
+      }
+    }, PITCH_INTERVAL_MS / playbackSpeed)
+    return () => { if (timerRef.current) clearTimeout(timerRef.current) }
+  }, [result, playing, sessionInProgress, sessionCursor, advanceActiveGame, pitchCount, playbackSpeed, pendingResolution, pitchNumber, state?.teams, activeGameSession?.seed])
+
+  useEffect(() => {
+    setPitchCount({ balls: 0, strikes: 0 })
+    setPitchNumber(0)
+    setLastPitch(undefined)
+    setPendingResolution(false)
+  }, [activeGameId])
 
   if (!state || !userTeam) return null
 
   const handlePlay = () => {
     const r = playUserGame()
-    if (r) {
-      setPlaying(true)
-      setVisibleLogs(0)
+    if (!r) return
+  }
+
+  const togglePlaying = () => {
+    if (playing) {
+      pauseActiveGame()
+    } else {
+      resumeActiveGame()
     }
   }
 
@@ -72,7 +151,7 @@ export function MatchPage() {
   const userScore = isHome ? homeScore : awayScore
   const oppScore = isHome ? awayScore : homeScore
 
-  const userWon = result && !playing
+  const userWon = result && gameFinished
     ? userScore > oppScore
     : false
 
@@ -93,21 +172,44 @@ export function MatchPage() {
     ? Math.max(result.innings.length, displayInnings.length, 9)
     : 9
 
-  const hasMoreGamesThisWeek = Boolean(upcomingGame && result && !playing)
+  const hasMoreGamesThisWeek = Boolean(upcomingGame && result && gameFinished)
+  const currentSituation = result
+    ? (sessionInProgress ? result.logs[replayCursor]?.situationBefore : undefined)
+      ?? result.logs[Math.max(0, (sessionInProgress || playing ? replayCursor : result.logs.length) - 1)]?.situationAfter
+      ?? result.logs[0]?.situationBefore
+    : undefined
+  const shownLogCount = sessionInProgress || playing ? replayCursor : result?.logs.length ?? 0
+  const currentLog = shownLogCount > 0 ? result?.logs[shownLogCount - 1] : undefined
+  const visibleLogs = result?.logs.slice(0, shownLogCount) ?? []
+  const userSide = currentSituation
+    ? ((currentSituation.half === 'bottom') === Boolean(isHome) ? 'offense' : 'defense')
+    : undefined
 
   return (
-    <div className="bm-animate-in space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-[var(--text-h)]">경기</h1>
-        <p className="text-sm text-[var(--text-muted)]">
-          {state.currentWeek}주차
-          {upcomingGame?.day ? ` · ${DAY_LABELS[upcomingGame.day]}요일` : null}
-          {result?.day && !upcomingGame ? ` · ${DAY_LABELS[result.day]}요일` : null}
-        </p>
+    <div className="bm-animate-in space-y-3">
+      <div className="flex min-h-8 items-center justify-between gap-3">
+        <div className="flex items-baseline gap-3">
+          <h1 className="text-xl font-bold text-[var(--text-h)]">경기</h1>
+          <p className="text-xs text-[var(--text-muted)]">
+            {state.currentWeek}주차
+            {upcomingGame?.day ? ` · ${DAY_LABELS[upcomingGame.day]}요일` : null}
+            {result?.day && !upcomingGame ? ` · ${DAY_LABELS[result.day]}요일` : null}
+          </p>
+        </div>
+        {result && opponent && liveScore ? (
+          <div className={`bm-card flex shrink-0 items-center gap-2 px-3 py-1 text-xs ${gameFinished && userWon ? 'border-emerald-500/50' : gameFinished ? 'border-red-500/30' : ''}`} aria-label={`${userTeam.name} ${userScore} 대 ${opponent.name} ${oppScore}`}>
+            <span className="text-[var(--text-muted)]">{playing || sessionInProgress ? currentInningLabel(result.logs, replayCursor) : userWon ? '승리' : '패배'}</span>
+            <b className="text-[var(--text-h)]">{userTeam.abbr}</b>
+            <strong className="text-base text-[var(--text-h)] tabular-nums">{userScore}</strong>
+            <span className="text-[var(--text-muted)]">:</span>
+            <strong className="text-base text-[var(--text-h)] tabular-nums">{oppScore}</strong>
+            <b className="text-[var(--text-h)]">{opponent.abbr}</b>
+          </div>
+        ) : null}
       </div>
 
       {!result && upcomingGame && opponent && (
-        <div className="bm-card p-6 text-center">
+        <><ManagerTacticsPanel /><div className="bm-card p-6 text-center">
           <div className="mb-4 text-sm text-[var(--text-muted)]">
             <span className="font-semibold text-[var(--accent)]">{DAY_LABELS[upcomingGame.day]}요일</span>
             {' · '}
@@ -116,14 +218,14 @@ export function MatchPage() {
           </div>
           <div className="flex items-center justify-center gap-6">
             <div>
-              <div className="text-xl font-bold" style={{ color: userTeam.color }}>
+              <div className="text-xl font-bold text-[var(--text-h)]">
                 {userTeam.name}
               </div>
               <div className="text-xs text-[var(--text-muted)]">{userTeam.city}</div>
             </div>
             <div className="text-2xl font-black text-[var(--text-muted)]">VS</div>
             <div>
-              <div className="text-xl font-bold" style={{ color: opponent.color }}>
+              <div className="text-xl font-bold text-[var(--text-h)]">
                 {opponent.name}
               </div>
               <div className="text-xs text-[var(--text-muted)]">{opponent.city}</div>
@@ -132,7 +234,7 @@ export function MatchPage() {
           <button type="button" className="bm-btn bm-btn-primary mt-6 px-8" onClick={handlePlay}>
             경기 시작
           </button>
-        </div>
+        </div></>
       )}
 
       {!result && !upcomingGame && (
@@ -146,28 +248,8 @@ export function MatchPage() {
 
       {result && opponent && liveScore && (
         <>
-          <div className={`bm-card p-6 text-center ${!playing && userWon ? 'border-emerald-500/50' : !playing ? 'border-red-500/30' : ''}`}>
-            <div className="mb-2 text-sm font-semibold tracking-wider text-[var(--text-muted)]">
-              {playing
-                ? currentInningLabel(result.logs, visibleLogs)
-                : userWon
-                  ? '승리!'
-                  : '패배'}
-            </div>
-            <div className="flex items-center justify-center gap-8">
-              <div>
-                <div className="text-4xl font-black text-[var(--text-h)] tabular-nums">{userScore}</div>
-                <div className="text-sm font-medium" style={{ color: userTeam.color }}>{userTeam.name}</div>
-              </div>
-              <div className="text-[var(--text-muted)]">:</div>
-              <div>
-                <div className="text-4xl font-black text-[var(--text-h)] tabular-nums">{oppScore}</div>
-                <div className="text-sm font-medium" style={{ color: opponent.color }}>{opponent.name}</div>
-              </div>
-            </div>
-
-            {!playing && (
-              <div className="mt-4 flex flex-wrap justify-center gap-2">
+          {gameFinished && (
+              <div className="flex flex-wrap justify-end gap-2">
                 {hasMoreGamesThisWeek ? (
                   <button
                     type="button"
@@ -192,10 +274,52 @@ export function MatchPage() {
                   대시보드
                 </button>
               </div>
-            )}
+          )}
+
+          <div className="grid items-start gap-3 md:grid-cols-[minmax(0,1fr)_200px_240px] 2xl:grid-cols-[minmax(0,1.2fr)_minmax(220px,.7fr)_minmax(280px,.9fr)]">
+            <GameSituationPanel
+              situation={currentSituation}
+              currentLog={currentLog}
+              teams={state.teams}
+              balls={sessionInProgress ? pitchCount.balls : 0}
+              strikes={sessionInProgress ? pitchCount.strikes : 0}
+              userSide={userSide}
+            />
+
+            <PitchLocationPanel pitch={lastPitch} />
+
+            <div className="space-y-3">
+              {sessionInProgress ? <ManagerTacticsPanel /> : null}
+              <div className="bm-card p-3" aria-label="경기 재생 설정">
+                <span className="mb-1.5 block text-xs text-[var(--text-muted)]">재생 속도</span>
+                <div className="grid grid-cols-4 gap-2">
+                  {[0.5, 1, 2].map((speed) => <button key={speed} type="button" className={`bm-btn w-full justify-center px-1 py-1.5 text-xs ${playbackSpeed === speed ? 'bm-btn-primary' : 'bm-btn-ghost'}`} onClick={() => setPlaybackSpeed(speed)}>{speed}×</button>)}
+                  {sessionInProgress ? (
+                    <button
+                      type="button"
+                      className="bm-btn bm-btn-ghost w-full justify-center px-1 py-1.5"
+                      onClick={togglePlaying}
+                      aria-label={playing ? '경기 일시정지' : '경기 계속 진행'}
+                      title={playing ? '일시정지' : '계속 진행'}
+                    >
+                      <PlayPauseIcon playing={playing} />
+                    </button>
+                  ) : null}
+                </div>
+              </div>
+            </div>
           </div>
 
-          {!playing && result.boxScore ? (
+          <LiveGameStatsPanel
+            logs={visibleLogs}
+            teams={state.teams}
+            currentPitcherId={sessionInProgress ? currentSituation?.pitcherId : undefined}
+            currentPitchCount={sessionInProgress ? pitchNumber : 0}
+          />
+
+          <GameManagementPanel />
+
+          {gameFinished && result.boxScore ? (
             <div className="bm-card p-4">
               <h2 className="mb-3 font-semibold text-[var(--text-h)]">박스스코어</h2>
               <div className="mb-4 flex flex-wrap gap-4 text-sm text-[var(--text-muted)]">
@@ -331,10 +455,34 @@ export function MatchPage() {
             </table>
           </div>
 
-          <div className="bm-card max-h-96 overflow-y-auto p-4">
-            <h2 className="mb-3 font-semibold text-[var(--text-h)]">플레이-by-플레이</h2>
-            <ul className="space-y-1 font-mono text-sm">
-              {result.logs.slice(0, playing ? visibleLogs : result.logs.length).map((log, i) => {
+          <button
+            type="button"
+            className="bm-card flex w-full items-center gap-3 px-4 py-2 text-left text-sm"
+            onClick={() => setShowPlayLog(true)}
+            aria-haspopup="dialog"
+          >
+            <span className="shrink-0 font-semibold text-[var(--accent)]">플레이-by-플레이</span>
+            <span className="min-w-0 flex-1 truncate text-[var(--text-h)]">
+              {currentLog ? `${currentLog.inning}회 ${currentLog.half === 'top' ? '초' : '말'} · ${currentLog.text}` : '아직 기록된 플레이가 없습니다.'}
+            </span>
+            <span className="shrink-0 text-xs text-[var(--text-muted)]">전체 보기</span>
+          </button>
+
+          {showPlayLog ? (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" role="presentation" onMouseDown={() => setShowPlayLog(false)}>
+              <section
+                className="bm-card flex max-h-[80vh] w-full max-w-3xl flex-col overflow-hidden"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="play-log-title"
+                onMouseDown={(event) => event.stopPropagation()}
+              >
+                <div className="flex items-center justify-between border-b border-[var(--border)] px-5 py-4">
+                  <h2 id="play-log-title" className="font-semibold text-[var(--text-h)]">플레이-by-플레이</h2>
+                  <button type="button" className="bm-btn bm-btn-ghost py-1 text-xs" onClick={() => setShowPlayLog(false)}>닫기</button>
+                </div>
+                <ul className="space-y-1 overflow-y-auto p-5 font-mono text-sm">
+              {visibleLogs.map((log, i) => {
                 const batter = log.batterId
                   ? findPlayerInLeague(state.teams, log.batterId)?.player
                   : null
@@ -366,10 +514,25 @@ export function MatchPage() {
                   </li>
                 )
               })}
-            </ul>
-          </div>
+                </ul>
+              </section>
+            </div>
+          ) : null}
         </>
       )}
     </div>
+  )
+}
+
+function PlayPauseIcon({ playing }: { playing: boolean }) {
+  return playing ? (
+    <svg viewBox="0 0 20 20" className="h-4 w-4" fill="currentColor" aria-hidden="true">
+      <rect x="4" y="3" width="4" height="14" rx="1" />
+      <rect x="12" y="3" width="4" height="14" rx="1" />
+    </svg>
+  ) : (
+    <svg viewBox="0 0 20 20" className="h-4 w-4" fill="currentColor" aria-hidden="true">
+      <path d="M5 3.8a1 1 0 0 1 1.53-.85l10 6.2a1 1 0 0 1 0 1.7l-10 6.2A1 1 0 0 1 5 16.2V3.8Z" />
+    </svg>
   )
 }

@@ -66,7 +66,7 @@ export function StandingsPage() {
                     {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}
                   </td>
                   <td>
-                    <span className="font-medium" style={{ color: t.color }}>
+                    <span className="font-medium text-[var(--text-h)]">
                       {t.name}
                     </span>
                   </td>

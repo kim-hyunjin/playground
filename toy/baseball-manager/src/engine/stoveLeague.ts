@@ -12,6 +12,7 @@ import { rollPotential } from './playerDevelopment'
 import { generateSchedule, generateFarmSchedule } from './schedule'
 import { countByLevel, FIRST_TEAM_MAX, FARM_TEAM_MAX } from './roster'
 import { initializeDraft } from './draft'
+import { createRenewalNegotiations } from './negotiations'
 
 export const STOVE_TOTAL_WEEKS = 4
 export const DEFAULT_SEASON_YEAR = 2026
@@ -121,7 +122,7 @@ export function buildStoveLeagueState(state: GameState): GameState {
     budget: t.budget + OFFSEASON_BUDGET_BONUS,
   }))
 
-  return {
+  const stoveState: GameState = {
     ...state,
     phase: 'stove',
     teams: teamsWithBudget,
@@ -131,6 +132,7 @@ export function buildStoveLeagueState(state: GameState): GameState {
     stoveTotalWeeks: STOVE_TOTAL_WEEKS,
     callUpSuggestions: [],
   }
+  return { ...stoveState, contractNegotiations: createRenewalNegotiations(stoveState) }
 }
 
 export function signFreeAgentForTeam(
@@ -160,7 +162,7 @@ export function signFreeAgentForTeam(
 
 function cpuSignPass(teams: Team[], freeAgents: FreeAgentListing[], userTeamId: string) {
   let pool = [...freeAgents]
-  let nextTeams = [...teams]
+  const nextTeams = [...teams]
 
   const cpuOrder = nextTeams
     .filter((t) => t.id !== userTeamId)
@@ -244,6 +246,7 @@ function resetTeamForNewSeason(team: Team): Team {
     farmRunsScored: 0,
     farmRunsAllowed: 0,
     players: team.players.map(resetPlayerForNewSeason),
+    coaches: team.coaches.map((coach) => ({ ...coach, contractYears: Math.max(0, (coach.contractYears ?? 1) - 1) })),
   }
 }
 
@@ -275,6 +278,7 @@ export function startNextSeasonState(state: GameState): GameState {
     results: [],
     farmResults: [],
     callUpSuggestions: [],
+    contractNegotiations: [],
     lineup: defaultLineup(userTeam),
     rotation: defaultRotation(userTeam),
   }
@@ -293,4 +297,3 @@ export function initialSeasonMeta() {
     freeAgents: [] as FreeAgentListing[],
   }
 }
-

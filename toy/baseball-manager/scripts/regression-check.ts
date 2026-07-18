@@ -9,7 +9,6 @@ import { generateProspectPool } from '../src/engine/draft'
 import {
   defaultLineup,
   defaultRotation,
-  overallRating,
 } from '../src/engine/generator'
 import { simulateFarmWeek } from '../src/engine/farmSimulation'
 import { generateFarmSchedule, generateSchedule } from '../src/engine/schedule'
@@ -23,9 +22,23 @@ import {
   validateFarmRoster,
   validateFirstTeamRoster,
 } from '../src/engine/roster'
-import { simulateCpuGames, simulateGame } from '../src/engine/simulation'
+import { cpuManagerCommand, simulateCpuGames, simulateCpuGamesForDay, simulateGame } from '../src/engine/simulation'
+import { createSeededRandom } from '../src/engine/sim/random'
+import {
+  advancePlateAppearance,
+  applySessionCommand,
+  createGameSession,
+  gameSessionView,
+  pauseGameSession,
+  resumeGameSession,
+  restoreGameSession,
+  substituteSessionPitcher,
+} from '../src/engine/gameSession'
 import { buildStoveLeagueState } from '../src/engine/stoveLeague'
 import type { GameState } from '../types/game'
+import { changePitcher, createGameRoster, substituteBatter } from '../src/engine/substitutions'
+import { submitContractOffer } from '../src/engine/negotiations'
+import { createLivePitch } from '../src/engine/livePitch'
 
 let passed = 0
 let failed = 0
@@ -98,6 +111,20 @@ try {
     assert(firstIds.has(id), `rotation uses 1군 투수 (${id})`)
   }
 
+  section('Game roster / substitutions')
+  const gameRoster = createGameRoster(userTeam, lineup, rotation[0]!)
+  assert(gameRoster.lineup.length === 9, '경기 타순 9명 생성')
+  const reliever = userTeam.players.find((p) => gameRoster.bullpenIds.includes(p.id))!
+  const pitchingChange = changePitcher(gameRoster, reliever)
+  assert(pitchingChange.ok && pitchingChange.roster.currentPitcherId === reliever.id, '불펜 투수 교체')
+  assert(!changePitcher(pitchingChange.roster, reliever).ok, '등판 투수 재투입 방지')
+  const matchingBench = userTeam.players.find((p) => gameRoster.benchIds.includes(p.id) && p.role === gameRoster.lineup[0]!.position)
+  if (matchingBench) {
+    const batterChange = substituteBatter(gameRoster, 0, matchingBench)
+    assert(batterChange.ok && batterChange.roster.lineup[0]!.playerId === matchingBench.id, '대타가 기존 타순 계승')
+    assert(!substituteBatter(batterChange.roster, 1, matchingBench).ok, '교체 타자 재출전 방지')
+  }
+
   section('Promote / demote')
   const firstPlayer = userTeam.players.find((p) => p.rosterLevel === 'first')!
   const farmPlayer = userTeam.players.find((p) => p.rosterLevel === 'farm')!
@@ -117,6 +144,9 @@ try {
   const farmSchedule = generateFarmSchedule(teams, 18)
   const cpu = simulateCpuGames(schedule, teams, 1, userTeam.id)
   assert(cpu.results.length > 0, 'CPU 경기 결과 생성')
+  const cpuForDay = simulateCpuGamesForDay(schedule, teams, 1, 'tue', userTeam.id)
+  assert(cpuForDay.results.length === 4 && cpuForDay.results.every((result) => result.day === 'tue'), '사용자 경기일의 CPU 4경기 동시 진행')
+  assert(cpuForDay.schedule.filter((game) => game.week === 1 && game.day !== 'tue').every((game) => !game.played), '다른 경기일 일정은 미진행 유지')
   const farm = simulateFarmWeek(farmSchedule, cpu.teams, 1)
   assert(farm.results.length > 0, '2군 경기 결과 생성')
 
@@ -151,6 +181,19 @@ try {
   assert(stove.phase === 'stove', '스토브리그 phase 전환')
   assert((stove.freeAgents?.length ?? 0) > 0, 'FA 풀 생성')
   assert(stove.draft !== undefined, '드래프트 상태 생성')
+  assert((stove.contractNegotiations?.length ?? 0) > 0, '선수·코치 재계약 협상 생성')
+  const renewal = stove.contractNegotiations![0]!
+  const budgetBeforeRenewal = stove.teams.find((t) => t.id === stove.userTeamId)!.budget
+  const agreed = submitContractOffer(stove, renewal.id, renewal.askingSalary, renewal.askingYears)
+  assert(agreed.state.contractNegotiations!.find((n) => n.id === renewal.id)!.status === 'accepted', '요구 조건 계약 수락')
+  assert(agreed.state.teams.find((t) => t.id === stove.userTeamId)!.budget === budgetBeforeRenewal - renewal.askingSalary, '재계약 예산 반영')
+  const rejectionTarget = stove.contractNegotiations!.find((n) => n.subjectType === 'player')
+  if (rejectionTarget) {
+    let rejectedState = stove
+    for (let attempt = 0; attempt < 3; attempt++) rejectedState = submitContractOffer(rejectedState, rejectionTarget.id, 100_000, 1).state
+    assert(rejectedState.contractNegotiations!.find((n) => n.id === rejectionTarget.id)!.status === 'rejected', '낮은 반복 제안 협상 결렬')
+    assert(rejectedState.freeAgents.some((listing) => listing.player.id === rejectionTarget.subjectId), '결렬 선수 FA 이동')
+  }
 
   section('Simulation (park + league strength + extras)')
   const parkGame = simulateGame(
@@ -163,6 +206,90 @@ try {
   assert(parkGame.parkStadium === userTeam.stadium, 'GameResult.parkStadium = home stadium')
   assert(parkGame.innings.length >= 9, '최소 9이닝 기록')
   assert(parkGame.homeScore !== parkGame.awayScore, '경기 승패 확정 (동점 타breaker)')
+
+  const situationGame = simulateGame(
+    { id: 'reg-situation', week: 1, day: 'wed', homeId: userTeam.id, awayId: teams[1]!.id, played: false },
+    userTeam,
+    teams[1]!,
+  )
+  assert(situationGame.logs.length > 0, '상황 스냅샷용 플레이 로그 생성')
+  assert(
+    situationGame.logs.every((log) => log.situationBefore && log.situationAfter),
+    '모든 플레이에 전후 상황 스냅샷',
+  )
+  assert(
+    situationGame.logs.every((log) => {
+      const after = log.situationAfter!
+      return after.outs >= 0 && after.outs <= 3 && after.inning === log.inning && after.half === log.half
+    }),
+    '아웃·이닝·초말 상황 범위',
+  )
+  const finalSituation = situationGame.logs.at(-1)!.situationAfter!
+  assert(
+    finalSituation.homeScore === situationGame.homeScore && finalSituation.awayScore === situationGame.awayScore,
+    '최종 상황 스코어와 경기 결과 일치',
+  )
+  const seededGame = () => simulateGame(
+    { id: 'reg-seeded', week: 1, day: 'thu', homeId: userTeam.id, awayId: teams[1]!.id, played: false },
+    userTeam,
+    teams[1]!,
+    { random: createSeededRandom({ seed: 20260718 }) },
+  )
+  assert(JSON.stringify(seededGame()) === JSON.stringify(seededGame()), '고정 seed 경기 결과 재현')
+  let session = createGameSession(seededGame(), 20260718)
+  session = advancePlateAppearance(session)
+  assert(session.cursor > 0, '세션 한 타석 진행')
+  assert(session.resolvedResult.logs[session.cursor - 1]?.eventType === 'plateAppearance', '타석 이벤트 경계에서 정지')
+  const paused = pauseGameSession(session)
+  const restored = restoreGameSession(JSON.parse(JSON.stringify(paused)))
+  assert(restored?.status === 'paused' && restored.cursor === session.cursor, '세션 JSON 저장·복원')
+  assert(gameSessionView(restored!).logs.length === session.cursor, '세션 cursor까지만 로그 공개')
+  const managed = createGameSession(seededGame(), 20260718, gameRoster)
+  const managedPitcher = userTeam.players.find((p) => gameRoster.bullpenIds.includes(p.id))!
+  const managedChange = substituteSessionPitcher(managed, managedPitcher)
+  assert(managedChange.ok && managedChange.session.status === 'paused', '세션 투수 교체 및 일시정지 반영')
+  assert(managedChange.session.resolvedResult.logs.some((log) => log.pitcherId === managedPitcher.id), '교체 투수가 잔여 플레이에 등판')
+  assert(Boolean(managedChange.session.resolvedResult.boxScore.pitchers[managedPitcher.id]), '교체 투수 박스스코어 재계산')
+  const interactiveSeed = 8844
+  const interactiveGame = { id: 'reg-interactive', week: 1, day: 'sat' as const, homeId: userTeam.id, awayId: teams[1]!.id, played: false }
+  const interactiveOptions = { homeLineup: lineup, homeRotationIndex: 0, homeCommand: { offense: 'normal' as const, pitching: 'normal' as const }, awayCommand: { offense: 'normal' as const, pitching: 'normal' as const } }
+  const interactiveResult = simulateGame(interactiveGame, userTeam, teams[1]!, { ...interactiveOptions, random: createSeededRandom({ seed: interactiveSeed }) })
+  const interactiveSession = resumeGameSession(createGameSession(interactiveResult, interactiveSeed, gameRoster, { game: interactiveGame, home: userTeam, away: teams[1]!, userTeamId: userTeam.id, options: interactiveOptions }))
+  const commanded = applySessionCommand(interactiveSession, { offense: 'normal', pitching: 'intentionalWalk' })
+  assert(commanded.ok && commanded.session.status === 'playing', '현재 경기 작전 적용 후 진행 상태 유지')
+  assert(commanded.session.resolvedResult.logs.find((log) => log.eventType === 'plateAppearance')?.outcome === 'walk', '현재 경기 다음 타석에 고의사구 적용')
+  const pitchInput = { seed: interactiveSeed, cursor: 0, pitchNumber: 1, pitcher: userTeam.players.find((p) => p.role === 'SP'), call: 'strike' as const, outcome: 'strikeout' as const }
+  const displayedPitch = createLivePitch(pitchInput)
+  assert(JSON.stringify(displayedPitch) === JSON.stringify(createLivePitch(pitchInput)), '투구 정보 고정 seed 재현')
+  assert(displayedPitch.x >= 25 && displayedPitch.x <= 75 && displayedPitch.y >= 20 && displayedPitch.y <= 80, '스트라이크 투구 위치가 존 내부')
+  const displayedBall = createLivePitch({ ...pitchInput, call: 'ball' })
+  assert(displayedBall.x < 25 || displayedBall.x > 75 || displayedBall.y < 20 || displayedBall.y > 80, '볼 투구 위치가 존 외부')
+  let progressed = interactiveSession
+  for (let i = 0; i < 3; i++) progressed = advancePlateAppearance(progressed)
+  const prefix = JSON.stringify(progressed.resolvedResult.logs.slice(0, progressed.cursor))
+  const changedLater = applySessionCommand(progressed, { offense: 'aggressive', pitching: 'challenge' })
+  assert(JSON.stringify(changedLater.session.resolvedResult.logs.slice(0, progressed.cursor)) === prefix, '작전 변경 전 플레이 기록 보존')
+  while (session.status !== 'complete') session = advancePlateAppearance(session)
+  assert(gameSessionView(session).complete, '세션을 경기 종료까지 진행')
+  const commandSample = (offense: 'normal' | 'bunt' | 'steal', pitching: 'normal' | 'intentionalWalk') => {
+    const outcomes = { sacrifice: 0, stolenBase: 0, walk: 0 }
+    for (let i = 1; i <= 12; i++) {
+      const sampled = simulateGame(
+        { id: `cmd-${offense}-${pitching}-${i}`, week: 1, day: 'fri', homeId: userTeam.id, awayId: teams[1]!.id, played: false },
+        userTeam, teams[1]!,
+        { random: createSeededRandom({ seed: 7000 + i }), homeCommand: { offense, pitching }, awayCommand: { offense: 'normal', pitching: 'normal' } },
+      )
+      outcomes.sacrifice += sampled.logs.filter((log) => log.outcome === 'sacrifice' && log.half === 'bottom').length
+      outcomes.stolenBase += sampled.logs.filter((log) => log.eventType === 'stolenBase' && log.half === 'bottom').length
+      outcomes.walk += sampled.logs.filter((log) => log.outcome === 'walk' && log.half === 'top').length
+    }
+    return outcomes
+  }
+  const normalCommands = commandSample('normal', 'normal')
+  assert(commandSample('bunt', 'normal').sacrifice > normalCommands.sacrifice, '번트 지시가 희생타 빈도 증가')
+  assert(commandSample('steal', 'normal').stolenBase > normalCommands.stolenBase, '도루 지시가 도루 빈도 증가')
+  assert(commandSample('normal', 'intentionalWalk').walk > normalCommands.walk, '고의사구 지시가 볼넷 빈도 증가')
+  assert(cpuManagerCommand(8, 0, { first: true, second: false, third: false, firstId: 'runner' }, 1).offense === 'bunt', 'CPU 후반 접전 번트 판단')
 
   const withHand = userTeam.players.filter((p) => p.bats && p.throws)
   assert(withHand.length >= FIRST_TEAM_MAX, '1군 선수 투타 정보')

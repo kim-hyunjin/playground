@@ -6,6 +6,7 @@ import './load-csv-shim.ts'
 import { PARKS_2026 } from '../src/data/parks/kbo2026'
 import { loadLeague2026 } from '../src/data/rosterLoader'
 import { simulateGame } from '../src/engine/simulation'
+import { createSeededRandom } from '../src/engine/sim/random'
 import type { ScheduledGame, Team } from '../src/types/game'
 
 const GAMES = 600
@@ -35,7 +36,11 @@ function simulateBlock(teams: Team[], level: 'first' | 'farm'): number {
       played: false,
     }
 
-    results.push(simulateGame(game, home, away, { rosterLevel: level, skipLogs: true }))
+    results.push(simulateGame(game, home, away, {
+      rosterLevel: level,
+      skipLogs: true,
+      random: createSeededRandom({ seed: (level === 'first' ? 10_000 : 20_000) + i }),
+    }))
   }
 
   return avgRunsPerTeam(results)
