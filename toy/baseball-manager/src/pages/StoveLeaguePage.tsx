@@ -7,6 +7,7 @@ import { OvrBadge } from '../components/PlayerCard'
 import { PlayerNameButton } from '../components/PlayerNameButton'
 import { useGame } from '../store/gameStore'
 import { POSITION_LABEL } from '../types/game'
+import { ContractNegotiationPanel } from '../components/ContractNegotiationPanel'
 
 export function StoveLeaguePage() {
   const {
@@ -44,6 +45,7 @@ export function StoveLeaguePage() {
   const firstCount = countByLevel(userTeam, 'first')
   const farmCount = countByLevel(userTeam, 'farm')
   const rosterFull = firstCount >= FIRST_TEAM_MAX && farmCount >= FARM_TEAM_MAX
+  const unresolvedContracts = (state.contractNegotiations ?? []).some((item) => item.status === 'pending' || item.status === 'countered')
 
   const handleSign = (playerId: string, askingSalary: number) => {
     if (userTeam.budget < askingSalary) {
@@ -94,6 +96,8 @@ export function StoveLeaguePage() {
           <button
             type="button"
             className="bm-btn bm-btn-primary text-xs"
+            disabled={unresolvedContracts}
+            title={unresolvedContracts ? '재계약 협상을 먼저 마무리하세요.' : undefined}
             onClick={() => {
               if (window.confirm(`${state.seasonYear + 1} 시즌을 시작할까요?`)) {
                 startNextSeason()
@@ -110,6 +114,8 @@ export function StoveLeaguePage() {
           {message}
         </p>
       )}
+
+      <ContractNegotiationPanel />
 
       <div className="bm-card p-4 text-sm text-[var(--text-muted)]">
         {!isDraftComplete(state.draft) && (

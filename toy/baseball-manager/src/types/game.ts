@@ -153,6 +153,21 @@ export interface Coach {
   motivation: number
   scouting: number
   salary: number
+  contractYears?: number
+}
+
+export type ContractSubject = 'player' | 'coach'
+export type NegotiationStatus = 'pending' | 'countered' | 'accepted' | 'rejected'
+export interface ContractNegotiation {
+  id: string
+  subjectType: ContractSubject
+  subjectId: string
+  askingSalary: number
+  askingYears: number
+  attempts: number
+  status: NegotiationStatus
+  offeredSalary?: number
+  offeredYears?: number
 }
 
 export interface CallUpSuggestion {
@@ -314,6 +329,7 @@ export interface GameState {
   rotationIndex: number
   bullpenStrategy?: BullpenStrategy
   managerCommand?: ManagerCommand
+  contractNegotiations?: ContractNegotiation[]
   results: GameResult[]
   farmResults: GameResult[]
   managerName: string

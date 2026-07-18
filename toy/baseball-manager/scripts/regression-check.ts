@@ -36,6 +36,7 @@ import {
 import { buildStoveLeagueState } from '../src/engine/stoveLeague'
 import type { GameState } from '../types/game'
 import { changePitcher, createGameRoster, substituteBatter } from '../src/engine/substitutions'
+import { submitContractOffer } from '../src/engine/negotiations'
 
 let passed = 0
 let failed = 0
@@ -175,6 +176,19 @@ try {
   assert(stove.phase === 'stove', '스토브리그 phase 전환')
   assert((stove.freeAgents?.length ?? 0) > 0, 'FA 풀 생성')
   assert(stove.draft !== undefined, '드래프트 상태 생성')
+  assert((stove.contractNegotiations?.length ?? 0) > 0, '선수·코치 재계약 협상 생성')
+  const renewal = stove.contractNegotiations![0]!
+  const budgetBeforeRenewal = stove.teams.find((t) => t.id === stove.userTeamId)!.budget
+  const agreed = submitContractOffer(stove, renewal.id, renewal.askingSalary, renewal.askingYears)
+  assert(agreed.state.contractNegotiations!.find((n) => n.id === renewal.id)!.status === 'accepted', '요구 조건 계약 수락')
+  assert(agreed.state.teams.find((t) => t.id === stove.userTeamId)!.budget === budgetBeforeRenewal - renewal.askingSalary, '재계약 예산 반영')
+  const rejectionTarget = stove.contractNegotiations!.find((n) => n.subjectType === 'player')
+  if (rejectionTarget) {
+    let rejectedState = stove
+    for (let attempt = 0; attempt < 3; attempt++) rejectedState = submitContractOffer(rejectedState, rejectionTarget.id, 100_000, 1).state
+    assert(rejectedState.contractNegotiations!.find((n) => n.id === rejectionTarget.id)!.status === 'rejected', '낮은 반복 제안 협상 결렬')
+    assert(rejectedState.freeAgents.some((listing) => listing.player.id === rejectionTarget.subjectId), '결렬 선수 FA 이동')
+  }
 
   section('Simulation (park + league strength + extras)')
   const parkGame = simulateGame(

@@ -38,6 +38,7 @@ export function generateCoach(role: CoachRole, tier: 'avg' | 'good' | 'elite' = 
     motivation: clamp(base + rand(-8, 8) + roleStatBoost(role, 'motivation')),
     scouting: clamp(base + rand(-8, 8) + roleStatBoost(role, 'scouting')),
     salary: rand(40, tier === 'elite' ? 180 : tier === 'good' ? 120 : 80) * 10_000,
+    contractYears: 1,
   }
 }
 

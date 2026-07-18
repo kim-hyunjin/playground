@@ -54,6 +54,7 @@ import {
 } from '../engine/gameSession'
 import { createSeededRandom } from '../engine/sim/random'
 import { createGameRoster } from '../engine/substitutions'
+import { submitContractOffer } from '../engine/negotiations'
 
 const STORAGE_KEY = 'baseball-manager'
 const ACTIVE_GAME_KEY = 'baseball-manager-active-game'
@@ -91,6 +92,7 @@ interface GameContextValue {
   sendToRehab: (playerId: string) => boolean
   hireCoach: (coachId: string) => boolean
   fireCoach: (coachId: string) => boolean
+  negotiateContract: (negotiationId: string, salary: number, years: number) => string
   acceptCallUp: (suggestionId: string) => boolean
   dismissCallUp: (suggestionId: string) => void
   enterStoveLeague: () => void
@@ -149,10 +151,16 @@ function loadState(): GameState | null {
     if (!parsed?.teams?.length || !parsed.userTeamId) return null
     return {
       ...parsed,
+      teams: parsed.teams.map((team) => ({
+        ...team,
+        players: team.players.map((player) => ({ ...player, contractYears: player.contractYears ?? 1 })),
+        coaches: (team.coaches ?? []).map((coach) => ({ ...coach, contractYears: coach.contractYears ?? 1 })),
+      })),
       schedule: normalizeSchedule(parsed.schedule ?? []),
       farmSchedule: normalizeSchedule(parsed.farmSchedule ?? []),
       bullpenStrategy: parsed.bullpenStrategy ?? DEFAULT_BULLPEN_STRATEGY,
       managerCommand: parsed.managerCommand ?? DEFAULT_MANAGER_COMMAND,
+      contractNegotiations: parsed.contractNegotiations ?? [],
     }
   } catch {
     return null
@@ -571,13 +579,19 @@ export function GameProvider({ children }: { children: ReactNode }) {
         coachMarket: [...(s.coachMarket ?? []), coach],
         teams: s.teams.map((t) =>
           t.id === s.userTeamId
-            ? { ...t, coaches: t.coaches.filter((c) => c.id !== coachId) }
+            ? { ...t, budget: Math.max(0, t.budget - Math.round(coach.salary * 0.5)), coaches: t.coaches.filter((c) => c.id !== coachId) }
             : t,
         ),
       }
     })
     return ok
   }, [])
+  const negotiateContract = useCallback((negotiationId: string, salary: number, years: number): string => {
+    if (!state || state.phase !== 'stove') return '스토브리그에서만 협상할 수 있습니다.'
+    const result = submitContractOffer(state, negotiationId, salary, years)
+    setState(result.state)
+    return result.message
+  }, [state])
 
   const acceptCallUp = useCallback((suggestionId: string): boolean => {
     let ok = false
@@ -723,6 +737,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     sendToRehab,
     hireCoach,
     fireCoach,
+    negotiateContract,
     acceptCallUp,
     dismissCallUp,
     enterStoveLeague,
