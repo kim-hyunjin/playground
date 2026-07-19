@@ -59,7 +59,7 @@ export function sanitizeRotation(team: Team, rotation: string[]): string[] {
   const available = availableStarters(team.players)
   const valid = rotation.filter((id) => available.some((p) => p.id === id))
   const missing = available.filter((p) => !valid.includes(p.id)).map((p) => p.id)
-  return [...valid, ...missing].slice(0, Math.max(valid.length, available.length))
+  return [...valid, ...missing].slice(0, 5)
 }
 
 export function ensureValidLineupAndRotation(team: Team): {

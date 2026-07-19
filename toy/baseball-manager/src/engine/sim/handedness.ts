@@ -1,4 +1,4 @@
-import type { Player, PlayerRole } from '../../types/game'
+import type { PitchingStyle, Player, PlayerRole } from '../../types/game'
 
 export type Hand = 'L' | 'R' | 'S'
 
@@ -38,13 +38,27 @@ export function inferThrows(player: Pick<Player, 'id' | 'role' | 'throws'>): Han
   return roll < 72 ? 'R' : 'L'
 }
 
+/** 미기재 투구폼은 선수 ID 기반으로 한 번 정해지는 결정적 분배를 사용한다. */
+export function inferPitchingStyle(
+  player: Pick<Player, 'id' | 'pitchingStyle'>,
+): PitchingStyle {
+  if (player.pitchingStyle) return player.pitchingStyle
+  const roll = hashId(`${player.id}:pitchingStyle`) % 100
+  if (roll < 55) return 'overhand'
+  if (roll < 88) return 'threeQuarter'
+  if (roll < 97) return 'sidearm'
+  return 'underhand'
+}
+
 export function ensureHandedness(player: Player): Player {
   const throws = inferThrows(player)
-  const bats = isPitcherRole(player.role) ? throws : inferBats(player)
+  const pitcher = isPitcherRole(player.role)
+  const bats = pitcher ? throws : inferBats(player)
   return {
     ...player,
     bats: player.bats ?? bats,
     throws: player.throws ?? throws,
+    ...(pitcher ? { pitchingStyle: player.pitchingStyle ?? inferPitchingStyle(player) } : {}),
   }
 }
 

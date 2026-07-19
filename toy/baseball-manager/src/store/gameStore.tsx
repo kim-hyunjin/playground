@@ -71,6 +71,7 @@ interface GameContextValue {
   setLineup: (lineup: Record<FieldPosition, string>) => void
   setRotation: (rotation: string[]) => void
   swapRotation: (from: number, to: number) => void
+  setPitcherRole: (playerId: string, role: 'SP' | 'RP') => void
   setBullpenStrategy: (strategy: BullpenStrategy) => void
   setManagerCommand: (command: ManagerCommand) => void
   playUserGame: () => GameResult | null
@@ -274,7 +275,20 @@ export function GameProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const setRotation = useCallback((rotation: string[]) => {
-    setState((s) => (s ? { ...s, rotation } : s))
+    setState((s) => {
+      if (!s) return s
+      const cappedRotation = [...new Set(rotation)].slice(0, 5)
+      const rotationIds = new Set(cappedRotation)
+      const teams = s.teams.map((team) => team.id !== s.userTeamId ? team : {
+        ...team,
+        players: team.players.map((player) =>
+          player.rosterLevel === 'first' && (player.role === 'SP' || player.role === 'RP')
+            ? { ...player, role: rotationIds.has(player.id) ? 'SP' as const : 'RP' as const }
+            : player,
+        ),
+      })
+      return { ...s, teams, rotation: cappedRotation }
+    })
   }, [])
 
   const swapRotation = useCallback((from: number, to: number) => {
@@ -283,6 +297,29 @@ export function GameProvider({ children }: { children: ReactNode }) {
       const rotation = [...s.rotation]
       ;[rotation[from], rotation[to]] = [rotation[to]!, rotation[from]!]
       return { ...s, rotation }
+    })
+  }, [])
+  const setPitcherRole = useCallback((playerId: string, role: 'SP' | 'RP') => {
+    setState((s) => {
+      if (!s) return s
+      const team = s.teams.find((candidate) => candidate.id === s.userTeamId)
+      const player = team?.players.find((candidate) => candidate.id === playerId)
+      if (!team || !player || (player.role !== 'SP' && player.role !== 'RP') || player.role === role) return s
+      const firstTeamStarters = team.players.filter((candidate) => candidate.rosterLevel === 'first' && candidate.role === 'SP')
+      if (role === 'RP' && player.rosterLevel === 'first' && firstTeamStarters.length <= 4) return s
+      if (role === 'SP' && player.rosterLevel === 'first' && firstTeamStarters.length >= 5) return s
+
+      const teams = s.teams.map((candidate) => candidate.id !== team.id ? candidate : {
+        ...candidate,
+        players: candidate.players.map((teamPlayer) => teamPlayer.id === playerId ? { ...teamPlayer, role } : teamPlayer),
+      })
+      let rotation = s.rotation
+      if (role === 'RP') {
+        rotation = rotation.filter((id) => id !== playerId)
+      } else if (player.rosterLevel === 'first' && !rotation.includes(playerId)) {
+        rotation = [...rotation, playerId].slice(0, 5)
+      }
+      return { ...s, teams, rotation }
     })
   }, [])
   const setBullpenStrategy = useCallback((bullpenStrategy: BullpenStrategy) => {
@@ -297,8 +334,24 @@ export function GameProvider({ children }: { children: ReactNode }) {
     const game = nextUserGame(state.schedule, state.userTeamId, state.currentWeek)
     if (!game) return null
 
-    const home = state.teams.find((t) => t.id === game.homeId)!
-    const away = state.teams.find((t) => t.id === game.awayId)!
+    const withConfiguredRotation = (team: Team): Team => {
+      if (team.id !== state.userTeamId) return team
+      const starters = state.rotation
+        .map((id) => team.players.find((player) => player.id === id && player.role === 'SP'))
+        .filter((player): player is Player => Boolean(player))
+      const configuredIds = new Set(starters.map((player) => player.id))
+      const remainingStarters = team.players.filter((player) => player.role === 'SP' && !configuredIds.has(player.id))
+      return {
+        ...team,
+        players: [
+          ...team.players.filter((player) => player.role !== 'SP'),
+          ...starters,
+          ...remainingStarters,
+        ],
+      }
+    }
+    const home = withConfiguredRotation(state.teams.find((t) => t.id === game.homeId)!)
+    const away = withConfiguredRotation(state.teams.find((t) => t.id === game.awayId)!)
     const isHome = game.homeId === state.userTeamId
 
     const seed = (Date.now() ^ state.currentWeek ^ state.rotationIndex) >>> 0
@@ -751,6 +804,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setLineup,
     setRotation,
     swapRotation,
+    setPitcherRole,
     setBullpenStrategy,
     setManagerCommand,
     playUserGame,

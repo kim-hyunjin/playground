@@ -1,6 +1,7 @@
 export type FieldPosition = 'C' | '1B' | '2B' | '3B' | 'SS' | 'LF' | 'CF' | 'RF' | 'DH'
 export type PlayerRole = FieldPosition | 'SP' | 'RP'
 export type RosterLevel = 'first' | 'farm'
+export type PitchingStyle = 'overhand' | 'threeQuarter' | 'sidearm' | 'underhand'
 
 export interface Player {
   id: string
@@ -33,6 +34,8 @@ export interface Player {
   bats?: 'L' | 'R' | 'S'
   /** 투구 (L/R) */
   throws?: 'L' | 'R' | 'S'
+  /** 투구폼 — 오버핸드/스리쿼터/사이드암/언더핸드 */
+  pitchingStyle?: PitchingStyle
   /** 부상 잔여 일수 (0 이하 = 출전 가능) */
   injuryDays?: number
   injuryType?: string

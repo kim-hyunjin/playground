@@ -26,6 +26,7 @@ export const PLAYERS_CSV_COLUMNS = [
   'bb9',
   'gs',
   'games',
+  'pitchingStyle',
 ] as const
 
 export type PlayersCsvColumn = (typeof PLAYERS_CSV_COLUMNS)[number]

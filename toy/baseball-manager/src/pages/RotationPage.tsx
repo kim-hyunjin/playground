@@ -1,18 +1,50 @@
-import { overallRating } from '../engine/generator'
+import { useState } from 'react'
+import { isPitcher, overallRating } from '../engine/generator'
 import { isPlayerAvailable } from '../engine/injury'
+import { firstTeamPlayers } from '../engine/roster'
+import { formatHandedness } from '../engine/rosterAvailability'
+import { inferPitchingStyle, inferThrows } from '../engine/sim/handedness'
 import { OvrBadge } from '../components/PlayerCard'
 import { PlayerNameButton } from '../components/PlayerNameButton'
+import { SortableHeader, sortRows, useTableSort } from '../components/SortableTable'
 import { useGame } from '../store/gameStore'
-import { DEFAULT_BULLPEN_STRATEGY } from '../types/game'
+import { DEFAULT_BULLPEN_STRATEGY, type Player } from '../types/game'
 
 export function RotationPage() {
-  const { userTeam, state, swapRotation, setBullpenStrategy } = useGame()
+  const { userTeam, state, swapRotation, setPitcherRole, setBullpenStrategy } = useGame()
+  const [roleMessage, setRoleMessage] = useState('')
+  const roleSort = useTableSort<RoleSortKey>({ key: 'ovr', direction: 'desc' })
   if (!userTeam || !state) return null
 
   const starters = state.rotation
     .map((id) => userTeam.players.find((p) => p.id === id))
     .filter(Boolean)
   const strategy = state.bullpenStrategy ?? DEFAULT_BULLPEN_STRATEGY
+  const pitchers = sortRows(firstTeamPlayers(userTeam).filter(isPitcher), {
+    name: (player) => player.name,
+    role: (player) => player.role,
+    hand: (player) => pitchingHandLabel(player),
+    ovr: (player) => overallRating(player),
+    velocity: (player) => player.velocity,
+    control: (player) => player.control,
+    movement: (player) => player.movement,
+    stamina: (player) => player.stamina,
+    fatigue: (player) => player.fatigue,
+  }, roleSort.sort)
+
+  const handleRoleChange = (player: Player, role: 'SP' | 'RP') => {
+    const starterCount = firstTeamPlayers(userTeam).filter((candidate) => candidate.role === 'SP').length
+    if (role === 'RP' && starterCount <= 4) {
+      setRoleMessage('선발 로테이션에는 최소 4명의 선발투수가 필요합니다.')
+      return
+    }
+    if (role === 'SP' && starterCount >= 5) {
+      setRoleMessage('선발은 최대 5명입니다. 기존 선발을 불펜으로 전환한 뒤 지정하세요.')
+      return
+    }
+    setPitcherRole(player.id, role)
+    setRoleMessage(`${player.name} 선수를 ${role === 'SP' ? '선발' : '불펜'} 보직으로 변경했습니다.`)
+  }
 
   return (
     <div className="bm-animate-in space-y-6">
@@ -73,8 +105,72 @@ export function RotationPage() {
       </div>
 
       <p className="text-xs text-[var(--text-muted)]">
-        ▲▼ 버튼으로 로테이션 순서를 변경할 수 있습니다. 경기마다 다음 선발이 자동으로 선택됩니다.
+        ▲▼ 버튼으로 등판 순서만 조정할 수 있습니다. 선발 명단은 아래 투수 보직 관리에서 구성합니다.
       </p>
+
+      <section className="bm-card overflow-hidden">
+        <div className="border-b border-[var(--border)] p-4">
+          <h2 className="font-semibold text-[var(--text-h)]">투수 보직 관리</h2>
+          <p className="text-xs text-[var(--text-muted)]">
+            선발은 로테이션 후보가 되고, 불펜은 경기 중 교체 투수로 운용됩니다.
+          </p>
+          {roleMessage ? <p className="mt-1 text-xs text-[var(--accent)]">{roleMessage}</p> : null}
+        </div>
+        <div className="overflow-x-auto">
+          <table className="bm-table whitespace-nowrap">
+            <thead>
+              <tr>
+                <SortableHeader column="name" sort={roleSort.sort} onSort={roleSort.requestSort}>투수</SortableHeader>
+                <SortableHeader column="role" sort={roleSort.sort} onSort={roleSort.requestSort}>보직</SortableHeader>
+                <SortableHeader column="hand" sort={roleSort.sort} onSort={roleSort.requestSort}>투구 유형</SortableHeader>
+                <SortableHeader column="ovr" sort={roleSort.sort} onSort={roleSort.requestSort}>OVR</SortableHeader>
+                <SortableHeader column="velocity" sort={roleSort.sort} onSort={roleSort.requestSort}>구속</SortableHeader>
+                <SortableHeader column="control" sort={roleSort.sort} onSort={roleSort.requestSort}>제구</SortableHeader>
+                <SortableHeader column="movement" sort={roleSort.sort} onSort={roleSort.requestSort}>구위</SortableHeader>
+                <SortableHeader column="stamina" sort={roleSort.sort} onSort={roleSort.requestSort}>체력</SortableHeader>
+                <SortableHeader column="fatigue" sort={roleSort.sort} onSort={roleSort.requestSort}>피로</SortableHeader>
+                <th aria-label="보직 변경" />
+              </tr>
+            </thead>
+            <tbody>
+              {pitchers.map((player) => {
+                const rotationSlot = state.rotation.indexOf(player.id)
+                return (
+                  <tr key={player.id}>
+                    <td><PlayerNameButton playerId={player.id} name={player.name} /></td>
+                    <td>
+                      <span className={`bm-badge ${player.role === 'SP' ? 'bg-sky-500/20 text-sky-400' : 'bg-amber-500/20 text-amber-300'}`}>
+                        {player.role === 'SP' ? '선발' : '불펜'}{rotationSlot >= 0 ? ` ${rotationSlot + 1}` : ''}
+                      </span>
+                    </td>
+                    <td className="text-xs text-[var(--text-muted)]">
+                      {pitchingHandLabel(player)}
+                      <span className="ml-1 opacity-70">({formatHandedness(player)})</span>
+                    </td>
+                    <td><OvrBadge player={player} /></td>
+                    <td>{player.velocity}</td>
+                    <td>{player.control}</td>
+                    <td>{player.movement}</td>
+                    <td>{player.stamina}</td>
+                    <td>{player.fatigue}</td>
+                    <td>
+                      <button
+                        type="button"
+                        className="bm-btn bm-btn-ghost py-1 text-xs"
+                        onClick={() => handleRoleChange(player, player.role === 'SP' ? 'RP' : 'SP')}
+                        disabled={player.role === 'RP' && pitchers.filter((candidate) => candidate.role === 'SP').length >= 5}
+                        title={player.role === 'RP' && pitchers.filter((candidate) => candidate.role === 'SP').length >= 5 ? '기존 선발을 불펜으로 전환한 뒤 지정하세요.' : undefined}
+                      >
+                        {player.role === 'SP' ? '불펜 전환' : '선발 전환'}
+                      </button>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      </section>
 
       <section className="bm-card space-y-4 p-4">
         <div>
@@ -97,6 +193,20 @@ export function RotationPage() {
           좌타자 상대 좌완 매치업 우선
         </label>
       </section>
+
     </div>
   )
+}
+
+type StarterSortKey = 'name' | 'hand' | 'ovr' | 'velocity' | 'control' | 'movement' | 'stamina' | 'fatigue'
+type RoleSortKey = StarterSortKey | 'role'
+
+function pitchingHandLabel(player: Player): string {
+  const throws = inferThrows(player)
+  const side = throws === 'L' ? '좌' : throws === 'R' ? '우' : '양'
+  const style = inferPitchingStyle(player)
+  if (style === 'underhand') return `${side}언`
+  if (style === 'sidearm') return `${side}사`
+  if (style === 'threeQuarter') return `${side}완(스리쿼터)`
+  return `${side}완(오버핸드)`
 }

@@ -119,6 +119,7 @@ function recordToPlayer(record: PlayerRecord): Player {
   player.contractYears = contractYearsForPlayer(player)
   if (record.bats) player.bats = record.bats
   if (record.throws) player.throws = record.throws
+  if (record.pitchingStyle) player.pitchingStyle = record.pitchingStyle
   return ensureHandedness(player)
 }
 
@@ -170,6 +171,12 @@ export function validateRosterFile(file: TeamRosterFile): string[] {
       }
       if (r.throws && !['L', 'R', 'S'].includes(r.throws)) {
         errors.push(`${r.id}: invalid throws ${r.throws}`)
+      }
+      if (r.pitchingStyle && !['overhand', 'threeQuarter', 'sidearm', 'underhand'].includes(r.pitchingStyle)) {
+        errors.push(`${r.id}: invalid pitchingStyle ${r.pitchingStyle}`)
+      }
+      if ((r.role === 'SP' || r.role === 'RP') && !r.pitchingStyle) {
+        errors.push(`${r.id}: missing pitchingStyle`)
       }
     }
   }

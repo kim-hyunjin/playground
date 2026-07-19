@@ -1,4 +1,4 @@
-import type { PlayerRole, RosterLevel } from '../types/game'
+import type { PitchingStyle, PlayerRole, RosterLevel } from '../types/game'
 import type {
   BatterSourceStats,
   PitcherSourceStats,
@@ -58,6 +58,11 @@ function bool(val: string | undefined): boolean {
 
 function hand(val: string | undefined): 'L' | 'R' | 'S' | undefined {
   if (val === 'L' || val === 'R' || val === 'S') return val
+  return undefined
+}
+
+function pitchingStyle(val: string | undefined): PitchingStyle | undefined {
+  if (val === 'overhand' || val === 'threeQuarter' || val === 'sidearm' || val === 'underhand') return val
   return undefined
 }
 
@@ -145,6 +150,7 @@ export function recordFromCsvRow(row: PlayersCsvRow): PlayerRecord {
     generated: bool(row.generated),
     bats: hand(row.bats),
     throws: hand(row.throws),
+    pitchingStyle: pitchingStyle(row.pitchingStyle),
   }
 
   const stats = sourceStatsFromRow(row)
