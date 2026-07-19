@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type CSSProperties } from 'react'
 import { DATA_SEASON, previewTeamStarLines } from '../data/rosterLoader'
 import { TEAM_DEFS } from '../engine/generator'
 import type { TeamAbbr } from '../data/types'
@@ -20,19 +20,14 @@ export function StartScreen() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--bg)] p-6">
+    <div className="bm-start-screen flex min-h-screen items-center justify-center p-6">
       <ThemeToggle className="absolute right-4 top-4" />
       <div className="bm-animate-in w-full max-w-2xl">
         <div className="mb-8 text-center">
           <h1 className="text-4xl font-black tracking-tight text-[var(--text-h)]">
             ⚾ Baseball Manager
           </h1>
-          <p className="mt-2 text-[var(--text-muted)]">
-            팀을 이끌고 라인업을 짜고, 18주 시즌을 정복하세요
-          </p>
-          <span className="mt-2 inline-block rounded-full bg-[var(--accent-dim)] px-3 py-1 text-xs font-semibold text-[var(--accent)]">
-            {DATA_SEASON} KBO 실명 로스터
-          </span>
+
         </div>
 
         <div className="bm-card space-y-6 p-6">
@@ -58,17 +53,19 @@ export function StartScreen() {
                   key={team.abbr}
                   type="button"
                   onClick={() => setSelected(i)}
-                  className={`rounded-lg border p-3 text-left transition ${
+                  data-selected={selected === i}
+                  style={{ '--team-color': team.color } as CSSProperties}
+                  className={`bm-team-option rounded-lg border p-3 text-left transition ${
                     selected === i
                       ? 'border-[var(--accent)] bg-[var(--accent-dim)]'
                       : 'border-[var(--border)] hover:border-[var(--text-muted)]'
                   }`}
                 >
-                  <div className="font-bold text-[var(--text-h)]">
+                  <div className="bm-team-name font-bold">
                     {team.name}
                   </div>
-                  <div className="text-xs text-[var(--text-muted)]">{team.city}</div>
-                  <div className="text-xs text-[var(--text-muted)]">{team.stadium}</div>
+                  <div className="bm-team-meta text-xs text-[var(--text-muted)]">{team.city}</div>
+                  <div className="bm-team-meta text-xs text-[var(--text-muted)]">{team.stadium}</div>
                 </button>
               ))}
             </div>

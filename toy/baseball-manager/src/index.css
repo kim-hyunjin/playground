@@ -66,6 +66,37 @@ body {
   min-height: 100vh;
 }
 
+.bm-start-screen {
+  background: var(--bg);
+}
+
+.bm-team-name {
+  color: white;
+}
+
+.bm-team-option {
+  background: var(--team-color);
+  border-color: transparent;
+}
+
+.bm-team-option:hover {
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
+.bm-team-option[data-selected='true'] {
+  background: var(--team-color);
+  border-color: white;
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+.bm-team-meta {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+:root[data-theme='dark'] .bm-start-screen {
+  background: #202631;
+}
+
 .bm-card {
   background: var(--panel);
   border: 1px solid var(--border);
