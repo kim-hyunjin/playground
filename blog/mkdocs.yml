@@ -42,7 +42,7 @@ theme:
 plugins:
   - search
   - awesome-pages:
-      collapse_single_pages: true
+      collapse_single_pages: false
   - mkdocs-jupyter:
       execute: false
       ignore: ["*.ipynb_checkpoints/*"]
