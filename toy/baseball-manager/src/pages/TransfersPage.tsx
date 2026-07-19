@@ -6,8 +6,11 @@ import { PlayerNameButton } from '../components/PlayerNameButton'
 import { RosterLevelBadge } from '../components/RosterBadges'
 import { useGame } from '../store/gameStore'
 import { POSITION_LABEL } from '../types/game'
+import { SortableHeader, sortRows, useTableSort } from '../components/SortableTable'
 
 type Tab = 'buy' | 'trade'
+type MarketSortKey = 'name' | 'team' | 'level' | 'pos' | 'ovr' | 'salary'
+type TradeSortKey = 'name' | 'pos' | 'ovr'
 
 function toggleId(ids: string[], id: string, max: number): string[] {
   if (ids.includes(id)) return ids.filter((x) => x !== id)
@@ -24,6 +27,9 @@ export function TransfersPage() {
   const [tradeTeamId, setTradeTeamId] = useState('')
   const [outgoingIds, setOutgoingIds] = useState<string[]>([])
   const [incomingIds, setIncomingIds] = useState<string[]>([])
+  const marketSort = useTableSort<MarketSortKey>({ key: 'ovr', direction: 'desc' })
+  const outgoingSort = useTableSort<TradeSortKey>({ key: 'ovr', direction: 'desc' })
+  const incomingSort = useTableSort<TradeSortKey>({ key: 'ovr', direction: 'desc' })
 
   const cpuTeams = useMemo(() => {
     if (!state || !userTeam) return []
@@ -112,6 +118,17 @@ export function TransfersPage() {
   const theirTradePool = (tradePartner?.players ?? [])
     .filter((p) => roleFilter === 'all' || (roleFilter === 'pitcher' ? isPitcher(p) : !isPitcher(p)))
     .sort((a, b) => overallRating(b) - overallRating(a))
+  const sortedMarket = sortRows(market, {
+    name: (p) => p.name, team: (p) => p.fromTeam.name, level: (p) => rosterLevelOf(p),
+    pos: (p) => POSITION_LABEL[p.role], ovr: (p) => overallRating(p), salary: (p) => p.salary,
+  }, marketSort.sort)
+  const tradeAccessors = {
+    name: (p: (typeof ourTradePool)[number]) => p.name,
+    pos: (p: (typeof ourTradePool)[number]) => POSITION_LABEL[p.role],
+    ovr: (p: (typeof ourTradePool)[number]) => overallRating(p),
+  }
+  const sortedOurTradePool = sortRows(ourTradePool, tradeAccessors, outgoingSort.sort)
+  const sortedTheirTradePool = sortRows(theirTradePool, tradeAccessors, incomingSort.sort)
 
   return (
     <div className="bm-animate-in space-y-6">
@@ -193,17 +210,17 @@ export function TransfersPage() {
           <table className="bm-table">
             <thead>
               <tr>
-                <th>선수</th>
-                <th>소속</th>
-                <th>등록</th>
-                <th>포지션</th>
-                <th>OVR</th>
-                <th>연봉</th>
+                <SortableHeader column="name" sort={marketSort.sort} onSort={marketSort.requestSort}>선수</SortableHeader>
+                <SortableHeader column="team" sort={marketSort.sort} onSort={marketSort.requestSort}>소속</SortableHeader>
+                <SortableHeader column="level" sort={marketSort.sort} onSort={marketSort.requestSort}>등록</SortableHeader>
+                <SortableHeader column="pos" sort={marketSort.sort} onSort={marketSort.requestSort}>포지션</SortableHeader>
+                <SortableHeader column="ovr" sort={marketSort.sort} onSort={marketSort.requestSort}>OVR</SortableHeader>
+                <SortableHeader column="salary" sort={marketSort.sort} onSort={marketSort.requestSort}>연봉</SortableHeader>
                 <th></th>
               </tr>
             </thead>
             <tbody>
-              {market.map((p) => {
+              {sortedMarket.map((p) => {
                 const level = rosterLevelOf(p)
                 return (
                   <tr key={p.id}>
@@ -261,13 +278,13 @@ export function TransfersPage() {
                 <thead>
                   <tr>
                     <th></th>
-                    <th>선수</th>
-                    <th>Pos</th>
-                    <th>OVR</th>
+                    <SortableHeader column="name" sort={outgoingSort.sort} onSort={outgoingSort.requestSort}>선수</SortableHeader>
+                    <SortableHeader column="pos" sort={outgoingSort.sort} onSort={outgoingSort.requestSort}>Pos</SortableHeader>
+                    <SortableHeader column="ovr" sort={outgoingSort.sort} onSort={outgoingSort.requestSort}>OVR</SortableHeader>
                   </tr>
                 </thead>
                 <tbody>
-                  {ourTradePool.map((p) => (
+                  {sortedOurTradePool.map((p) => (
                     <tr key={p.id}>
                       <td>
                         <input
@@ -297,13 +314,13 @@ export function TransfersPage() {
                   <thead>
                     <tr>
                       <th></th>
-                      <th>선수</th>
-                      <th>Pos</th>
-                      <th>OVR</th>
+                      <SortableHeader column="name" sort={incomingSort.sort} onSort={incomingSort.requestSort}>선수</SortableHeader>
+                      <SortableHeader column="pos" sort={incomingSort.sort} onSort={incomingSort.requestSort}>Pos</SortableHeader>
+                      <SortableHeader column="ovr" sort={incomingSort.sort} onSort={incomingSort.requestSort}>OVR</SortableHeader>
                     </tr>
                   </thead>
                   <tbody>
-                    {theirTradePool.map((p) => (
+                    {sortedTheirTradePool.map((p) => (
                       <tr key={p.id}>
                         <td>
                           <input

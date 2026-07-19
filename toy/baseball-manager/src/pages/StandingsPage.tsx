@@ -1,14 +1,30 @@
 import { useState } from 'react'
 import { sortedStandings, sortedFarmStandings, teamRecord, teamFarmRecord } from '../engine/schedule'
 import { useGame } from '../store/gameStore'
+import { SortableHeader, sortRows, useTableSort } from '../components/SortableTable'
+
+type StandingsSortKey = 'rank' | 'team' | 'games' | 'wins' | 'losses' | 'pct' | 'rs' | 'ra' | 'diff'
 
 export function StandingsPage() {
   const { state, userTeam } = useGame()
   const [tab, setTab] = useState<'first' | 'farm'>('first')
+  const { sort, requestSort } = useTableSort<StandingsSortKey>({ key: 'rank', direction: 'asc' })
 
   if (!state || !userTeam) return null
 
   const standings = tab === 'first' ? sortedStandings(state.teams) : sortedFarmStandings(state.teams)
+  const ranked = standings.map((team, index) => ({ team, rank: index + 1 }))
+  const rows = sortRows(ranked, {
+    rank: (r) => r.rank,
+    team: (r) => r.team.name,
+    games: (r) => tab === 'first' ? r.team.wins + r.team.losses : r.team.farmWins + r.team.farmLosses,
+    wins: (r) => tab === 'first' ? r.team.wins : r.team.farmWins,
+    losses: (r) => tab === 'first' ? r.team.losses : r.team.farmLosses,
+    pct: (r) => Number((tab === 'first' ? teamRecord(r.team) : teamFarmRecord(r.team)).pct),
+    rs: (r) => tab === 'first' ? r.team.runsScored : r.team.farmRunsScored,
+    ra: (r) => tab === 'first' ? r.team.runsAllowed : r.team.farmRunsAllowed,
+    diff: (r) => (tab === 'first' ? teamRecord(r.team) : teamFarmRecord(r.team)).diff,
+  }, sort)
 
   return (
     <div className="bm-animate-in space-y-6">
@@ -39,19 +55,19 @@ export function StandingsPage() {
         <table className="bm-table">
           <thead>
             <tr>
-              <th>#</th>
-              <th>팀</th>
-              <th>경기</th>
-              <th>승</th>
-              <th>패</th>
-              <th>승률</th>
-              <th>득</th>
-              <th>실</th>
-              <th>DIFF</th>
+              <SortableHeader column="rank" sort={sort} onSort={requestSort}>#</SortableHeader>
+              <SortableHeader column="team" sort={sort} onSort={requestSort}>팀</SortableHeader>
+              <SortableHeader column="games" sort={sort} onSort={requestSort}>경기</SortableHeader>
+              <SortableHeader column="wins" sort={sort} onSort={requestSort}>승</SortableHeader>
+              <SortableHeader column="losses" sort={sort} onSort={requestSort}>패</SortableHeader>
+              <SortableHeader column="pct" sort={sort} onSort={requestSort}>승률</SortableHeader>
+              <SortableHeader column="rs" sort={sort} onSort={requestSort}>득</SortableHeader>
+              <SortableHeader column="ra" sort={sort} onSort={requestSort}>실</SortableHeader>
+              <SortableHeader column="diff" sort={sort} onSort={requestSort}>DIFF</SortableHeader>
             </tr>
           </thead>
           <tbody>
-            {standings.map((t, i) => {
+            {rows.map(({ team: t, rank }) => {
               const rec = tab === 'first' ? teamRecord(t) : teamFarmRecord(t)
               const wins = tab === 'first' ? t.wins : t.farmWins
               const losses = tab === 'first' ? t.losses : t.farmLosses
@@ -63,7 +79,7 @@ export function StandingsPage() {
                   className={t.id === userTeam.id ? 'bg-[var(--accent-dim)]' : ''}
                 >
                   <td>
-                    {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}
+                    {rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank}
                   </td>
                   <td>
                     <span className="font-medium text-[var(--text-h)]">

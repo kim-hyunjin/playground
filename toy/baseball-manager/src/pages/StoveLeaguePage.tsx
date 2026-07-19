@@ -8,6 +8,9 @@ import { PlayerNameButton } from '../components/PlayerNameButton'
 import { useGame } from '../store/gameStore'
 import { POSITION_LABEL } from '../types/game'
 import { ContractNegotiationPanel } from '../components/ContractNegotiationPanel'
+import { SortableHeader, sortRows, useTableSort } from '../components/SortableTable'
+
+type FaSortKey = 'name' | 'pos' | 'age' | 'ovr' | 'salary' | 'formerTeam'
 
 export function StoveLeaguePage() {
   const {
@@ -20,6 +23,7 @@ export function StoveLeaguePage() {
   } = useGame()
   const [roleFilter, setRoleFilter] = useState<'all' | 'batter' | 'pitcher'>('all')
   const [message, setMessage] = useState('')
+  const tableSort = useTableSort<FaSortKey>({ key: 'ovr', direction: 'desc' })
 
   const listings = useMemo(() => {
     if (!state) return []
@@ -46,6 +50,10 @@ export function StoveLeaguePage() {
   const farmCount = countByLevel(userTeam, 'farm')
   const rosterFull = firstCount >= FIRST_TEAM_MAX && farmCount >= FARM_TEAM_MAX
   const unresolvedContracts = (state.contractNegotiations ?? []).some((item) => item.status === 'pending' || item.status === 'countered')
+  const sortedListings = sortRows(listings, {
+    name: (l) => l.player.name, pos: (l) => POSITION_LABEL[l.player.role], age: (l) => l.player.age,
+    ovr: (l) => overallRating(l.player), salary: (l) => l.askingSalary, formerTeam: (l) => l.formerTeamName,
+  }, tableSort.sort)
 
   const handleSign = (playerId: string, askingSalary: number) => {
     if (userTeam.budget < askingSalary) {
@@ -149,24 +157,24 @@ export function StoveLeaguePage() {
         <table className="bm-table">
           <thead>
             <tr>
-              <th>선수</th>
-              <th>포지션</th>
-              <th>나이</th>
-              <th>OVR</th>
-              <th>희망 연봉</th>
-              <th>전 소속</th>
+              <SortableHeader column="name" sort={tableSort.sort} onSort={tableSort.requestSort}>선수</SortableHeader>
+              <SortableHeader column="pos" sort={tableSort.sort} onSort={tableSort.requestSort}>포지션</SortableHeader>
+              <SortableHeader column="age" sort={tableSort.sort} onSort={tableSort.requestSort}>나이</SortableHeader>
+              <SortableHeader column="ovr" sort={tableSort.sort} onSort={tableSort.requestSort}>OVR</SortableHeader>
+              <SortableHeader column="salary" sort={tableSort.sort} onSort={tableSort.requestSort}>희망 연봉</SortableHeader>
+              <SortableHeader column="formerTeam" sort={tableSort.sort} onSort={tableSort.requestSort}>전 소속</SortableHeader>
               <th />
             </tr>
           </thead>
           <tbody>
-            {listings.length === 0 ? (
+            {sortedListings.length === 0 ? (
               <tr>
                 <td colSpan={7} className="text-center text-[var(--text-muted)]">
                   FA 풀이 비었습니다.
                 </td>
               </tr>
             ) : (
-              listings.map((l) => {
+              sortedListings.map((l) => {
                 const p = l.player
                 const affordable = userTeam.budget >= l.askingSalary
                 return (

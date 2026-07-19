@@ -11,6 +11,7 @@ import { PitchLocationPanel } from '../components/PitchLocationPanel'
 import { LiveGameStatsPanel } from '../components/LiveGameStatsPanel'
 import { useGame } from '../store/gameStore'
 import { createLivePitch, type LivePitch, type PitchCall } from '../engine/livePitch'
+import { SortableHeader, sortRows, useTableSort } from '../components/SortableTable'
 
 interface PitchCount {
   balls: number
@@ -60,6 +61,9 @@ export function MatchPage() {
   const [lastPitch, setLastPitch] = useState<LivePitch>()
   const [pendingResolution, setPendingResolution] = useState(false)
   const [showPlayLog, setShowPlayLog] = useState(false)
+  const batterSort = useTableSort<'name' | 'ab' | 'hits' | 'rbi'>({ key: 'ab', direction: 'desc' })
+  const pitcherSort = useTableSort<'name' | 'outs' | 'hits' | 'k' | 'er'>({ key: 'outs', direction: 'desc' })
+  const lineSort = useTableSort<string>({ key: 'team', direction: 'asc' })
   const timerRef = useRef<number | null>(null)
   const result = lastResult
   const playing = activeGameSession?.status === 'playing'
@@ -171,6 +175,22 @@ export function MatchPage() {
   const maxInningCols = result
     ? Math.max(result.innings.length, displayInnings.length, 9)
     : 9
+  const batterRows = sortRows(Object.entries(result?.boxScore?.batters ?? {}).filter(([, line]) => line.ab > 0 || line.pa > 0), {
+    name: ([id]) => findPlayerInLeague(state?.teams ?? [], id)?.player.name ?? id,
+    ab: ([, line]) => line.ab, hits: ([, line]) => line.hits, rbi: ([, line]) => line.rbi,
+  }, batterSort.sort).slice(0, 9)
+  const pitcherRows = sortRows(Object.entries(result?.boxScore?.pitchers ?? {}).filter(([, line]) => line.bf > 0), {
+    name: ([id]) => findPlayerInLeague(state?.teams ?? [], id)?.player.name ?? id,
+    outs: ([, line]) => line.outs, hits: ([, line]) => line.h, k: ([, line]) => line.k, er: ([, line]) => line.er,
+  }, pitcherSort.sort)
+  const scoreRows = sortRows([
+    { team: awayTeam?.name ?? '', innings: displayInnings.map((i) => i.top), runs: awayScore },
+    { team: homeTeam?.name ?? '', innings: displayInnings.map((i) => i.bottom), runs: homeScore },
+  ], Object.fromEntries([
+    ['team', (row: { team: string; innings: (number | undefined)[]; runs: number }) => row.team],
+    ...Array.from({ length: maxInningCols }, (_, i) => [String(i), (row: { innings: (number | undefined)[] }) => row.innings[i]] as const),
+    ['runs', (row: { runs: number }) => row.runs],
+  ]), lineSort.sort)
 
   const hasMoreGamesThisWeek = Boolean(upcomingGame && result && gameFinished)
   const currentSituation = result
@@ -352,18 +372,14 @@ export function MatchPage() {
                   <table className="bm-table text-sm">
                     <thead>
                       <tr>
-                        <th>선수</th>
-                        <th>타수</th>
-                        <th>안타</th>
-                        <th>타점</th>
+                        <SortableHeader column="name" sort={batterSort.sort} onSort={batterSort.requestSort}>선수</SortableHeader>
+                        <SortableHeader column="ab" sort={batterSort.sort} onSort={batterSort.requestSort}>타수</SortableHeader>
+                        <SortableHeader column="hits" sort={batterSort.sort} onSort={batterSort.requestSort}>안타</SortableHeader>
+                        <SortableHeader column="rbi" sort={batterSort.sort} onSort={batterSort.requestSort}>타점</SortableHeader>
                       </tr>
                     </thead>
                     <tbody>
-                      {Object.entries(result.boxScore.batters)
-                        .filter(([, line]) => line.ab > 0 || line.pa > 0)
-                        .sort((a, b) => b[1].pa - a[1].pa)
-                        .slice(0, 9)
-                        .map(([id, line]) => {
+                      {batterRows.map(([id, line]) => {
                           const name = findPlayerInLeague(state.teams, id)?.player.name ?? id
                           return (
                             <tr key={id}>
@@ -382,18 +398,15 @@ export function MatchPage() {
                   <table className="bm-table text-sm">
                     <thead>
                       <tr>
-                        <th>선수</th>
-                        <th>이닝</th>
-                        <th>피안타</th>
-                        <th>삼진</th>
-                        <th>자책</th>
+                        <SortableHeader column="name" sort={pitcherSort.sort} onSort={pitcherSort.requestSort}>선수</SortableHeader>
+                        <SortableHeader column="outs" sort={pitcherSort.sort} onSort={pitcherSort.requestSort}>이닝</SortableHeader>
+                        <SortableHeader column="hits" sort={pitcherSort.sort} onSort={pitcherSort.requestSort}>피안타</SortableHeader>
+                        <SortableHeader column="k" sort={pitcherSort.sort} onSort={pitcherSort.requestSort}>삼진</SortableHeader>
+                        <SortableHeader column="er" sort={pitcherSort.sort} onSort={pitcherSort.requestSort}>자책</SortableHeader>
                       </tr>
                     </thead>
                     <tbody>
-                      {Object.entries(result.boxScore.pitchers)
-                        .filter(([, line]) => line.bf > 0)
-                        .sort((a, b) => b[1].outs - a[1].outs)
-                        .map(([id, line]) => {
+                      {pitcherRows.map(([id, line]) => {
                           const name = findPlayerInLeague(state.teams, id)?.player.name ?? id
                           return (
                             <tr key={id}>
@@ -417,40 +430,19 @@ export function MatchPage() {
             <table className="text-center text-sm">
               <thead>
                 <tr className="text-[var(--text-muted)]">
-                  <th className="px-2">팀</th>
+                  <SortableHeader className="px-2" column="team" sort={lineSort.sort} onSort={lineSort.requestSort}>팀</SortableHeader>
                   {Array.from({ length: maxInningCols }, (_, i) => (
-                    <th key={i} className="px-2">{i + 1}</th>
+                    <SortableHeader key={i} className="px-2" column={String(i)} sort={lineSort.sort} onSort={lineSort.requestSort}>{i + 1}</SortableHeader>
                   ))}
-                  <th className="px-2 font-bold">득</th>
+                  <SortableHeader className="px-2 font-bold" column="runs" sort={lineSort.sort} onSort={lineSort.requestSort}>득</SortableHeader>
                 </tr>
               </thead>
               <tbody className="text-[var(--text-h)]">
-                <tr>
-                  <td className="px-2 text-left">{awayTeam?.name}</td>
-                  {Array.from({ length: maxInningCols }, (_, i) => (
-                    <td key={i} className="px-2 tabular-nums">
-                      {displayInnings[i]?.top !== undefined
-                        ? displayInnings[i]!.top
-                        : playing
-                          ? ''
-                          : '-'}
-                    </td>
-                  ))}
-                  <td className="px-2 font-bold tabular-nums">{awayScore}</td>
-                </tr>
-                <tr>
-                  <td className="px-2 text-left">{homeTeam?.name}</td>
-                  {Array.from({ length: maxInningCols }, (_, i) => (
-                    <td key={i} className="px-2 tabular-nums">
-                      {displayInnings[i]?.bottom !== undefined
-                        ? displayInnings[i]!.bottom
-                        : playing
-                          ? ''
-                          : '-'}
-                    </td>
-                  ))}
-                  <td className="px-2 font-bold tabular-nums">{homeScore}</td>
-                </tr>
+                {scoreRows.map((row) => <tr key={row.team}>
+                  <td className="px-2 text-left">{row.team}</td>
+                  {Array.from({ length: maxInningCols }, (_, i) => <td key={i} className="px-2 tabular-nums">{row.innings[i] ?? (playing ? '' : '-')}</td>)}
+                  <td className="px-2 font-bold tabular-nums">{row.runs}</td>
+                </tr>)}
               </tbody>
             </table>
           </div>

@@ -4,6 +4,7 @@ import { DAY_LABELS } from '../types/game'
 import type { GameResult, Team } from '../types/game'
 import { PlayerNameButton } from './PlayerNameButton'
 import { GameSituationPanel } from './GameSituationPanel'
+import { SortableHeader, sortRows, useTableSort } from './SortableTable'
 
 interface MatchReplayPanelProps {
   result: GameResult
@@ -12,12 +13,31 @@ interface MatchReplayPanelProps {
 }
 
 export function MatchReplayPanel({ result, teams, userTeamId }: MatchReplayPanelProps) {
+  const batterSort = useTableSort<'name' | 'ab' | 'hits' | 'rbi'>({ key: 'ab', direction: 'desc' })
+  const pitcherSort = useTableSort<'name' | 'outs' | 'hits' | 'k' | 'er'>({ key: 'outs', direction: 'desc' })
+  const lineSort = useTableSort<string>({ key: 'team', direction: 'asc' })
   const home = teams.find((t) => t.id === result.homeId)
   const away = teams.find((t) => t.id === result.awayId)
   const userWon = userTeamId
     ? (result.homeId === userTeamId ? result.homeScore : result.awayScore) >
       (result.homeId === userTeamId ? result.awayScore : result.homeScore)
     : result.homeScore !== result.awayScore && result.homeScore > result.awayScore
+  const batterRows = sortRows(Object.entries(result.boxScore?.batters ?? {}).filter(([, line]) => line.ab > 0 || line.pa > 0), {
+    name: ([id]) => findPlayerInLeague(teams, id)?.player.name ?? id,
+    ab: ([, line]) => line.ab, hits: ([, line]) => line.hits, rbi: ([, line]) => line.rbi,
+  }, batterSort.sort).slice(0, 9)
+  const pitcherRows = sortRows(Object.entries(result.boxScore?.pitchers ?? {}).filter(([, line]) => line.bf > 0), {
+    name: ([id]) => findPlayerInLeague(teams, id)?.player.name ?? id,
+    outs: ([, line]) => line.outs, hits: ([, line]) => line.h, k: ([, line]) => line.k, er: ([, line]) => line.er,
+  }, pitcherSort.sort)
+  const lineRows = sortRows([
+    { team: away?.name ?? '', innings: result.innings.map((i) => i.top), runs: result.awayScore },
+    { team: home?.name ?? '', innings: result.innings.map((i) => i.bottom), runs: result.homeScore },
+  ], Object.fromEntries([
+    ['team', (row: { team: string; innings: (number | null)[]; runs: number }) => row.team],
+    ...result.innings.map((_, i) => [String(i), (row: { innings: (number | null)[] }) => row.innings[i]] as const),
+    ['runs', (row: { runs: number }) => row.runs],
+  ]), lineSort.sort)
 
   return (
     <div className="space-y-6">
@@ -64,18 +84,14 @@ export function MatchReplayPanel({ result, teams, userTeamId }: MatchReplayPanel
               <table className="bm-table text-sm">
                 <thead>
                   <tr>
-                    <th>선수</th>
-                    <th>타수</th>
-                    <th>안타</th>
-                    <th>타점</th>
+                    <SortableHeader column="name" sort={batterSort.sort} onSort={batterSort.requestSort}>선수</SortableHeader>
+                    <SortableHeader column="ab" sort={batterSort.sort} onSort={batterSort.requestSort}>타수</SortableHeader>
+                    <SortableHeader column="hits" sort={batterSort.sort} onSort={batterSort.requestSort}>안타</SortableHeader>
+                    <SortableHeader column="rbi" sort={batterSort.sort} onSort={batterSort.requestSort}>타점</SortableHeader>
                   </tr>
                 </thead>
                 <tbody>
-                  {Object.entries(result.boxScore.batters)
-                    .filter(([, line]) => line.ab > 0 || line.pa > 0)
-                    .sort((a, b) => b[1].pa - a[1].pa)
-                    .slice(0, 9)
-                    .map(([id, line]) => {
+                  {batterRows.map(([id, line]) => {
                       const name = findPlayerInLeague(teams, id)?.player.name ?? id
                       return (
                         <tr key={id}>
@@ -94,18 +110,15 @@ export function MatchReplayPanel({ result, teams, userTeamId }: MatchReplayPanel
               <table className="bm-table text-sm">
                 <thead>
                   <tr>
-                    <th>선수</th>
-                    <th>이닝</th>
-                    <th>피안타</th>
-                    <th>삼진</th>
-                    <th>자책</th>
+                    <SortableHeader column="name" sort={pitcherSort.sort} onSort={pitcherSort.requestSort}>선수</SortableHeader>
+                    <SortableHeader column="outs" sort={pitcherSort.sort} onSort={pitcherSort.requestSort}>이닝</SortableHeader>
+                    <SortableHeader column="hits" sort={pitcherSort.sort} onSort={pitcherSort.requestSort}>피안타</SortableHeader>
+                    <SortableHeader column="k" sort={pitcherSort.sort} onSort={pitcherSort.requestSort}>삼진</SortableHeader>
+                    <SortableHeader column="er" sort={pitcherSort.sort} onSort={pitcherSort.requestSort}>자책</SortableHeader>
                   </tr>
                 </thead>
                 <tbody>
-                  {Object.entries(result.boxScore.pitchers)
-                    .filter(([, line]) => line.bf > 0)
-                    .sort((a, b) => b[1].outs - a[1].outs)
-                    .map(([id, line]) => {
+                  {pitcherRows.map(([id, line]) => {
                       const name = findPlayerInLeague(teams, id)?.player.name ?? id
                       return (
                         <tr key={id}>
@@ -129,28 +142,19 @@ export function MatchReplayPanel({ result, teams, userTeamId }: MatchReplayPanel
         <table className="text-center text-sm">
           <thead>
             <tr className="text-[var(--text-muted)]">
-              <th className="px-2">팀</th>
+              <SortableHeader className="px-2" column="team" sort={lineSort.sort} onSort={lineSort.requestSort}>팀</SortableHeader>
               {result.innings.map((_, i) => (
-                <th key={i} className="px-2">{i + 1}</th>
+                <SortableHeader key={i} className="px-2" column={String(i)} sort={lineSort.sort} onSort={lineSort.requestSort}>{i + 1}</SortableHeader>
               ))}
-              <th className="px-2 font-bold">득</th>
+              <SortableHeader className="px-2 font-bold" column="runs" sort={lineSort.sort} onSort={lineSort.requestSort}>득</SortableHeader>
             </tr>
           </thead>
           <tbody className="text-[var(--text-h)]">
-            <tr>
-              <td className="px-2 text-left">{away?.name}</td>
-              {result.innings.map((inn, i) => (
-                <td key={i} className="px-2">{inn.top ?? '-'}</td>
-              ))}
-              <td className="px-2 font-bold">{result.awayScore}</td>
-            </tr>
-            <tr>
-              <td className="px-2 text-left">{home?.name}</td>
-              {result.innings.map((inn, i) => (
-                <td key={i} className="px-2">{inn.bottom ?? '-'}</td>
-              ))}
-              <td className="px-2 font-bold">{result.homeScore}</td>
-            </tr>
+            {lineRows.map((row) => <tr key={row.team}>
+              <td className="px-2 text-left">{row.team}</td>
+              {row.innings.map((score, i) => <td key={i} className="px-2">{score ?? '-'}</td>)}
+              <td className="px-2 font-bold">{row.runs}</td>
+            </tr>)}
           </tbody>
         </table>
       </div>

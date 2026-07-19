@@ -12,6 +12,9 @@ import { OvrBadge } from '../components/PlayerCard'
 import { PlayerNameButton } from '../components/PlayerNameButton'
 import { useGame } from '../store/gameStore'
 import { POSITION_LABEL } from '../types/game'
+import { SortableHeader, sortRows, useTableSort } from '../components/SortableTable'
+
+type DraftSortKey = 'name' | 'pos' | 'age' | 'ovr' | 'potential' | 'salary'
 
 export function DraftPage() {
   const {
@@ -23,6 +26,7 @@ export function DraftPage() {
   } = useGame()
   const [roleFilter, setRoleFilter] = useState<'all' | 'batter' | 'pitcher'>('all')
   const [message, setMessage] = useState('')
+  const tableSort = useTableSort<DraftSortKey>({ key: 'ovr', direction: 'desc' })
 
   const draft = state?.draft
   const onClock = state ? isUserOnClock(state) : false
@@ -61,6 +65,10 @@ export function DraftPage() {
   const pickerTeam = draft.pickSequence[draft.currentPick]
     ? state.teams.find((t) => t.id === draft.pickSequence[draft.currentPick])
     : null
+  const sortedProspects = sortRows(prospects, {
+    name: (p) => p.name, pos: (p) => POSITION_LABEL[p.role], age: (p) => p.age,
+    ovr: (p) => overallRating(p), potential: (p) => p.potential, salary: (p) => p.salary,
+  }, tableSort.sort)
 
   const handleDraft = (playerId: string) => {
     if (!onClock) {
@@ -200,24 +208,24 @@ export function DraftPage() {
         <table className="bm-table">
           <thead>
             <tr>
-              <th>유망주</th>
-              <th>포지션</th>
-              <th>나이</th>
-              <th>OVR</th>
-              <th>잠재력</th>
-              <th>계약금</th>
+              <SortableHeader column="name" sort={tableSort.sort} onSort={tableSort.requestSort}>유망주</SortableHeader>
+              <SortableHeader column="pos" sort={tableSort.sort} onSort={tableSort.requestSort}>포지션</SortableHeader>
+              <SortableHeader column="age" sort={tableSort.sort} onSort={tableSort.requestSort}>나이</SortableHeader>
+              <SortableHeader column="ovr" sort={tableSort.sort} onSort={tableSort.requestSort}>OVR</SortableHeader>
+              <SortableHeader column="potential" sort={tableSort.sort} onSort={tableSort.requestSort}>잠재력</SortableHeader>
+              <SortableHeader column="salary" sort={tableSort.sort} onSort={tableSort.requestSort}>계약금</SortableHeader>
               <th />
             </tr>
           </thead>
           <tbody>
-            {prospects.length === 0 ? (
+            {sortedProspects.length === 0 ? (
               <tr>
                 <td colSpan={7} className="text-center text-[var(--text-muted)]">
                   남은 유망주가 없습니다.
                 </td>
               </tr>
             ) : (
-              prospects.slice(0, 40).map((p) => {
+              sortedProspects.slice(0, 40).map((p) => {
                 const affordable = userTeam.budget >= p.salary
                 return (
                   <tr key={p.id}>

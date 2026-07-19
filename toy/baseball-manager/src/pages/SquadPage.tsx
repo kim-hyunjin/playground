@@ -9,15 +9,19 @@ import { InjuryBadge } from '../components/RosterBadges'
 import { useGame } from '../store/gameStore'
 import { POSITION_LABEL } from '../types/game'
 import type { Player } from '../types/game'
+import { SortableHeader, sortRows, useTableSort } from '../components/SortableTable'
+
+type SquadSortKey = 'name' | 'pos' | 'hand' | 'ovr' | 'stat1' | 'stat2'
 
 export function SquadPage() {
   const { userTeam, state, openPlayer, focusedPlayerId, demotePlayer } = useGame()
   const [filter, setFilter] = useState<'all' | 'batter' | 'pitcher'>('all')
   const [message, setMessage] = useState('')
+  const tableSort = useTableSort<SquadSortKey>({ key: 'ovr', direction: 'desc' })
 
   if (!userTeam || !state) return null
 
-  const players = firstTeamPlayers(userTeam)
+  const playerRows = firstTeamPlayers(userTeam)
     .filter((p) => filter === 'all' || (filter === 'batter' ? isBatter(p) : isPitcher(p)))
     .sort((a, b) => overallRating(b) - overallRating(a))
 
@@ -43,6 +47,14 @@ export function SquadPage() {
 
   const statCol1 = filter === 'pitcher' ? 'FIP' : filter === 'batter' ? 'wOBA' : 'wOBA/FIP'
   const statCol2 = filter === 'pitcher' ? 'WHIP' : filter === 'batter' ? 'OPS' : 'OPS/WHIP'
+  const players = sortRows(playerRows, {
+    name: (p) => p.name,
+    pos: (p) => POSITION_LABEL[p.role],
+    hand: (p) => formatHandedness(p),
+    ovr: (p) => overallRating(p),
+    stat1: (p) => keyStat(p) === '-' ? null : Number(keyStat(p)),
+    stat2: (p) => keyStat2(p) === '-' ? null : Number(keyStat2(p)),
+  }, tableSort.sort)
 
   const handleDemote = (playerId: string, e: React.MouseEvent) => {
     e.stopPropagation()
@@ -78,12 +90,12 @@ export function SquadPage() {
         <table className="bm-table">
           <thead>
             <tr>
-              <th>선수</th>
-              <th>Pos</th>
-              <th>타/투</th>
-              <th>OVR</th>
-              <th>{statCol1}</th>
-              <th>{statCol2}</th>
+              <SortableHeader column="name" sort={tableSort.sort} onSort={tableSort.requestSort}>선수</SortableHeader>
+              <SortableHeader column="pos" sort={tableSort.sort} onSort={tableSort.requestSort}>Pos</SortableHeader>
+              <SortableHeader column="hand" sort={tableSort.sort} onSort={tableSort.requestSort}>타/투</SortableHeader>
+              <SortableHeader column="ovr" sort={tableSort.sort} onSort={tableSort.requestSort}>OVR</SortableHeader>
+              <SortableHeader column="stat1" sort={tableSort.sort} onSort={tableSort.requestSort}>{statCol1}</SortableHeader>
+              <SortableHeader column="stat2" sort={tableSort.sort} onSort={tableSort.requestSort}>{statCol2}</SortableHeader>
               <th />
             </tr>
           </thead>

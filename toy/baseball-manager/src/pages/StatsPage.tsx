@@ -4,15 +4,21 @@ import { firstTeamPlayers } from '../engine/roster'
 import { PlayerNameButton } from '../components/PlayerNameButton'
 import { useGame } from '../store/gameStore'
 import { POSITION_LABEL } from '../types/game'
+import { SortableHeader, sortRows, useTableSort } from '../components/SortableTable'
+
+type BatterSortKey = 'name' | 'pos' | 'pa' | 'woba' | 'wrc' | 'ops' | 'avg' | 'kpct' | 'bbpct' | 'hr' | 'sb' | 'rbi'
+type PitcherSortKey = 'name' | 'pos' | 'wl' | 'ip' | 'fip' | 'xfip' | 'era' | 'whip' | 'k9' | 'bb9' | 'sv' | 'k'
 
 export function StatsPage() {
   const { userTeam, state } = useGame()
+  const batterSort = useTableSort<BatterSortKey>({ key: 'wrc', direction: 'desc' })
+  const pitcherSort = useTableSort<PitcherSortKey>({ key: 'fip', direction: 'asc' })
   if (!userTeam || !state) return null
 
   const lgBat = leagueBattingRates(state.teams)
   const lgPit = leaguePitchingRates(state.teams)
 
-  const batters = firstTeamPlayers(userTeam)
+  const batterRows = firstTeamPlayers(userTeam)
     .filter(isBatter)
     .filter((p) => p.seasonStats.type === 'batter' && p.seasonStats.pa > 0)
     .sort((a, b) => {
@@ -21,7 +27,7 @@ export function StatsPage() {
       return calcWrcPlus(sb!, lgBat) - calcWrcPlus(sa!, lgBat)
     })
 
-  const pitchers = firstTeamPlayers(userTeam)
+  const pitcherRows = firstTeamPlayers(userTeam)
     .filter(isPitcher)
     .filter((p) => p.seasonStats.type === 'pitcher' && p.seasonStats.outs > 0)
     .sort((a, b) => {
@@ -29,6 +35,32 @@ export function StatsPage() {
       const sb = b.seasonStats.type === 'pitcher' ? b.seasonStats : null
       return calcFip(sa!) - calcFip(sb!)
     })
+  const batters = sortRows(batterRows, {
+    name: (p) => p.name, pos: (p) => POSITION_LABEL[p.role],
+    pa: (p) => p.seasonStats.type === 'batter' ? p.seasonStats.pa : null,
+    woba: (p) => p.seasonStats.type === 'batter' ? calcWoba(p.seasonStats) : null,
+    wrc: (p) => p.seasonStats.type === 'batter' ? calcWrcPlus(p.seasonStats, lgBat) : null,
+    ops: (p) => p.seasonStats.type === 'batter' ? calcOps(p.seasonStats) : null,
+    avg: (p) => p.seasonStats.type === 'batter' && p.seasonStats.ab > 0 ? p.seasonStats.hits / p.seasonStats.ab : null,
+    kpct: (p) => p.seasonStats.type === 'batter' && p.seasonStats.pa > 0 ? p.seasonStats.k / p.seasonStats.pa : null,
+    bbpct: (p) => p.seasonStats.type === 'batter' && p.seasonStats.pa > 0 ? p.seasonStats.bb / p.seasonStats.pa : null,
+    hr: (p) => p.seasonStats.type === 'batter' ? p.seasonStats.hr : null,
+    sb: (p) => p.seasonStats.type === 'batter' ? p.seasonStats.sb : null,
+    rbi: (p) => p.seasonStats.type === 'batter' ? p.seasonStats.rbi : null,
+  }, batterSort.sort)
+  const pitchers = sortRows(pitcherRows, {
+    name: (p) => p.name, pos: (p) => POSITION_LABEL[p.role],
+    wl: (p) => p.seasonStats.type === 'pitcher' ? p.seasonStats.wins * 10000 - p.seasonStats.losses : null,
+    ip: (p) => p.seasonStats.type === 'pitcher' ? p.seasonStats.outs : null,
+    fip: (p) => p.seasonStats.type === 'pitcher' ? calcFip(p.seasonStats) : null,
+    xfip: (p) => p.seasonStats.type === 'pitcher' ? calcXFip(p.seasonStats, lgPit) : null,
+    era: (p) => p.seasonStats.type === 'pitcher' && p.seasonStats.outs > 0 ? p.seasonStats.er * 27 / p.seasonStats.outs : null,
+    whip: (p) => p.seasonStats.type === 'pitcher' && p.seasonStats.outs > 0 ? (p.seasonStats.h + p.seasonStats.bb) * 3 / p.seasonStats.outs : null,
+    k9: (p) => p.seasonStats.type === 'pitcher' && p.seasonStats.outs > 0 ? p.seasonStats.k * 27 / p.seasonStats.outs : null,
+    bb9: (p) => p.seasonStats.type === 'pitcher' && p.seasonStats.outs > 0 ? p.seasonStats.bb * 27 / p.seasonStats.outs : null,
+    sv: (p) => p.seasonStats.type === 'pitcher' ? p.seasonStats.saves : null,
+    k: (p) => p.seasonStats.type === 'pitcher' ? p.seasonStats.k : null,
+  }, pitcherSort.sort)
 
   return (
     <div className="bm-animate-in space-y-6">
@@ -44,18 +76,7 @@ export function StatsPage() {
         <table className="bm-table">
           <thead>
             <tr>
-              <th>선수</th>
-              <th>Pos</th>
-              <th>PA</th>
-              <th>wOBA</th>
-              <th>wRC+</th>
-              <th>OPS</th>
-              <th>AVG</th>
-              <th>K%</th>
-              <th>BB%</th>
-              <th>HR</th>
-              <th>SB</th>
-              <th>RBI</th>
+              {([['name','선수'],['pos','Pos'],['pa','PA'],['woba','wOBA'],['wrc','wRC+'],['ops','OPS'],['avg','AVG'],['kpct','K%'],['bbpct','BB%'],['hr','HR'],['sb','SB'],['rbi','RBI']] as const).map(([key, label]) => <SortableHeader key={key} column={key} sort={batterSort.sort} onSort={batterSort.requestSort}>{label}</SortableHeader>)}
             </tr>
           </thead>
           <tbody>
@@ -96,18 +117,7 @@ export function StatsPage() {
         <table className="bm-table">
           <thead>
             <tr>
-              <th>선수</th>
-              <th>Pos</th>
-              <th>W-L</th>
-              <th>IP</th>
-              <th>FIP</th>
-              <th>xFIP</th>
-              <th>ERA</th>
-              <th>WHIP</th>
-              <th>K/9</th>
-              <th>BB/9</th>
-              <th>SV</th>
-              <th>K</th>
+              {([['name','선수'],['pos','Pos'],['wl','W-L'],['ip','IP'],['fip','FIP'],['xfip','xFIP'],['era','ERA'],['whip','WHIP'],['k9','K/9'],['bb9','BB/9'],['sv','SV'],['k','K']] as const).map(([key, label]) => <SortableHeader key={key} column={key} sort={pitcherSort.sort} onSort={pitcherSort.requestSort}>{label}</SortableHeader>)}
             </tr>
           </thead>
           <tbody>

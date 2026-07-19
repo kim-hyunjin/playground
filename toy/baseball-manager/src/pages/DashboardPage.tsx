@@ -9,8 +9,12 @@ import { isDraftComplete, draftProgressLabel } from '../engine/draft'
 import { isSeasonComplete, isStoveLeague, stoveWeekLabel } from '../engine/stoveLeague'
 import { injuredFirstTeamPlayers } from '../engine/injury'
 import { useGame } from '../store/gameStore'
+import { SortableHeader, sortRows, useTableSort } from '../components/SortableTable'
+
+type DashboardSortKey = 'rank' | 'team' | 'wins' | 'losses' | 'pct'
 
 export function DashboardPage() {
+  const tableSort = useTableSort<DashboardSortKey>({ key: 'rank', direction: 'asc' })
   const {
     state,
     userTeam,
@@ -31,6 +35,10 @@ export function DashboardPage() {
     : null
 
   const standings = sortedStandings(state.teams)
+  const dashboardRows = sortRows(standings.slice(0, 5).map((team, index) => ({ team, rank: index + 1 })), {
+    rank: (r) => r.rank, team: (r) => r.team.name, wins: (r) => r.team.wins, losses: (r) => r.team.losses,
+    pct: (r) => r.team.wins / Math.max(1, r.team.wins + r.team.losses),
+  }, tableSort.sort)
   const farmStandings = sortedFarmStandings(state.teams)
   const rank = standings.findIndex((t) => t.id === userTeam.id) + 1
   const farmRank = farmStandings.findIndex((t) => t.id === userTeam.id) + 1
@@ -257,17 +265,17 @@ export function DashboardPage() {
         <table className="bm-table">
           <thead>
             <tr>
-              <th>#</th>
-              <th>팀</th>
-              <th>승</th>
-              <th>패</th>
-              <th>승률</th>
+              <SortableHeader column="rank" sort={tableSort.sort} onSort={tableSort.requestSort}>#</SortableHeader>
+              <SortableHeader column="team" sort={tableSort.sort} onSort={tableSort.requestSort}>팀</SortableHeader>
+              <SortableHeader column="wins" sort={tableSort.sort} onSort={tableSort.requestSort}>승</SortableHeader>
+              <SortableHeader column="losses" sort={tableSort.sort} onSort={tableSort.requestSort}>패</SortableHeader>
+              <SortableHeader column="pct" sort={tableSort.sort} onSort={tableSort.requestSort}>승률</SortableHeader>
             </tr>
           </thead>
           <tbody>
-            {standings.slice(0, 5).map((t, i) => (
+            {dashboardRows.map(({ team: t, rank }) => (
               <tr key={t.id} className={t.id === userTeam.id ? 'bg-[var(--accent-dim)]' : ''}>
-                <td>{i + 1}</td>
+                <td>{rank}</td>
                 <td className={t.id === userTeam.id ? 'font-semibold text-[var(--accent)]' : undefined}>
                   {t.name}
                 </td>

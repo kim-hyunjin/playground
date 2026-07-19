@@ -4,6 +4,7 @@ import { pitchCountForOutcome } from '../engine/livePitch'
 import { findPlayerInLeague } from '../engine/playerLookup'
 import type { PlayLog, Team } from '../types/game'
 import { PlayerNameButton } from './PlayerNameButton'
+import { SortableHeader, sortRows, useTableSort, type SortValue } from './SortableTable'
 
 interface Props {
   logs: PlayLog[]
@@ -60,13 +61,16 @@ export function LiveGameStatsPanel({ logs, teams, currentPitcherId, currentPitch
         <span className="text-xs text-[var(--text-muted)]">현재까지 공개된 기록</span>
       </div>
       <div className="grid gap-3 md:grid-cols-2">
-        <StatTable title="투수" headers={['선수', '투구', '타자', '피안타', '볼넷', '삼진', '실점']} rows={stats.pitchers.map(([id, line]) => [<PlayerNameButton key={id} playerId={id} name={name(id)} />, line.pitches, line.batters, line.hits, line.walks, line.strikeouts, line.runs])} />
-        <StatTable title="타자" headers={['선수', '타석', '타수', '안타', '홈런', '볼넷', '삼진', '타점']} rows={stats.batters.map(([id, line]) => [<PlayerNameButton key={id} playerId={id} name={name(id)} />, line.pa, line.ab, line.h, line.hr, line.bb, line.k, line.rbi])} />
+        <StatTable title="투수" headers={['선수', '투구', '타자', '피안타', '볼넷', '삼진', '실점']} rows={stats.pitchers.map(([id, line]) => ({ cells: [<PlayerNameButton key={id} playerId={id} name={name(id)} />, line.pitches, line.batters, line.hits, line.walks, line.strikeouts, line.runs], values: [name(id), line.pitches, line.batters, line.hits, line.walks, line.strikeouts, line.runs] }))} />
+        <StatTable title="타자" headers={['선수', '타석', '타수', '안타', '홈런', '볼넷', '삼진', '타점']} rows={stats.batters.map(([id, line]) => ({ cells: [<PlayerNameButton key={id} playerId={id} name={name(id)} />, line.pa, line.ab, line.h, line.hr, line.bb, line.k, line.rbi], values: [name(id), line.pa, line.ab, line.h, line.hr, line.bb, line.k, line.rbi] }))} />
       </div>
     </section>
   )
 }
 
-function StatTable({ title, headers, rows }: { title: string; headers: string[]; rows: ReactNode[][] }) {
-  return <div className="min-w-0"><h3 className="mb-1 text-xs font-semibold text-[var(--accent)]">{title}</h3><div className="max-h-32 overflow-auto"><table className="bm-table whitespace-nowrap text-xs"><thead className="sticky top-0 bg-[var(--panel)]"><tr>{headers.map((header) => <th key={header}>{header}</th>)}</tr></thead><tbody>{rows.length > 0 ? rows.map((row, index) => <tr key={index}>{row.map((cell, cellIndex) => <td key={cellIndex} className="tabular-nums">{cell}</td>)}</tr>) : <tr><td colSpan={headers.length} className="text-center text-[var(--text-muted)]">기록 없음</td></tr>}</tbody></table></div></div>
+function StatTable({ title, headers, rows }: { title: string; headers: string[]; rows: { cells: ReactNode[]; values: SortValue[] }[] }) {
+  const tableSort = useTableSort<string>()
+  const accessors = Object.fromEntries(headers.map((_, index) => [String(index), (row: { values: SortValue[] }) => row.values[index]]))
+  const sortedRows = sortRows(rows, accessors, tableSort.sort)
+  return <div className="min-w-0"><h3 className="mb-1 text-xs font-semibold text-[var(--accent)]">{title}</h3><div className="max-h-32 overflow-auto"><table className="bm-table whitespace-nowrap text-xs"><thead className="sticky top-0 bg-[var(--panel)]"><tr>{headers.map((header, index) => <SortableHeader key={header} column={String(index)} sort={tableSort.sort} onSort={tableSort.requestSort}>{header}</SortableHeader>)}</tr></thead><tbody>{sortedRows.length > 0 ? sortedRows.map((row, index) => <tr key={index}>{row.cells.map((cell, cellIndex) => <td key={cellIndex} className="tabular-nums">{cell}</td>)}</tr>) : <tr><td colSpan={headers.length} className="text-center text-[var(--text-muted)]">기록 없음</td></tr>}</tbody></table></div></div>
 }

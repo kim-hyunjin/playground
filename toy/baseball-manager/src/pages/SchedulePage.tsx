@@ -8,12 +8,18 @@ import {
 } from '../engine/schedule'
 import { useGame } from '../store/gameStore'
 import { MatchReplayPanel } from '../components/MatchReplayPanel'
+import { SortableHeader, sortRows, useTableSort } from '../components/SortableTable'
+
+type WeekSortKey = 'day' | 'home' | 'away' | 'result'
+type HistorySortKey = 'week' | 'day' | 'opponent' | 'score' | 'result'
 
 export function SchedulePage() {
   const { state, userTeam, setView } = useGame()
   const [tab, setTab] = useState<'week' | 'history'>('week')
   const [weekView, setWeekView] = useState<number | null>(null)
   const [selectedGameId, setSelectedGameId] = useState<string | null>(null)
+  const weekSort = useTableSort<WeekSortKey>({ key: 'day', direction: 'asc' })
+  const historySort = useTableSort<HistorySortKey>({ key: 'week', direction: 'desc' })
 
   const displayWeek = weekView ?? state?.currentWeek ?? 1
 
@@ -37,6 +43,16 @@ export function SchedulePage() {
   const teamName = (id: string) => state.teams.find((t) => t.id === id)?.name ?? '?'
   const opponentName = (g: { homeId: string; awayId: string }) =>
     g.homeId === userTeam.id ? teamName(g.awayId) : teamName(g.homeId)
+  const sortedWeekGames = sortRows(gamesForWeek(state.schedule, displayWeek), {
+    day: (g) => GAME_DAYS.indexOf(g.day), home: (g) => teamName(g.homeId), away: (g) => teamName(g.awayId),
+    result: (g) => g.played ? (g.homeScore ?? 0) + (g.awayScore ?? 0) : null,
+  }, weekSort.sort)
+  const sortedHistory = sortRows(history, {
+    week: (r) => r.week, day: (r) => r.day ? GAME_DAYS.indexOf(r.day) : null,
+    opponent: (r) => teamName(r.homeId === userTeam.id ? r.awayId : r.homeId),
+    score: (r) => (r.homeId === userTeam.id ? r.homeScore : r.awayScore) - (r.homeId === userTeam.id ? r.awayScore : r.homeScore),
+    result: (r) => (r.homeId === userTeam.id ? r.homeScore : r.awayScore) > (r.homeId === userTeam.id ? r.awayScore : r.homeScore),
+  }, historySort.sort)
 
   return (
     <div className="bm-animate-in space-y-6">
@@ -172,14 +188,14 @@ export function SchedulePage() {
               <table className="bm-table text-sm">
                 <thead>
                   <tr>
-                    <th>요일</th>
-                    <th>홈</th>
-                    <th>원정</th>
-                    <th>결과</th>
+                    <SortableHeader column="day" sort={weekSort.sort} onSort={weekSort.requestSort}>요일</SortableHeader>
+                    <SortableHeader column="home" sort={weekSort.sort} onSort={weekSort.requestSort}>홈</SortableHeader>
+                    <SortableHeader column="away" sort={weekSort.sort} onSort={weekSort.requestSort}>원정</SortableHeader>
+                    <SortableHeader column="result" sort={weekSort.sort} onSort={weekSort.requestSort}>결과</SortableHeader>
                   </tr>
                 </thead>
                 <tbody>
-                  {gamesForWeek(state.schedule, displayWeek).map((g) => (
+                  {sortedWeekGames.map((g) => (
                     <tr
                       key={g.id}
                       className={
@@ -224,16 +240,16 @@ export function SchedulePage() {
                 <table className="bm-table">
                   <thead>
                     <tr>
-                      <th>주차</th>
-                      <th>요일</th>
-                      <th>상대</th>
-                      <th>스코어</th>
-                      <th>결과</th>
+                      <SortableHeader column="week" sort={historySort.sort} onSort={historySort.requestSort}>주차</SortableHeader>
+                      <SortableHeader column="day" sort={historySort.sort} onSort={historySort.requestSort}>요일</SortableHeader>
+                      <SortableHeader column="opponent" sort={historySort.sort} onSort={historySort.requestSort}>상대</SortableHeader>
+                      <SortableHeader column="score" sort={historySort.sort} onSort={historySort.requestSort}>스코어</SortableHeader>
+                      <SortableHeader column="result" sort={historySort.sort} onSort={historySort.requestSort}>결과</SortableHeader>
                       <th />
                     </tr>
                   </thead>
                   <tbody>
-                    {history.map((r) => {
+                    {sortedHistory.map((r) => {
                       const isHome = r.homeId === userTeam.id
                       const oppId = isHome ? r.awayId : r.homeId
                       const us = isHome ? r.homeScore : r.awayScore

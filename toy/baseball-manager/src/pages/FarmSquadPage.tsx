@@ -15,15 +15,18 @@ import { PotentialBadge } from '../components/DevelopmentPanel'
 import { useGame } from '../store/gameStore'
 import { POSITION_LABEL } from '../types/game'
 import type { Player } from '../types/game'
+import { SortableHeader, sortRows, useTableSort } from '../components/SortableTable'
 
 type RoleFilter = 'all' | 'batter' | 'pitcher'
 type SquadFilter = 'all' | 'prospect' | 'rehab' | 'callup'
+type FarmSortKey = 'name' | 'pos' | 'age' | 'ovr' | 'potential' | 'stat1' | 'stat2'
 
 export function FarmSquadPage() {
   const { userTeam, state, openPlayer, focusedPlayerId, promotePlayer } = useGame()
   const [roleFilter, setRoleFilter] = useState<RoleFilter>('all')
   const [squadFilter, setSquadFilter] = useState<SquadFilter>('all')
   const [message, setMessage] = useState('')
+  const tableSort = useTableSort<FarmSortKey>({ key: 'ovr', direction: 'desc' })
 
   const callUpIds = useMemo(() => {
     if (!userTeam || !state) return new Set<string>()
@@ -35,7 +38,7 @@ export function FarmSquadPage() {
 
   if (!userTeam || !state) return null
 
-  const players = farmPlayers(userTeam)
+  const playerRows = farmPlayers(userTeam)
     .filter((p) => roleFilter === 'all' || (roleFilter === 'batter' ? isBatter(p) : isPitcher(p)))
     .filter((p) => {
       if (squadFilter === 'prospect') return isProspect(p)
@@ -70,6 +73,12 @@ export function FarmSquadPage() {
   const statCol1 = roleFilter === 'pitcher' ? 'FIP' : roleFilter === 'batter' ? 'wOBA' : 'wOBA/FIP'
   const statCol2 = roleFilter === 'pitcher' ? 'WHIP' : roleFilter === 'batter' ? 'OPS' : 'OPS/WHIP'
   const firstCount = countByLevel(userTeam, 'first')
+  const players = sortRows(playerRows, {
+    name: (p) => p.name, pos: (p) => POSITION_LABEL[p.role], age: (p) => p.age,
+    ovr: (p) => overallRating(p), potential: (p) => p.potential,
+    stat1: (p) => keyStat(p) === '-' ? null : Number(keyStat(p)),
+    stat2: (p) => keyStat2(p) === '-' ? null : Number(keyStat2(p)),
+  }, tableSort.sort)
 
   const handlePromote = (playerId: string, e: React.MouseEvent) => {
     e.stopPropagation()
@@ -129,13 +138,13 @@ export function FarmSquadPage() {
         <table className="bm-table">
           <thead>
             <tr>
-              <th>선수</th>
-              <th>Pos</th>
-              <th>나이</th>
-              <th>OVR</th>
-              <th>잠재</th>
-              <th>{statCol1}</th>
-              <th>{statCol2}</th>
+              <SortableHeader column="name" sort={tableSort.sort} onSort={tableSort.requestSort}>선수</SortableHeader>
+              <SortableHeader column="pos" sort={tableSort.sort} onSort={tableSort.requestSort}>Pos</SortableHeader>
+              <SortableHeader column="age" sort={tableSort.sort} onSort={tableSort.requestSort}>나이</SortableHeader>
+              <SortableHeader column="ovr" sort={tableSort.sort} onSort={tableSort.requestSort}>OVR</SortableHeader>
+              <SortableHeader column="potential" sort={tableSort.sort} onSort={tableSort.requestSort}>잠재</SortableHeader>
+              <SortableHeader column="stat1" sort={tableSort.sort} onSort={tableSort.requestSort}>{statCol1}</SortableHeader>
+              <SortableHeader column="stat2" sort={tableSort.sort} onSort={tableSort.requestSort}>{statCol2}</SortableHeader>
               <th />
             </tr>
           </thead>
