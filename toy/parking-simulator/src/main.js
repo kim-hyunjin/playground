@@ -145,7 +145,22 @@ function drawParkingLines(ctx,scenario){
     ctx.strokeStyle="#e1b84c";ctx.lineWidth=.11;ctx.beginPath();ctx.moveTo(0,10);ctx.lineTo(scenario.world.width,10);ctx.stroke();
   }ctx.restore();
 }
-function drawCar(ctx,car,color,active=false){ctx.save();ctx.translate(car.x,car.y);ctx.rotate(car.angle);ctx.shadowColor="#0009";ctx.shadowBlur=.3;ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(-car.length/2,-car.width/2,car.length,car.width,.25);ctx.fill();ctx.shadowBlur=0;ctx.fillStyle="#1a2425";ctx.fillRect(-car.length*.12,-car.width*.41,car.length*.38,car.width*.82);ctx.fillStyle=active?"#fff4b8":"#86908b";ctx.fillRect(car.length*.43,-car.width*.34,.08,car.width*.68);ctx.fillStyle="#d95050";ctx.fillRect(-car.length*.5,-car.width*.33,.08,car.width*.66);ctx.restore();}
+function drawCar(ctx,car,color,active=false){
+  ctx.save();ctx.translate(car.x,car.y);ctx.rotate(car.angle);
+  const mirrorX=car.length*.18,mirrorWidth=.2,mirrorLength=.3;
+  ctx.fillStyle="#111918";
+  for(const side of [-1,1]){
+    const mirrorY=side*(car.width/2+mirrorWidth*.35);
+    ctx.beginPath();ctx.roundRect(mirrorX-mirrorLength/2,mirrorY-mirrorWidth/2,mirrorLength,mirrorWidth,.08);ctx.fill();
+    ctx.fillStyle=active?"#afc5c2":"#71807c";
+    ctx.beginPath();ctx.roundRect(mirrorX-mirrorLength*.32,mirrorY-mirrorWidth*.27,mirrorLength*.54,mirrorWidth*.54,.04);ctx.fill();
+    ctx.fillStyle="#111918";
+  }
+  ctx.shadowColor="#0009";ctx.shadowBlur=.3;ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(-car.length/2,-car.width/2,car.length,car.width,.25);ctx.fill();
+  ctx.shadowBlur=0;ctx.fillStyle="#1a2425";ctx.fillRect(-car.length*.12,-car.width*.41,car.length*.38,car.width*.82);
+  ctx.fillStyle=active?"#fff4b8":"#86908b";ctx.fillRect(car.length*.43,-car.width*.34,.08,car.width*.68);
+  ctx.fillStyle="#d95050";ctx.fillRect(-car.length*.5,-car.width*.33,.08,car.width*.66);ctx.restore();
+}
 function showResult(elapsed,collisions,result){const score=scoreParking(elapsed,collisions,result);const overlay=document.createElement("div");overlay.className="result-overlay";overlay.innerHTML=`<div class="result" role="dialog" aria-modal="true" aria-labelledby="result-title"><div class="eyebrow">MISSION COMPLETE</div><h2 id="result-title">주차 성공!</h2><div class="score">${score}<small>점</small></div><div class="result-stats"><div><span>주차 완료 시간</span><b>${elapsed.toFixed(1)}초</b></div><div><span>충돌</span><b>${collisions}회</b></div><div><span>각도 오차</span><b>${(result.angleError*180/Math.PI).toFixed(1)}°</b></div></div><div class="result-actions"><button id="menu">상황 선택</button><button class="primary" id="retry">다시 도전</button></div></div>`;app.querySelector(".stage-wrap").append(overlay);overlay.querySelector("#menu").onclick=renderMenu;overlay.querySelector("#retry").onclick=startGame;}
 
 renderMenu();
