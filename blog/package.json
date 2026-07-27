@@ -1,7 +1,6 @@
 {
   "name": "hyunjin-log",
   "version": "1.0.0",
-  "private": true,
   "type": "module",
   "scripts": {
     "dev": "node scripts/convert-notebooks.mjs && astro dev",
