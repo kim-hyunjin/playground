@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://kim-hyunjin.github.io/playground/sitemap-index.xml

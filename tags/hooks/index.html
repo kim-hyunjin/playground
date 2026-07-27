@@ -1,0 +1,29 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><meta name="generator" content="Astro v7.1.3"><meta name="description" content="#Hooks 태그가 붙은 기술 글 1개"><meta name="color-scheme" content="light dark"><link rel="canonical" href="https://kim-hyunjin.github.io/playground/tags/hooks/"><link rel="alternate" type="application/rss+xml" title="hyunjin.log RSS" href="https://kim-hyunjin.github.io/rss.xml"><meta property="og:type" content="website"><meta property="og:site_name" content="hyunjin.log"><meta property="og:title" content="#Hooks · hyunjin.log"><meta property="og:description" content="#Hooks 태그가 붙은 기술 글 1개"><meta property="og:url" content="https://kim-hyunjin.github.io/playground/tags/hooks/"><meta name="twitter:card" content="summary"><title>#Hooks · hyunjin.log</title><script>
+      (() => {
+        const saved = localStorage.getItem('theme');
+        document.documentElement.dataset.theme =
+          saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      })();
+    </script><link rel="stylesheet" href="/playground/_astro/BaseLayout.C6goWqRu.css"></head><body><a class="skip-link" href="#main-content">본문으로 건너뛰기</a><header class="site-header" data-pagefind-ignore><div class="header-shell"><a class="brand" href="/playground/" aria-label="hyunjin.log 홈"><span class="brand-mark" aria-hidden="true">hj</span><span>hyunjin.log</span></a><nav class="desktop-nav" aria-label="주요 탐색"><a href="/playground/categories/ai/">AI</a><a href="/playground/categories/algorithms/">Algorithms</a><a href="/playground/categories/backend/">Backend</a><a href="/playground/categories/blockchain/">Blockchain</a><a href="/playground/categories/design-architecture/">Design &amp; Architecture</a><a href="/playground/categories/frontend/">Frontend</a><a href="/playground/categories/language/">Language</a><a href="/playground/categories/mobile/">Mobile</a><a href="/playground/categories/security/">Security</a></nav><div class="header-actions"><a class="icon-link" href="/playground/search/" aria-label="검색"><span aria-hidden="true">⌕</span></a><button class="icon-button" id="theme-toggle" type="button" aria-label="다크 모드 전환"><span class="theme-icon" aria-hidden="true">◐</span></button><button class="icon-button mobile-menu-button" id="menu-toggle" type="button" aria-controls="mobile-navigation" aria-expanded="false" aria-label="메뉴 열기"><span aria-hidden="true">☰</span></button></div></div><nav id="mobile-navigation" class="mobile-nav" aria-label="모바일 탐색" hidden><a href="/playground/">홈</a><a href="/playground/categories/ai/">AI <small>27</small></a><a href="/playground/categories/algorithms/">Algorithms <small>3</small></a><a href="/playground/categories/backend/">Backend <small>85</small></a><a href="/playground/categories/blockchain/">Blockchain <small>2</small></a><a href="/playground/categories/design-architecture/">Design &amp; Architecture <small>4</small></a><a href="/playground/categories/frontend/">Frontend <small>16</small></a><a href="/playground/categories/language/">Language <small>11</small></a><a href="/playground/categories/mobile/">Mobile <small>2</small></a><a href="/playground/categories/security/">Security <small>1</small></a><a href="/playground/tags/">태그</a><a href="/playground/search/">검색</a></nav></header><script>
+  (() => {
+    const root = document.documentElement;
+    const stored = localStorage.getItem('theme');
+    const preferred = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    root.dataset.theme = stored || preferred;
+
+    document.querySelector('#theme-toggle')?.addEventListener('click', () => {
+      root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('theme', root.dataset.theme);
+      window.dispatchEvent(new CustomEvent('themechange', { detail: root.dataset.theme }));
+    });
+
+    const button = document.querySelector('#menu-toggle');
+    const navigation = document.querySelector('#mobile-navigation');
+    button?.addEventListener('click', () => {
+      const open = button.getAttribute('aria-expanded') !== 'true';
+      button.setAttribute('aria-expanded', String(open));
+      button.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+      if (navigation) navigation.hidden = !open;
+    });
+  })();
+</script><main id="main-content"><div class="listing-shell"><header class="section-header"><div><span class="eyebrow">Tag</span><h1>#Hooks</h1></div><p>1개의 글</p></header><div class="post-list"><article class="post-card"><div class="post-card-meta"><span class="post-card-topic-path" aria-label="주제 경로"><a href="/playground/categories/frontend/">Frontend</a><span aria-hidden="true">/</span><a href="/playground/categories/frontend/react/">React</a><span aria-hidden="true">/</span><a href="/playground/categories/frontend/react/react-guide/">React Guide</a></span><span aria-hidden="true">·</span><time datetime="2026-04-24T00:00:00.000Z">2026. 4. 24.</time><span aria-hidden="true">·</span><span>2분</span></div><h2><a href="/playground/frontend/react/react-guide/08-hooks.pub/">Hooks</a></h2><p>함수형 컴포넌트에서 상태 관리와 최적화를 가능하게 하는 다양한 Hooks의 종류와 사용법을 정리합니다.</p><ul class="tag-list" aria-label="태그"><li><a href="/playground/tags/react/">#React</a></li><li><a href="/playground/tags/hooks/">#Hooks</a></li><li><a href="/playground/tags/usestate/">#useState</a></li><li><a href="/playground/tags/useeffect/">#useEffect</a></li></ul></article></div></div></main><footer class="site-footer" data-pagefind-ignore><div><p>배운 것을 설명하며 더 단단하게 이해합니다.</p><nav aria-label="푸터 탐색"><a href="/playground/rss.xml">RSS</a><a href="/playground/sitemap/">Sitemap</a><a href="https://github.com/kim-hyunjin" rel="me">GitHub</a></nav></div></footer></body></html>
