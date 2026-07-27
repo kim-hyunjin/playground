@@ -19,11 +19,15 @@ Personal dev archive for experimenting, building, and documenting what I learn. 
 
 ## Blog
 
-Published posts live in [`blog/content/`](blog/content/) as `.pub.md` or `.pub.ipynb` files. The MkDocs site is configured under [`blog/`](blog/).
+Published posts live in [`blog/content/`](blog/content/) as `.pub.md`, `.pub.mdx`, or `.pub.ipynb` files. The blog is built as a static Astro site for the `/playground/` GitHub Pages project path.
 
 ```bash
 cd blog
-uv run mkdocs serve    # local preview
-./scripts/build.sh     # build site
-./scripts/publish.sh   # deploy to GitHub Pages
+corepack pnpm install --frozen-lockfile
+corepack pnpm dev      # local development
+corepack pnpm build    # check, test, build, and index
+corepack pnpm preview  # preview the production build
+corepack pnpm publish  # deploy dist/ to the gh-pages branch
 ```
+
+The build converts published Notebooks without executing cells, validates content metadata, generates the Pagefind search index and `.nojekyll`, and verifies every legacy URL. See [`blog/README.md`](blog/README.md) for authoring and deployment details.

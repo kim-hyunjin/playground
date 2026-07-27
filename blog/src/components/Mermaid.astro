@@ -1,0 +1,25 @@
+<script>
+  let mermaidApi: typeof import('mermaid').default | undefined;
+
+  async function renderMermaid() {
+    const nodes = [...document.querySelectorAll<HTMLElement>('.mermaid')];
+    if (!nodes.length) return;
+    mermaidApi ??= (await import('mermaid')).default;
+
+    for (const node of nodes) {
+      if (!node.dataset.source) node.dataset.source = node.textContent ?? '';
+      node.removeAttribute('data-processed');
+      node.textContent = node.dataset.source;
+    }
+
+    mermaidApi.initialize({
+      startOnLoad: false,
+      securityLevel: 'strict',
+      theme: document.documentElement.dataset.theme === 'dark' ? 'dark' : 'neutral',
+    });
+    await mermaidApi.run({ nodes });
+  }
+
+  renderMermaid();
+  window.addEventListener('themechange', renderMermaid);
+</script>

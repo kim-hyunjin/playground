@@ -1,0 +1,29 @@
+---
+import type { BlogEntry } from '../lib/content';
+import { categoryUrl, entryUrl, readingMinutes, tagUrl } from '../lib/content';
+
+interface Props {
+  entry: BlogEntry;
+}
+
+const { entry } = Astro.props;
+---
+
+<article class="post-card">
+  <div class="post-card-meta">
+    <a href={categoryUrl(entry.data.category)}>{entry.data.category}</a>
+    <span aria-hidden="true">·</span>
+    <time datetime={entry.data.date.toISOString()}>
+      {entry.data.date.toLocaleDateString('ko-KR')}
+    </time>
+    <span aria-hidden="true">·</span>
+    <span>{readingMinutes(entry)}분</span>
+  </div>
+  <h2><a href={entryUrl(entry)}>{entry.data.title}</a></h2>
+  <p>{entry.data.summary}</p>
+  <ul class="tag-list" aria-label="태그">
+    {entry.data.tags.slice(0, 4).map((tag) => (
+      <li><a href={tagUrl(tag)}>#{tag}</a></li>
+    ))}
+  </ul>
+</article>

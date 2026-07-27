@@ -278,10 +278,10 @@ blog 변경이 모두 commit됐는지 확인
 
 ### 7단계 — 정리와 운영 문서화 (0.5~1일)
 
-- [ ] `README.md`의 작성, 미리보기, 빌드, 배포 명령을 Node 기반으로 바꾼다.
-- [ ] MkDocs 전용 `pyproject.toml`, `requirements.txt`, `uv.lock`, 설정과 스크립트를 제거한다.
-- [ ] 더 이상 사용하지 않는 override/CSS를 삭제하되 이식된 스타일과 비교한다.
-- [ ] 글 작성 규칙, 허용 frontmatter, 이미지 규칙, Notebook 변환 방법을 문서화한다.
+- [x] `README.md`의 작성, 미리보기, 빌드, 배포 명령을 Node 기반으로 바꾼다.
+- [x] MkDocs 전용 `pyproject.toml`, `requirements.txt`, `uv.lock`, 설정과 스크립트를 제거한다.
+- [x] 더 이상 사용하지 않는 override/CSS를 삭제하되 이식된 스타일과 비교한다.
+- [x] 글 작성 규칙, 허용 frontmatter, 이미지 규칙, Notebook 변환 방법을 문서화한다.
 - [ ] 의존성 업데이트와 링크 검사를 주기적으로 실행하도록 자동화한다.
 
 ## 7. 테스트 전략
