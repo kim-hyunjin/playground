@@ -51,8 +51,8 @@ draft: false
 
 ```bash
 cd blog
-corepack pnpm convert:notebooks
-corepack pnpm verify:content
+pnpm convert:notebooks
+pnpm verify:content
 ```
 
 변환 결과인 `src/content/generated/`와 `public/notebook-assets/`는 직접 수정하지 않는다. 신뢰할 수 없는 Notebook을 추가하기 전에 저장된 HTML과 이미지 출력을 검토한다.

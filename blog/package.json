@@ -3,22 +3,17 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@11.17.0",
-  "engines": {
-    "node": ">=22.12.0 <23",
-    "pnpm": "11.17.0"
-  },
   "scripts": {
-    "dev": "corepack pnpm run convert:notebooks && astro dev",
+    "dev": "node scripts/convert-notebooks.mjs && astro dev",
     "preview": "astro preview",
     "clean": "node scripts/clean.mjs",
     "convert:notebooks": "node scripts/convert-notebooks.mjs",
     "verify:content": "node scripts/verify-content.mjs",
-    "check": "corepack pnpm run convert:notebooks && astro check && corepack pnpm run verify:content",
+    "check": "node scripts/convert-notebooks.mjs && astro check && node scripts/verify-content.mjs",
     "test": "vitest run",
-    "lint": "corepack pnpm run check",
-    "build:site": "corepack pnpm run clean && corepack pnpm run convert:notebooks && astro build && pagefind --site dist && node scripts/finalize-build.mjs && node scripts/verify-dist.mjs",
-    "build": "corepack pnpm run check && corepack pnpm run test && corepack pnpm run build:site",
+    "lint": "npm run check",
+    "build:site": "node scripts/clean.mjs && node scripts/convert-notebooks.mjs && astro build && pagefind --site dist && node scripts/finalize-build.mjs && node scripts/verify-dist.mjs",
+    "build": "npm run check && npm run test && npm run build:site",
     "publish": "node scripts/publish.mjs",
     "publish:dry-run": "node scripts/publish.mjs --dry-run"
   },

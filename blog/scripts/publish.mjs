@@ -1,21 +1,11 @@
 import { execFileSync, spawnSync } from 'node:child_process';
-import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 const root = process.cwd();
 const dryRun = process.argv.includes('--dry-run');
-const manifest = JSON.parse(await readFile(resolve(root, 'package.json'), 'utf8'));
 
 if (!resolve(root, 'package.json').endsWith('/blog/package.json')) {
   throw new Error('Run publish from the blog directory.');
-}
-if (!process.version.startsWith('v22.')) {
-  throw new Error(`Node 22 is required; found ${process.version}.`);
-}
-
-const pnpmVersion = execFileSync('corepack', ['pnpm', '--version'], { encoding: 'utf8' }).trim();
-if (pnpmVersion !== manifest.packageManager.split('@').at(-1)) {
-  throw new Error(`pnpm ${manifest.engines.pnpm} is required; found ${pnpmVersion}.`);
 }
 
 if (!dryRun) {
@@ -28,7 +18,7 @@ if (!dryRun) {
   }
 }
 
-const build = spawnSync('corepack', ['pnpm', 'run', 'build'], {
+const build = spawnSync('npm', ['run', 'build'], {
   cwd: root,
   encoding: 'utf8',
   stdio: 'inherit',
@@ -42,12 +32,14 @@ if (dryRun) {
 
 execFileSync('git', ['fetch', 'origin', 'gh-pages'], { cwd: root, stdio: 'inherit' });
 const sourceSha = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
+const ghPages = resolve(
+  root,
+  'node_modules/.bin',
+  process.platform === 'win32' ? 'gh-pages.cmd' : 'gh-pages',
+);
 const publish = spawnSync(
-  'corepack',
+  ghPages,
   [
-    'pnpm',
-    'exec',
-    'gh-pages',
     '--dist',
     'dist',
     '--branch',
