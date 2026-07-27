@@ -1,0 +1,36 @@
+---
+import type { BlogEntry } from '../lib/content';
+import { entryTopicPath, entryUrl, topicUrl } from '../lib/content';
+import type { TopicNode } from '../lib/topics';
+
+interface Props {
+  topic: TopicNode;
+  entries: BlogEntry[];
+}
+
+const { topic, entries } = Astro.props;
+const directEntries = entries.filter((entry) => entryTopicPath(entry) === topic.path);
+---
+
+<li class="sitemap-topic">
+  <div class="sitemap-topic-line">
+    <a href={topicUrl(topic.path)}>{topic.name}</a>
+    <span>{topic.count}개</span>
+  </div>
+
+  {directEntries.length > 0 && (
+    <ul class="sitemap-posts">
+      {directEntries.map((entry) => (
+        <li><a href={entryUrl(entry)}>{entry.data.title}</a></li>
+      ))}
+    </ul>
+  )}
+
+  {topic.children.length > 0 && (
+    <ul class="sitemap-children">
+      {topic.children.map((child) => (
+        <Astro.self topic={child} entries={entries} />
+      ))}
+    </ul>
+  )}
+</li>

@@ -33,6 +33,8 @@ const required = [
   'pagefind/pagefind.js',
   'rss.xml',
   'robots.txt',
+  'sitemap/index.html',
+  'sitemap-0.xml',
   'sitemap-index.xml',
 ];
 for (const file of required) {
@@ -101,6 +103,11 @@ for (const file of ['rss.xml', 'sitemap-index.xml']) {
   if (!source.includes(SITE_URL)) {
     errors.push(`${file} does not contain the production site URL.`);
   }
+}
+
+const sitemapIndex = await readFile(resolve(dist, 'sitemap-index.xml'), 'utf8');
+if (!sitemapIndex.includes(`${SITE_URL}sitemap-0.xml`)) {
+  errors.push('sitemap-index.xml does not reference sitemap-0.xml.');
 }
 
 if (errors.length) {
