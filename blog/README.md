@@ -29,7 +29,7 @@ corepack pnpm preview      # /playground/ production preview
 - MDX: `content/**/*.pub.mdx`
 - Notebook: `content/**/*.pub.ipynb`
 
-필수 frontmatter와 MDX/Notebook 보안 규칙은 [`docs/CONTENT_GUIDE.md`](docs/CONTENT_GUIDE.md)를 따른다. Notebook 변환 결과인 `src/content/generated/`와 `public/notebook-assets/`는 직접 수정하지 않는다.
+`content/`의 폴더 구조는 주제 페이지와 글 breadcrumb로 그대로 이어진다. 필수 frontmatter, 폴더 계층, MDX/Notebook 보안 규칙은 [`docs/CONTENT_GUIDE.md`](docs/CONTENT_GUIDE.md)를 따른다. Notebook 변환 결과인 `src/content/generated/`와 `public/notebook-assets/`는 직접 수정하지 않는다.
 
 ## 배포
 

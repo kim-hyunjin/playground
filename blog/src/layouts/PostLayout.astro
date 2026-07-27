@@ -3,7 +3,8 @@ import type { MarkdownHeading } from 'astro';
 import type { BlogEntry } from '../lib/content';
 import BaseLayout from './BaseLayout.astro';
 import Mermaid from '../components/Mermaid.astro';
-import { categoryUrl, entryUrl, readingMinutes, tagUrl } from '../lib/content';
+import TopicBreadcrumbs from '../components/TopicBreadcrumbs.astro';
+import { entryTopicBreadcrumbs, entryUrl, readingMinutes, tagUrl } from '../lib/content';
 
 interface Props {
   entry: BlogEntry;
@@ -15,6 +16,7 @@ interface Props {
 
 const { entry, entries, headings, previous, next } = Astro.props;
 const toc = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
+const topicBreadcrumbs = entryTopicBreadcrumbs(entry);
 ---
 
 <BaseLayout
@@ -27,7 +29,7 @@ const toc = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 
   <div class="post-shell">
     <article class="post-article">
       <header class="post-header">
-        <a class="eyebrow" href={categoryUrl(entry.data.category)}>{entry.data.category}</a>
+        <TopicBreadcrumbs items={topicBreadcrumbs} />
         <h1 data-pagefind-meta="title">{entry.data.title}</h1>
         <p class="post-summary">{entry.data.summary}</p>
         <div class="post-byline">

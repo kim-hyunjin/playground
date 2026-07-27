@@ -1,6 +1,6 @@
 ---
 import type { BlogEntry } from '../lib/content';
-import { collectCategories } from '../lib/content';
+import { collectCategories, topicUrl } from '../lib/content';
 import { withBase } from '../lib/url';
 
 interface Props {
@@ -20,7 +20,7 @@ const categories = collectCategories(entries);
 
     <nav class="desktop-nav" aria-label="주요 탐색">
       {categories.map((category) => (
-        <a href={withBase(`categories/${category.slug}/`)}>{category.name}</a>
+        <a href={topicUrl(category.slug)}>{category.name}</a>
       ))}
     </nav>
 
@@ -47,7 +47,7 @@ const categories = collectCategories(entries);
   <nav id="mobile-navigation" class="mobile-nav" aria-label="모바일 탐색" hidden>
     <a href={withBase()}>홈</a>
     {categories.map((category) => (
-      <a href={withBase(`categories/${category.slug}/`)}>{category.name} <small>{category.count}</small></a>
+      <a href={topicUrl(category.slug)}>{category.name} <small>{category.count}</small></a>
     ))}
     <a href={withBase('tags/')}>태그</a>
     <a href={withBase('search/')}>검색</a>

@@ -9,6 +9,7 @@
 - `.pub.md`/`.pub.mdx` 공통 스키마와 정적 글 경로 생성
 - Notebook 비실행 변환, HTML sanitize, PNG 해시 에셋, 재생성 가능한 출력
 - 홈, 카테고리, 태그, 글 상세, 검색, 404, RSS, sitemap, robots
+- `content/` 폴더 기반 계층형 주제 페이지와 글 breadcrumb
 - 반응형 내비게이션, light/dark 테마, 목차, 이전/다음 글, 읽기 시간, 코드 복사, Mermaid
 - Pagefind 한국어 인덱스와 `/playground/` base 경로
 - `.nojekyll`, canonical, 내부 링크와 에셋 검증

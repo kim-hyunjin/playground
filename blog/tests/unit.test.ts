@@ -1,6 +1,12 @@
 import { readFile, readdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import {
+  buildTopicTree,
+  flattenTopicTree,
+  topicBreadcrumbsFromPath,
+  topicPathFromId,
+} from '../src/lib/topics';
 import { joinBase, slugifySegment } from '../src/lib/url';
 
 async function walk(directory: string): Promise<string[]> {
@@ -23,6 +29,42 @@ describe('URL helpers', () => {
   it('normalizes category and Korean tag segments', () => {
     expect(slugifySegment('Design & Architecture')).toBe('design-and-architecture');
     expect(slugifySegment('데이터 베이스')).toBe('데이터-베이스');
+  });
+});
+
+describe('folder topic hierarchy', () => {
+  const topics = buildTopicTree([
+    { id: 'backend/backend-engineering/asynchronous-processing/worker.pub' },
+    { id: 'backend/backend-engineering/asynchronous-processing/queue.pub' },
+    { id: 'backend/backend-engineering/communications/http.pub' },
+    { id: 'backend/database/database-basics.pub' },
+  ]);
+
+  it('derives a post topic path from its physical folder', () => {
+    expect(topicPathFromId('backend/database/indexes-storage/b-tree.pub.md')).toBe(
+      'backend/database/indexes-storage',
+    );
+  });
+
+  it('aggregates descendant and direct post counts independently', () => {
+    const flattened = flattenTopicTree(topics);
+    expect(flattened.find((topic) => topic.path === 'backend')).toMatchObject({
+      count: 4,
+      directCount: 0,
+    });
+    expect(
+      flattened.find(
+        (topic) => topic.path === 'backend/backend-engineering/asynchronous-processing',
+      ),
+    ).toMatchObject({ count: 2, directCount: 2 });
+  });
+
+  it('builds human-readable breadcrumbs for every folder level', () => {
+    expect(
+      topicBreadcrumbsFromPath(
+        'backend/backend-engineering/asynchronous-processing',
+      ).map(({ name }) => name),
+    ).toEqual(['Backend', 'Backend Engineering', 'Asynchronous Processing']);
   });
 });
 

@@ -1,0 +1,111 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Pagination from '../../components/Pagination.astro';
+import PostCard from '../../components/PostCard.astro';
+import TopicBreadcrumbs from '../../components/TopicBreadcrumbs.astro';
+import {
+  collectTopics,
+  entryTopicPath,
+  getPublishedPosts,
+  topicUrl,
+} from '../../lib/content';
+import { flattenTopicTree, topicBreadcrumbsFromPath, type TopicNode } from '../../lib/topics';
+
+export async function getStaticPaths() {
+  const pageSize = 12;
+  const entries = await getPublishedPosts();
+  const topics = flattenTopicTree(collectTopics(entries));
+
+  return topics.flatMap((topic) => {
+    const directEntries = entries.filter((entry) => entryTopicPath(entry) === topic.path);
+    const pages = Math.max(1, Math.ceil(directEntries.length / pageSize));
+
+    return Array.from({ length: pages }, (_, index) => ({
+      params: {
+        path: index === 0 ? topic.path : `${topic.path}/page/${index + 1}`,
+      },
+      props: {
+        topic,
+        directEntries,
+        page: index + 1,
+        pages,
+      },
+    }));
+  });
+}
+
+interface Props {
+  topic: TopicNode;
+  directEntries: Awaited<ReturnType<typeof getPublishedPosts>>;
+  page: number;
+  pages: number;
+}
+
+const { topic, directEntries, page, pages } = Astro.props;
+const allEntries = await getPublishedPosts();
+const pageSize = 12;
+const visibleEntries = directEntries.slice((page - 1) * pageSize, page * pageSize);
+const breadcrumbs = topicBreadcrumbsFromPath(topic.path).map((item) => ({
+  ...item,
+  url: topicUrl(item.path),
+}));
+const pageTitle = `${topic.name}${page > 1 ? ` ${page}페이지` : ''}`;
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={`${topic.name} 주제의 기술 글 ${topic.count}개`}
+  entries={allEntries}
+>
+  <div class="listing-shell topic-listing">
+    <TopicBreadcrumbs items={breadcrumbs} current />
+
+    <header class="section-header topic-header">
+      <div>
+        <span class="eyebrow">Topic</span>
+        <h1>{topic.name}</h1>
+      </div>
+      <p>{topic.count}개의 글</p>
+    </header>
+
+    {topic.children.length > 0 && (
+      <section aria-labelledby="subtopics-title">
+        <div class="subsection-header">
+          <h2 id="subtopics-title">하위 주제</h2>
+          <p>{topic.children.length}개</p>
+        </div>
+        <div class="category-grid">
+          {topic.children.map((child) => (
+            <a class="category-card" href={topicUrl(child.path)}>
+              <strong>{child.name}</strong>
+              <span>
+                {child.count}개의 글
+                {child.children.length > 0 && ` · ${child.children.length}개 하위 주제`}
+                {' →'}
+              </span>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {directEntries.length > 0 && (
+      <section aria-labelledby="topic-posts-title">
+        <div class="subsection-header">
+          <h2 id="topic-posts-title">
+            {topic.children.length > 0 ? '이 주제의 글' : '글'}
+          </h2>
+          <p>{directEntries.length}개</p>
+        </div>
+        <div class="post-list">
+          {visibleEntries.map((entry) => <PostCard entry={entry} />)}
+        </div>
+        <Pagination
+          current={page}
+          total={pages}
+          getUrl={(target) => topicUrl(topic.path, target)}
+        />
+      </section>
+    )}
+  </div>
+</BaseLayout>

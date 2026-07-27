@@ -1,5 +1,11 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { slugifySegment, withBase } from './url';
+import {
+  buildTopicTree,
+  topicBreadcrumbsFromPath,
+  topicPathFromId,
+  type TopicNode,
+} from './topics';
 
 export type BlogEntry = CollectionEntry<'posts'> | CollectionEntry<'notebooks'>;
 
@@ -24,8 +30,17 @@ export function entryUrl(entry: BlogEntry) {
 }
 
 export function categoryUrl(category: string, page?: number) {
-  const suffix = page && page > 1 ? `/${page}` : '';
-  return withBase(`categories/${slugifySegment(category)}${suffix}/`);
+  return topicUrl(slugifySegment(category), page);
+}
+
+export function topicUrl(path: string, page?: number) {
+  const normalized = path
+    .split('/')
+    .filter(Boolean)
+    .map(slugifySegment)
+    .join('/');
+  const suffix = page && page > 1 ? `/page/${page}` : '';
+  return withBase(`categories/${normalized}${suffix}/`);
 }
 
 export function tagUrl(tag: string, page?: number) {
@@ -50,13 +65,26 @@ export function readingMinutes(entry: BlogEntry) {
 }
 
 export function collectCategories(entries: BlogEntry[]) {
-  const counts = new Map<string, number>();
-  for (const entry of entries) {
-    counts.set(entry.data.category, (counts.get(entry.data.category) ?? 0) + 1);
-  }
-  return [...counts.entries()]
-    .map(([name, count]) => ({ name, count, slug: slugifySegment(name) }))
-    .sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+  return buildTopicTree(entries).map(({ name, count, path }) => ({
+    name,
+    count,
+    slug: path,
+  }));
+}
+
+export function collectTopics(entries: BlogEntry[]): TopicNode[] {
+  return buildTopicTree(entries);
+}
+
+export function entryTopicPath(entry: BlogEntry) {
+  return topicPathFromId(entry.id);
+}
+
+export function entryTopicBreadcrumbs(entry: BlogEntry) {
+  return topicBreadcrumbsFromPath(entryTopicPath(entry)).map((item) => ({
+    ...item,
+    url: topicUrl(item.path),
+  }));
 }
 
 export function collectTags(entries: BlogEntry[]) {

@@ -319,6 +319,70 @@ a {
   color: var(--muted);
 }
 
+.topic-breadcrumbs {
+  margin: 0 0 1.25rem;
+  overflow-x: auto;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.topic-breadcrumbs ol,
+.topic-breadcrumbs li {
+  display: flex;
+  align-items: center;
+}
+
+.topic-breadcrumbs ol {
+  width: max-content;
+  max-width: 100%;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.topic-breadcrumbs li {
+  gap: 0.4rem;
+}
+
+.topic-breadcrumbs a {
+  color: var(--brand);
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.topic-breadcrumbs [aria-current='page'] {
+  color: var(--text);
+  font-weight: 650;
+}
+
+.topic-header {
+  margin-top: 0;
+}
+
+.subsection-header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 2.5rem 0 1rem;
+}
+
+.subsection-header h2,
+.subsection-header p {
+  margin: 0;
+}
+
+.subsection-header h2 {
+  font-size: 1.25rem;
+  letter-spacing: -0.025em;
+}
+
+.subsection-header p {
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
 .category-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -377,6 +441,12 @@ a {
   color: var(--brand);
   font-weight: 700;
   text-decoration: none;
+}
+
+.post-card-topic-path {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
 }
 
 .post-card h2 {

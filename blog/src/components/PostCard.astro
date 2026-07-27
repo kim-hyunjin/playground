@@ -1,17 +1,25 @@
 ---
 import type { BlogEntry } from '../lib/content';
-import { categoryUrl, entryUrl, readingMinutes, tagUrl } from '../lib/content';
+import { entryTopicBreadcrumbs, entryUrl, readingMinutes, tagUrl } from '../lib/content';
 
 interface Props {
   entry: BlogEntry;
 }
 
 const { entry } = Astro.props;
+const topics = entryTopicBreadcrumbs(entry);
 ---
 
 <article class="post-card">
   <div class="post-card-meta">
-    <a href={categoryUrl(entry.data.category)}>{entry.data.category}</a>
+    <span class="post-card-topic-path" aria-label="주제 경로">
+      {topics.map((topic, index) => (
+        <>
+          {index > 0 && <span aria-hidden="true">/</span>}
+          <a href={topic.url}>{topic.name}</a>
+        </>
+      ))}
+    </span>
     <span aria-hidden="true">·</span>
     <time datetime={entry.data.date.toISOString()}>
       {entry.data.date.toLocaleDateString('ko-KR')}
