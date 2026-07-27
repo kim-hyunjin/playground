@@ -1,0 +1,14 @@
+{
+  "name": "northstar-mastro-showcase",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "mastro dev",
+    "build": "mastro build",
+    "preview": "mastro preview"
+  },
+  "dependencies": {
+    "mastro": "latest"
+  }
+}

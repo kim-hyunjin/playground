@@ -1,0 +1,5 @@
+export const stories = [
+  { slug: 'midnight-sun', title: '해가 지지 않는 밤을 걷다', eyebrow: 'Field note · Iceland', description: '아이슬란드 북쪽 끝, 시간이 잠시 멈춘 듯한 여름밤의 기록.', accent: '#ffb86b', date: '2026. 6. 21', readTime: '6 min read', body: ['밤 11시가 넘었는데도 수평선 위의 빛은 사라지지 않았다. 우리는 지도를 접고, 바람이 이끄는 쪽으로 걸었다.', '이곳에서는 목적지보다 머무르는 감각이 중요하다. 검은 모래와 낮은 이끼, 멀리서 들려오는 파도 소리가 여행의 속도를 천천히 낮춘다.'] },
+  { slug: 'forest-signal', title: '숲이 보내는 가장 느린 신호', eyebrow: 'Field note · Jeju', description: '비 온 뒤의 곶자왈에서 발견한 작고 선명한 생명의 리듬.', accent: '#9bd6ad', date: '2026. 5. 9', readTime: '4 min read', body: ['나무 사이로 안개가 천천히 걷혔다. 젖은 현무암 틈에는 이름 모를 초록이 저마다의 방향으로 자라고 있었다.', '길을 잃지 않으려 애쓰기보다 숲의 속도에 맞춰 걸었다. 발밑의 소리와 잎에 맺힌 물방울이 훌륭한 이정표가 되어 주었다.'] },
+  { slug: 'coastal-table', title: '바다와 가장 가까운 식탁', eyebrow: 'Field note · Busan', description: '새벽 시장에서 시작해 한 접시의 여름으로 완성된 이야기.', accent: '#79bce5', date: '2026. 4. 18', readTime: '5 min read', body: ['아직 어두운 새벽, 시장은 이미 하루 중 가장 분주한 시간이었다. 반짝이는 생선과 상인들의 짧은 인사가 골목을 채웠다.', '좋은 재료에는 긴 설명이 필요하지 않았다. 소금과 불, 그리고 기다림만으로 바다의 계절이 한 접시에 담겼다.'] },
+];
