@@ -69,10 +69,8 @@ describe('folder topic hierarchy', () => {
 });
 
 describe('content contract', () => {
-  it('keeps the expected source counts and an MDX build fixture', async () => {
+  it('keeps an MDX build fixture', async () => {
     const files = await walk(resolve(process.cwd(), 'content'));
-    expect(files.filter((file) => file.endsWith('.pub.md'))).toHaveLength(130);
-    expect(files.filter((file) => file.endsWith('.pub.ipynb'))).toHaveLength(21);
     expect(files.some((file) => file.endsWith('component-fixture.pub.mdx'))).toBe(true);
   });
 

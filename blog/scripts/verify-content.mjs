@@ -1,9 +1,10 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { relative, resolve } from 'node:path';
 import matter from 'gray-matter';
-import { MARKDOWN_COUNT, NOTEBOOK_COUNT } from './config.mjs';
 
 const root = process.cwd();
+const sourceRoot = resolve(root, 'content');
+const generatedRoot = resolve(root, 'src/content/generated');
 
 async function walk(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
@@ -16,25 +17,33 @@ async function walk(directory) {
   return nested.flat();
 }
 
-const sources = await walk(resolve(root, 'content'));
+const sources = await walk(sourceRoot);
 const markdown = sources.filter((path) => /\.pub\.(md|mdx)$/.test(path));
 const notebooks = sources.filter((path) => path.endsWith('.pub.ipynb'));
-const generated = (await walk(resolve(root, 'src/content/generated'))).filter((path) =>
-  path.endsWith('.pub.md'),
-);
+const generated = (await walk(generatedRoot)).filter((path) => path.endsWith('.pub.md'));
 const errors = [];
 const slugs = new Map();
 
-if (markdown.filter((path) => path.endsWith('.pub.md')).length !== MARKDOWN_COUNT) {
-  errors.push(`Expected ${MARKDOWN_COUNT} Markdown posts.`);
+const expectedNotebookOutputs = new Set(
+  notebooks.map((path) => relative(sourceRoot, path).replace(/\.ipynb$/, '.md')),
+);
+const generatedNotebookOutputs = new Set(
+  generated.map((path) => relative(generatedRoot, path)),
+);
+for (const path of expectedNotebookOutputs) {
+  if (!generatedNotebookOutputs.has(path)) {
+    errors.push(`Missing generated Notebook: ${path}`);
+  }
 }
-if (notebooks.length !== NOTEBOOK_COUNT || generated.length !== NOTEBOOK_COUNT) {
-  errors.push(`Expected ${NOTEBOOK_COUNT} source and generated Notebooks.`);
+for (const path of generatedNotebookOutputs) {
+  if (!expectedNotebookOutputs.has(path)) {
+    errors.push(`Unexpected generated Notebook: ${path}`);
+  }
 }
 
 for (const [collection, base, files] of [
-  ['posts', resolve(root, 'content'), markdown],
-  ['notebooks', resolve(root, 'src/content/generated'), generated],
+  ['posts', sourceRoot, markdown],
+  ['notebooks', generatedRoot, generated],
 ]) {
   for (const path of files) {
     const { data } = matter(await readFile(path, 'utf8'));

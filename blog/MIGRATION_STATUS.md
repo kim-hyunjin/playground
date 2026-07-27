@@ -5,7 +5,7 @@
 ## 완료
 
 - Node.js, pnpm, Astro, MDX, Tailwind CSS 4 버전 고정과 ADR
-- Markdown 130개와 Notebook 21개를 build에서 검증
+- Markdown/MDX 필수 메타데이터와 Notebook 원본·변환 결과 대응을 build에서 검증
 - `.pub.md`/`.pub.mdx` 공통 스키마와 정적 글 경로 생성
 - Notebook 비실행 변환, HTML sanitize, PNG 해시 에셋, 재생성 가능한 출력
 - 홈, 카테고리, 태그, 글 상세, 검색, 404, RSS, sitemap, robots
