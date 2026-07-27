@@ -60,6 +60,10 @@ for (const htmlFile of htmlFiles) {
     }
   }
 
+  if (/<aside class="toc"[\s\S]*?<a[^>]*>[^<]*#<\/a>/.test(source)) {
+    errors.push(`${label} has a table-of-contents label ending in "#".`);
+  }
+
   for (const match of scannableSource.matchAll(/\b(?:href|src)="([^"]+)"/g)) {
     const raw = match[1];
     if (

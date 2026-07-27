@@ -36,10 +36,7 @@ export default defineConfig({
               className: ['heading-anchor'],
               ariaLabel: '이 제목으로 연결',
             },
-            content: {
-              type: 'text',
-              value: '#',
-            },
+            content: [],
           },
         ],
       ],
