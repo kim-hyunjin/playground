@@ -1,0 +1,102 @@
+---
+import type { MarkdownHeading } from 'astro';
+import type { BlogEntry } from '../lib/content';
+import BaseLayout from './BaseLayout.astro';
+import Mermaid from '../components/Mermaid.astro';
+import TopicBreadcrumbs from '../components/TopicBreadcrumbs.astro';
+import { entryTopicBreadcrumbs, entryUrl, readingMinutes, tagUrl } from '../lib/content';
+
+interface Props {
+  entry: BlogEntry;
+  entries: BlogEntry[];
+  headings: MarkdownHeading[];
+  previous?: BlogEntry;
+  next?: BlogEntry;
+}
+
+const { entry, entries, headings, previous, next } = Astro.props;
+const toc = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
+const topicBreadcrumbs = entryTopicBreadcrumbs(entry);
+---
+
+<BaseLayout
+  title={entry.data.title}
+  description={entry.data.description ?? entry.data.summary}
+  entries={entries}
+  canonical={entry.data.canonical}
+  type="article"
+>
+  <div class="post-shell">
+    <article class="post-article">
+      <header class="post-header">
+        <TopicBreadcrumbs items={topicBreadcrumbs} />
+        <h1 data-pagefind-meta="title">{entry.data.title}</h1>
+        <p class="post-summary">{entry.data.summary}</p>
+        <div class="post-byline">
+          <time datetime={entry.data.date.toISOString()}>
+            {entry.data.date.toLocaleDateString('ko-KR', { dateStyle: 'long' })}
+          </time>
+          <span aria-hidden="true">·</span>
+          <span>{readingMinutes(entry)}분 읽기</span>
+        </div>
+      </header>
+
+      <div class="prose" data-pagefind-body>
+        <slot />
+      </div>
+
+      <footer class="post-footer">
+        <ul class="tag-list" aria-label="태그">
+          {entry.data.tags.map((tag) => (
+            <li><a href={tagUrl(tag)}>#{tag}</a></li>
+          ))}
+        </ul>
+        <nav class="post-navigation" aria-label="이전과 다음 글">
+          {previous ? (
+            <a rel="prev" href={entryUrl(previous)}>
+              <small>이전 글</small>
+              <span>← {previous.data.title}</span>
+            </a>
+          ) : <span />}
+          {next ? (
+            <a rel="next" href={entryUrl(next)}>
+              <small>다음 글</small>
+              <span>{next.data.title} →</span>
+            </a>
+          ) : <span />}
+        </nav>
+      </footer>
+    </article>
+
+    {toc.length > 0 && (
+      <aside class="toc" aria-label="목차" data-pagefind-ignore>
+        <strong>목차</strong>
+        <ol>
+          {toc.map((heading) => (
+            <li class:list={{ nested: heading.depth === 3 }}>
+              <a href={`#${heading.slug}`}>{heading.text}</a>
+            </li>
+          ))}
+        </ol>
+      </aside>
+    )}
+  </div>
+
+  <Mermaid />
+</BaseLayout>
+
+<script>
+  for (const pre of document.querySelectorAll<HTMLElement>('.prose pre:not(.mermaid)')) {
+    const button = document.createElement('button');
+    button.className = 'copy-code';
+    button.type = 'button';
+    button.textContent = '복사';
+    button.addEventListener('click', async () => {
+      const code = pre.querySelector('code')?.textContent ?? '';
+      await navigator.clipboard.writeText(code);
+      button.textContent = '복사됨';
+      window.setTimeout(() => (button.textContent = '복사'), 1400);
+    });
+    pre.append(button);
+  }
+</script>

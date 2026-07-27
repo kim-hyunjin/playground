@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SitemapTopic from '../components/SitemapTopic.astro';
+import { collectTopics, getPublishedPosts } from '../lib/content';
+import { withBase } from '../lib/url';
+
+const entries = await getPublishedPosts();
+const topics = collectTopics(entries);
+---
+
+<BaseLayout
+  title="사이트맵"
+  description="주제별로 정리한 hyunjin.log의 전체 글과 주요 페이지"
+  entries={entries}
+>
+  <div class="listing-shell sitemap-shell">
+    <header class="section-header">
+      <div>
+        <span class="eyebrow">Sitemap</span>
+        <h1>사이트맵</h1>
+      </div>
+      <p>{entries.length}개의 글</p>
+    </header>
+
+    <p class="sitemap-intro">
+      관심 있는 주제를 따라가거나 전체 글을 한눈에 살펴보세요. 검색엔진용 XML
+      sitemap도 별도로 제공됩니다.
+    </p>
+
+    <nav class="sitemap-primary" aria-label="주요 페이지">
+      <a href={withBase()}>홈</a>
+      <a href={withBase('search/')}>검색</a>
+      <a href={withBase('tags/')}>전체 태그</a>
+      <a href={withBase('rss.xml')}>RSS</a>
+      <a href={withBase('sitemap-index.xml')}>XML Sitemap</a>
+    </nav>
+
+    <nav aria-label="주제와 글">
+      <ul class="sitemap-tree">
+        {topics.map((topic) => (
+          <SitemapTopic topic={topic} entries={entries} />
+        ))}
+      </ul>
+    </nav>
+  </div>
+</BaseLayout>

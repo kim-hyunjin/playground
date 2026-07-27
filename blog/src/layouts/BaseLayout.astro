@@ -1,0 +1,60 @@
+---
+import type { BlogEntry } from '../lib/content';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  entries: BlogEntry[];
+  canonical?: string;
+  type?: 'website' | 'article';
+}
+
+const {
+  title,
+  description = 'Learn in public — multi-stack notes, side projects, and published blog posts.',
+  entries,
+  canonical,
+  type = 'website',
+} = Astro.props;
+const pageTitle = title ? `${title} · hyunjin.log` : 'hyunjin.log';
+const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site);
+const rssUrl = new URL('rss.xml', Astro.site);
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="alternate" type="application/rss+xml" title="hyunjin.log RSS" href={rssUrl} />
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content="hyunjin.log" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta name="twitter:card" content="summary" />
+    <title>{pageTitle}</title>
+    <script is:inline>
+      (() => {
+        const saved = localStorage.getItem('theme');
+        document.documentElement.dataset.theme =
+          saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">본문으로 건너뛰기</a>
+    <Header entries={entries} />
+    <main id="main-content">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

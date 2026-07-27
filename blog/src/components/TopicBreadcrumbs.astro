@@ -1,0 +1,29 @@
+---
+import { withBase } from '../lib/url';
+
+interface Item {
+  name: string;
+  url: string;
+}
+
+interface Props {
+  items: Item[];
+  current?: boolean;
+}
+
+const { items, current = false } = Astro.props;
+---
+
+<nav class="topic-breadcrumbs" aria-label="주제 경로">
+  <ol>
+    <li><a href={withBase()}>홈</a></li>
+    {items.map((item, index) => (
+      <li>
+        <span aria-hidden="true">/</span>
+        {current && index === items.length - 1
+          ? <span aria-current="page">{item.name}</span>
+          : <a href={item.url}>{item.name}</a>}
+      </li>
+    ))}
+  </ol>
+</nav>

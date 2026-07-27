@@ -1,0 +1,37 @@
+---
+import { render } from 'astro:content';
+import type { BlogEntry } from '../lib/content';
+import PostLayout from '../layouts/PostLayout.astro';
+import { entrySlug, getPublishedPosts } from '../lib/content';
+
+export async function getStaticPaths() {
+  const entries = await getPublishedPosts();
+  return entries.map((entry) => ({
+    params: { slug: entrySlug(entry) },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: BlogEntry;
+}
+
+const { entry } = Astro.props;
+const entries = await getPublishedPosts();
+const position = entries.findIndex(
+  (candidate) => candidate.collection === entry.collection && candidate.id === entry.id,
+);
+const previous = position < entries.length - 1 ? entries[position + 1] : undefined;
+const next = position > 0 ? entries[position - 1] : undefined;
+const { Content, headings } = await render(entry);
+---
+
+<PostLayout
+  entry={entry}
+  entries={entries}
+  headings={headings}
+  previous={previous}
+  next={next}
+>
+  <Content />
+</PostLayout>

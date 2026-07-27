@@ -6,3 +6,8 @@ bin
 .cache
 site
 .vs
+blog/.astro/
+blog/dist/
+blog/node_modules/
+blog/src/content/generated/
+blog/public/notebook-assets/

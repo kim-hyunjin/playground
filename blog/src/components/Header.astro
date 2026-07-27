@@ -1,0 +1,79 @@
+---
+import type { BlogEntry } from '../lib/content';
+import { collectCategories, topicUrl } from '../lib/content';
+import { withBase } from '../lib/url';
+
+interface Props {
+  entries: BlogEntry[];
+}
+
+const { entries } = Astro.props;
+const categories = collectCategories(entries);
+---
+
+<header class="site-header" data-pagefind-ignore>
+  <div class="header-shell">
+    <a class="brand" href={withBase()} aria-label="hyunjin.log 홈">
+      <span class="brand-mark" aria-hidden="true">hj</span>
+      <span>hyunjin.log</span>
+    </a>
+
+    <nav class="desktop-nav" aria-label="주요 탐색">
+      {categories.map((category) => (
+        <a href={topicUrl(category.slug)}>{category.name}</a>
+      ))}
+    </nav>
+
+    <div class="header-actions">
+      <a class="icon-link" href={withBase('search/')} aria-label="검색">
+        <span aria-hidden="true">⌕</span>
+      </a>
+      <button class="icon-button" id="theme-toggle" type="button" aria-label="다크 모드 전환">
+        <span class="theme-icon" aria-hidden="true">◐</span>
+      </button>
+      <button
+        class="icon-button mobile-menu-button"
+        id="menu-toggle"
+        type="button"
+        aria-controls="mobile-navigation"
+        aria-expanded="false"
+        aria-label="메뉴 열기"
+      >
+        <span aria-hidden="true">☰</span>
+      </button>
+    </div>
+  </div>
+
+  <nav id="mobile-navigation" class="mobile-nav" aria-label="모바일 탐색" hidden>
+    <a href={withBase()}>홈</a>
+    {categories.map((category) => (
+      <a href={topicUrl(category.slug)}>{category.name} <small>{category.count}</small></a>
+    ))}
+    <a href={withBase('tags/')}>태그</a>
+    <a href={withBase('search/')}>검색</a>
+  </nav>
+</header>
+
+<script is:inline>
+  (() => {
+    const root = document.documentElement;
+    const stored = localStorage.getItem('theme');
+    const preferred = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    root.dataset.theme = stored || preferred;
+
+    document.querySelector('#theme-toggle')?.addEventListener('click', () => {
+      root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('theme', root.dataset.theme);
+      window.dispatchEvent(new CustomEvent('themechange', { detail: root.dataset.theme }));
+    });
+
+    const button = document.querySelector('#menu-toggle');
+    const navigation = document.querySelector('#mobile-navigation');
+    button?.addEventListener('click', () => {
+      const open = button.getAttribute('aria-expanded') !== 'true';
+      button.setAttribute('aria-expanded', String(open));
+      button.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+      if (navigation) navigation.hidden = !open;
+    });
+  })();
+</script>
