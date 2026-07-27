@@ -5,13 +5,13 @@
 ## 완료
 
 - Node.js, pnpm, Astro, MDX, Tailwind CSS 4 버전 고정과 ADR
-- 기존 Markdown 130개, Notebook 21개, 공개 URL 153개 기준선 저장
-- `.pub.md`/`.pub.mdx` 공통 스키마와 기존 `.pub/` URL 보존
+- Markdown 130개와 Notebook 21개를 build에서 검증
+- `.pub.md`/`.pub.mdx` 공통 스키마와 정적 글 경로 생성
 - Notebook 비실행 변환, HTML sanitize, PNG 해시 에셋, 재생성 가능한 출력
 - 홈, 카테고리, 태그, 글 상세, 검색, 404, RSS, sitemap, robots
 - 반응형 내비게이션, light/dark 테마, 목차, 이전/다음 글, 읽기 시간, 코드 복사, Mermaid
 - Pagefind 한국어 인덱스와 `/playground/` base 경로
-- `.nojekyll`, canonical, 내부 링크, 에셋, legacy URL 검증
+- `.nojekyll`, canonical, 내부 링크와 에셋 검증
 - commit 상태와 도구 버전을 강제하는 로컬 `gh-pages` publish 명령
 - 데스크톱/모바일 브라우저 smoke test
 - MkDocs/Python 설정, 의존성, override, shell wrapper와 로컬 산출물 제거

@@ -582,6 +582,27 @@ a {
   color: var(--brand);
 }
 
+.prose p:has(> a:only-child > img) {
+  display: flow-root;
+}
+
+.prose p > a:only-child:has(> img) {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  border-radius: 0.25rem;
+}
+
+.prose p > a:only-child:has(> img):focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 4px;
+}
+
+.prose p > a:only-child > img {
+  float: none;
+  margin-inline: 0;
+}
+
 .prose blockquote {
   margin-inline: 0;
   border-left: 3px solid var(--brand);

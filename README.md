@@ -30,4 +30,4 @@ corepack pnpm preview  # preview the production build
 corepack pnpm publish  # deploy dist/ to the gh-pages branch
 ```
 
-The build converts published Notebooks without executing cells, validates content metadata, generates the Pagefind search index and `.nojekyll`, and verifies every legacy URL. See [`blog/README.md`](blog/README.md) for authoring and deployment details.
+The build converts published Notebooks without executing cells, validates content metadata, generates the Pagefind search index and `.nojekyll`, and checks generated HTML, internal links, and canonical URLs. See [`blog/README.md`](blog/README.md) for authoring and deployment details.

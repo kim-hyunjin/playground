@@ -26,12 +26,6 @@ async function walk(directory) {
   return nested.flat();
 }
 
-function urlToFile(url) {
-  if (url === '/') return resolve(dist, 'index.html');
-  if (url.endsWith('/')) return resolve(dist, url.slice(1), 'index.html');
-  return resolve(dist, url.slice(1));
-}
-
 const required = [
   'index.html',
   '404.html',
@@ -43,12 +37,6 @@ const required = [
 ];
 for (const file of required) {
   if (!(await exists(resolve(dist, file)))) errors.push(`Missing required output: ${file}`);
-}
-
-const baselineUrls = JSON.parse(await readFile(resolve(root, 'baseline/legacy-urls.json'), 'utf8'));
-for (const url of baselineUrls) {
-  const target = urlToFile(url);
-  if (!(await exists(target))) errors.push(`Legacy URL has no Astro output: ${url}`);
 }
 
 const htmlFiles = (await walk(dist)).filter((path) => path.endsWith('.html'));
@@ -116,4 +104,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log(`Verified ${baselineUrls.length} legacy URLs and ${htmlFiles.length} Astro HTML files.`);
+console.log(`Verified ${htmlFiles.length} Astro HTML files.`);

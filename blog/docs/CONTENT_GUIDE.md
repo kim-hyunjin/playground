@@ -2,7 +2,7 @@
 
 ## Markdown과 MDX
 
-게시 글은 `content/` 아래에서 카테고리 경로를 유지하고 `.pub.md` 또는 `.pub.mdx`로 저장한다. 파일 이름은 소문자 kebab-case를 사용한다. `.pub`은 기존 공개 URL의 일부이므로 제거하지 않는다.
+게시 글은 `content/` 아래에서 카테고리 경로를 유지하고 `.pub.md` 또는 `.pub.mdx`로 저장한다. 파일 이름은 소문자 kebab-case를 사용한다. `.pub` 접미사는 게시 대상을 구분하는 현재 콘텐츠 규칙이다.
 
 ```yaml
 ---
@@ -24,7 +24,7 @@ draft: false
 
 ## 링크와 이미지
 
-내부 페이지 링크는 기존 `.pub/` URL을 유지한다. `public/`의 에셋을 직접 연결할 때는 배포 base가 빠지지 않도록 공용 URL helper 또는 `import.meta.env.BASE_URL`을 사용한다. Astro가 처리할 이미지는 `src/assets/`에 두고 import한다.
+내부 글 링크는 가능하면 저장소의 `.pub.md` 또는 `.pub.mdx` 원본을 기준으로 작성한다. `public/`의 에셋을 직접 연결할 때는 배포 base가 빠지지 않도록 공용 URL helper 또는 `import.meta.env.BASE_URL`을 사용한다. Astro가 처리할 이미지는 `src/assets/`에 두고 import한다.
 
 ## Notebook
 

@@ -24,6 +24,13 @@ async function walk(directory) {
 
 const joinSource = (source) => (Array.isArray(source) ? source.join('') : (source ?? ''));
 
+function normalizeMarkdown(value) {
+  // Legacy Notebook HTML often floats linked badges with align="left".
+  // The float collapses the parent paragraph and lets the following heading
+  // intercept pointer events over the image.
+  return value.replace(/(<img\b[^>]*?)\s+align=(["'])(?:left|right|center)\2([^>]*>)/gi, '$1$3');
+}
+
 function titleFromNotebook(notebook, fallback) {
   for (const cell of notebook.cells ?? []) {
     if (cell.cell_type !== 'markdown') continue;
@@ -159,7 +166,7 @@ for (const sourceFile of files) {
 
   for (const [cellIndex, cell] of (notebook.cells ?? []).entries()) {
     if (cell.cell_type === 'markdown') {
-      const markdown = joinSource(cell.source).trim();
+      const markdown = normalizeMarkdown(joinSource(cell.source)).trim();
       if (markdown) sections.push(markdown);
       continue;
     }

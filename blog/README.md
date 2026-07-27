@@ -1,6 +1,6 @@
 # hyunjin.log
 
-Astro 기반 정적 기술 블로그다. `https://kim-hyunjin.github.io/playground/`의 기존 공개 URL을 보존하며 Markdown, MDX, Jupyter Notebook을 게시한다.
+Astro 기반 정적 기술 블로그다. `https://kim-hyunjin.github.io/playground/`에 Markdown, MDX, Jupyter Notebook을 게시한다.
 
 ## 환경과 설치
 
@@ -21,7 +21,7 @@ corepack pnpm build        # 전체 검사, 정적 빌드, Pagefind, 링크 검�
 corepack pnpm preview      # /playground/ production preview
 ```
 
-`build`가 만드는 `dist/`에는 `.nojekyll`, Pagefind 인덱스, RSS, sitemap, robots와 404가 모두 포함된다. 기존 URL 기준선 153개 중 하나라도 빠지거나 `/playground/` base가 누락된 링크가 있으면 실패한다.
+`build`가 만드는 `dist/`에는 `.nojekyll`, Pagefind 인덱스, RSS, sitemap, robots와 404가 모두 포함된다. 필수 산출물, 내부 링크, canonical URL 또는 `/playground/` base가 올바르지 않으면 실패한다.
 
 ## 글 작성
 
