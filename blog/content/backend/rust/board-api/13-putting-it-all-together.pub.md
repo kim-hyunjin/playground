@@ -1,6 +1,7 @@
 ---
 title: "[Rust 13] 전체 흐름 정리 — 한 글 작성의 여정"
 date: 2026-05-31
+updated: 2026-07-28
 category: Backend
 tags: [Rust, Axum, SeaORM, architecture]
 summary: "board-api 시리즈 마무리 — REST vs Web, 레이어 책임, 한 요청의 전체 여정과 확장 아이디어를 정리합니다."
@@ -118,7 +119,25 @@ curl http://127.0.0.1:3000/health
 # 브라우저 http://127.0.0.1:3000
 ```
 
-Docker: `docker compose up --build` (README 참고).
+Docker로 같은 흐름을 확인하려면 프로젝트 루트에서 다음 명령을 실행합니다.
+
+```bash
+cd backend/rust/board-api
+
+# release 바이너리를 빌드해 컨테이너 시작
+docker compose up --build
+
+# 백그라운드로 실행하려면
+docker compose up --build -d
+
+# 상태 확인
+curl http://127.0.0.1:3000/health
+
+# 컨테이너 중지
+docker compose down
+```
+
+Compose 설정은 호스트의 `3000` 포트를 컨테이너에 연결하고, SQLite 파일을 `board-data` 볼륨의 `/data/board.db`에 저장합니다. `docker compose down`만으로는 이름 있는 볼륨이 유지되므로 다음 실행에서도 게시글이 남습니다.
 
 ## 확장 아이디어
 

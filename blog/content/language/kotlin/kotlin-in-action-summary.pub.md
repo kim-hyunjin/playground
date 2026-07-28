@@ -1,81 +1,266 @@
 ---
-title: "Kotlin In Action 코틀린 핵심 개념 요약"
-description: "Kotlin In Action 도서를 통해 학습한 코틀린의 핵심 문법, 타입 시스템, 함수형 프로그래밍 및 고급 기능 요약 가이드"
+title: "[Kotlin in Action 00] 코틀린 핵심 문법과 함수"
+description: "Kotlin in Action 실습 저장소의 기본 문법, 제어 흐름, 함수, 확장 함수를 실행 가능한 예제로 설명하는 시리즈 입문 글"
 date: 2026-04-22
+updated: 2026-07-28
 category: "Language"
 categories:
   - Language
   - Kotlin
 tags:
   - Kotlin
-  - OOP
-  - FunctionalProgramming
-  - TypeSystem
-summary: "Kotlin In Action 도서를 통해 학습한 코틀린의 핵심 문법, 타입 시스템, 함수형 프로그래밍 및 고급 기능 요약 가이드"
+  - Functions
+  - ExtensionFunctions
+  - ControlFlow
+summary: "Kotlin in Action 실습 코드를 바탕으로 식, 스마트 캐스트, 반복, 함수, 확장 함수를 단계별로 익힙니다."
 ---
 
-# Kotlin In Action: 코틀린 핵심 개념 요약
+이 글은 저장소의 `src/main/kotlin`이나 `summary.md`를 따로 열지 않아도 실습의 흐름을 따라갈 수 있도록 만든 **Kotlin in Action 시리즈의 출발점**입니다. 저장소가 Kotlin 1.5.10과 JVM 11을 기준으로 작성되어 있다는 점을 감안해, 예제의 학습 의도를 유지하면서 핵심 코드만 실행 가능한 단위로 정리했습니다.
 
-## 🚀 개요
-본 문서는 **Kotlin In Action** 도서를 학습하며 정리한 코틀린의 핵심 개념 요약 가이드입니다. 자바와의 상호운용성을 유지하면서도 더 안전하고 간결한 코드를 작성하기 위한 코틀린만의 철학과 주요 기능들을 다룹니다.
+## 먼저 잡아야 할 관점: 문이 아니라 식
 
----
+코틀린에서는 `if`, `when`, `try`가 값을 만듭니다. 그래서 값을 구하는 로직과 반환 로직을 따로 쓸 필요가 없습니다.
 
-## 💡 1. 코틀린 타입 시스템 (Type System)
+```kotlin
+fun max(a: Int, b: Int): Int {
+    return if (a > b) a else b
+}
 
-코틀린의 타입 시스템은 **Null Safety**와 **실용성**에 초점을 맞추고 있습니다.
+fun min(a: Int, b: Int) = if (a < b) a else b
 
-### 널 가능성 (Nullability)
-- **Safe Call (`?.`):** 객체가 null이 아닐 때만 메서드를 호출합니다.
-- **Elvis Operator (`?:`):** 객체가 null일 경우 기본값을 지정합니다.
-- **Safe Cast (`as?`):** 캐스팅 실패 시 ClassCastException 대신 null을 반환합니다.
-- **플랫폼 타입:** 자바에서 넘어온 타입은 `@Nullable`이나 `@NotNull` 어노테이션이 없는 경우 플랫폼 타입으로 취급되어 개발자가 주의해서 다뤄야 합니다.
+fun parseNumber(text: String): Int? =
+    try {
+        text.toInt()
+    } catch (e: NumberFormatException) {
+        null
+    }
+```
 
-### 원시 타입 (Primitive Types)
-- 코틀린에서는 원시 타입과 래퍼 타입을 구분하지 않고 `Int`, `Boolean` 등을 사용하며, 컴파일러가 상황에 맞게 최적화된 바이트코드로 변환합니다.
-- `Any`는 자바의 `Object`에 대응하는 최상위 타입이며, `Unit`은 `void`와 유사합니다. `Nothing`은 함수가 정상적으로 종료되지 않음을 의미합니다.
+중괄호가 있는 블록도 마지막 식이 결과가 됩니다. 다만 블록 본문 함수는 반환 타입과 `return`을 명시해야 합니다. 위 `min`처럼 등호 뒤에 식을 둔 함수에서는 컴파일러가 반환 타입을 추론합니다.
 
----
+## `val`을 기본값으로 삼기
 
-## 람다와 컬렉션 (Lambdas & Collections)
+`val`은 참조를 다시 대입할 수 없고, `var`는 다시 대입할 수 있습니다.
 
-함수형 프로그래밍 스타일을 활용하여 컬렉션을 효율적으로 다룹니다.
+```kotlin
+val languages = arrayListOf("Java")
+languages.add("Kotlin") // 참조는 같고, 가리키는 객체는 변경된다.
 
-### 람다 식의 문법
-- 함수 인자 중 마지막이 람다라면 괄호 밖으로 뺄 수 있습니다.
-- 인자가 하나뿐인 람다는 `it`이라는 예약어를 사용할 수 있습니다.
-- **멤버 참조 (`::`):** 프로퍼티나 메서드를 직접 참조하여 인자로 넘길 수 있습니다.
+var answer = 42
+answer = 43
+// answer = "forty-two" // 타입은 바뀌지 않는다.
+```
 
-### 컬렉션 연산
-- `filter`, `map`, `all`, `any`, `find`, `groupBy` 등을 활용하여 루프 없이 데이터를 가공합니다.
-- **시퀀스 (Sequence):** 대량의 데이터를 다룰 때 중간 컬렉션을 생성하지 않고 지연(Lazy) 연산을 수행하여 성능을 최적화합니다.
+`val`이 객체까지 불변으로 만드는 것은 아닙니다. 그럼에도 재대입이 필요한 시점까지 `val`을 유지하면 값이 어디에서 바뀌는지 추적할 범위가 크게 줄어듭니다.
 
----
+## 프로퍼티와 문자열 템플릿
 
-## 🛠️ 3. 고차 함수와 인라인 함수 (High-Order Functions)
+코틀린의 프로퍼티는 필드와 접근자를 한 문법으로 표현합니다. `val`은 읽기 전용, `var`는 변경 가능한 프로퍼티입니다.
 
-### 고차 함수 (High-Order Function)
-- 함수를 인자로 받거나 함수를 반환하는 함수입니다.
-- 함수 타입을 통해 변수에 함수를 담거나 파라미터로 전달할 수 있습니다.
+```kotlin
+class Person(
+    val name: String,
+    var isMarried: Boolean,
+)
 
-### 인라인 함수 (Inline Function)
-- `inline` 키워드를 사용하면 람다를 호출하는 지점에 람다 본문이 직접 삽입되어, 익명 클래스 생성에 따른 오버헤드를 줄입니다.
-- **Non-local return:** 인라인 함수 내부의 람다에서는 바깥쪽 함수를 반환시키는 `return` 문을 사용할 수 있습니다.
+class Rectangle(
+    val height: Int,
+    val width: Int,
+) {
+    val isSquare: Boolean
+        get() = height == width
+}
 
----
+fun greet(person: Person) {
+    println("Hello, ${person.name}!")
+}
+```
 
-## 🏗️ 4. 객체지향 프로그래밍 (OOP)
+`isSquare`는 별도 값을 저장하지 않고 접근할 때마다 계산합니다. 자바에서 게터를 직접 호출하던 코드가 프로퍼티 접근으로 읽히지만, 필요하면 커스텀 게터와 세터를 그대로 정의할 수 있습니다.
 
-- **Property:** 필드와 접근자(Getter/Setter)를 하나로 묶어 선언합니다.
-- **Data Class:** `equals`, `hashCode`, `toString` 등을 자동으로 생성하여 데이터 보관에 특화된 클래스를 제공합니다.
-- **Sealed Class:** 클래스 계층 구조를 제한하여 `when` 식에서 모든 경우를 처리했는지 컴파일러가 체크할 수 있게 합니다.
+## `when`과 스마트 캐스트
 
----
+`when`은 자바의 `switch`보다 넓은 조건을 받을 수 있고 결과도 반환합니다.
 
-## 📝 결론 및 학습 성과
-- **생산성 향상:** 자바보다 훨씬 적은 코드로 동일한 기능을 구현할 수 있음을 확인했습니다.
-- **안전성:** 컴파일 시점에 널 포인터 예외를 원천 차단하는 설계 방식의 위력을 실감했습니다.
-- **확장성:** 확장 함수나 수신 객체 지정 람다를 통해 기존 라이브러리를 수정하지 않고도 기능을 확장할 수 있는 유연함을 배웠습니다.
+```kotlin
+enum class Color { RED, ORANGE, YELLOW, GREEN, BLUE }
 
----
-*학습 상세 내용은 `src/main/kotlin` 하위의 각 챕터별 예제 코드와 `summary.md`를 참고하세요.*
+fun warmth(color: Color) = when (color) {
+    Color.RED, Color.ORANGE, Color.YELLOW -> "warm"
+    Color.GREEN -> "neutral"
+    Color.BLUE -> "cold"
+}
+```
+
+타입 계층을 다룰 때는 `is` 검사 뒤에 명시적 캐스트가 필요 없습니다.
+
+```kotlin
+sealed interface Expr
+data class Num(val value: Int) : Expr
+data class Sum(val left: Expr, val right: Expr) : Expr
+
+fun eval(expr: Expr): Int = when (expr) {
+    is Num -> expr.value
+    is Sum -> eval(expr.left) + eval(expr.right)
+}
+```
+
+`expr is Num`인 분기에서 컴파일러는 `expr`을 `Num`으로 스마트 캐스트합니다. `sealed` 계층의 모든 경우를 처리했기 때문에 `else`도 필요 없습니다.
+
+## 범위와 반복
+
+코틀린의 `for`는 컬렉션이나 범위를 순회합니다.
+
+```kotlin
+fun fizzBuzz(i: Int) = when {
+    i % 15 == 0 -> "FizzBuzz"
+    i % 3 == 0 -> "Fizz"
+    i % 5 == 0 -> "Buzz"
+    else -> i.toString()
+}
+
+for (i in 1..100) {
+    print("${fizzBuzz(i)} ")
+}
+
+for (i in 100 downTo 1 step 2) {
+    print("${fizzBuzz(i)} ")
+}
+```
+
+- `1..100`은 양 끝을 포함합니다.
+- `until`은 끝값을 포함하지 않습니다.
+- `downTo`는 역방향, `step`은 간격을 지정합니다.
+- `in`과 `!in`은 범위나 컬렉션의 포함 여부를 검사합니다.
+
+```kotlin
+fun recognize(c: Char) = when (c) {
+    in '0'..'9' -> "digit"
+    in 'a'..'z', in 'A'..'Z' -> "letter"
+    else -> "unknown"
+}
+```
+
+맵과 리스트를 순회할 때 구조 분해를 함께 쓸 수 있습니다.
+
+```kotlin
+val binary = sortedMapOf('A' to "1000001", 'B' to "1000010")
+
+for ((letter, representation) in binary) {
+    println("$letter = $representation")
+}
+
+for ((index, element) in listOf("10", "11", "1001").withIndex()) {
+    println("$index: $element")
+}
+```
+
+## 함수의 기본 인자와 이름 붙인 인자
+
+기본 인자를 사용하면 인자 조합마다 오버로드를 만들 필요가 없습니다.
+
+```kotlin
+fun <T> joinToString(
+    collection: Collection<T>,
+    separator: String = ", ",
+    prefix: String = "",
+    postfix: String = "",
+): String {
+    val result = StringBuilder(prefix)
+    for ((index, element) in collection.withIndex()) {
+        if (index > 0) result.append(separator)
+        result.append(element)
+    }
+    return result.append(postfix).toString()
+}
+
+val values = listOf(1, 7, 53)
+
+println(joinToString(values))
+println(joinToString(values, separator = "; ", prefix = "(", postfix = ")"))
+println(joinToString(values, prefix = "#"))
+```
+
+이름 붙인 인자는 의미가 불분명한 문자열이나 불리언 인자가 연속될 때 특히 유용합니다. 자바에서 기본 인자 형태의 코틀린 함수를 편하게 호출해야 한다면 `@JvmOverloads`로 오버로드 생성을 요청할 수 있습니다.
+
+## 최상위 함수와 확장 함수
+
+코틀린 함수는 클래스 밖 파일 최상위에 둘 수 있습니다. 특정 타입의 공개 API를 멤버처럼 호출하고 싶다면 확장 함수를 사용합니다.
+
+```kotlin
+fun String.lastChar(): Char = this[length - 1]
+
+fun <T> Collection<T>.join(
+    separator: String = ", ",
+    prefix: String = "",
+    postfix: String = "",
+): String {
+    val result = StringBuilder(prefix)
+    for ((index, element) in withIndex()) {
+        if (index > 0) result.append(separator)
+        result.append(element)
+    }
+    return result.append(postfix).toString()
+}
+
+println("Kotlin".lastChar())
+println(listOf("one", "two", "three").join(" "))
+```
+
+확장 함수는 클래스 내부에 새 멤버를 삽입하지 않습니다. JVM에서는 수신 객체를 첫 인자로 받는 정적 함수와 같은 형태로 컴파일되며, 다음 제약이 생깁니다.
+
+- 수신 객체의 `private`, `protected` 멤버에는 접근할 수 없습니다.
+- 확장 함수 호출은 변수의 **정적 타입**으로 결정되므로 오버라이드되지 않습니다.
+- 같은 시그니처의 멤버 함수가 생기면 멤버 함수가 우선합니다.
+
+확장 프로퍼티도 상태를 저장할 수 없으므로 접근자를 정의해야 합니다.
+
+```kotlin
+var StringBuilder.lastChar: Char
+    get() = get(length - 1)
+    set(value) {
+        setCharAt(length - 1, value)
+    }
+```
+
+## 로컬 함수로 검증 중복 걷어내기
+
+함수 안의 작은 반복 로직은 로컬 함수로 뽑을 수 있고, 로컬 함수는 바깥 함수의 파라미터를 사용할 수 있습니다.
+
+```kotlin
+data class User(val id: Int, val name: String, val address: String)
+
+fun User.validateBeforeSave() {
+    fun validate(value: String, fieldName: String) {
+        require(value.isNotEmpty()) {
+            "Can't save user $id: empty $fieldName"
+        }
+    }
+
+    validate(name, "Name")
+    validate(address, "Address")
+}
+```
+
+한 객체의 공개 정보만 사용하는 보조 로직이라면 확장 함수로 분리하면 원래 클래스를 간결하게 유지할 수 있습니다. 로컬 함수를 여러 단계 중첩하면 읽기 어려워지므로 보통 한 단계면 충분합니다.
+
+## 직접 실행해 볼 체크리스트
+
+1. `eval(Sum(Num(1), Num(2)))`가 `3`을 반환하는지 확인합니다.
+2. `1..10`, `1 until 10`, `10 downTo 1 step 2`의 원소 차이를 출력합니다.
+3. `joinToString`의 기본 인자를 하나씩 생략해 봅니다.
+4. `lastChar`와 같은 이름의 멤버 함수를 가진 클래스를 만들고 무엇이 우선하는지 확인합니다.
+
+## 시리즈 읽는 순서
+
+| 회차 | 주제 | 글 |
+|---|---|---|
+| 00 | 핵심 문법과 함수 | [코틀린 핵심 문법과 함수](./kotlin-in-action-summary.pub.md) |
+| 01 | 타입 시스템 | [널 안전성, 컬렉션과 타입](./01-type-system.pub.md) |
+| 02 | 함수형 코드 | [람다, 컬렉션과 시퀀스](./02-lambdas-collections-sequences.pub.md) |
+| 03 | 객체 모델 | [클래스, 위임과 객체](./03-classes-delegation-objects.pub.md) |
+| 04 | 추상화 | [고차 함수, 인라인과 제네릭](./04-higher-order-functions-generics.pub.md) |
+| 05 | 언어 관례 | [연산자, 구조 분해와 프로퍼티 위임](./05-conventions-and-property-delegation.pub.md) |
+| 06 | 메타프로그래밍 | [DSL, 애노테이션과 리플렉션](./06-dsl-annotations-reflection.pub.md) |
+
+다음 글에서는 `String?`와 `String`의 차이부터 컬렉션의 변경 가능성, `Any`·`Unit`·`Nothing`까지 타입 시스템을 코드로 연결합니다.

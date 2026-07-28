@@ -1,6 +1,7 @@
 ---
 title: RabbitMQ Push API (Consumer/구독자) 가이드
 date: 2026-04-23
+updated: 2026-07-28
 category: "Backend"
 categories:
   - Backend
@@ -13,8 +14,6 @@ tags:
   - rabbitmq
 summary: "RabbitMQ Push API (Consumer/구독자) 가이드에 관한 기술 내용과 핵심 개념을 정리합니다."
 ---
-
-# RabbitMQ Push API (Consumer/구독자) 가이드
 
 > 출처: RabbitMQ 공식 문서 — Consumers 페이지
 
@@ -158,7 +157,88 @@ Consumer 등록 시 두 가지 전달 모드 중 하나를 선택한다:
 | **자동 (Automatic)** | 승인 불필요 — "fire and forget" 방식 |
 | **수동 (Manual)** | 클라이언트가 명시적으로 승인해야 함 |
 
-> 자세한 내용은 별도의 Consumer Acknowledgements / Publisher Confirms 문서를 참조한다.
+자동 승인에서는 RabbitMQ가 메시지를 소켓으로 보낸 시점에 전달을 완료한 것으로 본다. Consumer 프로세스가 실제 처리를 끝내기 전에 종료되어도 메시지를 다시 받을 수 없으므로, 유실을 허용할 수 있는 작업이 아니라면 수동 승인이 기본 선택이다.
+
+수동 승인에서는 처리 결과에 따라 다음 중 하나를 호출한다:
+
+| 호출 | 의미 |
+|---|---|
+| `ack(message)` | 처리를 완료했으므로 큐에서 제거 |
+| `nack(message, false, true)` | 처리 실패, 다시 큐에 넣음 |
+| `nack(message, false, false)` | 재시도하지 않고 버리거나 Dead Letter Exchange로 보냄 |
+
+승인은 메시지를 받은 **같은 채널**에서 해야 한다. 승인 전에 연결이나 채널이 끊기면 미승인 메시지는 다시 큐에 들어가 다른 Consumer에게 전달될 수 있다. 따라서 수동 승인은 exactly-once를 보장하지 않으며, Consumer 로직은 같은 메시지를 다시 처리해도 안전하도록 멱등성을 고려해야 한다.
+
+저장소의 `consumer.js`는 숫자가 7인 경우에만 `ack`하고 나머지를 계속 미승인 상태로 남긴다. 학습용 동작을 실제 처리 흐름으로 바꾸면 다음과 같다.
+
+```javascript
+const amqp = require("amqplib");
+const { randomUUID } = require("node:crypto");
+
+async function startConsumer() {
+  const connection = await amqp.connect("amqp://localhost:5672");
+  const channel = await connection.createChannel();
+
+  await channel.assertQueue("jobs", { durable: true });
+  await channel.prefetch(10);
+
+  await channel.consume(
+    "jobs",
+    async (message) => {
+      if (message === null) return;
+
+      try {
+        const job = JSON.parse(message.content.toString());
+        await processJob(job);
+        channel.ack(message);
+      } catch (error) {
+        console.error("job failed", error);
+
+        const wasRedelivered = message.fields.redelivered;
+        channel.nack(message, false, !wasRedelivered);
+      }
+    },
+    { noAck: false },
+  );
+}
+```
+
+예제는 첫 실패에는 재큐잉하고, 이미 재전달된 메시지가 또 실패하면 재큐잉하지 않는다. 실제 서비스에서는 재시도 횟수와 간격을 헤더 또는 재시도 큐로 관리하고, 최종 실패를 Dead Letter Exchange로 보내는 방식이 일반적이다. 조건 없이 계속 `requeue=true`를 사용하면 같은 메시지가 즉시 반복 전달되는 루프가 생길 수 있다.
+
+### Consumer Ack와 Publisher Confirm의 차이
+
+두 기능은 서로 반대 방향의 안전성을 다룬다.
+
+- **Consumer Ack**: Consumer가 RabbitMQ에 "처리를 끝냈다"고 알린다.
+- **Publisher Confirm**: RabbitMQ가 Publisher에 "발행을 받아들였다"고 알린다.
+
+저장소의 `publisher.js`는 일반 채널에서 `sendToQueue` 직후 연결을 닫는다. confirm 채널을 사용하면 브로커의 확인을 기다린 뒤 종료할 수 있다.
+
+```javascript
+const amqp = require("amqplib");
+
+async function publish(job) {
+  const connection = await amqp.connect("amqp://localhost:5672");
+  const channel = await connection.createConfirmChannel();
+
+  await channel.assertQueue("jobs", { durable: true });
+  channel.sendToQueue(
+    "jobs",
+    Buffer.from(JSON.stringify(job)),
+    {
+      persistent: true,
+      contentType: "application/json",
+      messageId: randomUUID(),
+    },
+  );
+
+  await channel.waitForConfirms();
+  await channel.close();
+  await connection.close();
+}
+```
+
+`persistent: true`는 영속 큐와 함께 브로커 재시작 시 메시지를 보존할 가능성을 높이고, confirm은 발행 실패를 Publisher가 감지하게 한다. 이것만으로 Consumer의 업무 처리가 완료되는 것은 아니므로 Consumer Ack와 함께 설계해야 한다.
 
 ---
 
@@ -169,7 +249,22 @@ Consumer 등록 시 두 가지 전달 모드 중 하나를 선택한다:
 - "In flight" = 네트워크 전송 중이거나 전달되었지만 아직 미승인 상태
 - `basic.qos` 설정으로 제어한다.
 
-> 자세한 내용은 별도의 Prefetch 문서를 참조한다.
+Node.js `amqplib`에서는 Consumer를 등록하기 전에 `channel.prefetch(count)`를 호출한다.
+
+```javascript
+await channel.prefetch(10);
+await channel.consume("jobs", handleMessage, { noAck: false });
+```
+
+이 예제에서는 처리 완료를 기다리는 미승인 메시지가 설정한 한도에 도달하면 RabbitMQ가 추가 전달을 멈춘다. `ack` 또는 재큐잉하지 않는 `nack`으로 미승인 수가 줄어야 다음 메시지가 온다.
+
+값을 정할 때는 처리 시간과 메모리를 함께 본다.
+
+- 너무 작으면 Consumer가 처리할 수 있는데도 다음 메시지를 기다려 처리량이 낮아진다.
+- 너무 크면 장애 시 많은 메시지가 한 Consumer에 묶이고, 메모리 사용량과 재전달 규모가 커진다.
+- Consumer 내부 동시 처리 수가 10이라면 우선 prefetch도 10 안팎에서 시작해 처리량, 지연, 메모리, 재전달 수를 측정한다.
+
+수동 승인 없이 `noAck: true`를 쓰면 미승인 메시지가 없으므로 prefetch로 작업 중인 메시지 수를 제어하는 효과도 기대할 수 없다.
 
 ---
 
@@ -321,7 +416,28 @@ Consumer 우선순위를 사용하면:
 - 높은 우선순위 Consumer가 블로킹(예: prefetch 제한)된 경우에만 낮은 우선순위 Consumer가 메시지를 받는다.
 - 같은 높은 우선순위의 Consumer가 여러 개 있으면 라운드로빈으로 분배된다.
 
-> 자세한 내용은 별도의 Consumer Priority 문서를 참조한다.
+`amqplib`에서는 Consumer 등록 옵션으로 우선순위를 지정할 수 있다.
+
+```javascript
+await channel.consume("jobs", primaryHandler, {
+  noAck: false,
+  priority: 10,
+});
+
+await channel.consume("jobs", fallbackHandler, {
+  noAck: false,
+  priority: 0,
+});
+```
+
+우선순위 10 Consumer가 연결되어 있고 prefetch 여유도 있으면 메시지를 먼저 받는다. 해당 Consumer가 미승인 한도에 도달하거나 사용할 수 없을 때 우선순위 0 Consumer로 전달된다.
+
+이 기능은 "빠른 Consumer를 주력으로, 느린 Consumer를 예비로" 두는 데 사용할 수 있지만 다음 한계가 있다.
+
+- 같은 우선순위끼리는 라운드로빈이므로 정확한 Consumer 지정 기능이 아니다.
+- 이미 낮은 우선순위 Consumer에 전달된 메시지를 높은 우선순위 Consumer가 되찾지 않는다.
+- Single Active Consumer와 달리 낮은 우선순위 Consumer도 조건에 따라 동시에 처리할 수 있다.
+- 엄격한 순서 보장이 필요하다면 우선순위보다 큐 분리나 Single Active Consumer가 요구에 더 맞는지 검토해야 한다.
 
 ---
 

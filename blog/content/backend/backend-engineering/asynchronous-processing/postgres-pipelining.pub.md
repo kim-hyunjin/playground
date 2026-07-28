@@ -1,6 +1,7 @@
 ---
 title: 34.5. 파이프라인 모드 (Pipeline Mode)
 date: 2026-04-23
+updated: 2026-07-28
 category: "Backend"
 categories:
   - Backend
@@ -13,8 +14,6 @@ tags:
   - pipeline
 summary: "34.5. 파이프라인 모드 (Pipeline Mode)에 관한 기술 내용과 핵심 개념을 정리합니다."
 ---
-
-# 34.5. 파이프라인 모드 (Pipeline Mode)
 
 > 출처: PostgreSQL 공식 문서 — libpq 파이프라인 모드 (섹션 34.5)
 
@@ -124,7 +123,105 @@ libpq는 현재 처리 중인 쿼리에 대한 정보를 애플리케이션에 �
 
 가용 메모리를 기반으로 소켓의 결과를 자주 읽어야 합니다. 파이프라인 끝까지 기다릴 필요가 없습니다. 파이프라인은 보통(반드시 그렇지는 않지만) 트랜잭션 단위로 범위를 지정해야 합니다. 파이프라인 사이에 파이프라인 모드를 종료하고 재진입하거나, 다음을 전송하기 전에 하나가 완료될 때까지 기다릴 필요가 없습니다.
 
-`select()`와 간단한 상태 머신을 사용하여 전송/수신 작업을 추적하는 예제는 PostgreSQL 소스 배포판의 `src/test/modules/libpq_pipeline/libpq_pipeline.c`에 있습니다.
+### 두 큐로 결과의 주인을 찾기
+
+libpq는 현재 결과가 어떤 업무 요청에 대응하는지 알려 주지 않는다. 전송 순서대로 결과가 오므로 클라이언트가 두 FIFO 큐를 유지하면 매핑할 수 있다.
+
+```text
+pending: 아직 보내지 않은 작업
+inflight: 보냈지만 결과를 끝까지 읽지 않은 작업
+
+소켓 쓰기 가능:
+  pending 앞 작업을 PQsendQueryParams로 전송
+  성공하면 pending -> inflight 이동
+
+소켓 읽기 가능:
+  PQconsumeInput으로 입력 버퍼 갱신
+  PQisBusy가 false인 동안 PQgetResult 호출
+  한 쿼리의 결과 경계(NULL)를 만나면 inflight 앞 작업 완료
+```
+
+다음 코드는 문서의 `select()` 상태 머신 구조를 핵심 API만 남겨 축약한 예다. 오류 처리와 메모리 정리는 설명을 위해 단순화했다.
+
+```c
+typedef struct Work {
+    const char *sql;
+    const char *name;
+} Work;
+
+Work pending[] = {
+    {"INSERT INTO jobs(name) VALUES ('compile')", "compile"},
+    {"INSERT INTO jobs(name) VALUES ('test')", "test"},
+};
+
+if (PQenterPipelineMode(conn) != 1) {
+    fail(PQerrorMessage(conn));
+}
+
+for (size_t i = 0; i < 2; i++) {
+    if (PQsendQueryParams(
+            conn,
+            pending[i].sql,
+            0, NULL, NULL, NULL, NULL, 0
+        ) != 1) {
+        fail(PQerrorMessage(conn));
+    }
+    inflight_push(&pending[i]);
+}
+
+if (PQpipelineSync(conn) != 1) {
+    fail(PQerrorMessage(conn));
+}
+
+bool sync_seen = false;
+while (!sync_seen) {
+    wait_until_socket_is_readable(PQsocket(conn)); /* select/poll */
+
+    if (PQconsumeInput(conn) != 1) {
+        fail(PQerrorMessage(conn));
+    }
+
+    while (PQisBusy(conn) == 0) {
+        PGresult *result = PQgetResult(conn);
+
+        if (result == NULL) {
+            /* 현재 쿼리의 결과 스트림이 끝났다. */
+            if (!sync_seen) {
+                inflight_pop();
+            }
+            break;
+        }
+
+        ExecStatusType status = PQresultStatus(result);
+        if (status == PGRES_PIPELINE_SYNC) {
+            sync_seen = true;
+        } else if (status == PGRES_PIPELINE_ABORTED) {
+            mark_skipped(inflight_front());
+        } else if (
+            status == PGRES_COMMAND_OK ||
+            status == PGRES_TUPLES_OK
+        ) {
+            handle_success(inflight_front(), result);
+        } else {
+            handle_failure(inflight_front(), PQresultErrorMessage(result));
+        }
+
+        PQclear(result);
+    }
+}
+
+if (PQexitPipelineMode(conn) != 1) {
+    fail(PQerrorMessage(conn));
+}
+```
+
+상태 머신에서 놓치기 쉬운 지점은 다음과 같다.
+
+1. 파이프라인에서는 단순 쿼리 API인 `PQsendQuery`가 아니라 `PQsendQueryParams`, `PQsendQueryPrepared` 같은 확장 쿼리 API를 사용한다.
+2. 보내기만 하지 않고 읽기를 자주 섞어야 클라이언트와 서버의 송수신 버퍼가 동시에 가득 차는 교착 상태를 피할 수 있다.
+3. `PQgetResult`가 반환한 모든 `PGresult`는 성공과 실패에 관계없이 `PQclear`해야 한다.
+4. 첫 오류 뒤의 `PGRES_PIPELINE_ABORTED`는 해당 작업이 실행되지 않고 건너뛰어졌다는 뜻이다.
+5. `PGRES_PIPELINE_SYNC`를 받아야 오류 경계가 끝났음을 알고 다음 작업 묶음을 정상적으로 처리할 수 있다.
 
 ---
 
