@@ -53,17 +53,6 @@ export function tagSlug(tag: string) {
   return slug === 'index' ? 'index-tag' : slug;
 }
 
-export function readingMinutes(entry: BlogEntry) {
-  const text = ('body' in entry ? entry.body : '') ?? '';
-  const words = text
-    .replace(/```[\s\S]*?```/g, ' ')
-    .replace(/<[^>]+>/g, ' ')
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean).length;
-  return Math.max(1, Math.ceil(words / 260));
-}
-
 export function collectCategories(entries: BlogEntry[]) {
   return buildTopicTree(entries).map(({ name, count, path }) => ({
     name,

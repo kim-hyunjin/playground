@@ -4,7 +4,7 @@ import type { BlogEntry } from '../lib/content';
 import BaseLayout from './BaseLayout.astro';
 import Mermaid from '../components/Mermaid.astro';
 import TopicBreadcrumbs from '../components/TopicBreadcrumbs.astro';
-import { entryTopicBreadcrumbs, entryUrl, readingMinutes, tagUrl } from '../lib/content';
+import { entryTopicBreadcrumbs, entryUrl, tagUrl } from '../lib/content';
 
 interface Props {
   entry: BlogEntry;
@@ -36,8 +36,6 @@ const topicBreadcrumbs = entryTopicBreadcrumbs(entry);
           <time datetime={entry.data.date.toISOString()}>
             {entry.data.date.toLocaleDateString('ko-KR', { dateStyle: 'long' })}
           </time>
-          <span aria-hidden="true">·</span>
-          <span>{readingMinutes(entry)}분 읽기</span>
         </div>
       </header>
 
