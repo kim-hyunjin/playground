@@ -1,5 +1,5 @@
 ---
-title: "[Rust] REST API 핸들러 한 줄씩 읽기"
+title: "[Rust 10] REST API 핸들러 한 줄씩 읽기"
 date: 2026-05-31
 category: Backend
 tags: [Rust, Axum, REST API, JSON]

@@ -1,5 +1,5 @@
 ---
-title: "[Rust] 소유권, Option, Result — ? 연산자까지"
+title: "[Rust 03] 소유권, Option, Result — ? 연산자까지"
 date: 2026-05-31
 category: Backend
 tags: [Rust, Option, Result, ownership, error handling]

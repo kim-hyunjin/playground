@@ -1,5 +1,5 @@
 ---
-title: "[Rust] Rust 게시판 백엔드, 무엇을 만들었나"
+title: "[Rust 00] Rust 게시판 백엔드, 무엇을 만들었나"
 date: 2026-05-31
 category: Backend
 tags: [Rust, Axum, SeaORM, SQLite, REST API]
@@ -17,7 +17,7 @@ summary: "board-api 프로젝트의 전체 구조와 HTTP 요청이 라우트·�
 | **crate** | Rust의 “패키지/모듈 단위”. `board-api` 프로젝트는 라이브러리 crate + 실행 crate로 나뉩니다 (01편). |
 | **HTTP** | 브라우저·`curl`이 서버에 보내는 요청. `GET`(조회), `POST`(생성), `PUT`(수정), `DELETE`(삭제) 등. |
 
-다른 언어에서 백엔드를 만들어 본 적이 있다면 “컨트롤러 → 서비스 → DB” 구조는 그대로이고, **문법과 에러 처리 방식**만 Rust스럽게 바뀐다고 보면 됩니다. Rust 문법은 01~03편에서 프로젝트 코드로 익힙니다.
+다른 언어에서 백엔드를 만들어 본 적이 있다면 “컨트롤러 → 서비스 → DB” 구조는 그대로이고, **문법과 에러 처리 방식**만 Rust스럽게 바뀐다고 보면 됩니다. Rust 문법은 01\~03편에서 프로젝트 코드로 익힙니다.
 
 ## 이 프로젝트가 하는 일
 
@@ -152,6 +152,23 @@ curl -X POST http://127.0.0.1:3000/api/posts \
 
 ## 시리즈 읽는 순서
 
-`doc-plan.md`에 정리된 대로 **00(이 글) → Rust 문법(01~03) → 서버 뼈대(04~05) → DB·서비스(06~07) → API·에러·DTO(08~10) → HTML·테스트(11~12) → 전체 정리(13)** 순으로 읽으면 `board-api` 전체 소스를 따라갈 수 있습니다.
+아래 순서대로 읽으면 `board-api` 전체 소스를 따라갈 수 있습니다.
+
+| 회차 | 단계 | 글 |
+|------|------|----|
+| 00 | 개요 | [Rust 게시판 백엔드, 무엇을 만들었나](./00-rust-board-overview.pub.md) |
+| 01 | Rust 문법 | [Cargo.toml과 모듈 시스템: lib vs bin](./01-cargo-and-module-system.pub.md) |
+| 02 | Rust 문법 | [struct, enum, impl — 코드에서 만나는 Rust 문법](./02-rust-types-and-structs.pub.md) |
+| 03 | Rust 문법 | [소유권, Option, Result — ? 연산자까지](./03-ownership-option-result.pub.md) |
+| 04 | 서버 뼈대 | [async/await와 Tokio — 서버가 시작되는 순간](./04-async-tokio-and-main.pub.md) |
+| 05 | 서버 뼈대 | [AppState와 라우터 — 요청을 어디로 보낼까](./05-app-state-and-routing.pub.md) |
+| 06 | DB·서비스 | [SeaORM 엔티티와 DB 연결](./06-seaorm-entity-and-db.pub.md) |
+| 07 | DB·서비스 | [서비스 레이어 — CRUD와 검증 로직](./07-service-layer-crud.pub.md) |
+| 08 | API·에러·DTO | [thiserror로 만드는 앱 에러](./08-error-handling-with-thiserror.pub.md) |
+| 09 | API·에러·DTO | [DTO와 Serde — JSON/폼 데이터 변환](./09-dto-and-serde.pub.md) |
+| 10 | API·에러·DTO | [REST API 핸들러 한 줄씩 읽기](./10-rest-api-handlers.pub.md) |
+| 11 | HTML·테스트 | [Askama으로 HTML 게시판 만들기](./11-server-side-rendering-askama.pub.md) |
+| 12 | HTML·테스트 | [통합 테스트 — 메모리 DB로 CRUD 검증](./12-integration-tests.pub.md) |
+| 13 | 전체 정리 | [전체 흐름 정리 — 한 글 작성의 여정](./13-putting-it-all-together.pub.md) |
 
 다음 글에서는 `Cargo.toml`과 `lib.rs`의 **모듈 시스템**부터 살펴봅니다.

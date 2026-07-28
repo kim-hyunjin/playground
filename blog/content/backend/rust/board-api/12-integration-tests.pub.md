@@ -1,5 +1,5 @@
 ---
-title: "[Rust] 통합 테스트 — 메모리 DB로 CRUD 검증"
+title: "[Rust 12] 통합 테스트 — 메모리 DB로 CRUD 검증"
 date: 2026-05-31
 category: Backend
 tags: [Rust, integration test, Tokio, tower]

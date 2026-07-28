@@ -1,5 +1,5 @@
 ---
-title: "[Rust] 서비스 레이어 — CRUD와 검증 로직"
+title: "[Rust 07] 서비스 레이어 — CRUD와 검증 로직"
 date: 2026-05-31
 category: Backend
 tags: [Rust, SeaORM, service layer, CRUD]

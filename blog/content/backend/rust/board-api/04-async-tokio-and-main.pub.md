@@ -1,5 +1,5 @@
 ---
-title: "[Rust] async/await와 Tokio — 서버가 시작되는 순간"
+title: "[Rust 04] async/await와 Tokio — 서버가 시작되는 순간"
 date: 2026-05-31
 category: Backend
 tags: [Rust, Tokio, async, Axum, tracing]

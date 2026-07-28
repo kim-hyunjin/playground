@@ -1,5 +1,5 @@
 ---
-title: "[Rust] Cargo.toml과 모듈 시스템: lib vs bin"
+title: "[Rust 01] Cargo.toml과 모듈 시스템: lib vs bin"
 date: 2026-05-31
 category: Backend
 tags: [Rust, Cargo, 모듈, crate]

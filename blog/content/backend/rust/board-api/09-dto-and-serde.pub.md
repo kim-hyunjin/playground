@@ -1,5 +1,5 @@
 ---
-title: "[Rust] DTO와 Serde — JSON/폼 데이터 변환"
+title: "[Rust 09] DTO와 Serde — JSON/폼 데이터 변환"
 date: 2026-05-31
 category: Backend
 tags: [Rust, Serde, DTO, JSON]

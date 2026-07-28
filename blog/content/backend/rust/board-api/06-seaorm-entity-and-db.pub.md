@@ -1,5 +1,5 @@
 ---
-title: "[Rust] SeaORM 엔티티와 DB 연결"
+title: "[Rust 06] SeaORM 엔티티와 DB 연결"
 date: 2026-05-31
 category: Backend
 tags: [Rust, SeaORM, SQLite, entity]

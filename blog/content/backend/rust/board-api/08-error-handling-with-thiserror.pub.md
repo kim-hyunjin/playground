@@ -1,5 +1,5 @@
 ---
-title: "[Rust] thiserror로 만드는 앱 에러"
+title: "[Rust 08] thiserror로 만드는 앱 에러"
 date: 2026-05-31
 category: Backend
 tags: [Rust, thiserror, Axum, error handling]

@@ -1,5 +1,5 @@
 ---
-title: "[Rust] AppState와 라우터 — 요청을 어디로 보낼까"
+title: "[Rust 05] AppState와 라우터 — 요청을 어디로 보낼까"
 date: 2026-05-31
 category: Backend
 tags: [Rust, Axum, Router, AppState]

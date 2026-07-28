@@ -1,5 +1,5 @@
 ---
-title: "[Rust] struct, enum, impl — 코드에서 만나는 Rust 문법"
+title: "[Rust 02] struct, enum, impl — 코드에서 만나는 Rust 문법"
 date: 2026-05-31
 category: Backend
 tags: [Rust, struct, enum, derive, impl]

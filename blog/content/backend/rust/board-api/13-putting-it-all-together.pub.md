@@ -1,5 +1,5 @@
 ---
-title: "[Rust] 전체 흐름 정리 — 한 글 작성의 여정"
+title: "[Rust 13] 전체 흐름 정리 — 한 글 작성의 여정"
 date: 2026-05-31
 category: Backend
 tags: [Rust, Axum, SeaORM, architecture]

@@ -1,5 +1,5 @@
 ---
-title: "[Rust] Askama으로 HTML 게시판 만들기"
+title: "[Rust 11] Askama으로 HTML 게시판 만들기"
 date: 2026-05-31
 category: Backend
 tags: [Rust, Askama, SSR, HTML]
