@@ -2,7 +2,6 @@ import { defineConfig } from 'astro/config';
 import { unified } from '@astrojs/markdown-remark';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
-import tailwindcss from '@tailwindcss/vite';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeSlug from 'rehype-slug';
 import { BASE_PATH, SITE_ORIGIN } from './scripts/config.mjs';
@@ -49,7 +48,6 @@ export default defineConfig({
     },
   },
   vite: {
-    plugins: [tailwindcss()],
     build: {
       // Mermaid is lazy-loaded only on the seven posts that use it.
       chunkSizeWarningLimit: 700,

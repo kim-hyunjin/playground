@@ -1,21 +1,7 @@
-@import "tailwindcss";
-
-@theme {
-  --color-parchment: #f5f4ed;
-  --color-ivory: #faf9f5;
-  --color-warm-sand: #e8e6dc;
-  --color-ink-blue: #1b365d;
-  --color-ink-blue-light: #2d5a8a;
-  --color-ink-blue-tint: #eef2f7;
-  --color-near-black: #141413;
-  --color-warm-gray: #3d3d3a;
-  --color-stone: #6b6a64;
-  --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", sans-serif;
-  --font-mono: "JetBrains Mono", "SF Mono", "Fira Code", Consolas, monospace;
-}
-
 :root {
   color-scheme: light;
+  --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", "Fira Code", Consolas, monospace;
   --page: #f5f4ed;
   --surface: #faf9f5;
   --surface-muted: #e8e6dc;
