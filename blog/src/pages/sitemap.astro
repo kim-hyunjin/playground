@@ -44,3 +44,55 @@ const topics = collectTopics(entries);
     </nav>
   </div>
 </BaseLayout>
+
+<style>
+  .sitemap-shell {
+    padding-bottom: 2rem;
+  }
+
+  .sitemap-intro {
+    max-width: 42rem;
+    margin: 0 0 1.5rem;
+    color: var(--text-soft);
+  }
+
+  .sitemap-primary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 2rem;
+  }
+
+  .sitemap-primary a {
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.42rem 0.8rem;
+    background: var(--surface);
+    color: var(--brand);
+    font-size: 0.82rem;
+    font-weight: 650;
+    text-decoration: none;
+  }
+
+  .sitemap-primary a:hover {
+    color: var(--brand);
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+
+  .sitemap-tree {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .sitemap-tree > :global(.sitemap-topic) {
+    border: 1px solid var(--border);
+    border-radius: 0.8rem;
+    padding: 1.2rem;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+</style>

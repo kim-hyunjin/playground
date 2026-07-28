@@ -34,3 +34,70 @@ const directEntries = entries.filter((entry) => entryTopicPath(entry) === topic.
     </ul>
   )}
 </li>
+
+<style>
+  .sitemap-children,
+  .sitemap-posts {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .sitemap-topic-line {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .sitemap-topic-line a {
+    color: var(--text);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .sitemap-topic-line span {
+    flex: none;
+    color: var(--muted);
+    font-size: 0.76rem;
+  }
+
+  .sitemap-children {
+    display: grid;
+    gap: 0.9rem;
+    margin-top: 0.9rem;
+    border-left: 1px solid var(--border);
+    padding-left: 1rem;
+  }
+
+  .sitemap-posts {
+    display: grid;
+    gap: 0.35rem;
+    margin-top: 0.65rem;
+    padding-left: 1rem;
+  }
+
+  .sitemap-posts li {
+    position: relative;
+  }
+
+  .sitemap-posts li::before {
+    position: absolute;
+    left: -0.9rem;
+    color: var(--muted);
+    content: '–';
+  }
+
+  .sitemap-posts a {
+    color: var(--text-soft);
+    font-size: 0.84rem;
+    text-decoration: none;
+  }
+
+  .sitemap-topic-line a:hover,
+  .sitemap-posts a:hover {
+    color: var(--brand);
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+</style>
