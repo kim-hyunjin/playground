@@ -377,6 +377,20 @@ const topicBreadcrumbs = entryTopicBreadcrumbs(entry);
     min-width: max-content;
   }
 
+  .prose :global(.code-language) {
+    position: absolute;
+    top: 0.72rem;
+    left: 1.2rem;
+    color: inherit;
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 750;
+    letter-spacing: 0.035em;
+    line-height: 1.4;
+    opacity: 0.62;
+    pointer-events: none;
+  }
+
   .prose :global(.copy-code) {
     position: absolute;
     top: 0.65rem;

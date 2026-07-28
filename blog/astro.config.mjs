@@ -5,6 +5,7 @@ import sitemap from '@astrojs/sitemap';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeSlug from 'rehype-slug';
 import { BASE_PATH, SITE_ORIGIN } from './scripts/config.mjs';
+import codeLanguageLabelTransformer from './src/lib/code-language-label.mjs';
 import remarkCjkStrong from './src/lib/remark-cjk-strong.mjs';
 import remarkMermaid from './src/lib/remark-mermaid.mjs';
 import remarkNormalizeDocumentHeadings from './src/lib/remark-normalize-document-headings.mjs';
@@ -43,6 +44,10 @@ export default defineConfig({
       ],
     }),
     shikiConfig: {
+      langAlias: {
+        gradle: 'groovy',
+      },
+      transformers: [codeLanguageLabelTransformer],
       themes: {
         light: 'github-light',
         dark: 'github-dark',

@@ -7,6 +7,9 @@ import {
   topicBreadcrumbsFromPath,
   topicPathFromId,
 } from '../src/lib/topics';
+import codeLanguageLabelTransformer, {
+  codeLanguageLabel,
+} from '../src/lib/code-language-label.mjs';
 import remarkCjkStrong from '../src/lib/remark-cjk-strong.mjs';
 import remarkNormalizeDocumentHeadings from '../src/lib/remark-normalize-document-headings.mjs';
 import { joinBase, slugifySegment } from '../src/lib/url';
@@ -84,6 +87,42 @@ describe('content contract', () => {
 });
 
 describe('Markdown rendering', () => {
+  it('adds a readable language label to fenced code blocks', () => {
+    const pre = {
+      type: 'element',
+      tagName: 'pre',
+      properties: {},
+      children: [{ type: 'element', tagName: 'code', properties: {}, children: [] }],
+    };
+
+    codeLanguageLabelTransformer.pre.call({ options: { lang: 'javascript' } }, pre);
+
+    expect(codeLanguageLabel('cpp')).toBe('C++');
+    expect(pre.children[0]).toEqual({
+      type: 'element',
+      tagName: 'span',
+      properties: {
+        ariaLabel: '코드 언어: JavaScript',
+        className: ['code-language'],
+        dataPagefindIgnore: '',
+      },
+      children: [{ type: 'text', value: 'JavaScript' }],
+    });
+  });
+
+  it('does not label code blocks without a fence language', () => {
+    const pre = {
+      type: 'element',
+      tagName: 'pre',
+      properties: {},
+      children: [{ type: 'element', tagName: 'code', properties: {}, children: [] }],
+    };
+
+    codeLanguageLabelTransformer.pre.call({ options: { lang: 'plaintext' } }, pre);
+
+    expect(pre.children).toHaveLength(1);
+  });
+
   it('removes the document title and demotes later top-level sections', () => {
     const tree = {
       type: 'root',

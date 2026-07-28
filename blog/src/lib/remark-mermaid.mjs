@@ -16,10 +16,6 @@ export default function remarkMermaid() {
         delete node.meta;
       }
 
-      if (node.type === 'code' && node.lang === 'gradle') {
-        node.lang = 'groovy';
-      }
-
       if (
         node.type === 'link' &&
         typeof node.url === 'string' &&
