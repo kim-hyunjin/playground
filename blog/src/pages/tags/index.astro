@@ -26,3 +26,26 @@ const tags = collectTags(entries);
     </div>
   </div>
 </BaseLayout>
+
+<style>
+  .tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+  }
+
+  .tag-cloud a {
+    display: inline-flex;
+    gap: 0.4rem;
+    border-radius: 999px;
+    padding: 0.4rem 0.75rem;
+    background: var(--tag);
+    color: var(--brand);
+    font-size: 0.9rem;
+    text-decoration: none;
+  }
+
+  .tag-cloud span {
+    color: var(--muted);
+  }
+</style>

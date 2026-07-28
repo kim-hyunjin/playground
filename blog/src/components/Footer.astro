@@ -12,3 +12,36 @@ import { withBase } from '../lib/url';
     </nav>
   </div>
 </footer>
+
+<style>
+  .site-footer {
+    margin-top: 5rem;
+    border-top: 1px solid var(--border);
+    background: var(--surface-muted);
+    color: var(--text-soft);
+  }
+
+  .site-footer > div {
+    display: flex;
+    width: min(100% - 2rem, 76rem);
+    min-height: 7rem;
+    margin-inline: auto;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .site-footer nav {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 44rem) {
+    .site-footer > div {
+      align-items: flex-start;
+      flex-direction: column;
+      justify-content: center;
+    }
+  }
+</style>

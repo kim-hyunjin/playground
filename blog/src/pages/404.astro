@@ -16,3 +16,23 @@ const entries = await getPublishedPosts();
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .not-found {
+    display: grid;
+    min-height: 65vh;
+    place-items: center;
+    text-align: center;
+  }
+
+  .not-found strong {
+    display: block;
+    color: var(--brand);
+    font-family: var(--font-mono);
+  }
+
+  .not-found h1 {
+    margin: 0.4rem;
+    font-size: clamp(2rem, 7vw, 4rem);
+  }
+</style>
