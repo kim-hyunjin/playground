@@ -41,6 +41,19 @@ const topicBreadcrumbs = entryTopicBreadcrumbs(entry);
         </div>
       </header>
 
+      {toc.length > 0 && (
+        <details class="mobile-toc" data-pagefind-ignore>
+          <summary>목차</summary>
+          <ol>
+            {toc.map((heading) => (
+              <li class:list={{ nested: heading.depth === 3 }}>
+                <a href={`#${heading.slug}`}>{heading.text}</a>
+              </li>
+            ))}
+          </ol>
+        </details>
+      )}
+
       <div class="prose" data-pagefind-body>
         <slot />
       </div>
@@ -108,15 +121,18 @@ const topicBreadcrumbs = entryTopicBreadcrumbs(entry);
 
   .post-header h1 {
     margin: 0.6rem 0 1rem;
-    font-size: clamp(2.15rem, 6vw, 4.1rem);
+    font-size: clamp(2.15rem, 5.6vw, 3.65rem);
     font-weight: 650;
-    letter-spacing: -0.058em;
-    line-height: 1.07;
+    letter-spacing: -0.042em;
+    line-height: 1.1;
+    overflow-wrap: break-word;
+    word-break: keep-all;
   }
 
   .post-summary {
     color: var(--text-soft);
-    font-size: 1.08rem;
+    font-size: 1.1rem;
+    line-height: 1.75;
   }
 
   .post-byline {
@@ -136,7 +152,8 @@ const topicBreadcrumbs = entryTopicBreadcrumbs(entry);
     border-left: 1px solid var(--border);
     padding-left: 1rem;
     color: var(--muted);
-    font-size: 0.78rem;
+    font-size: 0.86rem;
+    line-height: 1.45;
   }
 
   .toc strong {
@@ -161,11 +178,16 @@ const topicBreadcrumbs = entryTopicBreadcrumbs(entry);
     text-decoration: none;
   }
 
+  .mobile-toc {
+    display: none;
+  }
+
   .prose {
     color: var(--text);
-    font-size: 1rem;
-    line-height: 1.78;
-    overflow-wrap: break-word;
+    font-size: 1.0625rem;
+    letter-spacing: -0.005em;
+    line-height: 1.82;
+    overflow-wrap: anywhere;
   }
 
   .prose > :global(:first-child) {
@@ -177,11 +199,13 @@ const topicBreadcrumbs = entryTopicBreadcrumbs(entry);
   .prose :global(h3),
   .prose :global(h4) {
     position: relative;
-    margin: 2.2em 0 0.75em;
+    margin: 2.5em 0 0.75em;
     font-weight: 650;
-    letter-spacing: -0.04em;
+    letter-spacing: -0.025em;
     line-height: 1.25;
+    overflow-wrap: break-word;
     scroll-margin-top: 6rem;
+    word-break: keep-all;
   }
 
   .prose :global(h1) {
@@ -196,6 +220,10 @@ const topicBreadcrumbs = entryTopicBreadcrumbs(entry);
 
   .prose :global(h3) {
     font-size: 1.35rem;
+  }
+
+  .prose :global(h4) {
+    font-size: 1.12rem;
   }
 
   .prose :global(.heading-anchor) {
@@ -216,17 +244,60 @@ const topicBreadcrumbs = entryTopicBreadcrumbs(entry);
     opacity: 1;
   }
 
-  .prose :global(p),
+  .prose :global(p) {
+    margin-block: 1em;
+  }
+
   .prose :global(ul),
-  .prose :global(ol),
-  .prose :global(blockquote),
-  .prose :global(table),
-  .prose :global(pre) {
+  .prose :global(ol) {
     margin-block: 1.15em;
+    padding-inline-start: 1.65rem;
+    list-style-position: outside;
+  }
+
+  .prose :global(ul) {
+    list-style-type: disc;
+  }
+
+  .prose :global(ol) {
+    list-style-type: decimal;
+  }
+
+  .prose :global(ul ul) {
+    list-style-type: circle;
+  }
+
+  .prose :global(ul ul ul) {
+    list-style-type: square;
+  }
+
+  .prose :global(ol ol) {
+    list-style-type: lower-alpha;
+  }
+
+  .prose :global(ol ol ol) {
+    list-style-type: lower-roman;
+  }
+
+  .prose :global(li) {
+    padding-inline-start: 0.18em;
+  }
+
+  .prose :global(li::marker) {
+    color: var(--brand);
+    font-weight: 650;
   }
 
   .prose :global(li + li) {
-    margin-top: 0.32em;
+    margin-top: 0.42em;
+  }
+
+  .prose :global(li > :is(ul, ol)) {
+    margin-block: 0.5em;
+  }
+
+  .prose :global(li > p) {
+    margin-block: 0.55em;
   }
 
   .prose :global(a) {
@@ -255,10 +326,26 @@ const topicBreadcrumbs = entryTopicBreadcrumbs(entry);
   }
 
   .prose :global(blockquote) {
-    margin-inline: 0;
+    margin: 1.55em 0;
     border-left: 3px solid var(--brand);
-    padding: 0.2rem 0 0.2rem 1rem;
+    border-radius: 0 0.55rem 0.55rem 0;
+    padding: 0.8rem 1.1rem;
+    background: var(--surface);
     color: var(--text-soft);
+  }
+
+  .prose :global(blockquote > :first-child) {
+    margin-top: 0;
+  }
+
+  .prose :global(blockquote > :last-child) {
+    margin-bottom: 0;
+  }
+
+  .prose :global(hr) {
+    margin: 2.75rem 0;
+    border: 0;
+    border-top: 1px solid var(--border);
   }
 
   .prose :global(:not(pre) > code) {
@@ -268,21 +355,23 @@ const topicBreadcrumbs = entryTopicBreadcrumbs(entry);
     background: var(--tag);
     color: var(--brand);
     font-family: var(--font-mono);
-    font-size: 0.86em;
+    font-size: 0.88em;
   }
 
-  .prose :global(pre) {
+  .prose :global(pre:not(.mermaid)) {
     position: relative;
     max-width: 100%;
+    margin: 1.6em 0;
     overflow: auto;
     border: 1px solid var(--border);
-    border-radius: 0.55rem;
-    padding: 1rem;
+    border-radius: 0.7rem;
+    padding: 2.8rem 1.2rem 1.2rem;
     background: var(--code);
     box-shadow: var(--shadow);
     font-family: var(--font-mono);
-    font-size: 0.84rem;
-    line-height: 1.6;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    scrollbar-gutter: stable;
   }
 
   .prose :global(pre code) {
@@ -292,35 +381,43 @@ const topicBreadcrumbs = entryTopicBreadcrumbs(entry);
 
   .prose :global(.copy-code) {
     position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
+    top: 0.65rem;
+    right: 0.65rem;
     border: 1px solid rgb(255 255 255 / 18%);
     border-radius: 0.35rem;
-    padding: 0.2rem 0.5rem;
+    padding: 0.24rem 0.58rem;
     background: rgb(20 20 19 / 75%);
     color: #f0efe8;
     cursor: pointer;
-    font-size: 0.7rem;
+    font-size: 0.72rem;
   }
 
   .prose :global(table) {
     display: block;
     width: max-content;
     max-width: 100%;
+    margin: 1.6em 0;
     overflow-x: auto;
     border-collapse: collapse;
-    font-size: 0.88rem;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    scrollbar-gutter: stable;
   }
 
   .prose :global(th),
   .prose :global(td) {
     border: 1px solid var(--border);
-    padding: 0.5rem 0.7rem;
+    padding: 0.65rem 0.8rem;
     text-align: left;
+    vertical-align: top;
   }
 
   .prose :global(th) {
     background: var(--surface-muted);
+  }
+
+  .prose :global(tbody tr:nth-child(even)) {
+    background: color-mix(in srgb, var(--surface) 55%, transparent);
   }
 
   .prose :global(img),
@@ -328,7 +425,7 @@ const topicBreadcrumbs = entryTopicBreadcrumbs(entry);
     display: block;
     max-width: 100%;
     height: auto;
-    margin: 1.4rem auto;
+    margin: 1.75rem auto;
   }
 
   .prose :global(.notebook-html-output) {
@@ -339,8 +436,12 @@ const topicBreadcrumbs = entryTopicBreadcrumbs(entry);
   .prose :global(.mermaid) {
     display: grid;
     min-height: 4rem;
+    margin: 1.6em 0;
     place-items: center;
     overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 0.7rem;
+    padding: 1rem;
     background: var(--surface) !important;
     color: var(--text);
   }
@@ -386,6 +487,42 @@ const topicBreadcrumbs = entryTopicBreadcrumbs(entry);
     .toc {
       display: none;
     }
+
+    .mobile-toc {
+      display: block;
+      margin: -1rem 0 2.25rem;
+      border: 1px solid var(--border);
+      border-radius: 0.65rem;
+      background: var(--surface);
+      color: var(--text-soft);
+      font-size: 0.9rem;
+    }
+
+    .mobile-toc summary {
+      padding: 0.8rem 1rem;
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 650;
+    }
+
+    .mobile-toc ol {
+      margin: 0;
+      padding: 0 1rem 1rem;
+      list-style: none;
+    }
+
+    .mobile-toc li + li {
+      margin-top: 0.5rem;
+    }
+
+    .mobile-toc li.nested {
+      padding-left: 0.9rem;
+    }
+
+    .mobile-toc a {
+      color: var(--text-soft);
+      text-decoration: none;
+    }
   }
 
   @media (max-width: 44rem) {
@@ -395,6 +532,20 @@ const topicBreadcrumbs = entryTopicBreadcrumbs(entry);
 
     .post-navigation {
       grid-template-columns: 1fr;
+    }
+
+    .prose :global(ul),
+    .prose :global(ol) {
+      padding-inline-start: 1.3rem;
+    }
+
+    .prose :global(pre:not(.mermaid)) {
+      padding-inline: 1rem;
+      font-size: 0.875rem;
+    }
+
+    .prose :global(table) {
+      font-size: 0.9rem;
     }
   }
 </style>

@@ -7,6 +7,8 @@ import {
   topicBreadcrumbsFromPath,
   topicPathFromId,
 } from '../src/lib/topics';
+import remarkCjkStrong from '../src/lib/remark-cjk-strong.mjs';
+import remarkNormalizeDocumentHeadings from '../src/lib/remark-normalize-document-headings.mjs';
 import { joinBase, slugifySegment } from '../src/lib/url';
 
 async function walk(directory: string): Promise<string[]> {
@@ -78,5 +80,73 @@ describe('content contract', () => {
     const source = await readFile(resolve(process.cwd(), 'scripts/convert-notebooks.mjs'), 'utf8');
     expect(source).not.toMatch(/\b(jupyter|nbconvert|execute_request|execSync)\b/);
     expect(source).toContain('cell.outputs');
+  });
+});
+
+describe('Markdown rendering', () => {
+  it('removes the document title and demotes later top-level sections', () => {
+    const tree = {
+      type: 'root',
+      children: [
+        { type: 'heading', depth: 1, children: [{ type: 'text', value: '문서 제목' }] },
+        { type: 'paragraph', children: [{ type: 'text', value: '본문' }] },
+        { type: 'heading', depth: 1, children: [{ type: 'text', value: '본문의 H1' }] },
+      ],
+    };
+
+    remarkNormalizeDocumentHeadings()(tree);
+
+    expect(tree.children).toHaveLength(2);
+    expect(tree.children[0]).toMatchObject({ type: 'paragraph' });
+    expect(tree.children[1]).toMatchObject({ type: 'heading', depth: 2 });
+  });
+
+  it('finds the document title after metadata and an introductory heading', () => {
+    const tree = {
+      type: 'root',
+      children: [
+        { type: 'mdxjsEsm', value: "import Callout from './Callout.astro'" },
+        { type: 'heading', depth: 2, children: [{ type: 'text', value: '별책 부록' }] },
+        { type: 'heading', depth: 1, children: [{ type: 'text', value: 'MDX 제목' }] },
+        { type: 'paragraph', children: [{ type: 'text', value: '본문' }] },
+      ],
+    };
+
+    remarkNormalizeDocumentHeadings()(tree);
+
+    expect(tree.children.map(({ type }) => type)).toEqual([
+      'mdxjsEsm',
+      'heading',
+      'paragraph',
+    ]);
+    expect(tree.children[1]).toMatchObject({ type: 'heading', depth: 2 });
+  });
+
+  it('restores strong emphasis before a Korean particle after punctuation', () => {
+    const tree = {
+      type: 'root',
+      children: [
+        {
+          type: 'paragraph',
+          children: [
+            {
+              type: 'text',
+              value: '처리량은 **전체 처리량(throughput)**을 뜻합니다.',
+            },
+          ],
+        },
+      ],
+    };
+
+    remarkCjkStrong()(tree);
+
+    expect(tree.children[0].children).toEqual([
+      { type: 'text', value: '처리량은 ' },
+      {
+        type: 'strong',
+        children: [{ type: 'text', value: '전체 처리량(throughput)' }],
+      },
+      { type: 'text', value: '을 뜻합니다.' },
+    ]);
   });
 });
