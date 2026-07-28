@@ -360,7 +360,7 @@ const topicBreadcrumbs = entryTopicBreadcrumbs(entry);
     position: relative;
     max-width: 100%;
     margin: 1.6em 0;
-    overflow: auto;
+    overflow: hidden;
     border: 1px solid var(--border);
     border-radius: 0.7rem;
     padding: 2.8rem 1.2rem 1.2rem;
@@ -369,12 +369,13 @@ const topicBreadcrumbs = entryTopicBreadcrumbs(entry);
     font-family: var(--font-mono);
     font-size: 0.9rem;
     line-height: 1.7;
-    scrollbar-gutter: stable;
   }
 
   .prose :global(pre code) {
     display: block;
-    min-width: max-content;
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-gutter: stable;
   }
 
   .prose :global(.code-language) {
