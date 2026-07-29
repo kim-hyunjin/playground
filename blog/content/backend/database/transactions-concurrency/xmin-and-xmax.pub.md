@@ -14,8 +14,6 @@ tags:
 summary: "인덱스 스캔 vs 비트맵 스캔 xmin/xmax의 역할에 관한 기술 내용과 핵심 개념을 정리합니다."
 ---
 
-# 인덱스 스캔 vs 비트맵 스캔: xmin/xmax의 역할
-
 ## 🐘 PostgreSQL: 왜 인덱스만으로 부족한가?
 
 PostgreSQL에서 데이터를 조회할 때, 인덱스에 모든 컬럼이 포함되어 있음에도 불구하고 **Index Only Scan** 대신 **Bitmap Scan**이나 **Heap 접근**이 발생하는 이유는 크게 두 가지 메커니즘 때문입니다.

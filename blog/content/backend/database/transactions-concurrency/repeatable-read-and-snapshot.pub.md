@@ -45,9 +45,7 @@ summary: "PostgresSQL의 MVCC 구현에 관한 기술 내용과 핵심 개념을
 
 ---
 
-</br></br>
-
-# PostgresSQL의 MVCC 구현
+## PostgresSQL의 MVCC 구현
 
 PostgreSQL의 **MVCC(Multi-Version Concurrency Control)**와 **스냅샷**은 데이터의 가시성을 관리하여 읽기 작업이 쓰기 작업을 방해하지 않도록 설계되었습니다. 핵심은 데이터를 덮어쓰지 않고 새로운 버전을 생성하는 방식에 있습니다.
 
@@ -99,9 +97,7 @@ MVCC의 부작용은 더 이상 아무도 참조하지 않는 **과거 버전(De
 
 ---
 
-</br></br>
-
-# MySQL InnoDB의 MVCC 구현
+## MySQL InnoDB의 MVCC 구현
 
 MySQL의 InnoDB 스토리지 엔진에서 **Undo Log**와 **Read View**는 트랜잭션의 격리 수준(Isolation Level)을 보장하고, **MVCC(Multi-Version Concurrency Control)**를 구현하는 핵심 요소입니다.
 

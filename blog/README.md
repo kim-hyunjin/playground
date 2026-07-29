@@ -122,6 +122,11 @@ redirect하는 검사는 없으므로, 이미 공유한 글을 이동하거나 �
 미리 저장해야 한다. 신뢰할 수 없는 Notebook은 저장된 HTML과 이미지 출력을 먼저
 검토한다.
 
+Notebook의 `metadata.title`을 우선 사용하고, 없으면 Markdown 셀의 첫 H1 또는
+파일명 순으로 생성 문서의 frontmatter `title`을 결정한다. 변환기가 본문 헤딩을
+제거하거나 단계를 바꾸지는 않으며, 본문에 남은 H1은 콘텐츠 검증에서 오류로
+처리된다.
+
 ```bash
 pnpm convert:notebooks
 pnpm verify:content

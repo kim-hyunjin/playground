@@ -14,15 +14,13 @@ tags:
 summary: "The Journey of a Request to the Backend에 관한 기술 내용과 핵심 개념을 정리합니다."
 ---
 
-# The Journey of a Request to the Backend
-
 > 프론트엔드에서 커널을 거쳐 백엔드 프로세스까지
 
 ## 개요
 
 백엔드로 요청을 보낼 때 대부분은 요청의 **처리(Processing)** 단계에만 집중하지만, 사실 그것은 마지막 단계에 불과하다. 요청이 처리되기까지는 총 **6단계**를 거치며, 각 단계는 이론적으로 별도의 스레드나 프로세스에서 실행될 수 있다. 웹 서버, 프록시, 프레임워크, 데이터베이스 등 거의 모든 백엔드가 이 단계들을 수행하며, 각각 다른 방식으로 구현한다.
 
-```
+```text
 [1. Accept] → [2. Read] → [3. Decrypt] → [4. Parse] → [5. Decode] → [6. Process]
 ```
 

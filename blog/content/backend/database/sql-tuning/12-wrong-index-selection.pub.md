@@ -14,8 +14,6 @@ tags:
 summary: "묵시적 형변환 제거를 통한 인덱스 범위 스캔 유도에 관한 기술 내용과 핵심 개념을 정리합니다."
 ---
 
-# SQL Tuning Report: 묵시적 형변환 제거를 통한 인덱스 범위 스캔 유도
-
 ## 1. Analysis Overview
 
 ### ① 대상 쿼리 (Target SQL)

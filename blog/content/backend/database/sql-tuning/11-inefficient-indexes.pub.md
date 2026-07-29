@@ -13,8 +13,6 @@ tags:
 summary: "SQL Performance Tuning Report 사원 정보 조회 쿼리에 관한 기술 내용과 핵심 개념을 정리합니다."
 ---
 
-# SQL Performance Tuning Report: 사원 정보 조회 쿼리
-
 ## 1. Analysis Overview
 
 ### 대상 쿼리
@@ -26,7 +24,7 @@ WHERE 성별 = 'M'
 ```
 
 ### 실행 계획 (EXPLAIN) 및 인덱스 요약
-현재 쿼리는 `I_성별_성` (성별, 성) 복합 인덱스를 사용하고 있습니다. 
+현재 쿼리는 `I_성별_성` (성별, 성) 복합 인덱스를 사용하고 있습니다.
 `성별` 컬럼의 Cardinality는 1인 반면, `성` 컬럼의 Cardinality는 3440으로 훨씬 높습니다.
 
 ---

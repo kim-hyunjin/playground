@@ -14,9 +14,6 @@ tags:
 summary: "Row vs Column Oriented Databases에 관한 기술 내용과 핵심 개념을 정리합니다."
 ---
 
-# Row vs Column Oriented Databases
-
-
 ## 예시 테이블
 
 | rowid | id | first_name | last_name | ssn | salary | dob | title | joined |
@@ -48,7 +45,7 @@ SELECT SUM(salary) FROM emp;
 
 ### 디스크 저장 구조
 
-```
+```text
 [Page 1] 1001,1,John,Smith,111,101000,1/1/1991,eng,1/1/2011 ||| 1002,2,Kary,White,222,102000,2/2/1992,mgr,2/1/2012
 [Page 2] 1003,3,Norman,Freeman,333,103000,3/3/1993,mkt,3/1/2013 ||| 1004,4,Nole,Smith,444,104000,4/4/1994,adm,4/1/2014
 [Page 3] 1005,5,Dar,Sol,555,105000,5/5/1995,adm,5/1/2015 ||| 1006,6,Yan,Thee,666,106000,6/6/1996,mkt,6/1/2016
@@ -84,7 +81,7 @@ SELECT SUM(salary) FROM emp;
 
 ### 디스크 저장 구조
 
-```
+```text
 [id]         1:1001, 2:1002, 3:1003, 4:1004, 5:1005, 6:1006, 7:1007, 8:1008
 [first_name] John:1001, Kary:1002, Norman:1003, Nole:1004 ||| Dar:1005, Yan:1006, Hasan:1007, Ali:1008
 [last_name]  Smith:1001, White:1002, Freeman:1003, Sol:1004 ||| Thee:1005, Ali:1006, Bilal:1007, Ali:1008

@@ -14,8 +14,6 @@ tags:
 summary: "PostgreSQL Asynchronous Commit에 관한 기술 내용과 핵심 개념을 정리합니다."
 ---
 
-# PostgreSQL: Asynchronous Commit
-
 > **출처:** [PostgreSQL 공식 문서 - 28.4. Asynchronous Commit](https://www.postgresql.org/docs/current/wal-async-commit.html)
 
 ---
@@ -107,7 +105,7 @@ PostgreSQL은 WAL 레코드를 생성할 때 처음엔 공유 메모리의 **WAL
 
 비동기 커밋을 사용할 경우, 위험 구간(risk window)의 최대 지속 시간은 `wal_writer_delay`의 **3배**입니다. WAL writer가 매 주기마다 무조건 flush하지 않고, 조건(flush 대상 데이터량, 마지막 flush 이후 경과 시간 등)을 충족해야만 실제 disk flush를 수행하도록 설계되어 있기 때문입니다.
 
-```
+```text
 [타임라인 예시 — wal_writer_delay = 200ms]
 
 T=0ms   : 비동기 트랜잭션 커밋 → 클라이언트에 "성공" 응답 반환
@@ -132,7 +130,7 @@ T=600ms : WAL writer 깨어남 → 조건 충족 → 실제 disk flush 실행
 
 디스크 flush(`fsync`)는 비용이 큰 작업입니다. 트랜잭션마다 개별적으로 flush를 요청하면 낭비가 심해집니다. `commit_delay`는 flush 직전에 **짧게 대기**하여, 그 시간 동안 다른 트랜잭션들을 모아 **단 한 번의 flush로 여러 트랜잭션을 한꺼번에 커밋**하는 전략입니다.
 
-```
+```text
 [commit_delay 없을 때]
 
   트랜잭션 A → flush → 완료

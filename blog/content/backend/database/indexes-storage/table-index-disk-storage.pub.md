@@ -14,9 +14,6 @@ tags:
 summary: "How Tables and Indexes Are Stored on Disk에 관한 기술 내용과 핵심 개념을 정리합니다."
 ---
 
-# How Tables and Indexes Are Stored on Disk
-
-
 ## Table
 
 논리적 테이블은 행(row)과 열(column)으로 구성된다.
@@ -57,7 +54,7 @@ summary: "How Tables and Indexes Are Stored on Disk에 관한 기술 내용과 �
 
 `1001 / 3 = 약 333개 페이지`
 
-```
+```text
 ┌─────────────────────────────────────┐
 │ Page 0                              │
 │ 1,10,Hussein,1/2/1988,$100,000      │
@@ -111,7 +108,7 @@ summary: "How Tables and Indexes Are Stored on Disk에 관한 기술 내용과 �
 
 ### 인덱스 구조 예시 (EMP_ID 인덱스)
 
-```
+```text
 Index on EMP_ID                           Heap
 ┌─────────────────────────────┐           ┌─────────────────────┐
 │ Page 0                      │           │ Page 0              │

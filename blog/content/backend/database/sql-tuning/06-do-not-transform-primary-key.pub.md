@@ -14,8 +14,6 @@ tags:
 summary: "SQL Tuning Report 인덱스 컬럼 가공 개선에 관한 기술 내용과 핵심 개념을 정리합니다."
 ---
 
-# SQL Tuning Report: 인덱스 컬럼 가공 개선
-
 ## 1. Analysis Overview
 
 ### 대상 쿼리

@@ -14,8 +14,6 @@ tags:
 summary: "Apache Kafka Long Polling 완전 가이드에 관한 기술 내용과 핵심 개념을 정리합니다."
 ---
 
-# Apache Kafka Long Polling 완전 가이드
-
 ## 1. 개요
 
 Apache Kafka는 기본적으로 **Pull 기반(소비자가 브로커에게 데이터를 요청)** 메시지 시스템이다. 이 Pull 방식의 단점은 브로커에 데이터가 없을 때 소비자가 빈 응답을 계속 받으며 빈번하게 요청을 반복하는 **Tight Loop** 문제가 발생한다는 것이다.
@@ -30,7 +28,7 @@ Kafka는 이 문제를 해결하기 위해 **Long Polling** 메커니즘을 도�
 
 ### Short Polling (기존 방식)
 
-```
+```text
 Consumer ──── Fetch Request ────► Broker
 Consumer ◄─── Empty Response ─── Broker  (데이터 없음)
 Consumer ──── Fetch Request ────► Broker
@@ -45,7 +43,7 @@ Consumer ◄─── Data Response ──── Broker  (데이터 있음)
 
 ### Long Polling (현재 방식)
 
-```
+```text
 Consumer ──── Fetch Request (min.bytes=1MB, wait=500ms) ────► Broker
              [데이터가 부족하면 Broker가 Purgatory에서 대기]
                      ... 최대 500ms 대기 ...
@@ -70,7 +68,7 @@ Consumer ◄──────────── Data Response (조건 충족 �
 
 Kafka 소비자가 `poll(Duration)`을 호출하면 내부적으로 아래 과정이 진행된다.
 
-```
+```text
 ┌─────────────────────────────────────────────┐
 │             Consumer poll() 호출             │
 └──────────────────┬──────────────────────────┘
@@ -135,7 +133,7 @@ Kafka의 Fetch 요청은 두 부분으로 구성된다.
 
 브로커는 데이터를 메모리에 복사하지 않고 디스크에서 소켓 버퍼로 직접 전송하는 **Zero-Copy** 방식을 사용한다. 이는 대용량 데이터 처리 시 성능을 크게 향상시킨다.
 
-```
+```text
 [일반 복사]
 디스크 → 커널 버퍼 → 애플리케이션 버퍼 → 소켓 버퍼 → 네트워크
 
@@ -159,7 +157,7 @@ Kafka의 Fetch 요청은 두 부분으로 구성된다.
 
 Kafka는 수많은 대기 요청을 효율적으로 관리하기 위해 **계층적 타이밍 휠(Hierarchical Timing Wheels)** 알고리즘을 사용한다.
 
-```
+```text
 [타이밍 휠 구조]
 
 밀리초 단위 휠:  [0][1][2]...[999]
@@ -174,7 +172,7 @@ Kafka는 수많은 대기 요청을 효율적으로 관리하기 위해 **계층
 
 ### Purgatory 처리 흐름
 
-```
+```text
 Fetch Request 수신
        │
        ▼
@@ -232,7 +230,7 @@ fetch.max.wait.ms=1000
 
 `fetch.min.bytes`와 `fetch.max.wait.ms`는 **OR 조건**으로 동작한다. 둘 중 **먼저 충족되는 조건**에 따라 응답이 반환된다.
 
-```
+```text
 시간 →
 ─────────────────────────────────────────────►
   [Fetch 요청 수신]
@@ -286,13 +284,13 @@ max.poll.records=100           # 소규모 배치
 
 Long Polling 환경에서 타임아웃 값들 간의 논리적 순서가 반드시 지켜져야 한다.
 
-```
+```text
 request.timeout.ms > poll.timeout.ms ≥ fetch.max.wait.ms
 ```
 
 또한 `max.poll.interval.ms`는 아래 전체 사이클을 커버할 수 있어야 한다.
 
-```
+```text
 max.poll.interval.ms > (배치 Fetch 시간 + 처리 시간 + 오프셋 커밋 시간)
 ```
 
@@ -302,7 +300,7 @@ max.poll.interval.ms > (배치 Fetch 시간 + 처리 시간 + 오프셋 커밋 �
 
 Kafka 소비자는 현재 배치를 처리하는 동안 **미리 다음 배치를 가져오는(Prefetch)** 최적화를 수행한다.
 
-```
+```text
 [처리 흐름]
 
 poll() → [배치 1 수신] → 애플리케이션 처리 중...
@@ -402,7 +400,7 @@ Apache Kafka의 Long Polling은 Pull 방식의 단점인 빈 응답 반복 문�
 
 이 세 요소가 **Zero-Copy 전송**, **Prefetch 최적화**와 결합되어 Kafka가 높은 처리량과 낮은 지연시간을 동시에 달성할 수 있는 기반이 된다.
 
-```
+```text
 [Kafka Long Polling 전체 그림]
 
 Consumer                    Broker                    Log (Disk)

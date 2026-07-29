@@ -44,7 +44,7 @@ Spring Boot에서 `@RestController`와 `@Controller`를 나눠 쓰는 것과 비
 
 ## 프로젝트 구조
 
-```
+```text
 board-api/
 ├── Cargo.toml          # 의존성·crate 설정
 ├── src/

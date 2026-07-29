@@ -14,9 +14,6 @@ tags:
 summary: "Replication에 관한 기술 내용과 핵심 개념을 정리합니다."
 ---
 
-# Replication
-
-
 ## Master/Backup Replication
 
 - 하나의 **Master/Leader 노드**가 쓰기(writes)와 DDL을 처리
@@ -25,7 +22,7 @@ summary: "Replication에 관한 기술 내용과 핵심 개념을 정리합니�
 
 ### 쓰기 (Write)
 
-```
+```text
 Client → [INSERT/UPDATE/CREATE] → Master(빨간색) → Backup1(초록색)
                                                   → Backup2(초록색)
 ```
@@ -35,7 +32,7 @@ Client → [INSERT/UPDATE/CREATE] → Master(빨간색) → Backup1(초록색)
 
 ### 읽기 (Read)
 
-```
+```text
 Client1 → [SELECT] → Master → (또는) Backup 노드들
 Client2 →                       → Backup1
 Client3 →                       → Backup2
