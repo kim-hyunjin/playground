@@ -2,6 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname, relative, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import sanitizeHtml from 'sanitize-html';
 import { BASE_PATH } from './config.mjs';
 import { joinNotebookSource, titleFromNotebook } from './markdown-headings.mjs';
@@ -12,6 +13,9 @@ const generatedRoot = resolve(root, 'src/content/generated');
 const assetRoot = resolve(root, 'public/notebook-assets');
 const GENERATOR_VERSION = 'notebook-converter-v1';
 
+/**
+ * 지정한 디렉터리를 재귀적으로 순회해 모든 파일의 절대 경로를 반환한다.
+ */
 async function walk(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
   const nested = await Promise.all(
@@ -23,6 +27,9 @@ async function walk(directory) {
   return nested.flat();
 }
 
+/**
+ * Notebook Markdown의 이미지 정렬 속성을 제거해 주변 요소와의 레이아웃 충돌을 방지한다.
+ */
 function normalizeMarkdown(value) {
   // Legacy Notebook HTML often floats linked badges with align="left".
   // The float collapses the parent paragraph and lets the following heading
@@ -30,6 +37,9 @@ function normalizeMarkdown(value) {
   return value.replace(/(<img\b[^>]*?)\s+align=(["'])(?:left|right|center)\2([^>]*>)/gi, '$1$3');
 }
 
+/**
+ * Notebook의 Markdown 셀에서 메타데이터에 사용할 짧은 일반 텍스트 요약을 만든다.
+ */
 function plainSummary(notebook, title) {
   const text = (notebook.cells ?? [])
     .filter((cell) => cell.cell_type === 'markdown')
@@ -46,6 +56,9 @@ function plainSummary(notebook, title) {
   return (text || `${title}의 코드와 저장된 실행 결과를 정리한 Notebook입니다.`).slice(0, 180);
 }
 
+/**
+ * 특정 파일의 최신 Git 커밋 정보를 요청한 형식으로 조회하고, 조회 실패 시 빈 문자열을 반환한다.
+ */
 function gitValue(path, format) {
   try {
     return execFileSync('git', ['log', '-1', `--format=${format}`, '--', relative(root, path)], {
@@ -57,6 +70,9 @@ function gitValue(path, format) {
   }
 }
 
+/**
+ * 소스 경로의 최상위 디렉터리명을 게시물에 표시할 표준 카테고리명으로 변환한다.
+ */
 function normalizedCategory(sourcePath) {
   const first = sourcePath.split('/')[0];
   const names = {
@@ -73,6 +89,9 @@ function normalizedCategory(sourcePath) {
   return names[first] ?? first;
 }
 
+/**
+ * Notebook의 HTML 출력을 허용 목록 기준으로 정제해 안전하게 게시할 수 있는 HTML로 만든다.
+ */
 function safeHtml(value) {
   return sanitizeHtml(value, {
     allowedTags: sanitizeHtml.defaults.allowedTags.concat([
@@ -95,7 +114,11 @@ function safeHtml(value) {
   });
 }
 
-async function richOutput(output, altText) {
+/**
+ * Notebook의 이미지, HTML, 일반 텍스트 출력을 Markdown에 삽입할 문자열로 변환한다.
+ * 이미지 출력은 해시 기반 파일명으로 별도 저장한다.
+ */
+async function richOutput(output, altText, outputAssetRoot) {
   const data = output.data ?? {};
 
   if (data['image/png']) {
@@ -103,7 +126,7 @@ async function richOutput(output, altText) {
     const buffer = Buffer.from(encoded, 'base64');
     const hash = createHash('sha256').update(buffer).digest('hex').slice(0, 20);
     const name = `${hash}.png`;
-    await writeFile(resolve(assetRoot, name), buffer);
+    await writeFile(resolve(outputAssetRoot, name), buffer);
     return `![${altText}](${BASE_PATH}notebook-assets/${name})`;
   }
 
@@ -116,7 +139,13 @@ async function richOutput(output, altText) {
   return `\`\`\`text\n${plain.replace(/\n$/, '')}\n\`\`\``;
 }
 
+/**
+ * 변환된 Notebook 문서에 삽입할 YAML frontmatter 문자열을 생성한다.
+ */
 function frontmatter(data) {
+  /**
+   * 문자열 배열을 YAML 블록 배열 형식으로 직렬화한다.
+   */
   const yamlArray = (values) => values.map((value) => `  - ${JSON.stringify(value)}`).join('\n');
   return [
     '---',
@@ -136,22 +165,21 @@ function frontmatter(data) {
   ].join('\n');
 }
 
-await rm(generatedRoot, { recursive: true, force: true });
-await rm(assetRoot, { recursive: true, force: true });
-await mkdir(generatedRoot, { recursive: true });
-await mkdir(assetRoot, { recursive: true });
-
-const files = (await walk(sourceRoot)).filter((path) => path.endsWith('.pub.ipynb')).sort();
-for (const sourceFile of files) {
-  const sourcePath = relative(sourceRoot, sourceFile);
-  const targetPath = sourcePath.replace(/\.ipynb$/, '.md');
-  const targetFile = resolve(generatedRoot, targetPath);
-  const notebook = JSON.parse(await readFile(sourceFile, 'utf8'));
+/**
+ * Notebook 객체의 Markdown, 코드, 저장된 실행 결과를 게시 가능한 Markdown 문서로 변환한다.
+ */
+export async function convertNotebook(
+  notebook,
+  {
+    sourcePath,
+    date = '1970-01-01',
+    sourceModified = `${date}T00:00:00Z`,
+    outputAssetRoot = assetRoot,
+  },
+) {
   const fallbackTitle = sourcePath.split('/').at(-1).replace('.pub.ipynb', '').replaceAll('-', ' ');
   const title = titleFromNotebook(notebook, fallbackTitle);
   const category = normalizedCategory(sourcePath);
-  const date = gitValue(sourceFile, '%cs') || '1970-01-01';
-  const sourceModified = gitValue(sourceFile, '%cI') || `${date}T00:00:00Z`;
   const sections = [];
 
   for (const [cellIndex, cell] of (notebook.cells ?? []).entries()) {
@@ -171,7 +199,11 @@ for (const sourceFile of files) {
         sections.push(`\`\`\`text\n${traceback}\n\`\`\``);
         continue;
       }
-      const rendered = await richOutput(output, `${title} 셀 ${cellIndex + 1} 출력`);
+      const rendered = await richOutput(
+        output,
+        `${title} 셀 ${cellIndex + 1} 출력`,
+        outputAssetRoot,
+      );
       if (rendered) sections.push(rendered);
     }
   }
@@ -187,8 +219,39 @@ for (const sourceFile of files) {
     sourceModified,
   };
 
-  await mkdir(dirname(targetFile), { recursive: true });
-  await writeFile(targetFile, `${frontmatter(metadata)}${sections.join('\n\n')}\n`);
+  return `${frontmatter(metadata)}${sections.join('\n\n')}\n`;
 }
 
-console.log(`Converted ${files.length} Notebooks without executing cells.`);
+/**
+ * content 아래의 공개 Notebook을 모두 찾아 생성 콘텐츠와 출력 자산으로 일괄 변환한다.
+ */
+export async function convertNotebooks() {
+  await rm(generatedRoot, { recursive: true, force: true });
+  await rm(assetRoot, { recursive: true, force: true });
+  await mkdir(generatedRoot, { recursive: true });
+  await mkdir(assetRoot, { recursive: true });
+
+  const files = (await walk(sourceRoot)).filter((path) => path.endsWith('.pub.ipynb')).sort();
+  for (const sourceFile of files) {
+    const sourcePath = relative(sourceRoot, sourceFile);
+    const targetPath = sourcePath.replace(/\.ipynb$/, '.md');
+    const targetFile = resolve(generatedRoot, targetPath);
+    const notebook = JSON.parse(await readFile(sourceFile, 'utf8'));
+    const date = gitValue(sourceFile, '%cs') || '1970-01-01';
+    const sourceModified = gitValue(sourceFile, '%cI') || `${date}T00:00:00Z`;
+    const markdown = await convertNotebook(notebook, {
+      sourcePath,
+      date,
+      sourceModified,
+    });
+
+    await mkdir(dirname(targetFile), { recursive: true });
+    await writeFile(targetFile, markdown);
+  }
+
+  console.log(`Converted ${files.length} Notebooks without executing cells.`);
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  await convertNotebooks();
+}

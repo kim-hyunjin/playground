@@ -1,6 +1,12 @@
+/**
+ * 문자열 또는 문자열 배열로 저장된 Notebook 셀 소스를 하나의 문자열로 합친다.
+ */
 export const joinNotebookSource = (source) =>
   Array.isArray(source) ? source.join('') : (source ?? '');
 
+/**
+ * Markdown 한 줄이 ATX 제목인지 판별하고 제목 깊이, 줄 번호, 텍스트를 추출한다.
+ */
 function headingFromLine(line, lineNumber) {
   const match = line.match(/^ {0,3}(#{1,6})(?:[ \t]+(.*)|[ \t]*)$/);
   if (!match) return null;
@@ -11,6 +17,9 @@ function headingFromLine(line, lineNumber) {
   };
 }
 
+/**
+ * 코드 펜스 내부를 제외한 Markdown의 ATX 및 Setext 제목을 문서 순서대로 수집한다.
+ */
 export function markdownHeadings(value) {
   const lines = value.split('\n');
   const headings = [];
@@ -58,7 +67,15 @@ export function markdownHeadings(value) {
   return headings;
 }
 
+/**
+ * Notebook 메타데이터나 첫 번째 H1에서 제목을 찾고, 없으면 대체 제목을 반환한다.
+ */
 export function titleFromNotebook(notebook, fallback) {
+  const metadataTitle = notebook.metadata?.title;
+  if (typeof metadataTitle === 'string' && metadataTitle.trim()) {
+    return metadataTitle.trim();
+  }
+
   for (const cell of notebook.cells ?? []) {
     if (cell.cell_type !== 'markdown') continue;
     const heading = markdownHeadings(joinNotebookSource(cell.source)).find(

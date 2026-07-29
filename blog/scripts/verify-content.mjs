@@ -7,6 +7,9 @@ const root = process.cwd();
 const sourceRoot = resolve(root, 'content');
 const generatedRoot = resolve(root, 'src/content/generated');
 
+/**
+ * 지정한 디렉터리를 재귀적으로 순회해 모든 파일의 절대 경로를 반환한다.
+ */
 async function walk(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
   const nested = await Promise.all(

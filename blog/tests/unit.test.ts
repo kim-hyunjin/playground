@@ -1,6 +1,8 @@
 import { readFile, readdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import matter from 'gray-matter';
 import { describe, expect, it } from 'vitest';
+import { convertNotebook } from '../scripts/convert-notebooks.mjs';
 import { markdownHeadings, titleFromNotebook } from '../scripts/markdown-headings.mjs';
 import {
   buildTopicTree,
@@ -83,6 +85,40 @@ describe('content contract', () => {
     const source = await readFile(resolve(process.cwd(), 'scripts/convert-notebooks.mjs'), 'utf8');
     expect(source).not.toMatch(/\b(jupyter|nbconvert|execute_request|execSync)\b/);
     expect(source).toContain('cell.outputs');
+  });
+
+  it('converts the Notebook fixture into publishable Markdown', async () => {
+    const fixturePath = resolve(
+      process.cwd(),
+      'tests/fixtures/notebook-conversion.pub.ipynb',
+    );
+    const notebook = JSON.parse(await readFile(fixturePath, 'utf8'));
+    const converted = await convertNotebook(notebook, {
+      sourcePath: 'fixtures/notebook-conversion.pub.ipynb',
+      date: '2026-07-29',
+      sourceModified: '2026-07-29T00:00:00Z',
+    });
+    const { content, data } = matter(converted);
+
+    expect(data).toMatchObject({
+      title: 'Notebook 변환 Fixture',
+      category: 'fixtures',
+      categories: ['fixtures'],
+      tags: ['notebook', 'python', 'fixtures'],
+      sourcePath: 'fixtures/notebook-conversion.pub.ipynb',
+      generator: 'notebook-converter-v1',
+    });
+    expect(content).toContain('## Fixture 섹션');
+    expect(content).toContain('```python\nprint("fixture output")\n```');
+    expect(content).toContain('```text\nfixture output\n```');
+    expect(markdownHeadings(content)).toContainEqual({
+      depth: 2,
+      line: 1,
+      text: 'Fixture 섹션',
+    });
+    expect(markdownHeadings(content)).not.toContainEqual(
+      expect.objectContaining({ depth: 1 }),
+    );
   });
 });
 

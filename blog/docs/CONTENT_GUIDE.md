@@ -52,10 +52,10 @@ draft: false
 ## Notebook
 
 `.pub.ipynb`는 저장된 셀 출력까지 게시한다. 빌드 과정은 셀을 실행하지 않는다.
-변환기는 Markdown 셀에서 처음 만나는 H1을 생성 문서의 frontmatter `title`로
-사용하지만 본문의 헤딩을 제거하거나 단계를 바꾸지 않는다. 따라서 Notebook
-본문도 H2부터 작성해야 하며, 남은 H1은 `pnpm verify:content`가 오류로 보고한다.
-Markdown 셀에 H1이 없으면 `.pub.ipynb` 파일명을 공백으로 풀어 제목으로 사용한다.
+변환기는 Notebook의 `metadata.title`을 우선 사용하고, 없으면 Markdown 셀에서
+처음 만나는 H1 또는 파일명 순으로 생성 문서의 frontmatter `title`을 결정한다.
+본문의 헤딩을 제거하거나 단계를 바꾸지는 않는다. 따라서 Notebook 본문도 H2부터
+작성해야 하며, 남은 H1은 `pnpm verify:content`가 오류로 보고한다.
 
 ```bash
 cd blog

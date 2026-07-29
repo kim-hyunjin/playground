@@ -6,6 +6,9 @@ const root = process.cwd();
 const dist = resolve(root, 'dist');
 const errors = [];
 
+/**
+ * 주어진 경로에 접근 가능한 파일이나 디렉터리가 존재하는지 확인한다.
+ */
 async function exists(path) {
   try {
     await access(path);
@@ -15,6 +18,9 @@ async function exists(path) {
   }
 }
 
+/**
+ * 지정한 디렉터리를 재귀적으로 순회해 모든 파일의 절대 경로를 반환한다.
+ */
 async function walk(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
   const nested = await Promise.all(
