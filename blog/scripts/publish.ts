@@ -18,7 +18,8 @@ if (!dryRun) {
   }
 }
 
-const build = spawnSync('npm', ['run', 'build'], {
+const packageManager = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm';
+const build = spawnSync(packageManager, ['run', 'build'], {
   cwd: root,
   encoding: 'utf8',
   stdio: 'inherit',

@@ -1,13 +1,31 @@
+import type { Notebook } from './notebook-types.ts';
+
+export interface MarkdownHeading {
+  depth: number;
+  line: number;
+  text: string;
+}
+
+interface MarkdownFence {
+  marker: string;
+  size: number;
+}
+
 /**
  * 문자열 또는 문자열 배열로 저장된 Notebook 셀 소스를 하나의 문자열로 합친다.
  */
-export const joinNotebookSource = (source) =>
-  Array.isArray(source) ? source.join('') : (source ?? '');
+export const joinNotebookSource = (source: unknown): string => {
+  if (typeof source === 'string') return source;
+  if (Array.isArray(source)) {
+    return source.filter((part): part is string => typeof part === 'string').join('');
+  }
+  return '';
+};
 
 /**
  * Markdown 한 줄이 ATX 제목인지 판별하고 제목 깊이, 줄 번호, 텍스트를 추출한다.
  */
-function headingFromLine(line, lineNumber) {
+function headingFromLine(line: string, lineNumber: number): MarkdownHeading | null {
   const match = line.match(/^ {0,3}(#{1,6})(?:[ \t]+(.*)|[ \t]*)$/);
   if (!match) return null;
   return {
@@ -20,10 +38,10 @@ function headingFromLine(line, lineNumber) {
 /**
  * 코드 펜스 내부를 제외한 Markdown의 ATX 및 Setext 제목을 문서 순서대로 수집한다.
  */
-export function markdownHeadings(value) {
+export function markdownHeadings(value: string): MarkdownHeading[] {
   const lines = value.split('\n');
-  const headings = [];
-  let fence = null;
+  const headings: MarkdownHeading[] = [];
+  let fence: MarkdownFence | null = null;
 
   for (let index = 0; index < lines.length; index += 1) {
     const line = lines[index];
@@ -70,7 +88,7 @@ export function markdownHeadings(value) {
 /**
  * Notebook 메타데이터나 첫 번째 H1에서 제목을 찾고, 없으면 대체 제목을 반환한다.
  */
-export function titleFromNotebook(notebook, fallback) {
+export function titleFromNotebook(notebook: Notebook, fallback: string): string {
   const metadataTitle = notebook.metadata?.title;
   if (typeof metadataTitle === 'string' && metadataTitle.trim()) {
     return metadataTitle.trim();
