@@ -13,8 +13,6 @@ tags:
 summary: "불필요한 UNION 연산 제거에 관한 기술 내용과 핵심 개념을 정리합니다."
 ---
 
-# SQL Tuning Report: 불필요한 UNION 연산 제거
-
 ## 1. Analysis Overview
 
 ### ① 대상 쿼리 (Target SQL)

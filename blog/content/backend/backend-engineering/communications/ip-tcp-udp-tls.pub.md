@@ -14,8 +14,6 @@ tags:
 summary: "IP / TCP / UDP / TLS에 관한 기술 내용과 핵심 개념을 정리합니다."
 ---
 
-# IP / TCP / UDP / TLS
-
 ---
 
 ## 1. Internet Protocol (IP)
@@ -233,7 +231,7 @@ IP 패킷은 **Header**와 **Data(Payload)** 로 구성된다.
 
 ### 7.3 TCP 3-Way Handshake (연결 수립)
 
-```
+```text
 Client                    Server
   |                          |
   |--- SYN (seq=x) -------->|
@@ -252,7 +250,7 @@ Client                    Server
 
 ### 7.4 TCP 4-Way Handshake (연결 종료)
 
-```
+```text
 Client                    Server
   |                          |
   |--- FIN ----------------->|
@@ -350,7 +348,7 @@ Client                    Server
 
 ### 8.3 TLS Handshake (TLS 1.2)
 
-```
+```text
 Client                          Server
   |                                |
   |--- ClientHello --------------->|

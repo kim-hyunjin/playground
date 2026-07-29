@@ -12,17 +12,15 @@ tags:
 summary: 클래스형 컴포넌트의 마운트, 업데이트, 언마운트 과정에서 호출되는 라이프사이클 메서드들에 대해 학습합니다.
 ---
 
-# 컴포넌트의 라이프사이클
-
 모든 리액트 컴포넌트에는 라이프사이클(수명 주기)이 존재합니다.
 컴포넌트를 처음으로 렌더링할 때 어떤 작업을 처리해야 하거나 컴포넌트를 업데이트하기 전후로 어떤 작업을 처리해야 할 때, 또 불필요한 업데이트를 방지하고자 할 때 라이프사이클 메서드를 사용합니다.
 
 - 라이프사이클 메서드는 클래스형 컴포넌트에서만 사용할 수 있습니다.
 - 함수형 컴포넌트에서는 Hooks 기능을 사용해 비슷한 작업을 처리할 수 있습니다.
 
-#### 컴포넌트를 마운트할 때 호출하는 메서드
+## 컴포넌트를 마운트할 때 호출하는 메서드
 
-```
+```text
 constructor => getDerivedStateFromProps => render => componentDidMount
 ```
 
@@ -31,7 +29,7 @@ constructor => getDerivedStateFromProps => render => componentDidMount
 - **render**: 우리가 준비한 UI를 렌더링하는 메서드
 - **componentDidMount**: 컴포넌트가 웹 브라우저상에 나타난 후 호출하는 메서드
 
-### 업데이트
+## 업데이트
 
 컴포넌트는 다음과 같은 총 네 가지 경우에 업데이트합니다.
 
@@ -40,19 +38,19 @@ constructor => getDerivedStateFromProps => render => componentDidMount
 3. 부모 컴포넌트가 리렌더링될 때
 4. `this.forceUpdate`로 강제로 렌더링을 트리거할 때
 
-#### 컴포넌트를 업데이트할 때 호출하는 메서드
+### 컴포넌트를 업데이트할 때 호출하는 메서드
 
-```
+```text
 props, state가 바뀌거나 부모 컴포넌트가 리렌더링될 때 => getDerivedStateFromProps => shouldComponentUpdate => true 반환 시 render, false 반환 시 여기서 작업 취소 => getSnapshotBeforeUpdate => 실제 DOM 변화 => componentDidUpdate
 ```
 
 - **shouldComponentUpdate**: 컴포넌트가 리렌더링 해야 할지 말아야 할지 결정하는 메서드입니다. `true`를 반환하면 다음 라이프사이클 메서드를 계속 실행하고, `false`를 반환하면 작업을 중지합니다(컴포넌트가 리렌더링되지 않음). 만약 `this.forceUpdate()` 함수를 호출한다면 이 과정을 생략하고 바로 `render` 함수를 호출합니다.
 - **getSnapshotBeforeUpdate**: 컴포넌트 변화를 DOM에 반영하기 바로 직전에 호출됩니다.
 
-### 언마운트
+## 언마운트
 
 - **componentWillUnmount**: 컴포넌트가 웹 브라우저상에서 사라지기 전에 호출하는 메서드입니다.
 
-### 에러 잡아내기
+## 에러 잡아내기
 
 - **componentDidCatch**: 에러 발생 시 호출되는 메서드입니다.

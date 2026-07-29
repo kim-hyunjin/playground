@@ -14,14 +14,11 @@ tags:
 summary: "Bloom Filters에 관한 기술 내용과 핵심 개념을 정리합니다."
 ---
 
-# Bloom Filters
-
-
 ## 문제: "이 username이 존재하는가?"
 
 ### 방법 1: 직접 DB 조회
 
-```
+```text
 GET /username?q=paul
 Client → Server → Database
 ```
@@ -31,7 +28,7 @@ Client → Server → Database
 
 ### 방법 2: 캐시 (Cache) 사용
 
-```
+```text
 GET /username?q=paul
 Client → Server → Cache(Redis) + Database
 ```
@@ -41,7 +38,7 @@ Client → Server → Cache(Redis) + Database
 
 ### 방법 3: Bloom Filter 사용
 
-```
+```text
 GET /username?q=paul
 Client → Server (Bloom Filter 확인) → 필요시에만 Database
 ```
@@ -58,7 +55,7 @@ Client → Server (Bloom Filter 확인) → 필요시에만 Database
 - 고정 크기의 **비트 배열** (예: 64비트)
 - 모든 비트가 0으로 초기화됨
 
-```
+```text
 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | ... | 0 | 0 |
   0   1   2   3   4   5   6   ...  62  63
 ```
@@ -68,41 +65,41 @@ Client → Server (Bloom Filter 확인) → 필요시에만 Database
 사용자가 생성될 때 해시 함수를 적용하여 비트를 설정한다:
 
 **1단계: jack 등록**
-```
+```text
 POST /username?q=jack
 Hash(jack) % 64 = 63  →  63번 비트를 1로 설정
 ```
-```
+```text
 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | ... | 0 | 1 |
   0   1   2   3   4   5   6   ...  62  63
 ```
 
 **2단계: paul 등록**
-```
+```text
 POST /username?q=paul
 Hash(paul) % 64 = 3  →  3번 비트를 1로 설정
 ```
-```
+```text
 | 0 | 0 | 0 | 1 | 0 | 0 | 0 | ... | 0 | 1 |
   0   1   2   3   4   5   6   ...  62  63
 ```
 
 **3단계: Tim 등록**
-```
+```text
 POST /username?q=Tim
 Hash(Tim) % 64 = 63  →  63번 비트는 이미 1 (jack과 충돌!)
 ```
-```
+```text
 | 0 | 0 | 0 | 1 | 0 | 0 | 0 | ... | 0 | 1 |
   0   1   2   3   4   5   6   ...  62  63
 ```
 
 **4단계: Ali 등록**
-```
+```text
 POST /username?q=Ali
 Hash(ali) % 64 = 4  →  4번 비트를 1로 설정
 ```
-```
+```text
 | 0 | 0 | 0 | 1 | 1 | 0 | 0 | ... | 0 | 1 |
   0   1   2   3   4   5   6   ...  62  63
 ```
@@ -110,7 +107,7 @@ Hash(ali) % 64 = 4  →  4번 비트를 1로 설정
 ### 존재 여부 확인 (읽기)
 
 **"paul"이 존재하는가?**
-```
+```text
 GET /username?q=paul
 Hash(paul) % 64 = 3  →  3번 비트 확인 → 1 → "아마도 존재함"
 ```
@@ -118,7 +115,7 @@ Hash(paul) % 64 = 3  →  3번 비트 확인 → 1 → "아마도 존재함"
 - 비트가 1이면: **아마도 존재함** → DB에서 확인 필요
 
 **"jack"이 존재하는가?**
-```
+```text
 GET /username?q=jack
 Hash(jack) % 64 = 63  →  63번 비트 확인 → 1 → "아마도 존재함"
 ```

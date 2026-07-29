@@ -14,9 +14,6 @@ tags:
 summary: "Sharding에 관한 기술 내용과 핵심 개념을 정리합니다."
 ---
 
-# Sharding
-
-
 ## Sharding이란?
 
 큰 테이블을 **여러 데이터베이스 서버(인스턴스)에 분산**하여 저장하는 것.
@@ -52,7 +49,7 @@ SELECT URL FROM URL_TABLE WHERE URLID = '5FTOJ';
 
 3개의 Postgres 인스턴스가 있을 때: `postgres:5432`, `postgres:5433`, `postgres:5434`
 
-```
+```text
 Hash("Input1") → 5432 (Server 1)
 Hash("Input2") → 5433 (Server 2)
 Hash("Input3") → 5434 (Server 3)
@@ -60,7 +57,7 @@ Hash("Input3") → 5434 (Server 3)
 
 ### 해시 함수 예시
 
-```
+```text
 num("Input2") % 3 = 1
 + 5432 (기본 포트)
 = 5433 → postgres:5433으로 라우팅

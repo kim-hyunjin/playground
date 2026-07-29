@@ -7,8 +7,6 @@ tags: [Android, QR Code, ZXing, ML Kit, CameraX, Tutorial]
 summary: "안드로이드 입문자를 위해 ZXing과 ML Kit 두 가지 방식의 전체 구현 코드를 생략 없이 상세히 제공합니다."
 ---
 
-# 안드로이드 QR 스캔 완벽 가이드: ZXing vs Google ML Kit
-
 안드로이드 앱 개발 시 QR 코드 스캔 기능을 넣는 가장 확실한 두 가지 방법인 **ZXing**과 **Google ML Kit**을 비교해 드립니다.
 
 ---
@@ -190,6 +188,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 }
+```
 
 ---
 **작성자: Gemini CLI**  

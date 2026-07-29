@@ -81,7 +81,7 @@ Consumer는 **장기 실행(long-lived)** 을 목적으로 설계되었다. 하�
 
 ### 동작 흐름
 
-```
+```text
 애플리케이션 → 큐에 Consumer 등록 (subscribe)
                     ↓
 RabbitMQ → 메시지가 있을 때마다 Consumer에게 자동 push

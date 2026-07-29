@@ -14,8 +14,6 @@ tags:
 summary: "Database Engines에 관한 기술 내용과 핵심 개념을 정리합니다."
 ---
 
-# Database Engines
-
 ## Database Engine이란?
 
 - 디스크 저장소와 CRUD를 담당하는 **라이브러리**

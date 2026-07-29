@@ -14,8 +14,6 @@ tags:
 summary: "LaHaise가 제안한 AIO 인터페이스에 대한 Linus Torvalds의 답변에 관한 기술 내용과 핵심 개념을 정리합니다."
 ---
 
-# Re: [PATCH 09/13] aio: add support for async openat()
-
 > **출처**: LWN.net — *News from the source*
 > **게재일**: 2016년 1월 12일 (corbet 작성)
 

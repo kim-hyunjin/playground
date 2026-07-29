@@ -14,8 +14,6 @@ tags:
 summary: "SQL Performance Tuning Report (V3) 부서 상태 조회 쿼리에 관한 기술 내용과 핵심 개념을 정리합니다."
 ---
 
-# SQL Performance Tuning Report (V3): 부서 상태 조회 쿼리
-
 ## 1. Analysis Overview
 
 ### 대상 쿼리

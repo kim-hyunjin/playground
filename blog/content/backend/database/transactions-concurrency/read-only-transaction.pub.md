@@ -47,9 +47,9 @@ Java 진영의 Spring 프레임워크에서는 `@Transactional(readOnly = true)`
 
 ### **Spring + Hibernate 조합 시 이점**
 
-1.  **Dirty Checking 생략:** Hibernate는 엔티티의 상태 변화를 감지하기 위해 스냅샷을 보관하는데, `readOnly = true`로 설정하면 이 과정을 생략하여 메모리와 CPU 사용량을 줄입니다.
-2.  **Flush 모드 설정:** Flush 모드를 `MANUAL`로 설정하여, 실수로 데이터가 변경되더라도 DB에 반영되지 않도록 보호합니다.
-3.  **DB 부하 분산 (Replication):** DB가 Master-Slave(Source-Replica) 구조로 구성되어 있을 때, 읽기 전용 트랜잭션은 자동으로 Slave DB로 연결되도록 설정하여 Master DB의 부하를 분산할 수 있습니다.
+1. **Dirty Checking 생략:** Hibernate는 엔티티의 상태 변화를 감지하기 위해 스냅샷을 보관하는데, `readOnly = true`로 설정하면 이 과정을 생략하여 메모리와 CPU 사용량을 줄입니다.
+2. **Flush 모드 설정:** Flush 모드를 `MANUAL`로 설정하여, 실수로 데이터가 변경되더라도 DB에 반영되지 않도록 보호합니다.
+3. **DB 부하 분산 (Replication):** DB가 Master-Slave(Source-Replica) 구조로 구성되어 있을 때, 읽기 전용 트랜잭션은 자동으로 Slave DB로 연결되도록 설정하여 Master DB의 부하를 분산할 수 있습니다.
 
 ---
 

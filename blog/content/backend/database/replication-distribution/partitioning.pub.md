@@ -14,9 +14,6 @@ tags:
 summary: "Partitioning에 관한 기술 내용과 핵심 개념을 정리합니다."
 ---
 
-# Partitioning
-
-
 ## Partitioning이란?
 
 큰 테이블을 **동일한 스키마의 작은 테이블(파티션)들로 분할**하는 것.

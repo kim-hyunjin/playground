@@ -14,8 +14,6 @@ tags:
 summary: "인덱스 컬럼 가공 개선 (Composite Index)에 관한 기술 내용과 핵심 개념을 정리합니다."
 ---
 
-# SQL Tuning Report: 인덱스 컬럼 가공 개선 (Composite Index)
-
 ## 1. Analysis Overview
 
 ### ① 대상 쿼리 (Target SQL)

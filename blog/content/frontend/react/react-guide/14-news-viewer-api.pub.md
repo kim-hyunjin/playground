@@ -10,11 +10,9 @@ tags:
 summary: axios를 사용하여 외부 뉴스 API를 연동하고, 비동기 작업을 처리하기 위한 async/await 문법과 커스텀 Hook 활용법을 익힙니다.
 ---
 
-# 외부 API를 연동하여 뉴스 뷰어 만들기
-
 비동기 작업의 핵심 개념을 이해하고 실전 API를 연동해 봅니다.
 
-### 비동기 작업의 이해
+## 비동기 작업의 이해
 
 서버의 API를 호출할 때 응답이 올 때까지 기다리지 않고 다음 작업을 수행하기 위해 비동기적으로 처리합니다.
 
@@ -22,7 +20,7 @@ summary: axios를 사용하여 외부 뉴스 API를 연동하고, 비동기 작�
 2. **Promise**: 콜백 지옥을 해결하기 위해 도입되었으며 `.then`, `.catch`로 흐름을 제어합니다.
 3. **async/await**: Promise를 더 직관적이고 동기적인 코드처럼 작성할 수 있게 해줍니다.
 
-### axios로 API 호출하기
+## axios로 API 호출하기
 
 `axios`는 가장 널리 사용되는 HTTP 클라이언트 라이브러리입니다.
 
@@ -41,7 +39,7 @@ const onClick = async () => {
 };
 ```
 
-### 선택적 URL 파라미터
+## 선택적 URL 파라미터
 
 라우트 설정 시 `?`를 사용하여 파라미터를 선택적으로 만들 수 있습니다.
 
@@ -49,7 +47,7 @@ const onClick = async () => {
 <Route path="/:category?" component={NewsPage} />
 ```
 
-### 커스텀 Hook (usePromise) 만들기
+## 커스텀 Hook (usePromise) 만들기
 
 비동기 요청 상태(loading, resolved, error)를 관리하는 로직을 재사용하기 위해 커스텀 Hook을 작성할 수 있습니다.
 

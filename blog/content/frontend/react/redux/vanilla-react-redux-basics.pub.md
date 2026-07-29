@@ -6,17 +6,15 @@ tags: [Redux, React-Redux, State Management, JavaScript]
 summary: Redux의 핵심 개념인 Store, Reducer, Action과 React-Redux의 connect 사용법을 알아봅니다.
 ---
 
-# Redux Basics
-
 Redux가 가장 잘하는 것은 바로 **데이터(state) 관리**입니다.
 
-### 핵심 개념
+## 핵심 개념
 
 - **Store**: 데이터(상태)를 저장하는 유일한 저장고입니다.
 - **Reducer**: 데이터를 변경하는 유일한 함수입니다.
 - **Action**: Reducer 안에서 수행할 행위를 정의한 객체입니다. Action은 반드시 **Plain Object**여야 하며, `type` 속성을 반드시 가지고 있어야 합니다.
 
-#### Reducer의 파라미터
+### Reducer의 파라미터
 
 ```javascript
 const reducer = (state, action) => {
@@ -25,7 +23,7 @@ const reducer = (state, action) => {
 }
 ```
 
-#### Store의 주요 내장 함수
+### Store의 주요 내장 함수
 
 - `dispatch`: 파라미터로 넘겨받은 action을 가지고 reducer를 실행합니다.
 - `getState`: 현재 store에 저장된 데이터를 리턴합니다.
@@ -59,7 +57,7 @@ const reducer = (state = [], action) => {
 
 ---
 
-# React Redux
+## React Redux
 
 Store의 데이터가 변경될 때 리액트 컴포넌트를 리렌더링하려면 `react-redux` 라이브러리를 사용합니다.
 

@@ -7,9 +7,7 @@ tags: [iOS, SwiftUI, UIKit, Swift, 개발패러다임, AI, LLM]
 summary: 명령형 UI인 UIKit과 선언형 UI인 SwiftUI의 차이점을 분석하고, AI 협업 시대에 SwiftUI가 주목받는 이유를 살펴봅니다.
 ---
 
-# iOS 개발의 패러다임 변화: UIKit vs SwiftUI 완벽 비교
-
-애플의 iOS 개발 생태계는 현재 거대한 전환기를 맞이하고 있습니다. 오랫동안 표준이었던 **UIKit**의 명령형(Imperative) 방식에서, 현대적인 **SwiftUI**의 선언형(Declarative) 방식으로의 변화입니다. 
+애플의 iOS 개발 생태계는 현재 거대한 전환기를 맞이하고 있습니다. 오랫동안 표준이었던 **UIKit**의 명령형(Imperative) 방식에서, 현대적인 **SwiftUI**의 선언형(Declarative) 방식으로의 변화입니다.
 
 단순히 UI를 만드는 도구가 바뀐 것이 아니라, 앱을 설계하고 상태를 관리하는 철학 자체가 달라졌습니다. 실제 코드 예시를 통해 두 프레임워크의 결정적인 차이점과, 특히 **AI 협업 시대**에 왜 SwiftUI가 더 유리한지 살펴보겠습니다.
 

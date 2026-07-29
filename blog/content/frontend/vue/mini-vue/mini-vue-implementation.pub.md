@@ -6,15 +6,13 @@ tags: [Vue, Reactivity, JavaScript, Proxy, Design Patterns]
 summary: Vue 3의 핵심인 반응형 시스템(ref, reactive, computed, watch)을 바닐라 자바스크립트로 직접 구현하며 원리를 파헤쳐 봅니다.
 ---
 
-# Vue 3 반응형 시스템 직접 구현해보기 (Mini-Vue)
-
-Vue 3의 가장 강력한 특징은 바로 **Composition API**와 이를 뒷받침하는 **반응형(Reactivity) 시스템**입니다. `ref`, `reactive`, `computed`, `watch` 등이 내부적으로 어떻게 동작하는지 궁금해 본 적이 있나요? 
+Vue 3의 가장 강력한 특징은 바로 **Composition API**와 이를 뒷받침하는 **반응형(Reactivity) 시스템**입니다. `ref`, `reactive`, `computed`, `watch` 등이 내부적으로 어떻게 동작하는지 궁금해 본 적이 있나요?
 
 이번 포스트에서는 `track`과 `trigger`라는 핵심 메커니즘을 중심으로 Mini-Vue를 직접 구현해 보며 그 원리를 깊이 있게 이해해 보겠습니다.
 
 ---
 
-### 1. 핵심 메커니즘: 의존성 추적 (track)과 실행 (trigger)
+## 1. 핵심 메커니즘: 의존성 추적 (track)과 실행 (trigger)
 
 반응형 시스템의 심장은 **의존성 관리**입니다. 특정 데이터를 누가 사용하는지 기록하고(`track`), 데이터가 변하면 그 기록을 바탕으로 관련 작업들을 다시 실행(`trigger`)하는 구조입니다.
 
@@ -53,7 +51,7 @@ function trigger(target, key) {
 
 ---
 
-### 2. ref와 reactive: 데이터에 반응성 입히기
+## 2. ref와 reactive: 데이터에 반응성 입히기
 
 데이터에 접근할 때 `track`을 호출하고, 값을 수정할 때 `trigger`를 호출하도록 가로채야 합니다.
 
@@ -95,7 +93,7 @@ export function reactive(target) {
 
 ---
 
-### 3. computed: 계산된 속성과 캐싱
+## 3. computed: 계산된 속성과 캐싱
 
 `computed`는 의존하는 값이 변할 때만 다시 계산되어야 합니다. 이를 위해 `dirty`라는 플래그를 사용하여 캐싱을 구현합니다.
 
@@ -132,7 +130,7 @@ export function computed(getter) {
 
 ---
 
-### 4. watch와 watchEffect: 사이드 이펙트 관리
+## 4. watch와 watchEffect: 사이드 이펙트 관리
 
 - **watchEffect**: 함수를 즉시 실행하고 사용된 모든 데이터를 자동으로 추적합니다.
 - **watch**: 특정 소스를 감시하다가 값이 변할 때만 콜백을 실행하며, 이전 값(`oldValue`)과 새 값(`newValue`)을 제공합니다.
@@ -169,7 +167,7 @@ export function watch(source, callback) {
 
 ---
 
-### 5. 테스트: 실제로 잘 동작할까?
+## 5. 테스트: 실제로 잘 동작할까?
 
 구현한 Mini-Vue가 복합적인 의존성 관계에서도 잘 동작하는지 확인해 봅시다.
 
@@ -189,6 +187,6 @@ count.value++;
 // [watchEffect - quadruple] 4
 ```
 
-### 마치며
+## 마치며
 
 Mini-Vue 구현을 통해 Vue 3 반응형 시스템의 핵심이 **Proxy**와 **의존성 그래프 관리**에 있다는 것을 배웠습니다. 이러한 원리를 이해하면 Vue 앱의 성능 최적화나 복잡한 상태 관리 로직을 더 명확하게 설계할 수 있습니다.

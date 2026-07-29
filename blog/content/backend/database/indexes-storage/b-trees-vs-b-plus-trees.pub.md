@@ -14,9 +14,6 @@ tags:
 summary: "B-Trees vs B+Trees에 관한 기술 내용과 핵심 개념을 정리합니다."
 ---
 
-# B-Trees vs B+Trees
-
-
 ## Full Table Scan
 
 - 큰 테이블에서 특정 행을 찾으려면 **Full Table Scan**을 수행해야 한다
@@ -67,7 +64,7 @@ summary: "B-Trees vs B+Trees에 관한 기술 내용과 핵심 개념을 정리�
 
 ### B-Tree가 검색을 돕는 방식
 
-```
+```text
          [2:702 | 4:704]          ← Root Node
         /       |       \
   [1:701]   [3:703]   [5:705]    ← Leaf Nodes
@@ -89,7 +86,7 @@ summary: "B-Trees vs B+Trees에 관한 기술 내용과 핵심 개념을 정리�
 
 ### 더 많은 항목이 추가된 B-Tree (11개 항목)
 
-```
+```text
               [4:704 | 8:802]              ← ROOT 노드
              /       |       \
       [2:702]    [6:800]    [10:804]       ← Internal 노드
@@ -132,7 +129,7 @@ B-Tree에서는 4, 5, 6, 7, 8, 9를 찾기 위해 **트리를 여러 번 탐색*
 
 ### B+Tree 구조 (차수 3)
 
-```
+```text
                     [5]                         ← Root (key만)
                    /   \
               [3]       [7 | 9]                 ← Internal (key만)
@@ -165,7 +162,7 @@ Leaf:  1→ 2→ 3→ 4→ 5→ 6→ 7→ 8→ 9→ 10→ 11      ← Leaf (key:
 
 ### 스토리지 구조
 
-```
+```text
 ┌─────────────────────────────────────────┐
 │  Internal 노드 (key만)                    │  ← 메모리에 올려야 함
 │  Root + Internal Nodes                   │

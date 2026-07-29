@@ -13,8 +13,6 @@ tags:
 summary: "묵시적 형변환에 의한 인덱스 무력화 개선에 관한 기술 내용과 핵심 개념을 정리합니다."
 ---
 
-# SQL Tuning Report: 묵시적 형변환에 의한 인덱스 무력화 개선
-
 ## 1. Analysis Overview
 
 ### ① 대상 쿼리 (Target SQL)

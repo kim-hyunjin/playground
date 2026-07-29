@@ -14,9 +14,6 @@ tags:
 summary: "Eventual Consistency에 관한 기술 내용과 핵심 개념을 정리합니다."
 ---
 
-# Eventual Consistency
-
-
 ## Eventual Consistency란?
 
 - 분산 데이터베이스 시스템에서 데이터가 **즉시 모든 노드에 동기화되지 않지만**, 시간이 지나면 **결국(eventually) 모든 노드가 동일한 데이터를 갖게 되는** 일관성 모델

@@ -102,7 +102,7 @@ pub fn router() -> Router<AppState> {
 
 `dto/mod.rs`, `entity/mod.rs`, `services/mod.rs`도 같은 방식입니다.
 
-```
+```text
 src/
   lib.rs          ← crate 루트
   routes/
