@@ -4,6 +4,7 @@ import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname, relative, resolve } from 'node:path';
 import sanitizeHtml from 'sanitize-html';
 import { BASE_PATH } from './config.mjs';
+import { joinNotebookSource, titleFromNotebook } from './markdown-headings.mjs';
 
 const root = process.cwd();
 const sourceRoot = resolve(root, 'content');
@@ -22,8 +23,6 @@ async function walk(directory) {
   return nested.flat();
 }
 
-const joinSource = (source) => (Array.isArray(source) ? source.join('') : (source ?? ''));
-
 function normalizeMarkdown(value) {
   // Legacy Notebook HTML often floats linked badges with align="left".
   // The float collapses the parent paragraph and lets the following heading
@@ -31,19 +30,10 @@ function normalizeMarkdown(value) {
   return value.replace(/(<img\b[^>]*?)\s+align=(["'])(?:left|right|center)\2([^>]*>)/gi, '$1$3');
 }
 
-function titleFromNotebook(notebook, fallback) {
-  for (const cell of notebook.cells ?? []) {
-    if (cell.cell_type !== 'markdown') continue;
-    const match = joinSource(cell.source).match(/^#\s+(.+)$/m);
-    if (match) return match[1].replaceAll('*', '').trim();
-  }
-  return fallback;
-}
-
 function plainSummary(notebook, title) {
   const text = (notebook.cells ?? [])
     .filter((cell) => cell.cell_type === 'markdown')
-    .map((cell) => joinSource(cell.source))
+    .map((cell) => joinNotebookSource(cell.source))
     .join('\n')
     .replace(/^---[\s\S]*?---/m, '')
     .replace(/<[^>]+>/g, ' ')
@@ -109,7 +99,7 @@ async function richOutput(output, altText) {
   const data = output.data ?? {};
 
   if (data['image/png']) {
-    const encoded = joinSource(data['image/png']).replace(/\s+/g, '');
+    const encoded = joinNotebookSource(data['image/png']).replace(/\s+/g, '');
     const buffer = Buffer.from(encoded, 'base64');
     const hash = createHash('sha256').update(buffer).digest('hex').slice(0, 20);
     const name = `${hash}.png`;
@@ -118,10 +108,10 @@ async function richOutput(output, altText) {
   }
 
   if (data['text/html']) {
-    return `<div class="notebook-html-output">\n${safeHtml(joinSource(data['text/html']))}\n</div>`;
+    return `<div class="notebook-html-output">\n${safeHtml(joinNotebookSource(data['text/html']))}\n</div>`;
   }
 
-  const plain = joinSource(data['text/plain'] ?? output.text);
+  const plain = joinNotebookSource(data['text/plain'] ?? output.text);
   if (!plain.trim()) return '';
   return `\`\`\`text\n${plain.replace(/\n$/, '')}\n\`\`\``;
 }
@@ -166,13 +156,13 @@ for (const sourceFile of files) {
 
   for (const [cellIndex, cell] of (notebook.cells ?? []).entries()) {
     if (cell.cell_type === 'markdown') {
-      const markdown = normalizeMarkdown(joinSource(cell.source)).trim();
+      const markdown = normalizeMarkdown(joinNotebookSource(cell.source)).trim();
       if (markdown) sections.push(markdown);
       continue;
     }
     if (cell.cell_type !== 'code') continue;
 
-    const code = joinSource(cell.source).replace(/\n$/, '');
+    const code = joinNotebookSource(cell.source).replace(/\n$/, '');
     if (code) sections.push(`\`\`\`python\n${code}\n\`\`\``);
 
     for (const output of cell.outputs ?? []) {

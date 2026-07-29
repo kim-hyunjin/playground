@@ -41,6 +41,10 @@ draft: false
 `category`와 `categories`는 RSS 등 글 메타데이터로 유지한다. 사이트의 탐색
 계층은 frontmatter가 아니라 실제 폴더 경로를 기준으로 생성된다.
 
+레이아웃이 frontmatter의 `title`을 문서 제목으로 렌더링하므로 본문에는 H1(`#`)
+을 다시 쓰지 않는다. 본문 섹션은 H2(`##`)부터 시작한다. `pnpm verify:content`는
+원본 Markdown/MDX와 Notebook 변환 결과에 남은 본문 H1을 오류로 처리한다.
+
 ## 링크와 이미지
 
 내부 글 링크는 가능하면 저장소의 `.pub.md` 또는 `.pub.mdx` 원본을 기준으로 작성한다. `public/`의 에셋을 직접 연결할 때는 배포 base가 빠지지 않도록 공용 URL helper 또는 `import.meta.env.BASE_URL`을 사용한다. Astro가 처리할 이미지는 `src/assets/`에 두고 import한다.
@@ -48,6 +52,10 @@ draft: false
 ## Notebook
 
 `.pub.ipynb`는 저장된 셀 출력까지 게시한다. 빌드 과정은 셀을 실행하지 않는다.
+변환기는 Markdown 셀에서 처음 만나는 H1을 생성 문서의 frontmatter `title`로
+사용하지만 본문의 헤딩을 제거하거나 단계를 바꾸지 않는다. 따라서 Notebook
+본문도 H2부터 작성해야 하며, 남은 H1은 `pnpm verify:content`가 오류로 보고한다.
+Markdown 셀에 H1이 없으면 `.pub.ipynb` 파일명을 공백으로 풀어 제목으로 사용한다.
 
 ```bash
 cd blog

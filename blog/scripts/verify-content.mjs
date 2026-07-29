@@ -1,6 +1,7 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { relative, resolve } from 'node:path';
 import matter from 'gray-matter';
+import { markdownHeadings } from './markdown-headings.mjs';
 
 const root = process.cwd();
 const sourceRoot = resolve(root, 'content');
@@ -46,7 +47,7 @@ for (const [collection, base, files] of [
   ['notebooks', generatedRoot, generated],
 ]) {
   for (const path of files) {
-    const { data } = matter(await readFile(path, 'utf8'));
+    const { content, data } = matter(await readFile(path, 'utf8'));
     const id = relative(base, path).replace(/\.(md|mdx)$/, '');
     const existing = slugs.get(id);
     if (existing) errors.push(`Duplicate output path: ${id} (${existing}, ${path})`);
@@ -62,6 +63,12 @@ for (const [collection, base, files] of [
     }
     if (String(data.summary ?? '').length > 220) {
       errors.push(`${relative(root, path)} has a summary longer than 220 characters.`);
+    }
+    for (const heading of markdownHeadings(content).filter(({ depth }) => depth === 1)) {
+      errors.push(
+        `${relative(root, path)} has a body H1 on content line ${heading.line}: "${heading.text}". ` +
+          'Use the frontmatter title and start body sections at ##.',
+      );
     }
   }
 }

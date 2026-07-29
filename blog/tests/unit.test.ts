@@ -1,6 +1,7 @@
 import { readFile, readdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { markdownHeadings, titleFromNotebook } from '../scripts/markdown-headings.mjs';
 import {
   buildTopicTree,
   flattenTopicTree,
@@ -11,7 +12,6 @@ import codeLanguageLabelTransformer, {
   codeLanguageLabel,
 } from '../src/lib/code-language-label.mjs';
 import remarkCjkStrong from '../src/lib/remark-cjk-strong.mjs';
-import remarkNormalizeDocumentHeadings from '../src/lib/remark-normalize-document-headings.mjs';
 import { joinBase, slugifySegment } from '../src/lib/url';
 
 async function walk(directory: string): Promise<string[]> {
@@ -123,42 +123,36 @@ describe('Markdown rendering', () => {
     expect(pre.children).toHaveLength(1);
   });
 
-  it('removes the document title and demotes later top-level sections', () => {
-    const tree = {
-      type: 'root',
-      children: [
-        { type: 'heading', depth: 1, children: [{ type: 'text', value: '문서 제목' }] },
-        { type: 'paragraph', children: [{ type: 'text', value: '본문' }] },
-        { type: 'heading', depth: 1, children: [{ type: 'text', value: '본문의 H1' }] },
+  it('extracts the Notebook title for frontmatter from the first body H1', () => {
+    const notebook = {
+      cells: [
+        {
+          cell_type: 'markdown',
+          source: ['## 머리말\n', '\n', '# **Notebook 제목**\n'],
+        },
       ],
     };
 
-    remarkNormalizeDocumentHeadings()(tree);
-
-    expect(tree.children).toHaveLength(2);
-    expect(tree.children[0]).toMatchObject({ type: 'paragraph' });
-    expect(tree.children[1]).toMatchObject({ type: 'heading', depth: 2 });
+    expect(titleFromNotebook(notebook, 'fallback-title')).toBe('Notebook 제목');
   });
 
-  it('finds the document title after metadata and an introductory heading', () => {
-    const tree = {
-      type: 'root',
-      children: [
-        { type: 'mdxjsEsm', value: "import Callout from './Callout.astro'" },
-        { type: 'heading', depth: 2, children: [{ type: 'text', value: '별책 부록' }] },
-        { type: 'heading', depth: 1, children: [{ type: 'text', value: 'MDX 제목' }] },
-        { type: 'paragraph', children: [{ type: 'text', value: '본문' }] },
-      ],
-    };
-
-    remarkNormalizeDocumentHeadings()(tree);
-
-    expect(tree.children.map(({ type }) => type)).toEqual([
-      'mdxjsEsm',
-      'heading',
-      'paragraph',
+  it('finds body H1s without treating fenced code comments as headings', () => {
+    expect(
+      markdownHeadings('## 정상 섹션\n\n~~~python\n# 코드 주석\n~~~\n\n# 잘못된 본문 H1'),
+    ).toEqual([
+      { depth: 2, line: 1, text: '정상 섹션' },
+      { depth: 1, line: 7, text: '잘못된 본문 H1' },
     ]);
-    expect(tree.children[1]).toMatchObject({ type: 'heading', depth: 2 });
+  });
+
+  it('extracts and detects a setext Notebook title', () => {
+    const notebook = {
+      cells: [{ cell_type: 'markdown', source: ['Setext 제목\n', '===\n', '\n', '본문'] }],
+    };
+    const markdown = notebook.cells[0].source.join('');
+
+    expect(titleFromNotebook(notebook, 'fallback-title')).toBe('Setext 제목');
+    expect(markdownHeadings(markdown)).toEqual([{ depth: 1, line: 1, text: 'Setext 제목' }]);
   });
 
   it('restores strong emphasis before a Korean particle after punctuation', () => {
