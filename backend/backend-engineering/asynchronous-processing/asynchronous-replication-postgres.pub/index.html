@@ -79,7 +79,7 @@
 <h3 id="27251-인증">27.2.5.1. 인증<a class="heading-anchor" aria-label="이 제목으로 연결" href="#27251-인증"></a></h3>
 <p>WAL 스트림에서 권한이 있는 정보를 추출하기 쉽기 때문에, 신뢰할 수 있는 사용자만 WAL 스트림을 읽을 수 있도록 복제에 대한 접근 권한을 설정하는 것이 매우 중요합니다. 스탠바이 서버는 <code>REPLICATION</code> 권한 또는 슈퍼유저 권한을 가진 계정으로 기본 서버에 인증해야 합니다. 복제를 위해 <code>REPLICATION</code>과 <code>LOGIN</code> 권한을 가진 전용 사용자 계정을 생성하는 것을 권장합니다. <code>REPLICATION</code> 권한은 매우 높은 권한을 부여하지만, <code>SUPERUSER</code> 권한과 달리 기본 시스템의 어떤 데이터도 수정할 수 없습니다.</p>
 <p>복제에 대한 클라이언트 인증은 <code>database</code> 필드에 <code>replication</code>을 지정하는 <code>pg_hba.conf</code> 레코드로 제어합니다. 예를 들어, 스탠바이가 호스트 IP <code>192.168.1.100</code>에서 실행 중이고 복제용 계정 이름이 <code>foo</code>라면, 관리자는 기본 서버의 <code>pg_hba.conf</code> 파일에 다음 줄을 추가할 수 있습니다:</p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span># 사용자 "foo"가 192.168.1.100에서 올바른 비밀번호를 제공하는 경우</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span># 사용자 "foo"가 192.168.1.100에서 올바른 비밀번호를 제공하는 경우</span></span>
 <span class="line"><span># 기본 서버에 복제 스탠바이로 연결하는 것을 허용합니다.</span></span>
 <span class="line"><span>#</span></span>
 <span class="line"><span># TYPE  DATABASE        USER            ADDRESS                 METHOD</span></span>

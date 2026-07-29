@@ -34,7 +34,7 @@
 <h2 id="1-통신-기초-개념">1. 통신 기초 개념<a class="heading-anchor" aria-label="이 제목으로 연결" href="#1-통신-기초-개념"></a></h2>
 <h3 id="클라이언트-서버-모델">클라이언트-서버 모델<a class="heading-anchor" aria-label="이 제목으로 연결" href="#클라이언트-서버-모델"></a></h3>
 <p>백엔드 통신의 가장 기본적인 구조입니다.</p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[클라이언트] ──요청(Request)──▶ [서버]</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>[클라이언트] ──요청(Request)──▶ [서버]</span></span>
 <span class="line"><span>[클라이언트] ◀──응답(Response)── [서버]</span></span></code></pre>
 <ul>
 <li><strong>클라이언트</strong>: 서비스를 요청하는 쪽 (브라우저, 모바일 앱, 다른 서버 등)</li>
@@ -66,7 +66,7 @@
 <hr>
 <h2 id="2-osi-모델과-네트워크-계층">2. OSI 모델과 네트워크 계층<a class="heading-anchor" aria-label="이 제목으로 연결" href="#2-osi-모델과-네트워크-계층"></a></h2>
 <p>네트워크 통신을 <strong>7개 계층</strong>으로 나눠서 이해하는 모델입니다.</p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>┌─────────────────────────────────┐</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>┌─────────────────────────────────┐</span></span>
 <span class="line"><span>│  7계층 - 응용 (Application)      │  ← HTTP, WebSocket, gRPC, DNS</span></span>
 <span class="line"><span>├─────────────────────────────────┤</span></span>
 <span class="line"><span>│  6계층 - 표현 (Presentation)     │  ← 암호화, 압축, 인코딩</span></span>
@@ -83,7 +83,7 @@
 <span class="line"><span>└─────────────────────────────────┘</span></span></code></pre>
 <h3 id="데이터-캡슐화">데이터 캡슐화<a class="heading-anchor" aria-label="이 제목으로 연결" href="#데이터-캡슐화"></a></h3>
 <p>데이터가 전송될 때 각 계층을 거치며 “헤더”가 추가됩니다:</p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>원본 데이터</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>원본 데이터</span></span>
 <span class="line"><span>  ↓  응용 계층    → [HTTP 헤더 | 데이터]</span></span>
 <span class="line"><span>  ↓  전송 계층    → [TCP 헤더 | HTTP 헤더 | 데이터]</span></span>
 <span class="line"><span>  ↓  네트워크 계층 → [IP 헤더 | TCP 헤더 | HTTP 헤더 | 데이터]</span></span>
@@ -131,7 +131,7 @@
 <li><strong>IPv6</strong>: <code>2001:db8::1</code> 형태, 사실상 무한대</li>
 </ul>
 <h3 id="ip-패킷-구조">IP 패킷 구조<a class="heading-anchor" aria-label="이 제목으로 연결" href="#ip-패킷-구조"></a></h3>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>┌──────────────────────────────────────────┐</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>┌──────────────────────────────────────────┐</span></span>
 <span class="line"><span>│                IP 헤더                    │</span></span>
 <span class="line"><span>│  - 출발지 IP (Source IP)                  │</span></span>
 <span class="line"><span>│  - 도착지 IP (Destination IP)             │</span></span>
@@ -153,7 +153,7 @@
 <h2 id="4-udp-user-datagram-protocol">4. UDP (User Datagram Protocol)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#4-udp-user-datagram-protocol"></a></h2>
 <h3 id="udp란">UDP란?<a class="heading-anchor" aria-label="이 제목으로 연결" href="#udp란"></a></h3>
 <p><strong>빠르지만 신뢰성을 보장하지 않는</strong> Layer 4 전송 프로토콜입니다.</p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>┌────────────────────────────┐</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>┌────────────────────────────┐</span></span>
 <span class="line"><span>│       UDP 헤더 (8바이트)     │</span></span>
 <span class="line"><span>│  - 출발지 포트              │</span></span>
 <span class="line"><span>│  - 도착지 포트              │</span></span>
@@ -215,7 +215,7 @@
 <h3 id="tcp란">TCP란?<a class="heading-anchor" aria-label="이 제목으로 연결" href="#tcp란"></a></h3>
 <p><strong>신뢰성 있는 데이터 전송을 보장하는</strong> Layer 4 프로토콜입니다. 스트림 기반으로 동작하며, 20~60바이트 헤더를 가집니다.</p>
 <h3 id="3-way-handshake-연결-수립">3-Way Handshake (연결 수립)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#3-way-handshake-연결-수립"></a></h3>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>클라이언트                        서버</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>클라이언트                        서버</span></span>
 <span class="line"><span>    │                              │</span></span>
 <span class="line"><span>    │──── SYN (연결 요청) ────────▶│  ① "연결하고 싶어"</span></span>
 <span class="line"><span>    │◀── SYN + ACK (수락+확인) ───│  ② "좋아, 나도 준비됐어"</span></span>
@@ -227,7 +227,7 @@
 </blockquote>
 <p>TCP 연결은 4가지 속성으로 식별됩니다: <code>SourceIP:SourcePort ↔ DestinationIP:DestinationPort</code></p>
 <h3 id="tcp-세그먼트-구조">TCP 세그먼트 구조<a class="heading-anchor" aria-label="이 제목으로 연결" href="#tcp-세그먼트-구조"></a></h3>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>┌──────────────────────────────────────┐</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>┌──────────────────────────────────────┐</span></span>
 <span class="line"><span>│            TCP 헤더 (20~60바이트)      │</span></span>
 <span class="line"><span>│  - 출발지 포트 / 도착지 포트           │</span></span>
 <span class="line"><span>│  - 시퀀스 번호 (Sequence Number)      │</span></span>
@@ -240,12 +240,12 @@
 <h3 id="tcp의-핵심-기능들">TCP의 핵심 기능들<a class="heading-anchor" aria-label="이 제목으로 연결" href="#tcp의-핵심-기능들"></a></h3>
 <h4 id="-순서-보장-ordering">① 순서 보장 (Ordering)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#-순서-보장-ordering"></a></h4>
 <p>각 바이트에 <strong>시퀀스 번호</strong>가 부여되어 받는 쪽에서 올바른 순서로 재조립합니다.</p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>보낸 순서: [패킷1] [패킷2] [패킷3]</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>보낸 순서: [패킷1] [패킷2] [패킷3]</span></span>
 <span class="line"><span>도착 순서: [패킷2] [패킷1] [패킷3]  ← 네트워크에서 뒤섞임</span></span>
 <span class="line"><span>재조립:    [패킷1] [패킷2] [패킷3]  ← TCP가 시퀀스 번호로 정렬</span></span></code></pre>
 <h4 id="-재전송-retransmission">② 재전송 (Retransmission)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#-재전송-retransmission"></a></h4>
 <p>패킷이 유실되면 <strong>자동으로 다시 보냅니다.</strong></p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>클라이언트                    서버</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>클라이언트                    서버</span></span>
 <span class="line"><span>    │── 패킷1 ──────────▶│   ✅ 수신</span></span>
 <span class="line"><span>    │── 패킷2 ───── ✖ ───│   ❌ 유실!</span></span>
 <span class="line"><span>    │── 패킷3 ──────────▶│   ✅ 수신</span></span>
@@ -265,7 +265,7 @@
 <li><strong>패킷 유실 감지 시</strong>: 전송 속도를 급격히 줄임</li>
 </ul>
 <h3 id="4-way-handshake-연결-종료">4-Way Handshake (연결 종료)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#4-way-handshake-연결-종료"></a></h3>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>클라이언트                        서버</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>클라이언트                        서버</span></span>
 <span class="line"><span>    │──── FIN (종료 요청) ────────▶│  ① "끝낼게"</span></span>
 <span class="line"><span>    │◀── ACK (확인) ──────────────│  ② "알겠어"</span></span>
 <span class="line"><span>    │◀── FIN (종료 요청) ─────────│  ③ "나도 끝낼게"</span></span>
@@ -289,7 +289,7 @@
 <li><strong>인증(Authentication)</strong>: 통신 상대가 진짜 그 서버인지 확인 (인증서)</li>
 </ul>
 <h3 id="tls-12-핸드셰이크">TLS 1.2 핸드셰이크<a class="heading-anchor" aria-label="이 제목으로 연결" href="#tls-12-핸드셰이크"></a></h3>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>클라이언트                              서버</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>클라이언트                              서버</span></span>
 <span class="line"><span>    │── ClientHello ──────────────────▶│  지원하는 암호화 방식 목록 전송</span></span>
 <span class="line"><span>    │◀── ServerHello ─────────────────│  암호화 방식 선택 + 인증서 전송</span></span>
 <span class="line"><span>    │   [인증서 검증]                      │</span></span>
@@ -303,21 +303,21 @@
 <li>불안전한 암호화 알고리즘 제거</li>
 <li><strong>0-RTT</strong>: 이전에 연결했던 서버에는 핸드셰이크 없이 바로 데이터 전송 가능</li>
 </ul>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>TLS 1.2:  TCP 핸드셰이크(1-RTT) + TLS 핸드셰이크(2-RTT) = 3-RTT</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>TLS 1.2:  TCP 핸드셰이크(1-RTT) + TLS 핸드셰이크(2-RTT) = 3-RTT</span></span>
 <span class="line"><span>TLS 1.3:  TCP 핸드셰이크(1-RTT) + TLS 핸드셰이크(1-RTT) = 2-RTT</span></span></code></pre>
 <hr>
 <h2 id="7-http11">7. HTTP/1.1<a class="heading-anchor" aria-label="이 제목으로 연결" href="#7-http11"></a></h2>
 <h3 id="http란">HTTP란?<a class="heading-anchor" aria-label="이 제목으로 연결" href="#http란"></a></h3>
 <p><strong>HyperText Transfer Protocol</strong> — 웹에서 가장 널리 쓰이는 응용 계층 프로토콜입니다.</p>
 <h3 id="요청request-구조">요청(Request) 구조<a class="heading-anchor" aria-label="이 제목으로 연결" href="#요청request-구조"></a></h3>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>GET /api/users HTTP/1.1          ← 요청 라인 (메서드 / 경로 / 버전)</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>GET /api/users HTTP/1.1          ← 요청 라인 (메서드 / 경로 / 버전)</span></span>
 <span class="line"><span>Host: example.com                 ← 헤더</span></span>
 <span class="line"><span>Content-Type: application/json</span></span>
 <span class="line"><span>Authorization: Bearer abc123</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>{"name": "홍길동"}                ← 본문 (Body)</span></span></code></pre>
 <h3 id="응답response-구조">응답(Response) 구조<a class="heading-anchor" aria-label="이 제목으로 연결" href="#응답response-구조"></a></h3>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>HTTP/1.1 200 OK                   ← 상태 라인 (버전 / 상태코드 / 메시지)</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>HTTP/1.1 200 OK                   ← 상태 라인 (버전 / 상태코드 / 메시지)</span></span>
 <span class="line"><span>Content-Type: application/json</span></span>
 <span class="line"><span>Content-Length: 27</span></span>
 <span class="line"><span></span></span>
@@ -431,12 +431,12 @@
 <table><thead><tr><th>코드</th><th>의미</th><th>설명</th></tr></thead><tbody><tr><td>200</td><td>OK</td><td>성공</td></tr><tr><td>201</td><td>Created</td><td>리소스 생성됨</td></tr><tr><td>301</td><td>Moved Permanently</td><td>영구 이동</td></tr><tr><td>304</td><td>Not Modified</td><td>캐시된 버전 사용</td></tr><tr><td>400</td><td>Bad Request</td><td>잘못된 요청</td></tr><tr><td>401</td><td>Unauthorized</td><td>인증 필요</td></tr><tr><td>403</td><td>Forbidden</td><td>권한 없음</td></tr><tr><td>404</td><td>Not Found</td><td>리소스 없음</td></tr><tr><td>500</td><td>Internal Server Error</td><td>서버 오류</td></tr><tr><td>502</td><td>Bad Gateway</td><td>게이트웨이 오류</td></tr><tr><td>503</td><td>Service Unavailable</td><td>서비스 불가</td></tr></tbody></table>
 <h3 id="http11의-핵심-기능">HTTP/1.1의 핵심 기능<a class="heading-anchor" aria-label="이 제목으로 연결" href="#http11의-핵심-기능"></a></h3>
 <h4 id="keep-alive-지속-연결">Keep-Alive (지속 연결)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#keep-alive-지속-연결"></a></h4>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>HTTP/1.0:  연결 → 요청 → 응답 → 종료 → 연결 → 요청 → 응답 → 종료 (비효율!)</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>HTTP/1.0:  연결 → 요청 → 응답 → 종료 → 연결 → 요청 → 응답 → 종료 (비효율!)</span></span>
 <span class="line"><span>HTTP/1.1:  연결 → 요청 → 응답 → 요청 → 응답 → 요청 → 응답 → 종료 (효율적!)</span></span></code></pre>
 <h4 id="pipelining-파이프라이닝">Pipelining (파이프라이닝)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#pipelining-파이프라이닝"></a></h4>
 <p>응답을 기다리지 않고 여러 요청을 한 번에 보낼 수 있지만, <strong>응답은 요청 순서대로</strong> 와야 합니다.</p>
 <h4 id="head-of-line-blocking-문제">Head-of-Line Blocking 문제<a class="heading-anchor" aria-label="이 제목으로 연결" href="#head-of-line-blocking-문제"></a></h4>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>요청1 (이미지, 5초) → 요청2 (CSS, 0.1초) → 요청3 (JS, 0.2초)</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>요청1 (이미지, 5초) → 요청2 (CSS, 0.1초) → 요청3 (JS, 0.2초)</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>응답1 (5초 대기 중...)</span></span>
 <span class="line"><span>응답2 (응답1이 끝날 때까지 대기)  ← 😫 이미 준비됐는데 기다려야 함</span></span>
@@ -449,7 +449,7 @@
 <h3 id="핵심-기능">핵심 기능<a class="heading-anchor" aria-label="이 제목으로 연결" href="#핵심-기능"></a></h3>
 <h4 id="-멀티플렉싱-multiplexing">① 멀티플렉싱 (Multiplexing)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#-멀티플렉싱-multiplexing"></a></h4>
 <p><strong>하나의 TCP 연결에서 여러 요청/응답을 동시에</strong> 주고받습니다.</p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>HTTP/1.1 (6개 연결 필요):</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>HTTP/1.1 (6개 연결 필요):</span></span>
 <span class="line"><span>  연결1: 요청A → 응답A</span></span>
 <span class="line"><span>  연결2: 요청B → 응답B</span></span>
 <span class="line"><span></span></span>
@@ -458,7 +458,7 @@
 <span class="line"><span>         └── 하나의 TCP 연결에서 동시 처리 ──┘</span></span></code></pre>
 <h4 id="-스트림-stream">② 스트림 (Stream)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#-스트림-stream"></a></h4>
 <p>각 요청/응답 쌍이 독립적인 <strong>스트림</strong> 채널로 관리됩니다.</p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>하나의 TCP 연결 안:</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>하나의 TCP 연결 안:</span></span>
 <span class="line"><span>┌──────────────────────────────────────┐</span></span>
 <span class="line"><span>│  스트림 1: GET /index.html           │</span></span>
 <span class="line"><span>│  스트림 3: GET /style.css            │</span></span>
@@ -469,13 +469,13 @@
 <p>자주 쓰는 헤더는 인덱스 번호로 대체하고, 이전에 보낸 헤더와 차이점만 전송합니다.</p>
 <h4 id="-서버-푸시-server-push">④ 서버 푸시 (Server Push)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#-서버-푸시-server-push"></a></h4>
 <p>클라이언트가 요청하기 전에 서버가 필요한 리소스를 미리 보내줍니다.</p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>클라이언트: "index.html 줘"</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>클라이언트: "index.html 줘"</span></span>
 <span class="line"><span>서버: "여기 index.html이야, 그리고 style.css랑 app.js도 같이 보낼게"</span></span></code></pre>
 <h4 id="-바이너리-프레이밍-binary-framing">⑤ 바이너리 프레이밍 (Binary Framing)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#-바이너리-프레이밍-binary-framing"></a></h4>
 <p>HTTP/1.1은 텍스트 기반이었지만, HTTP/2는 <strong>바이너리 프레임</strong>으로 파싱이 더 빠르고 효율적입니다.</p>
 <h3 id="http2의-한계">HTTP/2의 한계<a class="heading-anchor" aria-label="이 제목으로 연결" href="#http2의-한계"></a></h3>
 <p><strong>TCP 수준의 Head-of-Line Blocking은 여전히 존재합니다.</strong> TCP에서 패킷 하나가 유실되면, 그 패킷이 재전송될 때까지 모든 스트림이 막힙니다.</p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>HTTP/2 레벨: 스트림1, 스트림2, 스트림3 (독립적!)</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>HTTP/2 레벨: 스트림1, 스트림2, 스트림3 (독립적!)</span></span>
 <span class="line"><span>  ↓</span></span>
 <span class="line"><span>TCP 레벨: [패킷1] [패킷2 유실!] [패킷3]</span></span>
 <span class="line"><span>          → 패킷2가 복구될 때까지 패킷3도 대기 😫</span></span></code></pre>
@@ -486,29 +486,29 @@
 <h2 id="9-http3-quic">9. HTTP/3 (QUIC)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#9-http3-quic"></a></h2>
 <h3 id="http3란">HTTP/3란?<a class="heading-anchor" aria-label="이 제목으로 연결" href="#http3란"></a></h3>
 <p>TCP 대신 <strong>QUIC</strong> 프로토콜(UDP 기반)을 사용하는 HTTP의 최신 버전입니다.</p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>기존:    HTTP/2 → TLS 1.2 → TCP → IP</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>기존:    HTTP/2 → TLS 1.2 → TCP → IP</span></span>
 <span class="line"><span>HTTP/3:  HTTP/3 → QUIC (TLS 1.3 내장) → UDP → IP</span></span></code></pre>
 <h3 id="quic-프로토콜의-특징">QUIC 프로토콜의 특징<a class="heading-anchor" aria-label="이 제목으로 연결" href="#quic-프로토콜의-특징"></a></h3>
 <h4 id="-연결-수립이-빠름">① 연결 수립이 빠름<a class="heading-anchor" aria-label="이 제목으로 연결" href="#-연결-수립이-빠름"></a></h4>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>TCP + TLS 1.3:  1-RTT(TCP) + 1-RTT(TLS) = 2-RTT</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>TCP + TLS 1.3:  1-RTT(TCP) + 1-RTT(TLS) = 2-RTT</span></span>
 <span class="line"><span>QUIC:           1-RTT (연결 + 암호화 동시!)</span></span>
 <span class="line"><span>QUIC 재연결:    0-RTT (이전에 연결한 적 있다면!)</span></span></code></pre>
 <h4 id="-tcp-hol-blocking-해결">② TCP HOL Blocking 해결<a class="heading-anchor" aria-label="이 제목으로 연결" href="#-tcp-hol-blocking-해결"></a></h4>
 <p>QUIC의 스트림은 <strong>완전히 독립적</strong>입니다. 하나의 스트림에서 패킷이 유실되어도 다른 스트림에 영향을 주지 않습니다.</p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>QUIC:</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>QUIC:</span></span>
 <span class="line"><span>  스트림1: [패킷 유실!] → 스트림1만 재전송 대기</span></span>
 <span class="line"><span>  스트림2: [정상 수신] → 바로 처리 ✅</span></span>
 <span class="line"><span>  스트림3: [정상 수신] → 바로 처리 ✅</span></span></code></pre>
 <h4 id="-연결-마이그레이션-connection-migration">③ 연결 마이그레이션 (Connection Migration)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#-연결-마이그레이션-connection-migration"></a></h4>
 <p>TCP는 IP + 포트로 연결을 식별하지만, QUIC은 <strong>연결 ID</strong>로 식별합니다. IP 주소가 바뀌어도 연결이 유지됩니다.</p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>시나리오: Wi-Fi에서 LTE로 전환</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>시나리오: Wi-Fi에서 LTE로 전환</span></span>
 <span class="line"><span>TCP:  연결 끊김 → 새 TCP 핸드셰이크 → 새 TLS 핸드셰이크 😫</span></span>
 <span class="line"><span>QUIC: 연결 ID가 같으므로 끊김 없이 계속 통신 ✅</span></span></code></pre>
 <hr>
 <h2 id="10-websocket">10. WebSocket<a class="heading-anchor" aria-label="이 제목으로 연결" href="#10-websocket"></a></h2>
 <h3 id="websocket이란">WebSocket이란?<a class="heading-anchor" aria-label="이 제목으로 연결" href="#websocket이란"></a></h3>
 <p>HTTP의 요청-응답 모델과 달리, <strong>클라이언트와 서버가 양방향으로 자유롭게 메시지를 주고받을 수 있는</strong> 프로토콜입니다.</p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>HTTP:</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>HTTP:</span></span>
 <span class="line"><span>  클라이언트 → "데이터 줘" → 서버</span></span>
 <span class="line"><span>  클라이언트 ← "여기 있어" ← 서버</span></span>
 <span class="line"><span>  (매번 클라이언트가 먼저 요청해야 함)</span></span>
@@ -518,7 +518,7 @@
 <span class="line"><span>  (아무 때나 양쪽 다 메시지를 보낼 수 있음)</span></span></code></pre>
 <h3 id="websocket-연결-과정">WebSocket 연결 과정<a class="heading-anchor" aria-label="이 제목으로 연결" href="#websocket-연결-과정"></a></h3>
 <p>HTTP 업그레이드 요청으로 시작합니다.</p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>① 클라이언트 → 서버 (HTTP 요청)</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>① 클라이언트 → 서버 (HTTP 요청)</span></span>
 <span class="line"><span>   GET /chat HTTP/1.1</span></span>
 <span class="line"><span>   Upgrade: websocket</span></span>
 <span class="line"><span>   Connection: Upgrade</span></span>
@@ -541,7 +541,7 @@
 <h3 id="grpc란">gRPC란?<a class="heading-anchor" aria-label="이 제목으로 연결" href="#grpc란"></a></h3>
 <p>Google이 만든 고성능 <strong>RPC(Remote Procedure Call)</strong> 프레임워크입니다. HTTP/2 위에서 동작하며, Protocol Buffers(Protobuf)를 사용합니다.</p>
 <h3 id="rest-vs-grpc">REST vs gRPC<a class="heading-anchor" aria-label="이 제목으로 연결" href="#rest-vs-grpc"></a></h3>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>REST:</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>REST:</span></span>
 <span class="line"><span>  - JSON (텍스트, 사람이 읽기 쉬움)</span></span>
 <span class="line"><span>  - HTTP/1.1 또는 HTTP/2</span></span>
 <span class="line"><span>  - URL 기반 리소스 접근: GET /api/users/1</span></span>
@@ -565,7 +565,7 @@
 <span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">  string</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> email </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 3</span><span style="color:#24292E;--shiki-dark:#E1E4E8">;</span></span>
 <span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span></code></pre>
 <h3 id="grpc의-4가지-통신-패턴">gRPC의 4가지 통신 패턴<a class="heading-anchor" aria-label="이 제목으로 연결" href="#grpc의-4가지-통신-패턴"></a></h3>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>① Unary (단일 요청-응답)</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>① Unary (단일 요청-응답)</span></span>
 <span class="line"><span>   클라이언트 ─요청─▶ 서버</span></span>
 <span class="line"><span>   클라이언트 ◀─응답── 서버</span></span>
 <span class="line"><span></span></span>
@@ -646,7 +646,7 @@
 
 <table><thead><tr><th>NAT 유형</th><th>특징</th></tr></thead><tbody><tr><td>Full Cone NAT</td><td>가장 개방적, STUN으로 처리 가능</td></tr><tr><td>Address Restricted NAT</td><td>통신한 주소만 허용, STUN으로 처리 가능</td></tr><tr><td>Port Restricted NAT</td><td>통신한 주소:포트만 허용, STUN으로 처리 가능</td></tr><tr><td>Symmetric NAT</td><td>가장 제한적, TURN 서버 필요</td></tr></tbody></table>
 <h3 id="webrtc-연결-과정-signaling">WebRTC 연결 과정 (Signaling)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#webrtc-연결-과정-signaling"></a></h3>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>1. A가 B에 연결하려 함</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>1. A가 B에 연결하려 함</span></span>
 <span class="line"><span>2. A가 Offer 생성 (SDP)</span></span>
 <span class="line"><span>3. A가 B에게 Offer 전송 (Signaling 서버 경유)</span></span>
 <span class="line"><span>4. B가 Answer 생성</span></span>
@@ -681,10 +681,18 @@
 <p>백엔드에서 클라이언트와 서버가 데이터를 주고받는 다양한 방식입니다.</p>
 <h3 id="-요청-응답-request-response">① 요청-응답 (Request-Response)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#-요청-응답-request-response"></a></h3>
 <p>가장 기본적인 패턴입니다. HTTP, DNS, SSH, RPC, 데이터베이스 프로토콜 등에서 사용됩니다.</p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>클라이언트 ─요청 전송─▶ 서버</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>클라이언트 ─요청 전송─▶ 서버</span></span>
 <span class="line"><span>서버 ─응답 전송─▶ 클라이언트</span></span></code></pre>
-<p><strong>장점</strong>: 간단하고 명확한 구조, 확장성 우수
-<strong>단점</strong>: 여러 수신자에게 동시 전송 어려움, 높은 결합도</p>
+<p><strong>장점</strong></p>
+<ul>
+<li>간단하고 명확한 구조</li>
+<li>확장성 우수</li>
+</ul>
+<p><strong>단점</strong></p>
+<ul>
+<li>여러 수신자에게 동시 전송 어려움</li>
+<li>높은 결합도</li>
+</ul>
 <h3 id="-동기-vs-비동기-synchronous-vs-asynchronous">② 동기 vs 비동기 (Synchronous vs Asynchronous)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#-동기-vs-비동기-synchronous-vs-asynchronous"></a></h3>
 <p><strong>동기 I/O</strong>: 요청을 보낸 후 응답이 올 때까지 대기 (블로킹)</p>
 <p><strong>비동기 I/O</strong>: 요청을 보낸 후 응답을 기다리지 않고 다른 작업 수행</p>
@@ -697,45 +705,85 @@
 </blockquote>
 <h3 id="-push-푸시">③ Push (푸시)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#-push-푸시"></a></h3>
 <p>서버가 클라이언트에게 데이터를 <strong>능동적으로 전송</strong>합니다.</p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>서버 ─새 알림 전송─▶ 클라이언트 (클라이언트가 요청하지 않아도)</span></span></code></pre>
-<p><strong>장점</strong>: 실시간 데이터 전송
-<strong>단점</strong>: 클라이언트가 항상 온라인 상태여야 함, 양방향 프로토콜 필요
-<strong>사용 예시</strong>: 사용자 로그인 알림, RabbitMQ</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>서버 ─새 알림 전송─▶ 클라이언트 (클라이언트가 요청하지 않아도)</span></span></code></pre>
+<p><strong>장점</strong></p>
+<ul>
+<li>실시간 데이터 전송</li>
+</ul>
+<p><strong>단점</strong></p>
+<ul>
+<li>클라이언트가 항상 온라인 상태여야 함</li>
+<li>양방향 프로토콜 필요</li>
+</ul>
+<p><strong>사용 예시</strong>: 사용자 로그인 알림, RabbitMQ</p>
 <h3 id="-short-polling-짧은-폴링">④ Short Polling (짧은 폴링)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#-short-polling-짧은-폴링"></a></h3>
 <p>클라이언트가 <strong>주기적으로</strong> 서버에 상태를 확인합니다.</p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>매 5초마다:</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>매 5초마다:</span></span>
 <span class="line"><span>  클라이언트: "새 메시지 있어?" → 서버: "아니"</span></span>
 <span class="line"><span>  클라이언트: "새 메시지 있어?" → 서버: "아니"</span></span>
 <span class="line"><span>  클라이언트: "새 메시지 있어?" → 서버: "응! 여기"</span></span></code></pre>
-<p><strong>장점</strong>: 구현이 간단, 클라이언트가 연결을 끊을 수 있음
-<strong>단점</strong>: 너무 많은 요청, 네트워크 대역폭 낭비
-<strong>사용 예시</strong>: YouTube 비디오 업로드 진행 상태 확인</p>
+<p><strong>장점</strong></p>
+<ul>
+<li>구현이 간단</li>
+<li>클라이언트가 연결을 끊을 수 있음</li>
+</ul>
+<p><strong>단점</strong></p>
+<ul>
+<li>너무 많은 요청</li>
+<li>네트워크 대역폭 낭비</li>
+</ul>
+<p><strong>사용 예시</strong>: YouTube 비디오 업로드 진행 상태 확인</p>
 <h3 id="-long-polling-긴-폴링">⑤ Long Polling (긴 폴링)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#-long-polling-긴-폴링"></a></h3>
 <p>클라이언트가 요청을 보내면 서버가 <strong>응답할 준비가 될 때까지 연결을 유지</strong>합니다.</p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>클라이언트: "새 메시지 있어?" → 서버</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>클라이언트: "새 메시지 있어?" → 서버</span></span>
 <span class="line"><span>서버: (새 메시지가 올 때까지 대기... 30초 동안 응답하지 않음)</span></span>
 <span class="line"><span>서버: (새 메시지 도착!) → "여기 새 메시지!"</span></span>
 <span class="line"><span>클라이언트: (바로 다시 요청)</span></span></code></pre>
-<p><strong>장점</strong>: Short Polling보다 통신량 적음, 거의 실시간
-<strong>단점</strong>: 완전한 실시간은 아님, 타임아웃 처리 필요
-<strong>사용 예시</strong>: Kafka에서 사용</p>
+<p><strong>장점</strong></p>
+<ul>
+<li>Short Polling보다 통신량 적음</li>
+<li>거의 실시간</li>
+</ul>
+<p><strong>단점</strong></p>
+<ul>
+<li>완전한 실시간은 아님</li>
+<li>타임아웃 처리 필요</li>
+</ul>
+<p><strong>사용 예시</strong>: Kafka에서 사용</p>
 <h3 id="-server-sent-events-sse">⑥ Server-Sent Events (SSE)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#-server-sent-events-sse"></a></h3>
 <p>서버에서 클라이언트로 <strong>단방향으로</strong> 이벤트를 보내는 방식입니다. HTTP 기반으로 동작합니다.</p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>클라이언트: "이벤트 스트림 연결" → 서버</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>클라이언트: "이벤트 스트림 연결" → 서버</span></span>
 <span class="line"><span>서버: ── event: update ── data: {"price": 50000} ──▶ 클라이언트</span></span>
 <span class="line"><span>서버: ── event: update ── data: {"price": 50100} ──▶ 클라이언트</span></span>
 <span class="line"><span>(서버가 원할 때마다 계속 보냄, 연결은 유지)</span></span></code></pre>
-<p><strong>장점</strong>: HTTP 기반이라 기존 인프라와 호환, 자동 재연결 지원
-<strong>단점</strong>: 단방향(서버→클라이언트)만 가능, HTTP/1.1에서는 연결 6개 제한
-<strong>사용 예시</strong>: 실시간 뉴스 피드, 주식 시세, 알림</p>
+<p><strong>장점</strong></p>
+<ul>
+<li>HTTP 기반이라 기존 인프라와 호환</li>
+<li>자동 재연결 지원</li>
+</ul>
+<p><strong>단점</strong></p>
+<ul>
+<li>단방향(서버→클라이언트)만 가능</li>
+<li>HTTP/1.1에서는 연결 6개 제한</li>
+</ul>
+<p><strong>사용 예시</strong>: 실시간 뉴스 피드, 주식 시세, 알림</p>
 <h3 id="-publish-subscribe-pubsub-발행-구독">⑦ Publish-Subscribe (Pub/Sub, 발행-구독)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#-publish-subscribe-pubsub-발행-구독"></a></h3>
 <p>메시지 브로커를 통해 발행자가 보낸 메시지를 여러 구독자에게 전달합니다.</p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[발행자A] ──메시지──▶ [메시지 브로커] ──▶ [구독자1]</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>[발행자A] ──메시지──▶ [메시지 브로커] ──▶ [구독자1]</span></span>
 <span class="line"><span>[발행자B] ──메시지──▶ [  (Kafka 등)  ] ──▶ [구독자2]</span></span>
 <span class="line"><span>                                       ──▶ [구독자3]</span></span></code></pre>
-<p><strong>장점</strong>: 여러 수신자에게 확장 가능, 마이크로서비스에 적합, 느슨한 결합
-<strong>단점</strong>: 메시지 전달 보장 문제, 복잡도 증가
-<strong>사용 예시</strong>: 비디오 업로드 → 압축/변환/알림 서비스가 각각 처리</p>
+<p><strong>장점</strong></p>
+<ul>
+<li>여러 수신자에게 확장 가능</li>
+<li>마이크로서비스에 적합</li>
+<li>느슨한 결합</li>
+</ul>
+<p><strong>단점</strong></p>
+<ul>
+<li>메시지 전달 보장 문제</li>
+<li>복잡도 증가</li>
+</ul>
+<p><strong>사용 예시</strong>: 비디오 업로드 → 압축/변환/알림 서비스가 각각 처리</p>
 <h3 id="-multiplexing--demultiplexing-다중화--역다중화">⑧ Multiplexing &#x26; Demultiplexing (다중화 &#x26; 역다중화)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#-multiplexing--demultiplexing-다중화--역다중화"></a></h3>
 <ul>
 <li><strong>Multiplexing</strong>: 여러 스트림을 하나의 연결로 합치는 것 (예: HTTP/2)</li>
@@ -775,11 +823,20 @@
 <table><thead><tr><th></th><th>Stateful (상태 저장)</th><th>Stateless (무상태)</th></tr></thead><tbody><tr><td><strong>개념</strong></td><td>서버가 클라이언트 상태를 메모리에 저장</td><td>클라이언트가 모든 요청에 상태 정보를 포함</td></tr><tr><td><strong>예시</strong></td><td>TCP, gRPC</td><td>UDP, HTTP, JWT</td></tr><tr><td><strong>장점</strong></td><td>빠른 응답 (상태 재전송 불필요)</td><td>서버 재시작해도 워크플로우 지속, 확장성 우수</td></tr><tr><td><strong>단점</strong></td><td>서버 장애 시 상태 손실</td><td>요청 크기 증가</td></tr></tbody></table>
 <h3 id="-sidecar-pattern-사이드카-패턴">⑩ Sidecar Pattern (사이드카 패턴)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#-sidecar-pattern-사이드카-패턴"></a></h3>
 <p>각 서비스 옆에 <strong>프록시를 배치</strong>하여 복잡한 프로토콜 처리를 대신 담당하는 패턴입니다.</p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[서비스 A] ←→ [Sidecar 프록시] ←→ [Sidecar 프록시] ←→ [서비스 B]</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>[서비스 A] ←→ [Sidecar 프록시] ←→ [Sidecar 프록시] ←→ [서비스 B]</span></span>
 <span class="line"><span>              (Envoy/Linkerd)         (Envoy/Linkerd)</span></span></code></pre>
-<p><strong>장점</strong>: 언어에 독립적(Polyglot), 프로토콜 업그레이드 쉬움, 추적/모니터링/보안 강화
-<strong>단점</strong>: 복잡도 증가, 지연 시간 증가 (추가 홉)
-<strong>사용 예시</strong>: Service Mesh — Linkerd, Istio, Envoy</p>
+<p><strong>장점</strong></p>
+<ul>
+<li>언어에 독립적(Polyglot)</li>
+<li>프로토콜 업그레이드 쉬움</li>
+<li>추적/모니터링/보안 강화</li>
+</ul>
+<p><strong>단점</strong></p>
+<ul>
+<li>복잡도 증가</li>
+<li>지연 시간 증가 (추가 홉)</li>
+</ul>
+<p><strong>사용 예시</strong>: Service Mesh — Linkerd, Istio, Envoy</p>
 <h3 id="통신-패턴-선택-가이드">통신 패턴 선택 가이드<a class="heading-anchor" aria-label="이 제목으로 연결" href="#통신-패턴-선택-가이드"></a></h3>
 
 
@@ -871,7 +928,7 @@
 너무 많으면 CPU 컨텍스트 스위칭 오버헤드 증가</p>
 </blockquote>
 <h3 id="synaccept-queue-연결-수립-흐름">SYN/Accept Queue (연결 수립 흐름)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#synaccept-queue-연결-수립-흐름"></a></h3>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>클라이언트 → SYN → [SYN Queue]</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>클라이언트 → SYN → [SYN Queue]</span></span>
 <span class="line"><span>                       ↓ 서버가 SYN/ACK 전송</span></span>
 <span class="line"><span>클라이언트 → ACK → [Accept Queue]</span></span>
 <span class="line"><span>                       ↓ 애플리케이션이 accept() 호출</span></span>
@@ -913,12 +970,17 @@
 <hr>
 <h2 id="15-프록시와-로드-밸런서">15. 프록시와 로드 밸런서<a class="heading-anchor" aria-label="이 제목으로 연결" href="#15-프록시와-로드-밸런서"></a></h2>
 <h3 id="forward-proxy-vs-reverse-proxy">Forward Proxy vs Reverse Proxy<a class="heading-anchor" aria-label="이 제목으로 연결" href="#forward-proxy-vs-reverse-proxy"></a></h3>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>포워드 프록시:  [클라이언트] → [프록시] → [인터넷] → [서버]</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>포워드 프록시:  [클라이언트] → [프록시] → [인터넷] → [서버]</span></span>
 <span class="line"><span>               (클라이언트 IP 숨김, 접근 제어)</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>리버스 프록시:  [클라이언트] → [인터넷] → [리버스 프록시] → [서버1, 서버2, ...]</span></span>
 <span class="line"><span>               (서버 IP 숨김, 로드 밸런싱)</span></span></code></pre>
-<p><strong>대표적 도구</strong>: Nginx, HAProxy, AWS ALB</p>
+<p><strong>대표적 도구</strong></p>
+<ul>
+<li>Nginx</li>
+<li>HAProxy</li>
+<li>AWS ALB</li>
+</ul>
 <h3 id="로드-밸런싱-알고리즘">로드 밸런싱 알고리즘<a class="heading-anchor" aria-label="이 제목으로 연결" href="#로드-밸런싱-알고리즘"></a></h3>
 
 
@@ -988,13 +1050,13 @@
 
 <table><thead><tr><th></th><th>L4 로드 밸런서</th><th>L7 로드 밸런서</th></tr></thead><tbody><tr><td><strong>동작 수준</strong></td><td>TCP/UDP (IP + 포트만 확인)</td><td>HTTP (URL, 헤더, 쿠키 등 확인)</td></tr><tr><td><strong>속도</strong></td><td>빠름 (데이터 내용 미확인)</td><td>약간 느림</td></tr><tr><td><strong>캐싱</strong></td><td>❌</td><td>✅</td></tr><tr><td><strong>마이크로서비스</strong></td><td>제한적</td><td>✅ 적합</td></tr><tr><td><strong>예시</strong></td><td>AWS NLB</td><td>AWS ALB, Nginx</td></tr></tbody></table>
 <p><strong>L7 로드 밸런서 라우팅 예시:</strong></p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>/api/users/*   → 사용자 서비스 서버</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>/api/users/*   → 사용자 서비스 서버</span></span>
 <span class="line"><span>/api/orders/*  → 주문 서비스 서버</span></span>
 <span class="line"><span>/api/images/*  → 이미지 서비스 서버</span></span></code></pre>
 <hr>
 <h2 id="16-정리--프로토콜-비교표">16. 정리 &#x26; 프로토콜 비교표<a class="heading-anchor" aria-label="이 제목으로 연결" href="#16-정리--프로토콜-비교표"></a></h2>
 <h3 id="전체-프로토콜-스택-흐름">전체 프로토콜 스택 흐름<a class="heading-anchor" aria-label="이 제목으로 연결" href="#전체-프로토콜-스택-흐름"></a></h3>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>사용자가 https://example.com/api/data 에 접속하면:</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>사용자가 https://example.com/api/data 에 접속하면:</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>1. DNS     → example.com의 IP 주소를 알아냄</span></span>
 <span class="line"><span>2. TCP     → 3-Way Handshake로 연결 수립</span></span>
@@ -1076,7 +1138,7 @@
 
 <table><thead><tr><th>항목</th><th>HTTP/1.1</th><th>HTTP/2</th><th>HTTP/3</th><th>WebSocket</th><th>gRPC</th></tr></thead><tbody><tr><td><strong>전송 계층</strong></td><td>TCP</td><td>TCP</td><td>QUIC(UDP)</td><td>TCP</td><td>HTTP/2(TCP)</td></tr><tr><td><strong>데이터 형식</strong></td><td>텍스트</td><td>바이너리</td><td>바이너리</td><td>바이너리/텍스트</td><td>Protobuf(바이너리)</td></tr><tr><td><strong>멀티플렉싱</strong></td><td>❌</td><td>✅</td><td>✅</td><td>N/A</td><td>✅</td></tr><tr><td><strong>서버 푸시</strong></td><td>❌</td><td>✅</td><td>✅</td><td>✅ (양방향)</td><td>✅ (스트리밍)</td></tr><tr><td><strong>HOL Blocking</strong></td><td>있음</td><td>TCP 수준 있음</td><td>없음</td><td>있음</td><td>TCP 수준 있음</td></tr><tr><td><strong>헤더 압축</strong></td><td>❌</td><td>HPACK</td><td>QPACK</td><td>❌</td><td>HPACK</td></tr><tr><td><strong>주 사용처</strong></td><td>일반 웹</td><td>웹, API</td><td>모바일, 웹</td><td>실시간 통신</td><td>마이크로서비스</td></tr></tbody></table>
 <h3 id="프로토콜-선택-가이드">프로토콜 선택 가이드<a class="heading-anchor" aria-label="이 제목으로 연결" href="#프로토콜-선택-가이드"></a></h3>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>"일반적인 웹 API를 만든다"               → HTTP/1.1 또는 HTTP/2 + REST</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>"일반적인 웹 API를 만든다"               → HTTP/1.1 또는 HTTP/2 + REST</span></span>
 <span class="line"><span>"고성능 마이크로서비스 통신이 필요하다"    → gRPC</span></span>
 <span class="line"><span>"실시간 양방향 통신이 필요하다"            → WebSocket</span></span>
 <span class="line"><span>"서버→클라이언트 단방향 알림이 필요하다"   → SSE</span></span>

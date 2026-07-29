@@ -96,7 +96,7 @@
 <p>PostgreSQL은 WAL 레코드를 생성할 때 처음엔 공유 메모리의 <strong>WAL 버퍼</strong>에만 씁니다. 이것을 실제 디스크에 내려쓰는(flush) 작업을 전담하는 백그라운드 프로세스가 WAL writer이며, <code>wal_writer_delay</code>는 이 프로세스가 얼마나 자주 깨어나 flush를 수행할지를 결정합니다.</p>
 <p><strong>위험 구간이 3배인 이유</strong></p>
 <p>비동기 커밋을 사용할 경우, 위험 구간(risk window)의 최대 지속 시간은 <code>wal_writer_delay</code>의 <strong>3배</strong>입니다. WAL writer가 매 주기마다 무조건 flush하지 않고, 조건(flush 대상 데이터량, 마지막 flush 이후 경과 시간 등)을 충족해야만 실제 disk flush를 수행하도록 설계되어 있기 때문입니다.</p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[타임라인 예시 — wal_writer_delay = 200ms]</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>[타임라인 예시 — wal_writer_delay = 200ms]</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>T=0ms   : 비동기 트랜잭션 커밋 → 클라이언트에 "성공" 응답 반환</span></span>
 <span class="line"><span>          (WAL 레코드는 아직 메모리 버퍼에만 존재)</span></span>
@@ -113,7 +113,7 @@
 <p>이름 때문에 비동기 커밋과 혼동되기 쉽지만, 실제로는 <strong>동기 커밋 방식</strong>입니다. 비동기 커밋 중에는 <code>commit_delay</code>가 무시됩니다.</p>
 <p><strong>핵심 아이디어: flush는 비싸다, 같이 쓰자</strong></p>
 <p>디스크 flush(<code>fsync</code>)는 비용이 큰 작업입니다. 트랜잭션마다 개별적으로 flush를 요청하면 낭비가 심해집니다. <code>commit_delay</code>는 flush 직전에 <strong>짧게 대기</strong>하여, 그 시간 동안 다른 트랜잭션들을 모아 <strong>단 한 번의 flush로 여러 트랜잭션을 한꺼번에 커밋</strong>하는 전략입니다.</p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[commit_delay 없을 때]</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>[commit_delay 없을 때]</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>  트랜잭션 A → flush → 완료</span></span>
 <span class="line"><span>  트랜잭션 B → flush → 완료   ← flush 3번 발생 (비용 × 3)</span></span>

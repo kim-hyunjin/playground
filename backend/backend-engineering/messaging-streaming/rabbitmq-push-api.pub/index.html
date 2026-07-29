@@ -80,7 +80,7 @@
 <h2 id="5-consumer-등록--push-api">5. Consumer 등록 — Push API<a class="heading-anchor" aria-label="이 제목으로 연결" href="#5-consumer-등록--push-api"></a></h2>
 <p>애플리케이션은 RabbitMQ가 큐에 쌓인 메시지를 <strong>자동으로 밀어보내도록(push)</strong> 구독을 등록할 수 있다. 이 방식을 <strong>Push API</strong> 또는 <strong>구독(Subscription)</strong> 이라고 한다.</p>
 <h3 id="동작-흐름">동작 흐름<a class="heading-anchor" aria-label="이 제목으로 연결" href="#동작-흐름"></a></h3>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>애플리케이션 → 큐에 Consumer 등록 (subscribe)</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>애플리케이션 → 큐에 Consumer 등록 (subscribe)</span></span>
 <span class="line"><span>                    ↓</span></span>
 <span class="line"><span>RabbitMQ → 메시지가 있을 때마다 Consumer에게 자동 push</span></span>
 <span class="line"><span>                    ↓</span></span>

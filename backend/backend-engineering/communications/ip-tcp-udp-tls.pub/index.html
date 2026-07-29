@@ -393,7 +393,7 @@
 
 <table><thead><tr><th>필드</th><th>크기</th><th>설명</th></tr></thead><tbody><tr><td>Source Port</td><td>16 bit</td><td>출발지 포트</td></tr><tr><td>Destination Port</td><td>16 bit</td><td>목적지 포트</td></tr><tr><td>Sequence Number</td><td>32 bit</td><td>바이트 스트림 내 순서 번호</td></tr><tr><td>Acknowledgment Number</td><td>32 bit</td><td>다음에 받기를 기대하는 바이트 번호</td></tr><tr><td>Data Offset (Header Length)</td><td>4 bit</td><td>TCP 헤더 길이</td></tr><tr><td>Flags (Control Bits)</td><td>각 1 bit</td><td>SYN, ACK, FIN, RST, PSH, URG 등</td></tr><tr><td>Window Size</td><td>16 bit</td><td>수신 윈도우 크기 (흐름 제어)</td></tr><tr><td>Checksum</td><td>16 bit</td><td>오류 검출</td></tr><tr><td>Urgent Pointer</td><td>16 bit</td><td>긴급 데이터 위치</td></tr><tr><td>Options</td><td>가변</td><td>MSS, Window Scaling, Timestamps 등</td></tr></tbody></table>
 <h3 id="73-tcp-3-way-handshake-연결-수립">7.3 TCP 3-Way Handshake (연결 수립)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#73-tcp-3-way-handshake-연결-수립"></a></h3>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Client                    Server</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>Client                    Server</span></span>
 <span class="line"><span>  |                          |</span></span>
 <span class="line"><span>  |--- SYN (seq=x) -------->|</span></span>
 <span class="line"><span>  |                          |</span></span>
@@ -409,7 +409,7 @@
 <li><strong>ACK</strong>: 클라이언트가 서버의 SYN 확인 → 연결 완료</li>
 </ol>
 <h3 id="74-tcp-4-way-handshake-연결-종료">7.4 TCP 4-Way Handshake (연결 종료)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#74-tcp-4-way-handshake-연결-종료"></a></h3>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Client                    Server</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>Client                    Server</span></span>
 <span class="line"><span>  |                          |</span></span>
 <span class="line"><span>  |--- FIN ----------------->|</span></span>
 <span class="line"><span>  |                          |</span></span>
@@ -528,7 +528,7 @@
 
 <table><thead><tr><th>보안 목표</th><th>설명</th></tr></thead><tbody><tr><td>기밀성 (Confidentiality)</td><td>데이터 암호화로 도청 방지</td></tr><tr><td>무결성 (Integrity)</td><td>MAC(Message Authentication Code)으로 데이터 변조 탐지</td></tr><tr><td>인증 (Authentication)</td><td>인증서(Certificate)를 통한 서버(선택적으로 클라이언트) 신원 확인</td></tr></tbody></table>
 <h3 id="83-tls-handshake-tls-12">8.3 TLS Handshake (TLS 1.2)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#83-tls-handshake-tls-12"></a></h3>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Client                          Server</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>Client                          Server</span></span>
 <span class="line"><span>  |                                |</span></span>
 <span class="line"><span>  |--- ClientHello --------------->|</span></span>
 <span class="line"><span>  |    (지원 cipher suites,        |</span></span>

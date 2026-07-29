@@ -72,11 +72,11 @@
 <p>해시 함수를 사용하여 데이터를 어느 서버에 저장/조회할지 결정하는 방법.</p>
 <h3 id="동작-원리">동작 원리<a class="heading-anchor" aria-label="이 제목으로 연결" href="#동작-원리"></a></h3>
 <p>3개의 Postgres 인스턴스가 있을 때: <code>postgres:5432</code>, <code>postgres:5433</code>, <code>postgres:5434</code></p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Hash("Input1") → 5432 (Server 1)</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>Hash("Input1") → 5432 (Server 1)</span></span>
 <span class="line"><span>Hash("Input2") → 5433 (Server 2)</span></span>
 <span class="line"><span>Hash("Input3") → 5434 (Server 3)</span></span></code></pre>
 <h3 id="해시-함수-예시">해시 함수 예시<a class="heading-anchor" aria-label="이 제목으로 연결" href="#해시-함수-예시"></a></h3>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>num("Input2") % 3 = 1</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>num("Input2") % 3 = 1</span></span>
 <span class="line"><span>+ 5432 (기본 포트)</span></span>
 <span class="line"><span>= 5433 → postgres:5433으로 라우팅</span></span></code></pre>
 <ul>

@@ -119,7 +119,7 @@
 <li><strong>1 노드 = 1 디스크 페이지</strong></li>
 </ul>
 <h3 id="b-tree가-검색을-돕는-방식">B-Tree가 검색을 돕는 방식<a class="heading-anchor" aria-label="이 제목으로 연결" href="#b-tree가-검색을-돕는-방식"></a></h3>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>         [2:702 | 4:704]          ← Root Node</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>         [2:702 | 4:704]          ← Root Node</span></span>
 <span class="line"><span>        /       |       \</span></span>
 <span class="line"><span>  [1:701]   [3:703]   [5:705]    ← Leaf Nodes</span></span></code></pre>
 <ul>
@@ -139,7 +139,7 @@
 <li><code>1:701</code> 발견 → TID 701로 실제 행 접근</li>
 </ol>
 <h3 id="더-많은-항목이-추가된-b-tree-11개-항목">더 많은 항목이 추가된 B-Tree (11개 항목)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#더-많은-항목이-추가된-b-tree-11개-항목"></a></h3>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>              [4:704 | 8:802]              ← ROOT 노드</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>              [4:704 | 8:802]              ← ROOT 노드</span></span>
 <span class="line"><span>             /       |       \</span></span>
 <span class="line"><span>      [2:702]    [6:800]    [10:804]       ← Internal 노드</span></span>
 <span class="line"><span>       /   \      /   \       /    \</span></span>
@@ -175,7 +175,7 @@
 <li><strong>범위 쿼리에 매우 유리함</strong></li>
 </ul>
 <h3 id="btree-구조-차수-3">B+Tree 구조 (차수 3)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#btree-구조-차수-3"></a></h3>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>                    [5]                         ← Root (key만)</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>                    [5]                         ← Root (key만)</span></span>
 <span class="line"><span>                   /   \</span></span>
 <span class="line"><span>              [3]       [7 | 9]                 ← Internal (key만)</span></span>
 <span class="line"><span>             /   \     /   |   \</span></span>
@@ -204,7 +204,7 @@
 <li><strong>대부분의 DBMS 시스템이 B+Tree를 사용</strong>한다</li>
 </ul>
 <h3 id="스토리지-구조">스토리지 구조<a class="heading-anchor" aria-label="이 제목으로 연결" href="#스토리지-구조"></a></h3>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>┌─────────────────────────────────────────┐</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>┌─────────────────────────────────────────┐</span></span>
 <span class="line"><span>│  Internal 노드 (key만)                    │  ← 메모리에 올려야 함</span></span>
 <span class="line"><span>│  Root + Internal Nodes                   │</span></span>
 <span class="line"><span>└─────────────────────────────────────────┘</span></span>

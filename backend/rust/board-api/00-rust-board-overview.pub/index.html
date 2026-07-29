@@ -119,7 +119,7 @@
 <table><thead><tr><th>구분</th><th>라이브러리</th><th>비고</th></tr></thead><tbody><tr><td>HTTP</td><td>Axum 0.7</td><td>Tokio 위의 웹 프레임워크 (Express/FastAPI 느낌)</td></tr><tr><td>ORM</td><td>SeaORM 1.x + SQLx</td><td>SQLite용</td></tr><tr><td>DB</td><td>SQLite (<code>board.db</code>)</td><td>파일 하나로 동작, 학습·로컬에 적합</td></tr><tr><td>템플릿</td><td>Askama 0.12</td><td>컴파일 타임 HTML 템플릿 (Jinja2 유사)</td></tr><tr><td>비동기</td><td>Tokio</td><td><code>async</code>/<code>await</code> 런타임</td></tr></tbody></table>
 <p><strong>왜 Rust인가 (짧게):</strong> 게시판 규모에서는 Python/FastAPI나 Node도 충분합니다. 이 예제는 “Rust로 백엔드를 읽고 쓸 수 있다”는 학습 목표에 맞춰, <strong>컴파일 타임 타입 검사</strong>와 <strong>단일 바이너리 배포</strong> 같은 Rust의 강점을 체험하도록 고른 스택입니다.</p>
 <h2 id="프로젝트-구조">프로젝트 구조<a class="heading-anchor" aria-label="이 제목으로 연결" href="#프로젝트-구조"></a></h2>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>board-api/</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>board-api/</span></span>
 <span class="line"><span>├── Cargo.toml          # 의존성·crate 설정</span></span>
 <span class="line"><span>├── src/</span></span>
 <span class="line"><span>│   ├── main.rs         # 서버 진입점 (바이너리)</span></span>

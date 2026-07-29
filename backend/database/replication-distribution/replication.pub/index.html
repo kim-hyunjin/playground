@@ -34,14 +34,14 @@
 <li>구현이 <strong>간단</strong>하고 <strong>충돌(conflict)이 없음</strong></li>
 </ul>
 <h3 id="쓰기-write">쓰기 (Write)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#쓰기-write"></a></h3>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Client → [INSERT/UPDATE/CREATE] → Master(빨간색) → Backup1(초록색)</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>Client → [INSERT/UPDATE/CREATE] → Master(빨간색) → Backup1(초록색)</span></span>
 <span class="line"><span>                                                  → Backup2(초록색)</span></span></code></pre>
 <ul>
 <li>모든 쓰기 작업은 Master 노드로만 전송됨</li>
 <li>Master가 Backup 노드들에게 변경사항을 전파</li>
 </ul>
 <h3 id="읽기-read">읽기 (Read)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#읽기-read"></a></h3>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Client1 → [SELECT] → Master → (또는) Backup 노드들</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>Client1 → [SELECT] → Master → (또는) Backup 노드들</span></span>
 <span class="line"><span>Client2 →                       → Backup1</span></span>
 <span class="line"><span>Client3 →                       → Backup2</span></span></code></pre>
 <ul>

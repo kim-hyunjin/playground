@@ -32,7 +32,7 @@
 </blockquote>
 <h2 id="개요">개요<a class="heading-anchor" aria-label="이 제목으로 연결" href="#개요"></a></h2>
 <p>백엔드로 요청을 보낼 때 대부분은 요청의 <strong>처리(Processing)</strong> 단계에만 집중하지만, 사실 그것은 마지막 단계에 불과하다. 요청이 처리되기까지는 총 <strong>6단계</strong>를 거치며, 각 단계는 이론적으로 별도의 스레드나 프로세스에서 실행될 수 있다. 웹 서버, 프록시, 프레임워크, 데이터베이스 등 거의 모든 백엔드가 이 단계들을 수행하며, 각각 다른 방식으로 구현한다.</p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[1. Accept] → [2. Read] → [3. Decrypt] → [4. Parse] → [5. Decode] → [6. Process]</span></span></code></pre>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>[1. Accept] → [2. Read] → [3. Decrypt] → [4. Parse] → [5. Decode] → [6. Process]</span></span></code></pre>
 <hr>
 <h2 id="1-accept-연결-수락">1. Accept (연결 수락)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#1-accept-연결-수락"></a></h2>
 <p>클라이언트가 서버의 포트(예: 443)에 접속하면, OS 커널이 <strong>3-way handshake</strong>를 완료하고 해당 연결을 <strong>accept queue</strong>(리스너 큐)에 넣는다. 백엔드 애플리케이션은 리스너 소켓에서 <code>accept()</code> 시스템 콜을 호출하여 연결을 나타내는 <strong>파일 디스크립터</strong>를 생성한다.</p>

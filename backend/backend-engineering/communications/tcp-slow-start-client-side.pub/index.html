@@ -73,7 +73,7 @@
 <li>도메인당 2개 연결 → <strong>6개</strong>로 증가</li>
 </ul>
 <p>그 결과, Slow Start는 사실상 무력화되었습니다.</p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>도메인당 6개 연결</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>도메인당 6개 연결</span></span>
 <span class="line"><span>× 서브도메인 6개</span></span>
 <span class="line"><span>× 연결당 초기 cwnd 3</span></span>
 <span class="line"><span>= 초기 cwnd 108  (RFC2581이 제안하는 값과는 전혀 다릅니다!)</span></span></code></pre>
@@ -197,7 +197,7 @@
 <hr>
 <h3 id="tcp-slow-start가-왜-존재하는가">TCP Slow Start가 왜 존재하는가?<a class="heading-anchor" aria-label="이 제목으로 연결" href="#tcp-slow-start가-왜-존재하는가"></a></h3>
 <p>인터넷이 막 시작될 때, 누군가 데이터를 너무 빠르게 쏟아내면 네트워크가 혼잡해져 “인터넷 마비”가 생겼습니다. 이를 막기 위해 TCP는 <strong>처음엔 조금만 보내고, 문제 없으면 조금씩 늘려가는</strong> Slow Start 방식을 채택했습니다.</p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>처음: cwnd = 3 (조심스럽게 시작)</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>처음: cwnd = 3 (조심스럽게 시작)</span></span>
 <span class="line"><span>  → 잘 됨 → cwnd = 6</span></span>
 <span class="line"><span>  → 잘 됨 → cwnd = 12</span></span>
 <span class="line"><span>  → 패킷 손실 → cwnd 다시 줄임</span></span></code></pre>
@@ -211,7 +211,7 @@
 <p><strong>서브도메인 샤딩:</strong> <code>img1.site.com</code>, <code>img2.site.com</code>, <code>img3.site.com</code>처럼 서브도메인을 여러 개 만들면, 브라우저가 각각에 새 연결을 열어줌 → 연결 수 폭발적으로 증가</p>
 </blockquote>
 <p>결국 브라우저도 도메인당 6개 연결을 공식 허용했고, 그 결과:</p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>도메인당 연결 6개</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>도메인당 연결 6개</span></span>
 <span class="line"><span>  × 서브도메인 6개</span></span>
 <span class="line"><span>  × 연결당 초기 cwnd 3</span></span>
 <span class="line"><span>= 실질적 초기 cwnd 108</span></span></code></pre>

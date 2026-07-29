@@ -29,21 +29,21 @@
   })();
 </script><main id="main-content" data-astro-cid-z4jru4n3><div class="post-shell" data-astro-cid-ssdmjifj><article class="post-article" data-astro-cid-ssdmjifj><header class="post-header" data-astro-cid-ssdmjifj><nav class="topic-breadcrumbs" aria-label="주제 경로" data-astro-cid-tpnkdnn2><ol data-astro-cid-tpnkdnn2><li data-astro-cid-tpnkdnn2><a href="/playground/" data-astro-cid-tpnkdnn2>홈</a></li><li data-astro-cid-tpnkdnn2><span aria-hidden="true" data-astro-cid-tpnkdnn2>/</span><a href="/playground/categories/backend/" data-astro-cid-tpnkdnn2>Backend</a></li><li data-astro-cid-tpnkdnn2><span aria-hidden="true" data-astro-cid-tpnkdnn2>/</span><a href="/playground/categories/backend/database/" data-astro-cid-tpnkdnn2>Database</a></li><li data-astro-cid-tpnkdnn2><span aria-hidden="true" data-astro-cid-tpnkdnn2>/</span><a href="/playground/categories/backend/database/indexes-storage/" data-astro-cid-tpnkdnn2>Indexes &amp; Storage</a></li></ol></nav><h1 data-pagefind-meta="title" data-astro-cid-ssdmjifj>Bloom Filters</h1><p class="post-summary" data-astro-cid-ssdmjifj>Bloom Filters에 관한 기술 내용과 핵심 개념을 정리합니다.</p><div class="post-byline" data-astro-cid-ssdmjifj><time datetime="2026-04-23T00:00:00.000Z" data-astro-cid-ssdmjifj>2026년 4월 23일</time></div></header><details class="mobile-toc" data-pagefind-ignore data-astro-cid-ssdmjifj><summary data-astro-cid-ssdmjifj>목차</summary><ol data-astro-cid-ssdmjifj><li data-astro-cid-ssdmjifj><a href="#문제-이-username이-존재하는가" data-astro-cid-ssdmjifj>문제: “이 username이 존재하는가?”</a></li><li class="nested" data-astro-cid-ssdmjifj><a href="#방법-1-직접-db-조회" data-astro-cid-ssdmjifj>방법 1: 직접 DB 조회</a></li><li class="nested" data-astro-cid-ssdmjifj><a href="#방법-2-캐시-cache-사용" data-astro-cid-ssdmjifj>방법 2: 캐시 (Cache) 사용</a></li><li class="nested" data-astro-cid-ssdmjifj><a href="#방법-3-bloom-filter-사용" data-astro-cid-ssdmjifj>방법 3: Bloom Filter 사용</a></li><li data-astro-cid-ssdmjifj><a href="#bloom-filter-동작-원리" data-astro-cid-ssdmjifj>Bloom Filter 동작 원리</a></li><li class="nested" data-astro-cid-ssdmjifj><a href="#구조" data-astro-cid-ssdmjifj>구조</a></li><li class="nested" data-astro-cid-ssdmjifj><a href="#사용자-생성-쓰기" data-astro-cid-ssdmjifj>사용자 생성 (쓰기)</a></li><li class="nested" data-astro-cid-ssdmjifj><a href="#존재-여부-확인-읽기" data-astro-cid-ssdmjifj>존재 여부 확인 (읽기)</a></li><li data-astro-cid-ssdmjifj><a href="#핵심-특성" data-astro-cid-ssdmjifj>핵심 특성</a></li><li class="nested" data-astro-cid-ssdmjifj><a href="#false-positive-거짓-양성" data-astro-cid-ssdmjifj>False Positive (거짓 양성)</a></li><li class="nested" data-astro-cid-ssdmjifj><a href="#false-negative-없음" data-astro-cid-ssdmjifj>False Negative 없음</a></li><li class="nested" data-astro-cid-ssdmjifj><a href="#정리" data-astro-cid-ssdmjifj>정리</a></li><li data-astro-cid-ssdmjifj><a href="#장점과-단점" data-astro-cid-ssdmjifj>장점과 단점</a></li><li class="nested" data-astro-cid-ssdmjifj><a href="#장점" data-astro-cid-ssdmjifj>장점</a></li><li class="nested" data-astro-cid-ssdmjifj><a href="#단점" data-astro-cid-ssdmjifj>단점</a></li></ol></details><div class="prose" data-pagefind-body data-astro-cid-ssdmjifj><h2 id="문제-이-username이-존재하는가">문제: “이 username이 존재하는가?”<a class="heading-anchor" aria-label="이 제목으로 연결" href="#문제-이-username이-존재하는가"></a></h2>
 <h3 id="방법-1-직접-db-조회">방법 1: 직접 DB 조회<a class="heading-anchor" aria-label="이 제목으로 연결" href="#방법-1-직접-db-조회"></a></h3>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>GET /username?q=paul</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>GET /username?q=paul</span></span>
 <span class="line"><span>Client → Server → Database</span></span></code></pre>
 <ul>
 <li>매번 데이터베이스에 쿼리를 보내야 함</li>
 <li><strong>느리다 (Slow)</strong></li>
 </ul>
 <h3 id="방법-2-캐시-cache-사용">방법 2: 캐시 (Cache) 사용<a class="heading-anchor" aria-label="이 제목으로 연결" href="#방법-2-캐시-cache-사용"></a></h3>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>GET /username?q=paul</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>GET /username?q=paul</span></span>
 <span class="line"><span>Client → Server → Cache(Redis) + Database</span></span></code></pre>
 <ul>
 <li>모든 username을 캐시에 저장</li>
 <li><strong>비효율적이고 메모리 소모가 큼 (Inefficient, memory)</strong></li>
 </ul>
 <h3 id="방법-3-bloom-filter-사용">방법 3: Bloom Filter 사용<a class="heading-anchor" aria-label="이 제목으로 연결" href="#방법-3-bloom-filter-사용"></a></h3>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>GET /username?q=paul</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>GET /username?q=paul</span></span>
 <span class="line"><span>Client → Server (Bloom Filter 확인) → 필요시에만 Database</span></span></code></pre>
 <ul>
 <li>해시 함수를 사용하여 <strong>비트 배열(bit array)</strong> 에서 빠르게 존재 여부 확인</li>
@@ -56,40 +56,40 @@
 <li>고정 크기의 <strong>비트 배열</strong> (예: 64비트)</li>
 <li>모든 비트가 0으로 초기화됨</li>
 </ul>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>| 0 | 0 | 0 | 0 | 0 | 0 | 0 | ... | 0 | 0 |</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>| 0 | 0 | 0 | 0 | 0 | 0 | 0 | ... | 0 | 0 |</span></span>
 <span class="line"><span>  0   1   2   3   4   5   6   ...  62  63</span></span></code></pre>
 <h3 id="사용자-생성-쓰기">사용자 생성 (쓰기)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#사용자-생성-쓰기"></a></h3>
 <p>사용자가 생성될 때 해시 함수를 적용하여 비트를 설정한다:</p>
 <p><strong>1단계: jack 등록</strong></p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>POST /username?q=jack</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>POST /username?q=jack</span></span>
 <span class="line"><span>Hash(jack) % 64 = 63  →  63번 비트를 1로 설정</span></span></code></pre>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>| 0 | 0 | 0 | 0 | 0 | 0 | 0 | ... | 0 | 1 |</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>| 0 | 0 | 0 | 0 | 0 | 0 | 0 | ... | 0 | 1 |</span></span>
 <span class="line"><span>  0   1   2   3   4   5   6   ...  62  63</span></span></code></pre>
 <p><strong>2단계: paul 등록</strong></p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>POST /username?q=paul</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>POST /username?q=paul</span></span>
 <span class="line"><span>Hash(paul) % 64 = 3  →  3번 비트를 1로 설정</span></span></code></pre>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>| 0 | 0 | 0 | 1 | 0 | 0 | 0 | ... | 0 | 1 |</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>| 0 | 0 | 0 | 1 | 0 | 0 | 0 | ... | 0 | 1 |</span></span>
 <span class="line"><span>  0   1   2   3   4   5   6   ...  62  63</span></span></code></pre>
 <p><strong>3단계: Tim 등록</strong></p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>POST /username?q=Tim</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>POST /username?q=Tim</span></span>
 <span class="line"><span>Hash(Tim) % 64 = 63  →  63번 비트는 이미 1 (jack과 충돌!)</span></span></code></pre>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>| 0 | 0 | 0 | 1 | 0 | 0 | 0 | ... | 0 | 1 |</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>| 0 | 0 | 0 | 1 | 0 | 0 | 0 | ... | 0 | 1 |</span></span>
 <span class="line"><span>  0   1   2   3   4   5   6   ...  62  63</span></span></code></pre>
 <p><strong>4단계: Ali 등록</strong></p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>POST /username?q=Ali</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>POST /username?q=Ali</span></span>
 <span class="line"><span>Hash(ali) % 64 = 4  →  4번 비트를 1로 설정</span></span></code></pre>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>| 0 | 0 | 0 | 1 | 1 | 0 | 0 | ... | 0 | 1 |</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>| 0 | 0 | 0 | 1 | 1 | 0 | 0 | ... | 0 | 1 |</span></span>
 <span class="line"><span>  0   1   2   3   4   5   6   ...  62  63</span></span></code></pre>
 <h3 id="존재-여부-확인-읽기">존재 여부 확인 (읽기)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#존재-여부-확인-읽기"></a></h3>
 <p><strong>“paul”이 존재하는가?</strong></p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>GET /username?q=paul</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>GET /username?q=paul</span></span>
 <span class="line"><span>Hash(paul) % 64 = 3  →  3번 비트 확인 → 1 → "아마도 존재함"</span></span></code></pre>
 <ul>
 <li>비트가 0이면: <strong>확실히 존재하지 않음</strong> (DB 조회 불필요)</li>
 <li>비트가 1이면: <strong>아마도 존재함</strong> → DB에서 확인 필요</li>
 </ul>
 <p><strong>“jack”이 존재하는가?</strong></p>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>GET /username?q=jack</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>GET /username?q=jack</span></span>
 <span class="line"><span>Hash(jack) % 64 = 63  →  63번 비트 확인 → 1 → "아마도 존재함"</span></span></code></pre>
 <ul>
 <li>하지만 63번 비트는 jack과 Tim 둘 다 사용 → <strong>False Positive</strong> 가능</li>

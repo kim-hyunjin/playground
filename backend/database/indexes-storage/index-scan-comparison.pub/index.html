@@ -149,12 +149,12 @@
 <ol>
 <li>다수의 튜플(행)을 반환하는 경우</li>
 </ol>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>• 조건에 일치하는 행이 많을 때 PostgreSQL은 일반 인덱스 스캔 대신 비트맵 스캔을 선택합니다.</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>• 조건에 일치하는 행이 많을 때 PostgreSQL은 일반 인덱스 스캔 대신 비트맵 스캔을 선택합니다.</span></span>
 <span class="line"><span>• 이유: 일반 인덱스 스캔은 행마다 랜덤 I/O를 하므로 비효율적일 수 있음. 반면 비트맵은 한 번에 페이지 단위로 처리 가능.</span></span></code></pre>
 <ol start="2">
 <li>OR 조건 또는 여러 조건의 조합</li>
 </ol>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>• WHERE 절에 OR 조건, 또는 여러 인덱스를 결합해야 하는 경우 사용됩니다.    </span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>• WHERE 절에 OR 조건, 또는 여러 인덱스를 결합해야 하는 경우 사용됩니다.    </span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>   SELECT * FROM users</span></span>
 <span class="line"><span>   WHERE age = 30 OR city = 'Seoul';    </span></span>
@@ -163,12 +163,12 @@
 <ol start="3">
 <li>여러 인덱스가 결합되는 경우</li>
 </ol>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>• PostgreSQL은 여러 인덱스를 비트맵으로 AND/OR 연산할 수 있습니다.</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>• PostgreSQL은 여러 인덱스를 비트맵으로 AND/OR 연산할 수 있습니다.</span></span>
 <span class="line"><span>• 이 경우 일반 인덱스 스캔은 불가능하고, 비트맵 인덱스 스캔 + 비트맵 AND/OR 전략이 사용됩니다.</span></span></code></pre>
 <ol start="4">
 <li>쿼리 비용 기반 결정 (통계/카디널리티 고려)</li>
 </ol>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>• PostgreSQL은 EXPLAIN 계획에서 비용 추정(cost) 을 바탕으로 인덱스 스캔 방식(일반 vs 비트맵)을 선택합니다.</span></span>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>• PostgreSQL은 EXPLAIN 계획에서 비용 추정(cost) 을 바탕으로 인덱스 스캔 방식(일반 vs 비트맵)을 선택합니다.</span></span>
 <span class="line"><span>• 선택 기준:</span></span>
 <span class="line"><span>  • 인덱스의 선택도(Selectivity)</span></span>
 <span class="line"><span>  • 반환되는 예상 튜플 수</span></span>
