@@ -1,7 +1,7 @@
 import rss from '@astrojs/rss';
 import type { APIContext } from 'astro';
 import { getPublishedPosts, entrySlug } from '../lib/content';
-import { SITE_URL } from '../../scripts/config.mjs';
+import { SITE_URL } from '../../scripts/config.ts';
 
 export async function GET(context: APIContext) {
   const entries = await getPublishedPosts();

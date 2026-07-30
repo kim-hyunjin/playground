@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { SITE_URL } from '../../scripts/config.mjs';
+import { SITE_URL } from '../../scripts/config.ts';
 
 export const GET: APIRoute = () =>
   new Response(`User-agent: *\nAllow: /\nSitemap: ${SITE_URL}sitemap-index.xml\n`, {

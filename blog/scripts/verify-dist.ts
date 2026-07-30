@@ -1,15 +1,15 @@
 import { access, readdir, readFile } from 'node:fs/promises';
 import { dirname, extname, relative, resolve } from 'node:path';
-import { BASE_PATH, SITE_URL } from './config.mjs';
+import { BASE_PATH, SITE_URL } from './config.ts';
 
 const root = process.cwd();
 const dist = resolve(root, 'dist');
-const errors = [];
+const errors: string[] = [];
 
 /**
  * 주어진 경로에 접근 가능한 파일이나 디렉터리가 존재하는지 확인한다.
  */
-async function exists(path) {
+async function exists(path: string): Promise<boolean> {
   try {
     await access(path);
     return true;
@@ -21,7 +21,7 @@ async function exists(path) {
 /**
  * 지정한 디렉터리를 재귀적으로 순회해 모든 파일의 절대 경로를 반환한다.
  */
-async function walk(directory) {
+async function walk(directory: string): Promise<string[]> {
   const entries = await readdir(directory, { withFileTypes: true });
   const nested = await Promise.all(
     entries.map(async (entry) => {

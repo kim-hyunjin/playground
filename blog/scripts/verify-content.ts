@@ -1,7 +1,7 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { relative, resolve } from 'node:path';
 import matter from 'gray-matter';
-import { markdownHeadings } from './markdown-headings.mjs';
+import { markdownHeadings } from './markdown-headings.ts';
 
 const root = process.cwd();
 const sourceRoot = resolve(root, 'content');
@@ -10,7 +10,7 @@ const generatedRoot = resolve(root, 'src/content/generated');
 /**
  * 지정한 디렉터리를 재귀적으로 순회해 모든 파일의 절대 경로를 반환한다.
  */
-async function walk(directory) {
+async function walk(directory: string): Promise<string[]> {
   const entries = await readdir(directory, { withFileTypes: true });
   const nested = await Promise.all(
     entries.map(async (entry) => {
@@ -25,8 +25,8 @@ const sources = await walk(sourceRoot);
 const markdown = sources.filter((path) => /\.pub\.(md|mdx)$/.test(path));
 const notebooks = sources.filter((path) => path.endsWith('.pub.ipynb'));
 const generated = (await walk(generatedRoot)).filter((path) => path.endsWith('.pub.md'));
-const errors = [];
-const slugs = new Map();
+const errors: string[] = [];
+const slugs = new Map<string, string>();
 
 const expectedNotebookOutputs = new Set(
   notebooks.map((path) => relative(sourceRoot, path).replace(/\.ipynb$/, '.md')),
@@ -45,10 +45,12 @@ for (const path of generatedNotebookOutputs) {
   }
 }
 
-for (const [collection, base, files] of [
+const collections: Array<readonly [collection: string, base: string, files: string[]]> = [
   ['posts', sourceRoot, markdown],
   ['notebooks', generatedRoot, generated],
-]) {
+];
+
+for (const [collection, base, files] of collections) {
   for (const path of files) {
     const { content, data } = matter(await readFile(path, 'utf8'));
     const id = relative(base, path).replace(/\.(md|mdx)$/, '');

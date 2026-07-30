@@ -1,19 +1,23 @@
 import { readFile, readdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import type { Element } from 'hast';
 import matter from 'gray-matter';
+import type { Root } from 'mdast';
 import { describe, expect, it } from 'vitest';
-import { convertNotebook } from '../scripts/convert-notebooks.mjs';
-import { markdownHeadings, titleFromNotebook } from '../scripts/markdown-headings.mjs';
+import { convertNotebook } from '../scripts/convert-notebooks.ts';
+import { markdownHeadings, titleFromNotebook } from '../scripts/markdown-headings.ts';
+import { parseNotebook } from '../scripts/notebook-types.ts';
 import {
   buildTopicTree,
   flattenTopicTree,
   topicBreadcrumbsFromPath,
   topicPathFromId,
 } from '../src/lib/topics';
-import codeLanguageLabelTransformer, {
+import {
+  addCodeLanguageLabel,
   codeLanguageLabel,
-} from '../src/lib/code-language-label.mjs';
-import remarkCjkStrong from '../src/lib/remark-cjk-strong.mjs';
+} from '../src/lib/code-language-label.ts';
+import { transformCjkStrong } from '../src/lib/remark-cjk-strong.ts';
 import { joinBase, slugifySegment } from '../src/lib/url';
 
 async function walk(directory: string): Promise<string[]> {
@@ -82,9 +86,15 @@ describe('content contract', () => {
   });
 
   it('keeps the Notebook converter non-executing', async () => {
-    const source = await readFile(resolve(process.cwd(), 'scripts/convert-notebooks.mjs'), 'utf8');
+    const source = await readFile(resolve(process.cwd(), 'scripts/convert-notebooks.ts'), 'utf8');
     expect(source).not.toMatch(/\b(jupyter|nbconvert|execute_request|execSync)\b/);
     expect(source).toContain('cell.outputs');
+  });
+
+  it('rejects malformed Notebook cell collections', () => {
+    expect(() => parseNotebook({ cells: 'not-an-array' })).toThrow(
+      'Notebook cells must be an array.',
+    );
   });
 
   it('converts the Notebook fixture into publishable Markdown', async () => {
@@ -124,14 +134,14 @@ describe('content contract', () => {
 
 describe('Markdown rendering', () => {
   it('adds a readable language label to fenced code blocks', () => {
-    const pre = {
+    const pre: Element = {
       type: 'element',
       tagName: 'pre',
       properties: {},
       children: [{ type: 'element', tagName: 'code', properties: {}, children: [] }],
     };
 
-    codeLanguageLabelTransformer.pre.call({ options: { lang: 'javascript' } }, pre);
+    addCodeLanguageLabel(pre, 'javascript');
 
     expect(codeLanguageLabel('cpp')).toBe('C++');
     expect(pre.children[0]).toEqual({
@@ -147,27 +157,27 @@ describe('Markdown rendering', () => {
   });
 
   it('does not label code blocks without a fence language', () => {
-    const pre = {
+    const pre: Element = {
       type: 'element',
       tagName: 'pre',
       properties: {},
       children: [{ type: 'element', tagName: 'code', properties: {}, children: [] }],
     };
 
-    codeLanguageLabelTransformer.pre.call({ options: { lang: 'plaintext' } }, pre);
+    addCodeLanguageLabel(pre, 'plaintext');
 
     expect(pre.children).toHaveLength(1);
   });
 
   it('extracts the Notebook title for frontmatter from the first body H1', () => {
-    const notebook = {
+    const notebook = parseNotebook({
       cells: [
         {
           cell_type: 'markdown',
           source: ['## 머리말\n', '\n', '# **Notebook 제목**\n'],
         },
       ],
-    };
+    });
 
     expect(titleFromNotebook(notebook, 'fallback-title')).toBe('Notebook 제목');
   });
@@ -182,17 +192,17 @@ describe('Markdown rendering', () => {
   });
 
   it('extracts and detects a setext Notebook title', () => {
-    const notebook = {
+    const notebook = parseNotebook({
       cells: [{ cell_type: 'markdown', source: ['Setext 제목\n', '===\n', '\n', '본문'] }],
-    };
-    const markdown = notebook.cells[0].source.join('');
+    });
+    const markdown = 'Setext 제목\n===\n\n본문';
 
     expect(titleFromNotebook(notebook, 'fallback-title')).toBe('Setext 제목');
     expect(markdownHeadings(markdown)).toEqual([{ depth: 1, line: 1, text: 'Setext 제목' }]);
   });
 
   it('restores strong emphasis before a Korean particle after punctuation', () => {
-    const tree = {
+    const tree: Root = {
       type: 'root',
       children: [
         {
@@ -207,9 +217,13 @@ describe('Markdown rendering', () => {
       ],
     };
 
-    remarkCjkStrong()(tree);
+    transformCjkStrong(tree);
 
-    expect(tree.children[0].children).toEqual([
+    const paragraph = tree.children[0];
+    expect(paragraph.type).toBe('paragraph');
+    if (paragraph.type !== 'paragraph') throw new TypeError('Expected a paragraph node.');
+
+    expect(paragraph.children).toEqual([
       { type: 'text', value: '처리량은 ' },
       {
         type: 'strong',

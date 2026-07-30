@@ -4,10 +4,10 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeSlug from 'rehype-slug';
-import { BASE_PATH, SITE_ORIGIN } from './scripts/config.mjs';
-import codeLanguageLabelTransformer from './src/lib/code-language-label.mjs';
-import remarkCjkStrong from './src/lib/remark-cjk-strong.mjs';
-import remarkMermaid from './src/lib/remark-mermaid.mjs';
+import { BASE_PATH, SITE_ORIGIN } from './scripts/config.ts';
+import codeLanguageLabelTransformer from './src/lib/code-language-label.ts';
+import remarkCjkStrong from './src/lib/remark-cjk-strong.ts';
+import remarkMermaid from './src/lib/remark-mermaid.ts';
 
 export default defineConfig({
   site: SITE_ORIGIN,

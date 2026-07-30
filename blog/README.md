@@ -11,7 +11,8 @@ Astro 기반 정적 기술 블로그다. Markdown, MDX, Jupyter Notebook으로 �
 pnpm install --frozen-lockfile
 ```
 
-Node와 pnpm의 특정 버전은 고정하지 않는다. 프로젝트 의존성 설치와 명령 실행이
+Node 22.18.0 이상이 필요하다. 관리 스크립트는 Node의 TypeScript type stripping을
+사용해 `.ts` 파일을 직접 실행한다. pnpm은 프로젝트 의존성 설치와 명령 실행이
 가능한 현재 버전을 사용하면 된다.
 
 ## 새 글 추가
@@ -139,7 +140,8 @@ pnpm verify:content
 
 ```bash
 pnpm dev                   # Notebook 변환 후 개발 서버 실행
-pnpm check                 # Notebook 변환, Astro 검사, 콘텐츠 검증
+pnpm typecheck             # TypeScript와 Astro 타입 검사
+pnpm check                 # Notebook 변환, 전체 타입 검사, 콘텐츠 검증
 pnpm test                  # URL과 콘텐츠 계약 단위 테스트
 pnpm build                 # 전체 검사, 테스트, 정적 빌드와 링크 검사
 pnpm preview               # build된 /playground/ 사이트 미리 보기
