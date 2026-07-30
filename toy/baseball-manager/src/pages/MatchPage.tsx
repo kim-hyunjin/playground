@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { computeScoreThroughLogs, currentInningLabel } from '../engine/liveScore'
 import { findPlayerInLeague } from '../engine/playerLookup'
 import { ipFromOuts } from '../engine/sabermetrics'
@@ -17,6 +17,8 @@ interface PitchCount {
   balls: number
   strikes: number
 }
+
+type PlaybackMode = 'manual' | 'auto'
 
 const PITCH_INTERVAL_MS = 5000
 
@@ -55,11 +57,11 @@ export function MatchPage() {
     advanceWeek,
     setView,
   } = useGame()
+  const [playbackMode, setPlaybackMode] = useState<PlaybackMode>('manual')
   const [playbackSpeed, setPlaybackSpeed] = useState(1)
   const [pitchCount, setPitchCount] = useState<PitchCount>({ balls: 0, strikes: 0 })
   const [pitchNumber, setPitchNumber] = useState(0)
   const [lastPitch, setLastPitch] = useState<LivePitch>()
-  const [pendingResolution, setPendingResolution] = useState(false)
   const [showPlayLog, setShowPlayLog] = useState(false)
   const batterSort = useTableSort<'name' | 'ab' | 'hits' | 'rbi'>({ key: 'ab', direction: 'desc' })
   const pitcherSort = useTableSort<'name' | 'outs' | 'hits' | 'k' | 'er'>({ key: 'outs', direction: 'desc' })
@@ -91,46 +93,82 @@ export function MatchPage() {
     return computeScoreThroughLogs(result.logs, replayCursor)
   }, [result, playing, replayCursor, sessionInProgress])
 
-  useEffect(() => {
-    if (!result || !playing || !sessionInProgress) return
-    timerRef.current = window.setTimeout(() => {
-      if (pendingResolution) {
-        setPitchCount({ balls: 0, strikes: 0 })
-        setPitchNumber(0)
-        setPendingResolution(false)
-        advanceActiveGame()
-        return
-      }
-      const nextLog = result.logs.slice(sessionCursor)
-        .find((log) => (log.eventType ?? 'plateAppearance') === 'plateAppearance')
-      const nextCount = nextPitchCount(pitchCount, nextLog?.outcome)
-      const call: PitchCall = nextCount
-        ? nextCount.balls > pitchCount.balls ? 'ball' : 'strike'
-        : nextLog?.outcome === 'walk' ? 'ball' : nextLog?.outcome === 'strikeout' ? 'strike' : 'inPlay'
-      const pitcher = nextLog?.pitcherId ? findPlayerInLeague(state?.teams ?? [], nextLog.pitcherId)?.player : undefined
-      setLastPitch(createLivePitch({
-        seed: activeGameSession?.seed ?? 1,
-        cursor: sessionCursor,
-        pitchNumber,
-        pitcher,
-        call,
-        outcome: nextLog?.outcome,
-      }))
+  const advanceOnePitch = useCallback(() => {
+    if (!result || !sessionInProgress) return
+
+    const nextLog = result.logs.slice(sessionCursor)
+      .find((log) => (log.eventType ?? 'plateAppearance') === 'plateAppearance')
+    if (!nextLog) return
+
+    const nextCount = nextPitchCount(pitchCount, nextLog.outcome)
+    const call: PitchCall = nextCount
+      ? nextCount.balls > pitchCount.balls ? 'ball' : 'strike'
+      : nextLog.outcome === 'walk' ? 'ball' : nextLog.outcome === 'strikeout' ? 'strike' : 'inPlay'
+    const pitcher = nextLog.pitcherId
+      ? findPlayerInLeague(state?.teams ?? [], nextLog.pitcherId)?.player
+      : undefined
+
+    setLastPitch(createLivePitch({
+      seed: activeGameSession?.seed ?? 1,
+      cursor: sessionCursor,
+      pitchNumber,
+      pitcher,
+      call,
+      outcome: nextLog.outcome,
+    }))
+
+    if (nextCount) {
+      setPitchCount(nextCount)
       setPitchNumber((value) => value + 1)
-      if (nextCount) {
-        setPitchCount(nextCount)
-      } else {
-        setPendingResolution(true)
-      }
-    }, PITCH_INTERVAL_MS / playbackSpeed)
+      return
+    }
+
+    // 타석을 끝낸 투구는 같은 턴에 결과까지 반영한다.
+    setPitchCount({ balls: 0, strikes: 0 })
+    setPitchNumber(0)
+    advanceActiveGame(playbackMode === 'manual')
+  }, [
+    activeGameSession?.seed,
+    advanceActiveGame,
+    pitchCount,
+    pitchNumber,
+    playbackMode,
+    result,
+    sessionCursor,
+    sessionInProgress,
+    state?.teams,
+  ])
+
+  useEffect(() => {
+    if (playbackMode !== 'auto' || !playing || !sessionInProgress) return
+    timerRef.current = window.setTimeout(advanceOnePitch, PITCH_INTERVAL_MS / playbackSpeed)
     return () => { if (timerRef.current) clearTimeout(timerRef.current) }
-  }, [result, playing, sessionInProgress, sessionCursor, advanceActiveGame, pitchCount, playbackSpeed, pendingResolution, pitchNumber, state?.teams, activeGameSession?.seed])
+  }, [advanceOnePitch, playbackMode, playbackSpeed, playing, sessionInProgress])
+
+  useEffect(() => {
+    if (playbackMode !== 'manual' || !sessionInProgress) return
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.code !== 'Space' || event.repeat) return
+      const target = event.target
+      if (
+        target instanceof HTMLInputElement
+        || target instanceof HTMLTextAreaElement
+        || target instanceof HTMLSelectElement
+        || target instanceof HTMLButtonElement
+        || target instanceof HTMLAnchorElement
+        || (target instanceof HTMLElement && target.isContentEditable)
+      ) return
+      event.preventDefault()
+      advanceOnePitch()
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [advanceOnePitch, playbackMode, sessionInProgress])
 
   useEffect(() => {
     setPitchCount({ balls: 0, strikes: 0 })
     setPitchNumber(0)
     setLastPitch(undefined)
-    setPendingResolution(false)
   }, [activeGameId])
 
   if (!state || !userTeam) return null
@@ -142,6 +180,16 @@ export function MatchPage() {
 
   const togglePlaying = () => {
     if (playing) {
+      pauseActiveGame()
+    } else {
+      resumeActiveGame()
+    }
+  }
+
+  const changePlaybackMode = (mode: PlaybackMode) => {
+    setPlaybackMode(mode)
+    if (!sessionInProgress) return
+    if (mode === 'manual') {
       pauseActiveGame()
     } else {
       resumeActiveGame()
@@ -311,21 +359,43 @@ export function MatchPage() {
             <div className="space-y-3">
               {sessionInProgress ? <ManagerTacticsPanel /> : null}
               <div className="bm-card p-3" aria-label="경기 재생 설정">
-                <span className="mb-1.5 block text-xs text-[var(--text-muted)]">재생 속도</span>
-                <div className="grid grid-cols-4 gap-2">
-                  {[0.5, 1, 2].map((speed) => <button key={speed} type="button" className={`bm-btn w-full justify-center px-1 py-1.5 text-xs ${playbackSpeed === speed ? 'bm-btn-primary' : 'bm-btn-ghost'}`} onClick={() => setPlaybackSpeed(speed)}>{speed}×</button>)}
-                  {sessionInProgress ? (
+                <span className="mb-1.5 block text-xs text-[var(--text-muted)]">진행 방식</span>
+                <div className="mb-2 grid grid-cols-2 gap-2">
+                  <button type="button" className={`bm-btn w-full justify-center px-2 py-1.5 text-xs ${playbackMode === 'manual' ? 'bm-btn-primary' : 'bm-btn-ghost'}`} onClick={() => changePlaybackMode('manual')}>수동</button>
+                  <button type="button" className={`bm-btn w-full justify-center px-2 py-1.5 text-xs ${playbackMode === 'auto' ? 'bm-btn-primary' : 'bm-btn-ghost'}`} onClick={() => changePlaybackMode('auto')}>자동</button>
+                </div>
+                {playbackMode === 'manual' ? (
+                  <>
                     <button
                       type="button"
-                      className="bm-btn bm-btn-ghost w-full justify-center px-1 py-1.5"
-                      onClick={togglePlaying}
-                      aria-label={playing ? '경기 일시정지' : '경기 계속 진행'}
-                      title={playing ? '일시정지' : '계속 진행'}
+                      className="bm-btn bm-btn-primary w-full justify-center py-2"
+                      onClick={advanceOnePitch}
+                      disabled={!sessionInProgress}
                     >
-                      <PlayPauseIcon playing={playing} />
+                      다음 투구
+                      <kbd className="ml-2 rounded border border-white/30 px-1.5 py-0.5 text-[10px]">Space</kbd>
                     </button>
-                  ) : null}
-                </div>
+                    <p className="mt-1.5 text-center text-[10px] text-[var(--text-muted)]">버튼 또는 스페이스바로 한 투구씩 진행</p>
+                  </>
+                ) : (
+                  <>
+                    <span className="mb-1.5 block text-xs text-[var(--text-muted)]">재생 속도</span>
+                    <div className="grid grid-cols-4 gap-2">
+                      {[0.5, 1, 2].map((speed) => <button key={speed} type="button" className={`bm-btn w-full justify-center px-1 py-1.5 text-xs ${playbackSpeed === speed ? 'bm-btn-primary' : 'bm-btn-ghost'}`} onClick={() => setPlaybackSpeed(speed)}>{speed}×</button>)}
+                      {sessionInProgress ? (
+                        <button
+                          type="button"
+                          className="bm-btn bm-btn-ghost w-full justify-center px-1 py-1.5"
+                          onClick={togglePlaying}
+                          aria-label={playing ? '경기 일시정지' : '경기 계속 진행'}
+                          title={playing ? '일시정지' : '계속 진행'}
+                        >
+                          <PlayPauseIcon playing={playing} />
+                        </button>
+                      ) : null}
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
