@@ -12,6 +12,12 @@ const playersCsv = readFileSync(
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  clearScreen: false,
+  server: {
+    host: process.env.TAURI_DEV_HOST || '127.0.0.1',
+    port: 5173,
+    strictPort: true,
+  },
   define: {
     __PLAYERS_CSV_TEXT__: JSON.stringify(playersCsv),
   },

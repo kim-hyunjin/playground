@@ -15,7 +15,8 @@
 - **이적·트레이드** — 정규시즌 중 타 구단 영입·1~3명 교환
 - **계약 협상** — 선수·코치 다년 계약, 역제안·결렬, FA/코치 시장 연동
 - **스토브리그** — FA 영입, 신인 드래프트, 시즌 리셋
-- **자동 저장** — localStorage (`baseball-manager`)
+- **자동 저장** — 웹에서는 브라우저 localStorage, 데스크톱에서는 WebView2 앱 전용 저장소
+- **Windows 데스크톱 앱** — Tauri 2 기반 NSIS·MSI 설치 파일
 - **라이트·다크 모드** — 시스템 설정을 기본으로 사용하고 선택한 테마를 브라우저에 저장
 
 ## 경기 조작
@@ -37,6 +38,26 @@ npm run dev
 ```
 
 브라우저에서 `http://localhost:5173` 접속
+
+### Windows 데스크톱 앱
+
+사전 요구사항:
+
+- Node.js 24 이상
+- Rust stable (`rustup`, `cargo`)
+- Microsoft C++ Build Tools와 WebView2
+
+```bash
+cd toy/baseball-manager
+npm install
+npm run desktop:dev       # Tauri 개발 창 실행
+npm run desktop:build     # NSIS .exe와 MSI 설치 파일 생성
+npm run desktop:info      # 로컬 Tauri 개발 환경 확인
+```
+
+설치 파일은 `src-tauri/target/release/bundle` 아래에 생성됩니다. 데스크톱
+자동 저장은 Windows 사용자별 WebView2 데이터 디렉터리에 보관되어 브라우저
+버전의 저장 데이터와 분리됩니다.
 
 ## 빌드·검증
 
