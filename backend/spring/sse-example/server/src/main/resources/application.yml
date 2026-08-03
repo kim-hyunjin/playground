@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: sse-example
+
+server:
+  port: 8080
+
+sse:
+  emitter-timeout: 1800000
+  demo:
+    enabled: true
+    interval: 3000
+
