@@ -118,7 +118,7 @@ export default function App() {
               </div>
             ) : (
               events.map((event) => (
-                <article className="event-item" key={event.id}>
+                <article className="event-item" key={`${event.sentAt}-${event.id}`}>
                   <span className={`event-icon ${event.type}`}>{event.type === 'connected' ? '✓' : '↯'}</span>
                   <div>
                     <div className="event-meta">
@@ -137,4 +137,3 @@ export default function App() {
     </main>
   )
 }
-
