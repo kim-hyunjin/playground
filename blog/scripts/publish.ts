@@ -1,10 +1,10 @@
 import { execFileSync, spawnSync } from 'node:child_process';
-import { resolve } from 'node:path';
+import { basename, resolve } from 'node:path';
 
 const root = process.cwd();
 const dryRun = process.argv.includes('--dry-run');
 
-if (!resolve(root, 'package.json').endsWith('/blog/package.json')) {
+if (basename(root) !== 'blog') {
   throw new Error('Run publish from the blog directory.');
 }
 
@@ -18,12 +18,14 @@ if (!dryRun) {
   }
 }
 
-const packageManager = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm';
-const build = spawnSync(packageManager, ['run', 'build'], {
+const buildCommand = process.platform === 'win32' ? (process.env.ComSpec ?? 'cmd.exe') : 'pnpm';
+const buildArgs = process.platform === 'win32' ? ['/d', '/s', '/c', 'pnpm run build'] : ['run', 'build'];
+const build = spawnSync(buildCommand, buildArgs, {
   cwd: root,
   encoding: 'utf8',
   stdio: 'inherit',
 });
+if (build.error) throw build.error;
 if (build.status !== 0) process.exit(build.status ?? 1);
 
 if (dryRun) {
@@ -33,14 +35,11 @@ if (dryRun) {
 
 execFileSync('git', ['fetch', 'origin', 'gh-pages'], { cwd: root, stdio: 'inherit' });
 const sourceSha = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
-const ghPages = resolve(
-  root,
-  'node_modules/.bin',
-  process.platform === 'win32' ? 'gh-pages.cmd' : 'gh-pages',
-);
+const ghPages = resolve(root, 'node_modules/gh-pages/bin/gh-pages.js');
 const publish = spawnSync(
-  ghPages,
+  process.execPath,
   [
+    ghPages,
     '--dist',
     'dist',
     '--branch',
@@ -51,6 +50,7 @@ const publish = spawnSync(
   ],
   { cwd: root, stdio: 'inherit' },
 );
+if (publish.error) throw publish.error;
 if (publish.status !== 0) process.exit(publish.status ?? 1);
 
 console.log(`Published dist/ from ${sourceSha} to gh-pages.`);
