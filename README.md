@@ -27,7 +27,7 @@ corepack pnpm install --frozen-lockfile
 corepack pnpm dev      # local development
 corepack pnpm build    # check, test, build, and index
 corepack pnpm preview  # preview the production build
-corepack pnpm publish  # deploy dist/ to the gh-pages branch
+corepack pnpm run deploy  # build and deploy dist/ to the gh-pages branch
 ```
 
-The build converts published Notebooks without executing cells, validates content metadata, generates the Pagefind search index and `.nojekyll`, and checks generated HTML, internal links, and canonical URLs. See [`blog/README.md`](blog/README.md) for authoring and deployment details.
+The build converts published Notebooks without executing cells, validates content metadata, generates the Pagefind search index, and checks generated HTML, internal links, and canonical URLs. Deployment adds `.nojekyll` and publishes `dist/` to the `gh-pages` branch. See [`blog/README.md`](blog/README.md) for authoring and deployment details.

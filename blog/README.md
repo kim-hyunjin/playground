@@ -129,32 +129,26 @@ Notebook의 `metadata.title`을 우선 사용하고, 없으면 Markdown 셀의 �
 처리된다.
 
 ```bash
-pnpm convert:notebooks
-pnpm verify:content
+pnpm check
 ```
 
 변환 결과인 `src/content/generated/`와 `public/notebook-assets/`는 직접 수정하지
-않는다. 원본 `.pub.ipynb`를 수정한 뒤 변환 명령을 다시 실행한다.
+않는다. 원본 `.pub.ipynb`를 수정한 뒤 검사 명령을 다시 실행한다.
 
 ## 개발과 검증
 
 ```bash
 pnpm dev                   # Notebook 변환 후 개발 서버 실행
-pnpm typecheck             # TypeScript와 Astro 타입 검사
 pnpm check                 # Notebook 변환, 전체 타입 검사, 콘텐츠 검증
 pnpm test                  # URL과 콘텐츠 계약 단위 테스트
 pnpm build                 # 전체 검사, 테스트, 정적 빌드와 링크 검사
 pnpm preview               # build된 /playground/ 사이트 미리 보기
-pnpm run publish:dry-run   # 실제 게시 없이 publish의 전체 로컬 게이트 실행
+pnpm run deploy            # 전체 빌드 후 gh-pages 브랜치에 배포
 ```
 
 새 글 하나를 작성하는 동안에는 `pnpm dev`를 사용하고, 작업을 마치기 전에는
 `pnpm build`까지 통과시키는 것을 기본으로 한다. `preview`는 기존 `dist/`를
 보여주므로 먼저 `pnpm build`가 필요하다.
-
-`publish:dry-run`은 실제 publish와 같은 전체 build를 수행하지만 `gh-pages`
-브랜치를 만들거나 원격 저장소에 push하지 않는다. 수정 중인 작업 트리에서도
-실행할 수 있다.
 
 ## 빌드할 때 자동으로 만들어지는 것
 
@@ -165,7 +159,7 @@ pnpm run publish:dry-run   # 실제 게시 없이 publish의 전체 로컬 게�
 - `/playground/rss.xml`
 - 사람이 보는 `/playground/sitemap/`
 - 검색엔진용 `/playground/sitemap-index.xml`과 XML sitemap
-- `robots.txt`, `404.html`, `.nojekyll`
+- `robots.txt`, `404.html`
 
 이 결과물은 `pnpm build`가 `dist/`에 새로 만든다. `dist/`를 직접 수정하거나
 커밋하지 않는다.
@@ -179,23 +173,12 @@ pnpm run publish:dry-run   # 실제 게시 없이 publish의 전체 로컬 게�
 git pull --ff-only origin main
 cd blog
 pnpm install --frozen-lockfile
-pnpm run publish
+pnpm run deploy
 ```
 
-의존성이 이미 최신이면 install은 생략할 수 있다. 반드시 `pnpm publish`가 아니라
-`pnpm run publish`를 사용한다.
-
-publish 스크립트는 다음 작업을 수행한다.
-
-1. `blog/` 작업 트리가 깨끗한지 확인한다.
-2. 전체 check, test, build와 산출물 검사를 다시 실행한다.
-3. 원격 `gh-pages` 브랜치를 가져온다.
-4. `dist/`의 내용만 `gh-pages` 브랜치 루트에 게시한다.
-5. 배포 commit 메시지에 source commit SHA를 기록한다.
-
-스크립트는 현재 브랜치가 `main`인지 검사하지 않는다. PR을 병합한 뒤 최신
-`main`으로 이동했는지 직접 확인해야 한다. force 또는 orphan history 재작성은
-사용하지 않는다.
+의존성이 이미 최신이면 install은 생략할 수 있다. `deploy`는 전체 check, test,
+build와 산출물 검사를 실행한 뒤 `dist/`의 내용만 `gh-pages` 브랜치 루트에
+게시한다. 배포할 때 `.nojekyll`을 추가해 GitHub Pages의 Jekyll 처리를 건너뛴다.
 
 ## 새 글 체크리스트
 

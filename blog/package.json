@@ -8,18 +8,11 @@
   },
   "scripts": {
     "dev": "node scripts/convert-notebooks.ts && astro dev",
-    "preview": "astro preview",
-    "clean": "node scripts/clean.ts",
-    "convert:notebooks": "node scripts/convert-notebooks.ts",
-    "verify:content": "node scripts/verify-content.ts",
-    "typecheck": "tsc --noEmit && astro check",
-    "check": "node scripts/convert-notebooks.ts && pnpm run typecheck && node scripts/verify-content.ts",
+    "check": "node scripts/convert-notebooks.ts && astro check && node scripts/verify-content.ts",
     "test": "vitest run",
-    "lint": "pnpm run check",
-    "build:site": "node scripts/clean.ts && node scripts/convert-notebooks.ts && astro build && pagefind --site dist && node scripts/finalize-build.ts && node scripts/verify-dist.ts",
-    "build": "pnpm run check && pnpm run test && pnpm run build:site",
-    "publish": "node scripts/publish.ts",
-    "publish:dry-run": "node scripts/publish.ts --dry-run"
+    "build": "pnpm run check && pnpm run test && astro build && pagefind --site dist && node scripts/verify-dist.ts",
+    "preview": "astro preview",
+    "deploy": "pnpm run build && gh-pages -d dist --nojekyll"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "7.2.1",

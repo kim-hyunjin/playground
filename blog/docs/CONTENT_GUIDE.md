@@ -42,7 +42,7 @@ draft: false
 계층은 frontmatter가 아니라 실제 폴더 경로를 기준으로 생성된다.
 
 레이아웃이 frontmatter의 `title`을 문서 제목으로 렌더링하므로 본문에는 H1(`#`)
-을 다시 쓰지 않는다. 본문 섹션은 H2(`##`)부터 시작한다. `pnpm verify:content`는
+을 다시 쓰지 않는다. 본문 섹션은 H2(`##`)부터 시작한다. `pnpm check`는
 원본 Markdown/MDX와 Notebook 변환 결과에 남은 본문 H1을 오류로 처리한다.
 
 ## 링크와 이미지
@@ -55,12 +55,11 @@ draft: false
 변환기는 Notebook의 `metadata.title`을 우선 사용하고, 없으면 Markdown 셀에서
 처음 만나는 H1 또는 파일명 순으로 생성 문서의 frontmatter `title`을 결정한다.
 본문의 헤딩을 제거하거나 단계를 바꾸지는 않는다. 따라서 Notebook 본문도 H2부터
-작성해야 하며, 남은 H1은 `pnpm verify:content`가 오류로 보고한다.
+작성해야 하며, 남은 H1은 `pnpm check`가 오류로 보고한다.
 
 ```bash
 cd blog
-pnpm convert:notebooks
-pnpm verify:content
+pnpm check
 ```
 
 변환 결과인 `src/content/generated/`와 `public/notebook-assets/`는 직접 수정하지 않는다. 신뢰할 수 없는 Notebook을 추가하기 전에 저장된 HTML과 이미지 출력을 검토한다.

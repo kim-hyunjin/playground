@@ -35,7 +35,6 @@ async function walk(directory: string): Promise<string[]> {
 const required = [
   'index.html',
   '404.html',
-  '.nojekyll',
   'pagefind/pagefind.js',
   'rss.xml',
   'robots.txt',
