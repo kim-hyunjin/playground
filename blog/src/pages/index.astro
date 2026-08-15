@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
+import { Button } from '../components/starwind/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/starwind/card';
 import { collectCategories, getPublishedPosts, topicUrl } from '../lib/content';
 import { withBase } from '../lib/url';
 
@@ -10,94 +12,51 @@ const recent = entries.slice(0, 12);
 ---
 
 <BaseLayout entries={entries}>
-  <div class="page-shell">
-    <section class="hero">
-      <div>
-        <span class="eyebrow">Learn in public</span>
-        <h1>배우고,<br />만들고, 설명합니다.</h1>
-        <p>
+  <div class="mx-auto w-[min(calc(100%-2rem),72rem)]">
+    <section class="grid min-h-[30rem] place-items-center py-20 text-center max-sm:min-h-[25rem] max-sm:py-12">
+      <div class="max-w-3xl">
+        <span class="text-xs font-bold tracking-[0.08em] text-primary uppercase">Learn in public</span>
+        <h1 class="my-3 text-[clamp(2.7rem,8vw,6.2rem)] leading-[0.96] font-semibold tracking-[-0.065em]">
+          배우고,<br />만들고, 설명합니다.
+        </h1>
+        <p class="mx-auto max-w-2xl text-[clamp(1rem,2.1vw,1.25rem)] text-muted-foreground">
           백엔드와 분산 시스템, 데이터베이스, 프론트엔드, AI를 탐구하며
           더 나은 소프트웨어를 만드는 과정을 기록합니다.
         </p>
-        <div class="hero-actions">
-          <a class="button primary" href="#recent-posts">최근 글 보기</a>
-          <a class="button" href={withBase('search/')}>글 검색하기</a>
+        <div class="mt-8 flex flex-wrap justify-center gap-3">
+          <Button as="a" variant="primary" href="#recent-posts">최근 글 보기</Button>
+          <Button as="a" variant="outline" href={withBase('search/')}>글 검색하기</Button>
         </div>
       </div>
     </section>
 
     <section aria-labelledby="categories-title">
-      <div class="section-header">
-        <h2 id="categories-title">주제별 탐색</h2>
-        <p>{entries.length}개의 글</p>
+      <div class="mb-6 flex items-end justify-between gap-4 border-b pb-3">
+        <h2 id="categories-title" class="text-[clamp(1.55rem,4vw,2.35rem)] font-semibold tracking-[-0.045em]">주제별 탐색</h2>
+        <p class="text-muted-foreground">{entries.length}개의 글</p>
       </div>
-      <div class="category-grid">
+      <div class="mb-16 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {categories.map((category) => (
-          <a class="category-card" href={topicUrl(category.slug)}>
-            <strong>{category.name}</strong>
-            <span>{category.count}개의 글 →</span>
+          <a class="group block no-underline" href={topicUrl(category.slug)}>
+            <Card class="min-h-36 justify-between transition-colors group-hover:border-primary/40">
+              <CardHeader><CardTitle>{category.name}</CardTitle></CardHeader>
+              <CardContent class="text-sm text-muted-foreground group-hover:text-primary-accent">
+                {category.count}개의 글 →
+              </CardContent>
+            </Card>
           </a>
         ))}
       </div>
     </section>
 
     <section id="recent-posts" aria-labelledby="recent-title">
-      <div class="section-header">
-        <h2 id="recent-title">최근 글</h2>
-        <a href={withBase('tags/')}>모든 태그 보기</a>
+      <div class="mb-6 flex items-end justify-between gap-4 border-b pb-3">
+        <h2 id="recent-title" class="text-[clamp(1.55rem,4vw,2.35rem)] font-semibold tracking-[-0.045em]">최근 글</h2>
+        <a class="text-sm font-medium text-primary hover:text-primary-accent" href={withBase('tags/')}>모든 태그 보기</a>
       </div>
-      <div class="post-list">
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
         {recent.map((entry) => <PostCard entry={entry} />)}
       </div>
     </section>
   </div>
 </BaseLayout>
-
-<style>
-  .page-shell {
-    width: min(100% - 2rem, 72rem);
-    margin-inline: auto;
-  }
-
-  .hero {
-    display: grid;
-    min-height: 30rem;
-    place-items: center;
-    padding-block: 5rem;
-    text-align: center;
-  }
-
-  .hero > div {
-    max-width: 50rem;
-  }
-
-  .hero h1 {
-    margin: 0.7rem 0 1rem;
-    font-size: clamp(2.7rem, 8vw, 6.2rem);
-    font-weight: 650;
-    letter-spacing: -0.065em;
-    line-height: 0.96;
-  }
-
-  .hero p {
-    max-width: 42rem;
-    margin-inline: auto;
-    color: var(--text-soft);
-    font-size: clamp(1rem, 2.1vw, 1.25rem);
-  }
-
-  .hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.75rem;
-    margin-top: 2rem;
-  }
-
-  @media (max-width: 44rem) {
-    .hero {
-      min-height: 25rem;
-      padding-block: 3rem;
-    }
-  }
-</style>

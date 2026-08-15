@@ -1,5 +1,13 @@
 ---
 import { withBase } from '../lib/url';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from './starwind/breadcrumb';
 
 interface Item {
   name: string;
@@ -14,55 +22,18 @@ interface Props {
 const { items, current = false } = Astro.props;
 ---
 
-<nav class="topic-breadcrumbs" aria-label="주제 경로">
-  <ol>
-    <li><a href={withBase()}>홈</a></li>
+<Breadcrumb class="mb-5 overflow-x-auto" aria-label="주제 경로">
+  <BreadcrumbList class="w-max max-w-full flex-nowrap text-xs">
+    <BreadcrumbItem><BreadcrumbLink href={withBase()}>홈</BreadcrumbLink></BreadcrumbItem>
     {items.map((item, index) => (
-      <li>
-        <span aria-hidden="true">/</span>
-        {current && index === items.length - 1
-          ? <span aria-current="page">{item.name}</span>
-          : <a href={item.url}>{item.name}</a>}
-      </li>
+      <>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          {current && index === items.length - 1
+            ? <BreadcrumbPage>{item.name}</BreadcrumbPage>
+            : <BreadcrumbLink href={item.url}>{item.name}</BreadcrumbLink>}
+        </BreadcrumbItem>
+      </>
     ))}
-  </ol>
-</nav>
-
-<style>
-  .topic-breadcrumbs {
-    margin: 0 0 1.25rem;
-    overflow-x: auto;
-    color: var(--muted);
-    font-size: 0.78rem;
-  }
-
-  .topic-breadcrumbs ol,
-  .topic-breadcrumbs li {
-    display: flex;
-    align-items: center;
-  }
-
-  .topic-breadcrumbs ol {
-    width: max-content;
-    max-width: 100%;
-    gap: 0.4rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .topic-breadcrumbs li {
-    gap: 0.4rem;
-  }
-
-  .topic-breadcrumbs a {
-    color: var(--brand);
-    font-weight: 650;
-    text-decoration: none;
-  }
-
-  .topic-breadcrumbs [aria-current='page'] {
-    color: var(--text);
-    font-weight: 650;
-  }
-</style>
+  </BreadcrumbList>
+</Breadcrumb>

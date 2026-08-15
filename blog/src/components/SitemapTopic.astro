@@ -2,6 +2,7 @@
 import type { BlogEntry } from '../lib/content';
 import { entryTopicPath, entryUrl, topicUrl } from '../lib/content';
 import type { TopicNode } from '../lib/topics';
+import { Badge } from './starwind/badge';
 
 interface Props {
   topic: TopicNode;
@@ -12,92 +13,27 @@ const { topic, entries } = Astro.props;
 const directEntries = entries.filter((entry) => entryTopicPath(entry) === topic.path);
 ---
 
-<li class="sitemap-topic">
-  <div class="sitemap-topic-line">
-    <a href={topicUrl(topic.path)}>{topic.name}</a>
-    <span>{topic.count}개</span>
+<div class="sitemap-topic">
+  <div class="flex items-baseline justify-between gap-4">
+    <a class="font-bold no-underline hover:text-primary-accent hover:underline" href={topicUrl(topic.path)}>{topic.name}</a>
+    <Badge variant="outline" size="sm">{topic.count}개</Badge>
   </div>
 
   {directEntries.length > 0 && (
-    <ul class="sitemap-posts">
+    <ul class="mt-3 grid list-none gap-1.5 pl-4">
       {directEntries.map((entry) => (
-        <li><a href={entryUrl(entry)}>{entry.data.title}</a></li>
+        <li class="relative before:absolute before:-left-3.5 before:text-muted-foreground before:content-['–']">
+          <a class="text-sm text-muted-foreground no-underline hover:text-primary-accent hover:underline" href={entryUrl(entry)}>{entry.data.title}</a>
+        </li>
       ))}
     </ul>
   )}
 
   {topic.children.length > 0 && (
-    <ul class="sitemap-children">
+    <ul class="mt-4 grid list-none gap-4 border-l pl-4">
       {topic.children.map((child) => (
-        <Astro.self topic={child} entries={entries} />
+        <li><Astro.self topic={child} entries={entries} /></li>
       ))}
     </ul>
   )}
-</li>
-
-<style>
-  .sitemap-children,
-  .sitemap-posts {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .sitemap-topic-line {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem;
-  }
-
-  .sitemap-topic-line a {
-    color: var(--text);
-    font-weight: 700;
-    text-decoration: none;
-  }
-
-  .sitemap-topic-line span {
-    flex: none;
-    color: var(--muted);
-    font-size: 0.76rem;
-  }
-
-  .sitemap-children {
-    display: grid;
-    gap: 0.9rem;
-    margin-top: 0.9rem;
-    border-left: 1px solid var(--border);
-    padding-left: 1rem;
-  }
-
-  .sitemap-posts {
-    display: grid;
-    gap: 0.35rem;
-    margin-top: 0.65rem;
-    padding-left: 1rem;
-  }
-
-  .sitemap-posts li {
-    position: relative;
-  }
-
-  .sitemap-posts li::before {
-    position: absolute;
-    left: -0.9rem;
-    color: var(--muted);
-    content: '–';
-  }
-
-  .sitemap-posts a {
-    color: var(--text-soft);
-    font-size: 0.84rem;
-    text-decoration: none;
-  }
-
-  .sitemap-topic-line a:hover,
-  .sitemap-posts a:hover {
-    color: var(--brand);
-    text-decoration: underline;
-    text-underline-offset: 0.18em;
-  }
-</style>
+</div>

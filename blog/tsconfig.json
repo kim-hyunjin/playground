@@ -1,8 +1,12 @@
 {
   "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
-    "erasableSyntaxOnly": true
+    "erasableSyntaxOnly": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
   "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist", "site"]
+  "exclude": ["dist", "site", "src/components/starwind/**/index.ts"]
 }

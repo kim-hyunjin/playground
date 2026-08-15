@@ -1,4 +1,5 @@
 ---
+import '@/styles/starwind.css';
 import type { BlogEntry } from '../lib/content';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
@@ -43,39 +44,30 @@ const rssUrl = new URL('rss.xml', Astro.site);
     <title>{pageTitle}</title>
     <script is:inline>
       (() => {
-        const saved = localStorage.getItem('theme');
-        document.documentElement.dataset.theme =
-          saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        let theme = 'system';
+        try {
+          const stored = localStorage.getItem('colorTheme');
+          const legacy = localStorage.getItem('theme');
+          theme = stored || (legacy === 'dark' || legacy === 'light' ? legacy : 'system');
+          if (!stored) localStorage.setItem('colorTheme', theme);
+          if (legacy) localStorage.removeItem('theme');
+        } catch {}
+        const resolved = theme === 'system'
+          ? (window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+          : theme;
+        document.documentElement.classList.toggle('dark', resolved === 'dark');
       })();
     </script>
   </head>
   <body>
-    <a class="skip-link" href="#main-content">본문으로 건너뛰기</a>
+    <a
+      class="fixed top-2 left-2 z-[100] -translate-y-[150%] rounded-md bg-foreground px-4 py-2 text-background transition-transform focus:translate-y-0"
+      href="#main-content"
+    >본문으로 건너뛰기</a>
     <Header entries={entries} />
-    <main id="main-content">
+    <main id="main-content" class="min-h-[calc(100vh-13rem)]">
       <slot />
     </main>
     <Footer />
   </body>
 </html>
-
-<style>
-  .skip-link {
-    position: fixed;
-    top: 0.5rem;
-    left: 0.5rem;
-    z-index: 100;
-    padding: 0.6rem 0.9rem;
-    background: var(--text);
-    color: var(--page);
-    transform: translateY(-150%);
-  }
-
-  .skip-link:focus {
-    transform: translateY(0);
-  }
-
-  #main-content {
-    min-height: calc(100vh - 13rem);
-  }
-</style>

@@ -1,3 +1,4 @@
+import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'astro/config';
 import { unified } from '@astrojs/markdown-remark';
 import mdx from '@astrojs/mdx';
@@ -54,6 +55,7 @@ export default defineConfig({
     },
   },
   vite: {
+    plugins: [tailwindcss()],
     build: {
       // Mermaid is lazy-loaded only on the seven posts that use it.
       chunkSizeWarningLimit: 700,

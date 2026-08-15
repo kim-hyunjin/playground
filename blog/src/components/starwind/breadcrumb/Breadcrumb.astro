@@ -1,0 +1,11 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+type Props = HTMLAttributes<"nav">;
+
+const { "aria-label": ariaLabel = "주제 경로", class: className, ...rest } = Astro.props;
+---
+
+<nav data-sw-breadcrumb aria-label={ariaLabel} class={className} {...rest} data-slot="breadcrumb">
+  <slot />
+</nav>

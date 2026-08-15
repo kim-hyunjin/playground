@@ -1,7 +1,19 @@
 ---
+import Menu from '@tabler/icons/outline/menu-2.svg';
+import Search from '@tabler/icons/outline/search.svg';
 import type { BlogEntry } from '../lib/content';
 import { collectCategories, topicUrl } from '../lib/content';
 import { withBase } from '../lib/url';
+import { Button } from './starwind/button';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from './starwind/sheet';
+import { ThemeToggle } from './starwind/theme-toggle';
 
 interface Props {
   entries: BlogEntry[];
@@ -11,202 +23,63 @@ const { entries } = Astro.props;
 const categories = collectCategories(entries);
 ---
 
-<header class="site-header" data-pagefind-ignore>
-  <div class="header-shell">
-    <a class="brand" href={withBase()} aria-label="hyunjin.log 홈">
-      <span class="brand-mark" aria-hidden="true">hj</span>
+<header
+  class="sticky top-0 z-40 border-b bg-card/90 backdrop-blur-md"
+  data-pagefind-ignore
+>
+  <div class="mx-auto flex min-h-16 w-[min(calc(100%-2rem),84rem)] items-center gap-5">
+    <a
+      class="inline-flex shrink-0 items-center gap-2 font-bold text-primary no-underline"
+      href={withBase()}
+      aria-label="hyunjin.log 홈"
+    >
+      <span
+        class="grid size-7 place-items-center rounded-full bg-primary font-mono text-[0.66rem] tracking-normal text-primary-foreground"
+        aria-hidden="true"
+      >hj</span>
       <span>hyunjin.log</span>
     </a>
 
-    <nav class="desktop-nav" aria-label="주요 탐색">
+    <nav class="hidden min-w-0 flex-1 items-center justify-center gap-[clamp(0.65rem,1.6vw,1.5rem)] lg:flex" aria-label="주요 탐색">
       {categories.map((category) => (
-        <a href={topicUrl(category.slug)}>{category.name}</a>
+        <a
+          class="whitespace-nowrap text-sm font-semibold text-muted-foreground no-underline hover:text-primary-accent"
+          href={topicUrl(category.slug)}
+        >{category.name}</a>
       ))}
     </nav>
 
-    <div class="header-actions">
-      <a class="icon-link" href={withBase('search/')} aria-label="검색">
-        <span aria-hidden="true">⌕</span>
-      </a>
-      <button class="icon-button" id="theme-toggle" type="button" aria-label="다크 모드 전환">
-        <span class="theme-icon" aria-hidden="true">◐</span>
-      </button>
-      <button
-        class="icon-button mobile-menu-button"
-        id="menu-toggle"
-        type="button"
-        aria-controls="mobile-navigation"
-        aria-expanded="false"
-        aria-label="메뉴 열기"
-      >
-        <span aria-hidden="true">☰</span>
-      </button>
+    <div class="ml-auto flex shrink-0 gap-1">
+      <Button as="a" href={withBase('search/')} variant="ghost" size="icon" aria-label="검색">
+        <Search aria-hidden="true" />
+      </Button>
+      <ThemeToggle variant="default" size="md" class="w-11" ariaLabel="다크 모드 전환" />
+
+      <Sheet>
+        <SheetTrigger
+          class="inline-flex size-11 items-center justify-center rounded-md transition-colors hover:bg-muted focus-visible:ring-3 focus-visible:ring-outline/50 focus-visible:outline-none lg:hidden"
+          aria-label="메뉴 열기"
+        >
+          <Menu class="size-5" aria-hidden="true" />
+        </SheetTrigger>
+        <SheetContent class="overflow-y-auto" aria-label="모바일 탐색" closeLabel="메뉴 닫기">
+          <SheetHeader>
+            <SheetTitle>hyunjin.log</SheetTitle>
+            <SheetDescription>주제별 글을 탐색합니다.</SheetDescription>
+          </SheetHeader>
+          <nav class="grid gap-1 px-4 pb-6" aria-label="모바일 탐색">
+            <Button as="a" href={withBase()} variant="ghost" class="justify-between">홈</Button>
+            {categories.map((category) => (
+              <Button as="a" href={topicUrl(category.slug)} variant="ghost" class="justify-between">
+                <span>{category.name}</span>
+                <span class="text-sm text-muted-foreground">{category.count}</span>
+              </Button>
+            ))}
+            <Button as="a" href={withBase('tags/')} variant="ghost" class="justify-start">태그</Button>
+            <Button as="a" href={withBase('search/')} variant="ghost" class="justify-start">검색</Button>
+          </nav>
+        </SheetContent>
+      </Sheet>
     </div>
   </div>
-
-  <nav id="mobile-navigation" class="mobile-nav" aria-label="모바일 탐색" hidden>
-    <a href={withBase()}>홈</a>
-    {categories.map((category) => (
-      <a href={topicUrl(category.slug)}>{category.name} <small>{category.count}</small></a>
-    ))}
-    <a href={withBase('tags/')}>태그</a>
-    <a href={withBase('search/')}>검색</a>
-  </nav>
 </header>
-
-<style>
-  .site-header {
-    position: sticky;
-    top: 0;
-    z-index: 40;
-    border-bottom: 1px solid var(--border);
-    background: color-mix(in srgb, var(--surface) 91%, transparent);
-    backdrop-filter: blur(14px);
-  }
-
-  .header-shell {
-    display: flex;
-    width: min(100% - 2rem, 84rem);
-    min-height: 4rem;
-    margin-inline: auto;
-    align-items: center;
-    gap: 1.25rem;
-  }
-
-  .brand {
-    display: inline-flex;
-    flex: none;
-    align-items: center;
-    gap: 0.55rem;
-    color: var(--brand);
-    font-weight: 700;
-    text-decoration: none;
-  }
-
-  .brand-mark {
-    display: grid;
-    width: 1.75rem;
-    height: 1.75rem;
-    place-items: center;
-    border-radius: 999px;
-    background: var(--brand);
-    color: var(--surface);
-    font-family: var(--font-mono);
-    font-size: 0.66rem;
-    letter-spacing: 0;
-  }
-
-  .desktop-nav {
-    display: flex;
-    min-width: 0;
-    flex: 1;
-    align-items: center;
-    justify-content: center;
-    gap: clamp(0.65rem, 1.6vw, 1.5rem);
-    overflow: hidden;
-  }
-
-  .desktop-nav a {
-    color: var(--text-soft);
-    font-size: 0.82rem;
-    font-weight: 600;
-    text-decoration: none;
-    white-space: nowrap;
-  }
-
-  .header-actions {
-    display: flex;
-    flex: none;
-    gap: 0.25rem;
-  }
-
-  .icon-button,
-  .icon-link {
-    display: grid;
-    width: 2.4rem;
-    height: 2.4rem;
-    place-items: center;
-    border: 0;
-    border-radius: 999px;
-    background: transparent;
-    color: var(--text-soft);
-    cursor: pointer;
-    font-size: 1.15rem;
-    text-decoration: none;
-  }
-
-  .icon-button:hover,
-  .icon-link:hover {
-    background: var(--surface-muted);
-    color: var(--brand);
-  }
-
-  .mobile-menu-button,
-  .mobile-nav {
-    display: none;
-  }
-
-  @media (max-width: 64rem) {
-    .desktop-nav {
-      display: none;
-    }
-
-    .header-actions {
-      margin-left: auto;
-    }
-
-    .mobile-menu-button {
-      display: grid;
-    }
-
-    .mobile-nav {
-      width: min(100% - 2rem, 44rem);
-      max-height: calc(100vh - 5rem);
-      margin: 0 auto 1rem;
-      overflow: auto;
-      border-top: 1px solid var(--border);
-      padding-top: 0.5rem;
-    }
-
-    .mobile-nav:not([hidden]) {
-      display: grid;
-    }
-
-    .mobile-nav a {
-      display: flex;
-      justify-content: space-between;
-      padding: 0.55rem;
-      text-decoration: none;
-    }
-  }
-
-  @media (max-width: 44rem) {
-    .header-shell {
-      min-height: 3.6rem;
-    }
-  }
-</style>
-
-<script is:inline>
-  (() => {
-    const root = document.documentElement;
-    const stored = localStorage.getItem('theme');
-    const preferred = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    root.dataset.theme = stored || preferred;
-
-    document.querySelector('#theme-toggle')?.addEventListener('click', () => {
-      root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
-      localStorage.setItem('theme', root.dataset.theme);
-      window.dispatchEvent(new CustomEvent('themechange', { detail: root.dataset.theme }));
-    });
-
-    const button = document.querySelector('#menu-toggle');
-    const navigation = document.querySelector('#mobile-navigation');
-    button?.addEventListener('click', () => {
-      const open = button.getAttribute('aria-expanded') !== 'true';
-      button.setAttribute('aria-expanded', String(open));
-      button.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
-      if (navigation) navigation.hidden = !open;
-    });
-  })();
-</script>

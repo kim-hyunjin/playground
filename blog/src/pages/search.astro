@@ -1,5 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { Button } from '../components/starwind/button';
+import { Input } from '../components/starwind/input';
 import { getPublishedPosts } from '../lib/content';
 import { withBase } from '../lib/url';
 
@@ -9,102 +11,30 @@ const basePath = withBase();
 ---
 
 <BaseLayout title="검색" description="hyunjin.log의 글 검색" entries={entries}>
-  <div class="search-shell" id="search-shell" data-pagefind-path={pagefindPath} data-base-path={basePath}>
-    <header class="section-header">
+  <div class="mx-auto w-[min(calc(100%-2rem),72rem)] pt-13" id="search-shell" data-pagefind-path={pagefindPath} data-base-path={basePath}>
+    <header class="mb-6 flex items-end justify-between gap-4 border-b pb-3">
       <div>
-        <span class="eyebrow">Static search</span>
-        <h1>검색</h1>
+        <span class="text-xs font-bold tracking-[0.08em] text-primary uppercase">Static search</span>
+        <h1 class="text-[clamp(1.55rem,4vw,2.35rem)] font-semibold tracking-[-0.045em]">검색</h1>
       </div>
-      <p>제목, 본문, 태그</p>
+      <p class="text-muted-foreground">제목, 본문, 태그</p>
     </header>
-    <form class="search-form" id="search-form" role="search" data-pagefind-ignore>
+    <form class="my-6 flex gap-2" id="search-form" role="search" data-pagefind-ignore>
       <label class="sr-only" for="search-input">검색어</label>
-      <input
+      <Input
+        class="min-w-0 flex-1"
         id="search-input"
         name="q"
         type="search"
         placeholder="예: PostgreSQL, 분산 시스템, React"
         autocomplete="off"
       />
-      <button class="button primary" type="submit">검색</button>
+      <Button variant="primary" type="submit">검색</Button>
     </form>
-    <p class="search-status" id="search-status" aria-live="polite"></p>
-    <ol class="search-results" id="search-results"></ol>
+    <p class="text-muted-foreground" id="search-status" aria-live="polite"></p>
+    <ol class="search-results my-4 grid list-none gap-3 p-0" id="search-results"></ol>
   </div>
 </BaseLayout>
-
-<style>
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    overflow: hidden;
-    border: 0;
-    padding: 0;
-    white-space: nowrap;
-    clip: rect(0, 0, 0, 0);
-  }
-
-  .search-shell {
-    width: min(100% - 2rem, 72rem);
-    margin-inline: auto;
-    padding-top: 3.2rem;
-  }
-
-  .search-form {
-    display: flex;
-    gap: 0.5rem;
-    margin-block: 1.5rem 2rem;
-  }
-
-  .search-form input {
-    min-width: 0;
-    flex: 1;
-    border: 1px solid var(--border);
-    border-radius: 0.55rem;
-    padding: 0.8rem 1rem;
-    background: var(--surface);
-    color: var(--text);
-  }
-
-  .search-status {
-    color: var(--muted);
-  }
-
-  .search-results {
-    display: grid;
-    gap: 0.7rem;
-    margin: 1rem 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .search-results :global(a) {
-    display: block;
-    border: 1px solid var(--border);
-    border-radius: 0.65rem;
-    padding: 1rem;
-    background: var(--surface);
-    text-decoration: none;
-  }
-
-  .search-results :global(h2) {
-    margin: 0 0 0.35rem;
-    font-size: 1.05rem;
-  }
-
-  .search-results :global(p) {
-    margin: 0;
-    color: var(--text-soft);
-    font-size: 0.88rem;
-  }
-
-  .search-results :global(mark) {
-    background: #ffe49a;
-    color: #141413;
-  }
-</style>
 
 <script is:inline>
   const form = document.querySelector('#search-form');
@@ -144,9 +74,9 @@ const basePath = withBase();
       list.innerHTML = results
         .map((result) => `
           <li>
-            <a href="${escapeHtml(result.url)}">
-              <h2>${escapeHtml(result.meta.title)}</h2>
-              <p>${result.excerpt}</p>
+            <a class="block rounded-xl border bg-card p-5 text-card-foreground no-underline shadow-xs transition-colors hover:border-primary/35" href="${escapeHtml(result.url)}">
+              <h2 class="mb-1.5 text-lg font-medium">${escapeHtml(result.meta.title)}</h2>
+              <p class="m-0 text-sm text-muted-foreground">${result.excerpt}</p>
             </a>
           </li>
         `)

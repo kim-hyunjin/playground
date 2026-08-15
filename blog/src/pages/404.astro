@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { Button } from '../components/starwind/button';
 import { getPublishedPosts } from '../lib/content';
 import { withBase } from '../lib/url';
 
@@ -7,32 +8,12 @@ const entries = await getPublishedPosts();
 ---
 
 <BaseLayout title="페이지를 찾을 수 없습니다" entries={entries}>
-  <section class="not-found">
+  <section class="grid min-h-[65vh] place-items-center px-4 text-center">
     <div>
-      <strong>404</strong>
-      <h1>길을 잃었습니다.</h1>
-      <p>주소가 바뀌었거나 존재하지 않는 페이지입니다.</p>
-      <a class="button primary" href={withBase()}>홈으로 돌아가기</a>
+      <strong class="font-mono text-primary">404</strong>
+      <h1 class="my-2 text-[clamp(2rem,7vw,4rem)] font-semibold tracking-tight">길을 잃었습니다.</h1>
+      <p class="mb-7 text-muted-foreground">주소가 바뀌었거나 존재하지 않는 페이지입니다.</p>
+      <Button as="a" variant="primary" href={withBase()}>홈으로 돌아가기</Button>
     </div>
   </section>
 </BaseLayout>
-
-<style>
-  .not-found {
-    display: grid;
-    min-height: 65vh;
-    place-items: center;
-    text-align: center;
-  }
-
-  .not-found strong {
-    display: block;
-    color: var(--brand);
-    font-family: var(--font-mono);
-  }
-
-  .not-found h1 {
-    margin: 0.4rem;
-    font-size: clamp(2rem, 7vw, 4rem);
-  }
-</style>

@@ -1,51 +1,28 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { collectTags, getPublishedPosts } from '../../lib/content';
-import { tagUrl } from '../../lib/content';
+import { Badge } from '../../components/starwind/badge';
+import { collectTags, getPublishedPosts, tagUrl } from '../../lib/content';
 
 const entries = await getPublishedPosts();
 const tags = collectTags(entries);
 ---
 
 <BaseLayout title="태그" description="hyunjin.log의 모든 기술 태그" entries={entries}>
-  <div class="listing-shell">
-    <header class="section-header">
+  <div class="mx-auto w-[min(calc(100%-2rem),72rem)] pt-13">
+    <header class="mb-6 flex items-end justify-between gap-4 border-b pb-3">
       <div>
-        <span class="eyebrow">Topics</span>
-        <h1>태그</h1>
+        <span class="text-xs font-bold tracking-[0.08em] text-primary uppercase">Topics</span>
+        <h1 class="text-[clamp(1.55rem,4vw,2.35rem)] font-semibold tracking-[-0.045em]">태그</h1>
       </div>
-      <p>{tags.length}개</p>
+      <p class="text-muted-foreground">{tags.length}개</p>
     </header>
-    <div class="tag-cloud">
+    <div class="flex flex-wrap gap-2.5">
       {tags.map((tag) => (
-        <a href={tagUrl(tag.name)}>
+        <Badge href={tagUrl(tag.name)} tone="primary" appearance="soft" size="md">
           <strong>#{tag.name}</strong>
-          <span>{tag.count}</span>
-        </a>
+          <span class="opacity-70">{tag.count}</span>
+        </Badge>
       ))}
     </div>
   </div>
 </BaseLayout>
-
-<style>
-  .tag-cloud {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.65rem;
-  }
-
-  .tag-cloud a {
-    display: inline-flex;
-    gap: 0.4rem;
-    border-radius: 999px;
-    padding: 0.4rem 0.75rem;
-    background: var(--tag);
-    color: var(--brand);
-    font-size: 0.9rem;
-    text-decoration: none;
-  }
-
-  .tag-cloud span {
-    color: var(--muted);
-  }
-</style>

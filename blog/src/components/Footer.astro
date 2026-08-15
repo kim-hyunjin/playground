@@ -2,46 +2,13 @@
 import { withBase } from '../lib/url';
 ---
 
-<footer class="site-footer" data-pagefind-ignore>
-  <div>
+<footer class="mt-20 border-t bg-muted text-muted-foreground" data-pagefind-ignore>
+  <div class="mx-auto flex min-h-28 w-[min(calc(100%-2rem),76rem)] flex-col items-start justify-center gap-3 sm:flex-row sm:items-center sm:justify-between">
     <p>배운 것을 설명하며 더 단단하게 이해합니다.</p>
-    <nav aria-label="푸터 탐색">
-      <a href={withBase('rss.xml')}>RSS</a>
-      <a href={withBase('sitemap/')}>Sitemap</a>
-      <a href="https://github.com/kim-hyunjin" rel="me">GitHub</a>
+    <nav class="flex gap-4 text-sm" aria-label="푸터 탐색">
+      <a class="hover:text-primary-accent" href={withBase('rss.xml')}>RSS</a>
+      <a class="hover:text-primary-accent" href={withBase('sitemap/')}>Sitemap</a>
+      <a class="hover:text-primary-accent" href="https://github.com/kim-hyunjin" rel="me">GitHub</a>
     </nav>
   </div>
 </footer>
-
-<style>
-  .site-footer {
-    margin-top: 5rem;
-    border-top: 1px solid var(--border);
-    background: var(--surface-muted);
-    color: var(--text-soft);
-  }
-
-  .site-footer > div {
-    display: flex;
-    width: min(100% - 2rem, 76rem);
-    min-height: 7rem;
-    margin-inline: auto;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-  }
-
-  .site-footer nav {
-    display: flex;
-    gap: 1rem;
-    font-size: 0.9rem;
-  }
-
-  @media (max-width: 44rem) {
-    .site-footer > div {
-      align-items: flex-start;
-      flex-direction: column;
-      justify-content: center;
-    }
-  }
-</style>

@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SitemapTopic from '../components/SitemapTopic.astro';
+import { Button } from '../components/starwind/button';
+import { Card, CardContent } from '../components/starwind/card';
 import { collectTopics, getPublishedPosts } from '../lib/content';
 import { withBase } from '../lib/url';
 
@@ -13,86 +15,38 @@ const topics = collectTopics(entries);
   description="주제별로 정리한 hyunjin.log의 전체 글과 주요 페이지"
   entries={entries}
 >
-  <div class="listing-shell sitemap-shell">
-    <header class="section-header">
+  <div class="mx-auto w-[min(calc(100%-2rem),72rem)] pt-13 pb-8">
+    <header class="mb-6 flex items-end justify-between gap-4 border-b pb-3">
       <div>
-        <span class="eyebrow">Sitemap</span>
-        <h1>사이트맵</h1>
+        <span class="text-xs font-bold tracking-[0.08em] text-primary uppercase">Sitemap</span>
+        <h1 class="text-[clamp(1.55rem,4vw,2.35rem)] font-semibold tracking-[-0.045em]">사이트맵</h1>
       </div>
-      <p>{entries.length}개의 글</p>
+      <p class="text-muted-foreground">{entries.length}개의 글</p>
     </header>
 
-    <p class="sitemap-intro">
+    <p class="mb-6 max-w-2xl text-muted-foreground">
       관심 있는 주제를 따라가거나 전체 글을 한눈에 살펴보세요. 검색엔진용 XML
       sitemap도 별도로 제공됩니다.
     </p>
 
-    <nav class="sitemap-primary" aria-label="주요 페이지">
-      <a href={withBase()}>홈</a>
-      <a href={withBase('search/')}>검색</a>
-      <a href={withBase('tags/')}>전체 태그</a>
-      <a href={withBase('rss.xml')}>RSS</a>
-      <a href={withBase('sitemap-index.xml')}>XML Sitemap</a>
+    <nav class="mb-8 flex flex-wrap gap-2" aria-label="주요 페이지">
+      <Button as="a" variant="outline" size="sm" href={withBase()}>홈</Button>
+      <Button as="a" variant="outline" size="sm" href={withBase('search/')}>검색</Button>
+      <Button as="a" variant="outline" size="sm" href={withBase('tags/')}>전체 태그</Button>
+      <Button as="a" variant="outline" size="sm" href={withBase('rss.xml')}>RSS</Button>
+      <Button as="a" variant="outline" size="sm" href={withBase('sitemap-index.xml')}>XML Sitemap</Button>
     </nav>
 
     <nav aria-label="주제와 글">
-      <ul class="sitemap-tree">
+      <ul class="grid list-none gap-4 p-0">
         {topics.map((topic) => (
-          <SitemapTopic topic={topic} entries={entries} />
+          <li>
+            <Card>
+              <CardContent><SitemapTopic topic={topic} entries={entries} /></CardContent>
+            </Card>
+          </li>
         ))}
       </ul>
     </nav>
   </div>
 </BaseLayout>
-
-<style>
-  .sitemap-shell {
-    padding-bottom: 2rem;
-  }
-
-  .sitemap-intro {
-    max-width: 42rem;
-    margin: 0 0 1.5rem;
-    color: var(--text-soft);
-  }
-
-  .sitemap-primary {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    margin-bottom: 2rem;
-  }
-
-  .sitemap-primary a {
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    padding: 0.42rem 0.8rem;
-    background: var(--surface);
-    color: var(--brand);
-    font-size: 0.82rem;
-    font-weight: 650;
-    text-decoration: none;
-  }
-
-  .sitemap-primary a:hover {
-    color: var(--brand);
-    text-decoration: underline;
-    text-underline-offset: 0.18em;
-  }
-
-  .sitemap-tree {
-    display: grid;
-    gap: 1rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .sitemap-tree > :global(.sitemap-topic) {
-    border: 1px solid var(--border);
-    border-radius: 0.8rem;
-    padding: 1.2rem;
-    background: var(--surface);
-    box-shadow: var(--shadow);
-  }
-</style>

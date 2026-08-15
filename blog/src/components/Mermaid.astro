@@ -15,11 +15,11 @@
     mermaidApi.initialize({
       startOnLoad: false,
       securityLevel: 'strict',
-      theme: document.documentElement.dataset.theme === 'dark' ? 'dark' : 'neutral',
+      theme: document.documentElement.classList.contains('dark') ? 'dark' : 'neutral',
     });
     await mermaidApi.run({ nodes });
   }
 
   renderMermaid();
-  window.addEventListener('themechange', renderMermaid);
+  document.addEventListener('starwind:theme-change', renderMermaid);
 </script>
