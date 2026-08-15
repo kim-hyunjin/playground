@@ -45,15 +45,15 @@ const visibleEntries = tagEntries.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE
   description={`#${tag} 태그가 붙은 기술 글 ${tagEntries.length}개`}
   entries={allEntries}
 >
-  <div class="listing-shell">
-    <header class="section-header">
+  <div class="mx-auto w-[min(calc(100%-2rem),72rem)] pt-13">
+    <header class="mb-6 flex items-end justify-between gap-4 border-b pb-3">
       <div>
-        <span class="eyebrow">Tag</span>
-        <h1>#{tag}</h1>
+        <span class="text-xs font-bold tracking-[0.08em] text-primary uppercase">Tag</span>
+        <h1 class="text-[clamp(1.55rem,4vw,2.35rem)] font-semibold tracking-[-0.045em]">#{tag}</h1>
       </div>
-      <p>{tagEntries.length}개의 글</p>
+      <p class="text-muted-foreground">{tagEntries.length}개의 글</p>
     </header>
-    <div class="post-list">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
       {visibleEntries.map((entry) => <PostCard entry={entry} />)}
     </div>
     <Pagination current={page} total={pages} getUrl={(target) => tagUrl(tag, target)} />

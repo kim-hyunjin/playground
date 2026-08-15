@@ -1,4 +1,12 @@
 ---
+import {
+  Pagination as StarwindPagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from './starwind/pagination';
+
 interface Props {
   current: number;
   total: number;
@@ -9,25 +17,21 @@ const { current, total, getUrl } = Astro.props;
 ---
 
 {total > 1 && (
-  <nav class="pagination" aria-label="페이지">
-    {current > 1 ? <a rel="prev" href={getUrl(current - 1)}>← 이전</a> : <span />}
-    <span>{current} / {total}</span>
-    {current < total ? <a rel="next" href={getUrl(current + 1)}>다음 →</a> : <span />}
-  </nav>
+  <StarwindPagination class="mt-10 border-t pt-4" aria-label="페이지">
+    <PaginationContent class="grid w-full grid-cols-[1fr_auto_1fr]">
+      <PaginationItem>
+        {current > 1 && (
+          <PaginationPrevious href={getUrl(current - 1)} rel="prev">이전</PaginationPrevious>
+        )}
+      </PaginationItem>
+      <PaginationItem class="flex items-center px-3 text-sm text-muted-foreground">
+        <span aria-current="page">{current} / {total}</span>
+      </PaginationItem>
+      <PaginationItem class="justify-self-end">
+        {current < total && (
+          <PaginationNext href={getUrl(current + 1)} rel="next">다음</PaginationNext>
+        )}
+      </PaginationItem>
+    </PaginationContent>
+  </StarwindPagination>
 )}
-
-<style>
-  .pagination {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 2.5rem;
-    border-top: 1px solid var(--border);
-    padding-top: 1rem;
-  }
-
-  .pagination > :last-child {
-    justify-self: end;
-  }
-</style>

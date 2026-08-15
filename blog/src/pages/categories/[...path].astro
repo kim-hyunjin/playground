@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Pagination from '../../components/Pagination.astro';
 import PostCard from '../../components/PostCard.astro';
 import TopicBreadcrumbs from '../../components/TopicBreadcrumbs.astro';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/starwind/card';
 import {
   collectTopics,
   entryTopicPath,
@@ -57,32 +58,34 @@ const pageTitle = `${topic.name}${page > 1 ? ` ${page}페이지` : ''}`;
   description={`${topic.name} 주제의 기술 글 ${topic.count}개`}
   entries={allEntries}
 >
-  <div class="listing-shell topic-listing">
+  <div class="mx-auto w-[min(calc(100%-2rem),72rem)] pt-13">
     <TopicBreadcrumbs items={breadcrumbs} current />
 
-    <header class="section-header topic-header">
+    <header class="mb-6 flex items-end justify-between gap-4 border-b pb-3">
       <div>
-        <span class="eyebrow">Topic</span>
-        <h1>{topic.name}</h1>
+        <span class="text-xs font-bold tracking-[0.08em] text-primary uppercase">Topic</span>
+        <h1 class="text-[clamp(1.55rem,4vw,2.35rem)] font-semibold tracking-[-0.045em]">{topic.name}</h1>
       </div>
-      <p>{topic.count}개의 글</p>
+      <p class="text-muted-foreground">{topic.count}개의 글</p>
     </header>
 
     {topic.children.length > 0 && (
       <section aria-labelledby="subtopics-title">
-        <div class="subsection-header">
-          <h2 id="subtopics-title">하위 주제</h2>
-          <p>{topic.children.length}개</p>
+        <div class="mt-10 mb-4 flex items-end justify-between gap-4">
+          <h2 id="subtopics-title" class="text-xl font-semibold tracking-tight">하위 주제</h2>
+          <p class="text-sm text-muted-foreground">{topic.children.length}개</p>
         </div>
-        <div class="category-grid">
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {topic.children.map((child) => (
-            <a class="category-card" href={topicUrl(child.path)}>
-              <strong>{child.name}</strong>
-              <span>
-                {child.count}개의 글
-                {child.children.length > 0 && ` · ${child.children.length}개 하위 주제`}
-                {' →'}
-              </span>
+            <a class="group block no-underline" href={topicUrl(child.path)}>
+              <Card class="min-h-36 justify-between transition-colors group-hover:border-primary/40">
+                <CardHeader><CardTitle>{child.name}</CardTitle></CardHeader>
+                <CardContent class="text-sm text-muted-foreground group-hover:text-primary-accent">
+                  {child.count}개의 글
+                  {child.children.length > 0 && ` · ${child.children.length}개 하위 주제`}
+                  {' →'}
+                </CardContent>
+              </Card>
             </a>
           ))}
         </div>
@@ -91,13 +94,13 @@ const pageTitle = `${topic.name}${page > 1 ? ` ${page}페이지` : ''}`;
 
     {directEntries.length > 0 && (
       <section aria-labelledby="topic-posts-title">
-        <div class="subsection-header">
-          <h2 id="topic-posts-title">
+        <div class="mt-10 mb-4 flex items-end justify-between gap-4">
+          <h2 id="topic-posts-title" class="text-xl font-semibold tracking-tight">
             {topic.children.length > 0 ? '이 주제의 글' : '글'}
           </h2>
-          <p>{directEntries.length}개</p>
+          <p class="text-sm text-muted-foreground">{directEntries.length}개</p>
         </div>
-        <div class="post-list">
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
           {visibleEntries.map((entry) => <PostCard entry={entry} />)}
         </div>
         <Pagination
@@ -109,32 +112,3 @@ const pageTitle = `${topic.name}${page > 1 ? ` ${page}페이지` : ''}`;
     )}
   </div>
 </BaseLayout>
-
-<style>
-  .topic-header {
-    margin-top: 0;
-  }
-
-  .subsection-header {
-    display: flex;
-    align-items: end;
-    justify-content: space-between;
-    gap: 1rem;
-    margin: 2.5rem 0 1rem;
-  }
-
-  .subsection-header h2,
-  .subsection-header p {
-    margin: 0;
-  }
-
-  .subsection-header h2 {
-    font-size: 1.25rem;
-    letter-spacing: -0.025em;
-  }
-
-  .subsection-header p {
-    color: var(--muted);
-    font-size: 0.84rem;
-  }
-</style>

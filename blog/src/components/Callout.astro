@@ -1,4 +1,6 @@
 ---
+import { Alert, AlertTitle } from './starwind/alert';
+
 interface Props {
   title?: string;
 }
@@ -6,22 +8,9 @@ interface Props {
 const { title = '참고' } = Astro.props;
 ---
 
-<aside class="callout">
-  <strong>{title}</strong>
-  <slot />
-</aside>
-
-<style>
-  .callout {
-    margin-block: 1.25rem;
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--brand);
-    border-radius: 0.5rem;
-    padding: 0.85rem 1rem;
-    background: var(--surface);
-  }
-
-  .callout :global(p:last-child) {
-    margin-bottom: 0;
-  }
-</style>
+<Alert variant="primary" class="my-5 border-l-[3px] bg-card" role="note">
+  <AlertTitle>{title}</AlertTitle>
+  <div class="leading-relaxed [&>:last-child]:mb-0">
+    <slot />
+  </div>
+</Alert>

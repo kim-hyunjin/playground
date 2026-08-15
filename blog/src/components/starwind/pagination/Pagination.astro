@@ -1,0 +1,27 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+import { pagination } from "./variants";
+
+type Props = HTMLAttributes<"nav"> & {
+  size?: "sm" | "md" | "lg";
+};
+
+const {
+  size = "md",
+  "aria-label": ariaLabel = "페이지",
+  class: className,
+  ...rest
+} = Astro.props;
+---
+
+<nav
+  role="navigation"
+  aria-label={ariaLabel}
+  class={pagination({ class: className })}
+  {...rest}
+  data-size={size}
+  data-slot="pagination"
+>
+  <slot />
+</nav>
