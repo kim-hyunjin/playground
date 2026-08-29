@@ -121,27 +121,9 @@ a {
 
 .blog-prose table {
   display: block;
-  width: max-content;
-  max-width: 100%;
   overflow-x: auto;
   border-collapse: collapse;
   scrollbar-gutter: stable;
-}
-
-.blog-prose th,
-.blog-prose td {
-  border: 1px solid var(--border);
-  padding: 0.65rem 0.8rem;
-  text-align: left;
-  vertical-align: top;
-}
-
-.blog-prose th {
-  background: var(--muted);
-}
-
-.blog-prose tbody tr:nth-child(even) {
-  background: color-mix(in srgb, var(--card) 55%, transparent);
 }
 
 .blog-prose img,
