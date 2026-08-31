@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><meta name="generator" content="Astro v7.1.3"><meta name="description" content="B-Trees vs B+Trees에 관한 기술 내용과 핵심 개념을 정리합니다."><meta name="color-scheme" content="light dark"><link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"><link rel="canonical" href="https://kim-hyunjin.github.io/playground/backend/database/indexes-storage/b-trees-vs-b-plus-trees.pub/"><link rel="alternate" type="application/rss+xml" title="hyunjin.log RSS" href="https://kim-hyunjin.github.io/rss.xml"><meta property="og:type" content="article"><meta property="og:site_name" content="hyunjin.log"><meta property="og:title" content="B-Trees vs B+Trees · hyunjin.log"><meta property="og:description" content="B-Trees vs B+Trees에 관한 기술 내용과 핵심 개념을 정리합니다."><meta property="og:url" content="https://kim-hyunjin.github.io/playground/backend/database/indexes-storage/b-trees-vs-b-plus-trees.pub/"><meta name="twitter:card" content="summary"><title>B-Trees vs B+Trees · hyunjin.log</title><script>
+<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><meta name="generator" content="Astro v7.1.3"><meta name="description" content="디스크 기반 인덱스가 왜 이진 탐색 트리가 아닌 B-Tree 계열이어야 하는지부터, B-Tree와 B+Tree의 구조적 차이, fanout 계산, MySQL InnoDB와 PostgreSQL의 실제 구현 차이까지 정리한다."><meta name="color-scheme" content="light dark"><link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"><link rel="canonical" href="https://kim-hyunjin.github.io/playground/backend/database/indexes-storage/b-trees-vs-b-plus-trees.pub/"><link rel="alternate" type="application/rss+xml" title="hyunjin.log RSS" href="https://kim-hyunjin.github.io/rss.xml"><meta property="og:type" content="article"><meta property="og:site_name" content="hyunjin.log"><meta property="og:title" content="B-Tree와 B+Tree, 그리고 DB 인덱스가 B+Tree를 선택한 이유 · hyunjin.log"><meta property="og:description" content="디스크 기반 인덱스가 왜 이진 탐색 트리가 아닌 B-Tree 계열이어야 하는지부터, B-Tree와 B+Tree의 구조적 차이, fanout 계산, MySQL InnoDB와 PostgreSQL의 실제 구현 차이까지 정리한다."><meta property="og:url" content="https://kim-hyunjin.github.io/playground/backend/database/indexes-storage/b-trees-vs-b-plus-trees.pub/"><meta name="twitter:card" content="summary"><title>B-Tree와 B+Tree, 그리고 DB 인덱스가 B+Tree를 선택한 이유 · hyunjin.log</title><script>
       (() => {
         let theme = 'system';
         try {
@@ -13,7 +13,7 @@
           : theme;
         document.documentElement.classList.toggle('dark', resolved === 'dark');
       })();
-    </script><link rel="stylesheet" href="/playground/_astro/BaseLayout.COAkCVg4.css"><link rel="stylesheet" href="/playground/_astro/_..muzhrrbz.css"></head><body><a class="fixed top-2 left-2 z-[100] -translate-y-[150%] rounded-md bg-foreground px-4 py-2 text-background transition-transform focus:translate-y-0" href="#main-content">본문으로 건너뛰기</a><header class="sticky top-0 z-40 border-b bg-card/90 backdrop-blur-md" data-pagefind-ignore><div class="mx-auto flex min-h-16 w-[min(calc(100%-2rem),84rem)] items-center gap-5"><a class="inline-flex shrink-0 items-center gap-2 font-bold text-primary no-underline" href="/playground/" aria-label="hyunjin.log 홈"><span class="grid size-7 place-items-center rounded-full bg-primary font-mono text-[0.66rem] tracking-normal text-primary-foreground" aria-hidden="true">hj</span><span>hyunjin.log</span></a><nav class="hidden min-w-0 flex-1 items-center justify-center gap-[clamp(0.65rem,1.6vw,1.5rem)] lg:flex" aria-label="주요 탐색"><a class="whitespace-nowrap text-sm font-semibold text-muted-foreground no-underline hover:text-primary-accent" href="/playground/categories/ai/">AI</a><a class="whitespace-nowrap text-sm font-semibold text-muted-foreground no-underline hover:text-primary-accent" href="/playground/categories/algorithms/">Algorithms</a><a class="whitespace-nowrap text-sm font-semibold text-muted-foreground no-underline hover:text-primary-accent" href="/playground/categories/backend/">Backend</a><a class="whitespace-nowrap text-sm font-semibold text-muted-foreground no-underline hover:text-primary-accent" href="/playground/categories/blockchain/">Blockchain</a><a class="whitespace-nowrap text-sm font-semibold text-muted-foreground no-underline hover:text-primary-accent" href="/playground/categories/design-architecture/">Design &amp; Architecture</a><a class="whitespace-nowrap text-sm font-semibold text-muted-foreground no-underline hover:text-primary-accent" href="/playground/categories/frontend/">Frontend</a><a class="whitespace-nowrap text-sm font-semibold text-muted-foreground no-underline hover:text-primary-accent" href="/playground/categories/language/">Language</a><a class="whitespace-nowrap text-sm font-semibold text-muted-foreground no-underline hover:text-primary-accent" href="/playground/categories/mobile/">Mobile</a><a class="whitespace-nowrap text-sm font-semibold text-muted-foreground no-underline hover:text-primary-accent" href="/playground/categories/security/">Security</a></nav><div class="ml-auto flex shrink-0 gap-1"><a class="inline-flex items-center justify-center gap-1.5 rounded-md font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 hover:bg-muted hover:text-foreground focus-visible:ring-outline/50 size-11 [&amp;_svg:not([class*='size-'])]:size-4.5" href="/playground/search/" aria-label="검색" data-slot="button"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-search" aria-hidden="true">
+    </script><link rel="stylesheet" href="/playground/_astro/BaseLayout.CR-Em5P5.css"><link rel="stylesheet" href="/playground/_astro/_..muzhrrbz.css"></head><body><a class="fixed top-2 left-2 z-[100] -translate-y-[150%] rounded-md bg-foreground px-4 py-2 text-background transition-transform focus:translate-y-0" href="#main-content">본문으로 건너뛰기</a><header class="sticky top-0 z-40 border-b bg-card/90 backdrop-blur-md" data-pagefind-ignore><div class="mx-auto flex min-h-16 w-[min(calc(100%-2rem),84rem)] items-center gap-5"><a class="inline-flex shrink-0 items-center gap-2 font-bold text-primary no-underline" href="/playground/" aria-label="hyunjin.log 홈"><span class="grid size-7 place-items-center rounded-full bg-primary font-mono text-[0.66rem] tracking-normal text-primary-foreground" aria-hidden="true">hj</span><span>hyunjin.log</span></a><nav class="hidden min-w-0 flex-1 items-center justify-center gap-[clamp(0.65rem,1.6vw,1.5rem)] lg:flex" aria-label="주요 탐색"><a class="whitespace-nowrap text-sm font-semibold text-muted-foreground no-underline hover:text-primary-accent" href="/playground/categories/ai/">AI</a><a class="whitespace-nowrap text-sm font-semibold text-muted-foreground no-underline hover:text-primary-accent" href="/playground/categories/algorithms/">Algorithms</a><a class="whitespace-nowrap text-sm font-semibold text-muted-foreground no-underline hover:text-primary-accent" href="/playground/categories/backend/">Backend</a><a class="whitespace-nowrap text-sm font-semibold text-muted-foreground no-underline hover:text-primary-accent" href="/playground/categories/blockchain/">Blockchain</a><a class="whitespace-nowrap text-sm font-semibold text-muted-foreground no-underline hover:text-primary-accent" href="/playground/categories/design-architecture/">Design &amp; Architecture</a><a class="whitespace-nowrap text-sm font-semibold text-muted-foreground no-underline hover:text-primary-accent" href="/playground/categories/frontend/">Frontend</a><a class="whitespace-nowrap text-sm font-semibold text-muted-foreground no-underline hover:text-primary-accent" href="/playground/categories/language/">Language</a><a class="whitespace-nowrap text-sm font-semibold text-muted-foreground no-underline hover:text-primary-accent" href="/playground/categories/mobile/">Mobile</a><a class="whitespace-nowrap text-sm font-semibold text-muted-foreground no-underline hover:text-primary-accent" href="/playground/categories/security/">Security</a></nav><div class="ml-auto flex shrink-0 gap-1"><a class="inline-flex items-center justify-center gap-1.5 rounded-md font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 hover:bg-muted hover:text-foreground focus-visible:ring-outline/50 size-11 [&amp;_svg:not([class*='size-'])]:size-4.5" href="/playground/search/" aria-label="검색" data-slot="button"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-search" aria-hidden="true">
   <path stroke="none" d="M0 0h24v24H0z" fill="none" />
   <path d="M3 10a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
   <path d="M21 21l-6 -6" />
@@ -29,7 +29,7 @@
   <path d="M4 6l16 0" />
   <path d="M4 12l16 0" />
   <path d="M4 18l16 0" />
-</svg></button><div data-sw-drawer-backdrop data-state="closed" hidden class="fixed inset-0 top-0 left-0 z-50 hidden h-screen w-screen bg-black/80 data-starting-style:!animate-none data-starting-style:opacity-0 data-[state=open]:animate-in fade-in data-[state=closed]:animate-out data-[state=closed]:fill-mode-forwards fade-out data-[state=closed]:duration-300 data-[state=open]:duration-500" data-state="closed" hidden data-slot="sheet-backdrop"></div><dialog data-sw-drawer-popup data-state="closed" data-side="right" class="bg-background fixed z-50 flex-col gap-4 shadow-lg transition ease-in-out open:flex data-starting-style:!animate-none data-starting-style:opacity-0 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fill-mode-forwards data-[state=closed]:duration-300 data-[state=open]:duration-500 slide-out-to-right slide-in-from-right inset-y-0 right-0 left-auto h-full max-h-[100dvh] w-3/4 border-l sm:max-w-sm overflow-y-auto" data-state="closed" aria-label="모바일 탐색" data-slot="sheet-content"><div class="flex flex-col gap-1.5 p-4" data-slot="sheet-header"><h2 data-sw-drawer-title class="text-foreground font-heading font-semibold" data-slot="sheet-title">hyunjin.log</h2><p data-sw-drawer-description class="text-muted-foreground text-sm" data-slot="sheet-description">주제별 글을 탐색합니다.</p></div><nav class="grid gap-1 px-4 pb-6" aria-label="모바일 탐색"><a class="inline-flex items-center gap-1.5 rounded-md font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 hover:bg-muted hover:text-foreground focus-visible:ring-outline/50 h-11 px-5 text-base has-[>svg]:px-4 [&amp;_svg:not([class*='size-'])]:size-4.5 justify-between" href="/playground/" data-slot="button">홈</a><a class="inline-flex items-center gap-1.5 rounded-md font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 hover:bg-muted hover:text-foreground focus-visible:ring-outline/50 h-11 px-5 text-base has-[>svg]:px-4 [&amp;_svg:not([class*='size-'])]:size-4.5 justify-between" href="/playground/categories/ai/" data-slot="button"><span>AI</span><span class="text-sm text-muted-foreground">6</span></a><a class="inline-flex items-center gap-1.5 rounded-md font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 hover:bg-muted hover:text-foreground focus-visible:ring-outline/50 h-11 px-5 text-base has-[>svg]:px-4 [&amp;_svg:not([class*='size-'])]:size-4.5 justify-between" href="/playground/categories/algorithms/" data-slot="button"><span>Algorithms</span><span class="text-sm text-muted-foreground">3</span></a><a class="inline-flex items-center gap-1.5 rounded-md font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 hover:bg-muted hover:text-foreground focus-visible:ring-outline/50 h-11 px-5 text-base has-[>svg]:px-4 [&amp;_svg:not([class*='size-'])]:size-4.5 justify-between" href="/playground/categories/backend/" data-slot="button"><span>Backend</span><span class="text-sm text-muted-foreground">86</span></a><a class="inline-flex items-center gap-1.5 rounded-md font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 hover:bg-muted hover:text-foreground focus-visible:ring-outline/50 h-11 px-5 text-base has-[>svg]:px-4 [&amp;_svg:not([class*='size-'])]:size-4.5 justify-between" href="/playground/categories/blockchain/" data-slot="button"><span>Blockchain</span><span class="text-sm text-muted-foreground">2</span></a><a class="inline-flex items-center gap-1.5 rounded-md font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 hover:bg-muted hover:text-foreground focus-visible:ring-outline/50 h-11 px-5 text-base has-[>svg]:px-4 [&amp;_svg:not([class*='size-'])]:size-4.5 justify-between" href="/playground/categories/design-architecture/" data-slot="button"><span>Design &amp; Architecture</span><span class="text-sm text-muted-foreground">4</span></a><a class="inline-flex items-center gap-1.5 rounded-md font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 hover:bg-muted hover:text-foreground focus-visible:ring-outline/50 h-11 px-5 text-base has-[>svg]:px-4 [&amp;_svg:not([class*='size-'])]:size-4.5 justify-between" href="/playground/categories/frontend/" data-slot="button"><span>Frontend</span><span class="text-sm text-muted-foreground">16</span></a><a class="inline-flex items-center gap-1.5 rounded-md font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 hover:bg-muted hover:text-foreground focus-visible:ring-outline/50 h-11 px-5 text-base has-[>svg]:px-4 [&amp;_svg:not([class*='size-'])]:size-4.5 justify-between" href="/playground/categories/language/" data-slot="button"><span>Language</span><span class="text-sm text-muted-foreground">8</span></a><a class="inline-flex items-center gap-1.5 rounded-md font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 hover:bg-muted hover:text-foreground focus-visible:ring-outline/50 h-11 px-5 text-base has-[>svg]:px-4 [&amp;_svg:not([class*='size-'])]:size-4.5 justify-between" href="/playground/categories/mobile/" data-slot="button"><span>Mobile</span><span class="text-sm text-muted-foreground">2</span></a><a class="inline-flex items-center gap-1.5 rounded-md font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 hover:bg-muted hover:text-foreground focus-visible:ring-outline/50 h-11 px-5 text-base has-[>svg]:px-4 [&amp;_svg:not([class*='size-'])]:size-4.5 justify-between" href="/playground/categories/security/" data-slot="button"><span>Security</span><span class="text-sm text-muted-foreground">1</span></a><a class="inline-flex items-center gap-1.5 rounded-md font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 hover:bg-muted hover:text-foreground focus-visible:ring-outline/50 h-11 px-5 text-base has-[>svg]:px-4 [&amp;_svg:not([class*='size-'])]:size-4.5 justify-start" href="/playground/tags/" data-slot="button">태그</a><a class="inline-flex items-center gap-1.5 rounded-md font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 hover:bg-muted hover:text-foreground focus-visible:ring-outline/50 h-11 px-5 text-base has-[>svg]:px-4 [&amp;_svg:not([class*='size-'])]:size-4.5 justify-start" href="/playground/search/" data-slot="button">검색</a></nav><button type="button" class="inline-flex items-center justify-center gap-1.5 font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 hover:bg-muted hover:text-foreground size-9 [&amp;_svg:not([class*='size-'])]:size-3.5 absolute top-4 right-4 rounded-xs [&amp;>svg]:opacity-70 hover:[&amp;>svg]:opacity-100 focus-visible:ring-outline/50 transition-[color,box-shadow] outline-none focus-visible:ring-3" data-sw-drawer-close="true" data-slot="sheet-close" data-sw-button><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5 transition-opacity">
+</svg></button><div data-sw-drawer-backdrop data-state="closed" hidden class="fixed inset-0 top-0 left-0 z-50 hidden h-screen w-screen bg-black/80 data-starting-style:!animate-none data-starting-style:opacity-0 data-[state=open]:animate-in fade-in data-[state=closed]:animate-out data-[state=closed]:fill-mode-forwards fade-out data-[state=closed]:duration-300 data-[state=open]:duration-500" data-state="closed" hidden data-slot="sheet-backdrop"></div><dialog data-sw-drawer-popup data-state="closed" data-side="right" class="bg-background fixed z-50 flex-col gap-4 shadow-lg transition ease-in-out open:flex data-starting-style:!animate-none data-starting-style:opacity-0 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fill-mode-forwards data-[state=closed]:duration-300 data-[state=open]:duration-500 slide-out-to-right slide-in-from-right inset-y-0 right-0 left-auto h-full max-h-[100dvh] w-3/4 border-l sm:max-w-sm overflow-y-auto" data-state="closed" aria-label="모바일 탐색" data-slot="sheet-content"><div class="flex flex-col gap-1.5 p-4" data-slot="sheet-header"><h2 data-sw-drawer-title class="text-foreground font-heading font-semibold" data-slot="sheet-title">hyunjin.log</h2><p data-sw-drawer-description class="text-muted-foreground text-sm" data-slot="sheet-description">주제별 글을 탐색합니다.</p></div><nav class="grid gap-1 px-4 pb-6" aria-label="모바일 탐색"><a class="inline-flex items-center gap-1.5 rounded-md font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 hover:bg-muted hover:text-foreground focus-visible:ring-outline/50 h-11 px-5 text-base has-[>svg]:px-4 [&amp;_svg:not([class*='size-'])]:size-4.5 justify-between" href="/playground/" data-slot="button">홈</a><a class="inline-flex items-center gap-1.5 rounded-md font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 hover:bg-muted hover:text-foreground focus-visible:ring-outline/50 h-11 px-5 text-base has-[>svg]:px-4 [&amp;_svg:not([class*='size-'])]:size-4.5 justify-between" href="/playground/categories/ai/" data-slot="button"><span>AI</span><span class="text-sm text-muted-foreground">6</span></a><a class="inline-flex items-center gap-1.5 rounded-md font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 hover:bg-muted hover:text-foreground focus-visible:ring-outline/50 h-11 px-5 text-base has-[>svg]:px-4 [&amp;_svg:not([class*='size-'])]:size-4.5 justify-between" href="/playground/categories/algorithms/" data-slot="button"><span>Algorithms</span><span class="text-sm text-muted-foreground">3</span></a><a class="inline-flex items-center gap-1.5 rounded-md font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 hover:bg-muted hover:text-foreground focus-visible:ring-outline/50 h-11 px-5 text-base has-[>svg]:px-4 [&amp;_svg:not([class*='size-'])]:size-4.5 justify-between" href="/playground/categories/backend/" data-slot="button"><span>Backend</span><span class="text-sm text-muted-foreground">87</span></a><a class="inline-flex items-center gap-1.5 rounded-md font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 hover:bg-muted hover:text-foreground focus-visible:ring-outline/50 h-11 px-5 text-base has-[>svg]:px-4 [&amp;_svg:not([class*='size-'])]:size-4.5 justify-between" href="/playground/categories/blockchain/" data-slot="button"><span>Blockchain</span><span class="text-sm text-muted-foreground">2</span></a><a class="inline-flex items-center gap-1.5 rounded-md font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 hover:bg-muted hover:text-foreground focus-visible:ring-outline/50 h-11 px-5 text-base has-[>svg]:px-4 [&amp;_svg:not([class*='size-'])]:size-4.5 justify-between" href="/playground/categories/design-architecture/" data-slot="button"><span>Design &amp; Architecture</span><span class="text-sm text-muted-foreground">4</span></a><a class="inline-flex items-center gap-1.5 rounded-md font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 hover:bg-muted hover:text-foreground focus-visible:ring-outline/50 h-11 px-5 text-base has-[>svg]:px-4 [&amp;_svg:not([class*='size-'])]:size-4.5 justify-between" href="/playground/categories/frontend/" data-slot="button"><span>Frontend</span><span class="text-sm text-muted-foreground">16</span></a><a class="inline-flex items-center gap-1.5 rounded-md font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 hover:bg-muted hover:text-foreground focus-visible:ring-outline/50 h-11 px-5 text-base has-[>svg]:px-4 [&amp;_svg:not([class*='size-'])]:size-4.5 justify-between" href="/playground/categories/language/" data-slot="button"><span>Language</span><span class="text-sm text-muted-foreground">8</span></a><a class="inline-flex items-center gap-1.5 rounded-md font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 hover:bg-muted hover:text-foreground focus-visible:ring-outline/50 h-11 px-5 text-base has-[>svg]:px-4 [&amp;_svg:not([class*='size-'])]:size-4.5 justify-between" href="/playground/categories/mobile/" data-slot="button"><span>Mobile</span><span class="text-sm text-muted-foreground">2</span></a><a class="inline-flex items-center gap-1.5 rounded-md font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 hover:bg-muted hover:text-foreground focus-visible:ring-outline/50 h-11 px-5 text-base has-[>svg]:px-4 [&amp;_svg:not([class*='size-'])]:size-4.5 justify-between" href="/playground/categories/security/" data-slot="button"><span>Security</span><span class="text-sm text-muted-foreground">1</span></a><a class="inline-flex items-center gap-1.5 rounded-md font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 hover:bg-muted hover:text-foreground focus-visible:ring-outline/50 h-11 px-5 text-base has-[>svg]:px-4 [&amp;_svg:not([class*='size-'])]:size-4.5 justify-start" href="/playground/tags/" data-slot="button">태그</a><a class="inline-flex items-center gap-1.5 rounded-md font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 hover:bg-muted hover:text-foreground focus-visible:ring-outline/50 h-11 px-5 text-base has-[>svg]:px-4 [&amp;_svg:not([class*='size-'])]:size-4.5 justify-start" href="/playground/search/" data-slot="button">검색</a></nav><button type="button" class="inline-flex items-center justify-center gap-1.5 font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 hover:bg-muted hover:text-foreground size-9 [&amp;_svg:not([class*='size-'])]:size-3.5 absolute top-4 right-4 rounded-xs [&amp;>svg]:opacity-70 hover:[&amp;>svg]:opacity-100 focus-visible:ring-outline/50 transition-[color,box-shadow] outline-none focus-visible:ring-3" data-sw-drawer-close="true" data-slot="sheet-close" data-sw-button><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5 transition-opacity">
   <path stroke="none" d="M0 0h24v24H0z" fill="none" />
   <path d="M18 6l-12 12" />
   <path d="M6 6l12 12" />
@@ -42,18 +42,19 @@
 </svg></li><li data-sw-breadcrumb-item class="inline-flex items-center gap-1.5" data-slot="breadcrumb-item"><a data-sw-breadcrumb-link class="hover:text-foreground transition-colors" href="/playground/categories/backend/database/" data-slot="breadcrumb-link">Database</a></li><li data-sw-breadcrumb-separator role="presentation" aria-hidden="true" class="[&amp;>svg]:size-4" data-slot="breadcrumb-separator"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right">
   <path stroke="none" d="M0 0h24v24H0z" fill="none" />
   <path d="M9 6l6 6l-6 6" />
-</svg></li><li data-sw-breadcrumb-item class="inline-flex items-center gap-1.5" data-slot="breadcrumb-item"><a data-sw-breadcrumb-link class="hover:text-foreground transition-colors" href="/playground/categories/backend/database/indexes-storage/" data-slot="breadcrumb-link">Indexes &amp; Storage</a></li></ol></nav><h1 class="my-3 text-[clamp(2.15rem,5.6vw,3.65rem)] leading-[1.1] font-semibold tracking-[-0.042em] [overflow-wrap:break-word] [word-break:keep-all]" data-pagefind-meta="title">B-Trees vs B+Trees</h1><p class="text-lg leading-7 text-muted-foreground">B-Trees vs B+Trees에 관한 기술 내용과 핵심 개념을 정리합니다.</p><div class="mt-4 flex gap-2 text-sm text-muted-foreground"><time datetime="2026-04-23T00:00:00.000Z">2026년 4월 23일</time></div></header><div data-sw-collapsible data-state="closed" class="group mb-9 rounded-xl border bg-card lg:hidden" data-pagefind-ignore="true" data-slot="collapsible"><button type="button" data-sw-collapsible-trigger aria-expanded="false" data-state="closed" class="flex w-full items-center justify-between px-4 py-3 text-left font-semibold" data-slot="collapsible-trigger">목차<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 transition-transform group-data-[state=open]:rotate-180" aria-hidden="true">
+</svg></li><li data-sw-breadcrumb-item class="inline-flex items-center gap-1.5" data-slot="breadcrumb-item"><a data-sw-breadcrumb-link class="hover:text-foreground transition-colors" href="/playground/categories/backend/database/indexes-storage/" data-slot="breadcrumb-link">Indexes &amp; Storage</a></li></ol></nav><h1 class="my-3 text-[clamp(2.15rem,5.6vw,3.65rem)] leading-[1.1] font-semibold tracking-[-0.042em] [overflow-wrap:break-word] [word-break:keep-all]" data-pagefind-meta="title">B-Tree와 B+Tree, 그리고 DB 인덱스가 B+Tree를 선택한 이유</h1><p class="text-lg leading-7 text-muted-foreground">디스크 기반 인덱스가 왜 이진 탐색 트리가 아닌 B-Tree 계열이어야 하는지부터, B-Tree와 B+Tree의 구조적 차이, fanout 계산, MySQL InnoDB와 PostgreSQL의 실제 구현 차이까지 정리한다.</p><div class="mt-4 flex gap-2 text-sm text-muted-foreground"><time datetime="2026-04-23T00:00:00.000Z">2026년 4월 23일</time></div></header><div data-sw-collapsible data-state="closed" class="group mb-9 rounded-xl border bg-card lg:hidden" data-pagefind-ignore="true" data-slot="collapsible"><button type="button" data-sw-collapsible-trigger aria-expanded="false" data-state="closed" class="flex w-full items-center justify-between px-4 py-3 text-left font-semibold" data-slot="collapsible-trigger">목차<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 transition-transform group-data-[state=open]:rotate-180" aria-hidden="true">
   <path stroke="none" d="M0 0h24v24H0z" fill="none" />
   <path d="M6 9l6 6l6 -6" />
-</svg></button><div data-sw-collapsible-panel data-state="closed" hidden data-slot="collapsible-content"><ol class="grid list-none gap-2 px-4 pb-4 text-sm text-muted-foreground"><li><a class="no-underline hover:text-primary-accent" href="#full-table-scan">Full Table Scan</a></li><li class="pl-4"><a class="no-underline hover:text-primary-accent" href="#예시">예시</a></li><li><a class="no-underline hover:text-primary-accent" href="#b-tree">B-Tree</a></li><li class="pl-4"><a class="no-underline hover:text-primary-accent" href="#기본-개념">기본 개념</a></li><li class="pl-4"><a class="no-underline hover:text-primary-accent" href="#노드-구조">노드 구조</a></li><li class="pl-4"><a class="no-underline hover:text-primary-accent" href="#b-tree가-검색을-돕는-방식">B-Tree가 검색을 돕는 방식</a></li><li class="pl-4"><a class="no-underline hover:text-primary-accent" href="#검색-예시">검색 예시</a></li><li class="pl-4"><a class="no-underline hover:text-primary-accent" href="#더-많은-항목이-추가된-b-tree-11개-항목">더 많은 항목이 추가된 B-Tree (11개 항목)</a></li><li><a class="no-underline hover:text-primary-accent" href="#b-tree의-한계">B-Tree의 한계</a></li><li class="pl-4"><a class="no-underline hover:text-primary-accent" href="#범위-쿼리-예시-id-between-4-and-9">범위 쿼리 예시: ID BETWEEN 4 AND 9</a></li><li><a class="no-underline hover:text-primary-accent" href="#btree">B+Tree</a></li><li class="pl-4"><a class="no-underline hover:text-primary-accent" href="#핵심-특징">핵심 특징</a></li><li class="pl-4"><a class="no-underline hover:text-primary-accent" href="#btree-구조-차수-3">B+Tree 구조 (차수 3)</a></li><li class="pl-4"><a class="no-underline hover:text-primary-accent" href="#범위-쿼리-예시-id-between-4-and-9-1">범위 쿼리 예시: ID BETWEEN 4 AND 9</a></li><li><a class="no-underline hover:text-primary-accent" href="#btree--dbms-고려사항">B+Tree &amp; DBMS 고려사항</a></li><li class="pl-4"><a class="no-underline hover:text-primary-accent" href="#스토리지-구조">스토리지 구조</a></li><li><a class="no-underline hover:text-primary-accent" href="#btree-스토리지-비용-mysql-vs-postgres">B+Tree 스토리지 비용: MySQL vs Postgres</a></li><li class="pl-4"><a class="no-underline hover:text-primary-accent" href="#secondary-index의-value가-가리키는-대상">Secondary Index의 Value가 가리키는 대상</a></li><li class="pl-4"><a class="no-underline hover:text-primary-accent" href="#주요-차이점">주요 차이점</a></li><li><a class="no-underline hover:text-primary-accent" href="#summary">Summary</a></li></ol></div></div><script type="module" src="/playground/_astro/CollapsibleRoot.astro_astro_type_script_index_0_lang.BNvJ_Qe8.js"></script><div data-sw-prose class="sw-prose max-w-[65ch] blog-prose" data-pagefind-body="true" data-slot="prose"><h2 id="full-table-scan">Full Table Scan<a class="heading-anchor" aria-label="이 제목으로 연결" href="#full-table-scan"></a></h2>
-<ul>
-<li>큰 테이블에서 특정 행을 찾으려면 <strong>Full Table Scan</strong>을 수행해야 한다</li>
-<li>큰 테이블을 읽는 것은 느리다</li>
-<li>모든 페이지를 읽기 위해 많은 I/O가 필요하다</li>
-<li><strong>검색 공간(search space)을 줄일 방법이 필요하다</strong></li>
-</ul>
-<h3 id="예시">예시<a class="heading-anchor" aria-label="이 제목으로 연결" href="#예시"></a></h3>
-<p>약 10억 행이 있는 테이블에서:</p>
+</svg></button><div data-sw-collapsible-panel data-state="closed" hidden data-slot="collapsible-content"><ol class="grid list-none gap-2 px-4 pb-4 text-sm text-muted-foreground"><li><a class="no-underline hover:text-primary-accent" href="#출발점-검색-공간을-줄여야-한다">출발점: 검색 공간을 줄여야 한다</a></li><li><a class="no-underline hover:text-primary-accent" href="#왜-이진-탐색-트리로는-안-되는가">왜 이진 탐색 트리로는 안 되는가</a></li><li><a class="no-underline hover:text-primary-accent" href="#b-tree의-구조">B-Tree의 구조</a></li><li class="pl-4"><a class="no-underline hover:text-primary-accent" href="#정의와-불변식">정의와 불변식</a></li><li class="pl-4"><a class="no-underline hover:text-primary-accent" href="#노드의-내용">노드의 내용</a></li><li class="pl-4"><a class="no-underline hover:text-primary-accent" href="#검색-과정">검색 과정</a></li><li class="pl-4"><a class="no-underline hover:text-primary-accent" href="#삽입과-분할">삽입과 분할</a></li><li><a class="no-underline hover:text-primary-accent" href="#fanout-이-모든-것을-결정하는-숫자">fanout: 이 모든 것을 결정하는 숫자</a></li><li><a class="no-underline hover:text-primary-accent" href="#b-tree의-두-가지-한계">B-Tree의 두 가지 한계</a></li><li class="pl-4"><a class="no-underline hover:text-primary-accent" href="#1-내부-노드가-value를-들고-있어-fanout을-낭비한다">1. 내부 노드가 value를 들고 있어 fanout을 낭비한다</a></li><li class="pl-4"><a class="no-underline hover:text-primary-accent" href="#2-범위-쿼리가-느리다">2. 범위 쿼리가 느리다</a></li><li><a class="no-underline hover:text-primary-accent" href="#btree-두-문제를-한-번에-해결하다">B+Tree: 두 문제를 한 번에 해결하다</a></li><li class="pl-4"><a class="no-underline hover:text-primary-accent" href="#효과-1-fanout이-커지고-트리가-낮아진다">효과 1: fanout이 커지고 트리가 낮아진다</a></li><li class="pl-4"><a class="no-underline hover:text-primary-accent" href="#효과-2-범위-쿼리가-순차-접근이-된다">효과 2: 범위 쿼리가 순차 접근이 된다</a></li><li class="pl-4"><a class="no-underline hover:text-primary-accent" href="#효과-3-리프-레벨만-훑으면-전체-스캔이-된다">효과 3: 리프 레벨만 훑으면 전체 스캔이 된다</a></li><li><a class="no-underline hover:text-primary-accent" href="#실제-dbms는-어떻게-구현하는가">실제 DBMS는 어떻게 구현하는가</a></li><li class="pl-4"><a class="no-underline hover:text-primary-accent" href="#용어에-대한-주의">용어에 대한 주의</a></li><li class="pl-4"><a class="no-underline hover:text-primary-accent" href="#mysql-innodb-클러스터드-인덱스">MySQL InnoDB: 클러스터드 인덱스</a></li><li class="pl-4"><a class="no-underline hover:text-primary-accent" href="#postgresql-힙--세컨더리-인덱스">PostgreSQL: 힙 + 세컨더리 인덱스</a></li><li><a class="no-underline hover:text-primary-accent" href="#btree의-대가">B+Tree의 대가</a></li><li><a class="no-underline hover:text-primary-accent" href="#실무로-옮기면">실무로 옮기면</a></li><li><a class="no-underline hover:text-primary-accent" href="#summary">Summary</a></li><li><a class="no-underline hover:text-primary-accent" href="#함께-보기">함께 보기</a></li></ol></div></div><script type="module" src="/playground/_astro/CollapsibleRoot.astro_astro_type_script_index_0_lang.BNvJ_Qe8.js"></script><div data-sw-prose class="sw-prose max-w-[65ch] blog-prose" data-pagefind-body="true" data-slot="prose"><h2 id="출발점-검색-공간을-줄여야-한다">출발점: 검색 공간을 줄여야 한다<a class="heading-anchor" aria-label="이 제목으로 연결" href="#출발점-검색-공간을-줄여야-한다"></a></h2>
+<p>큰 테이블에서 특정 행을 찾는 가장 단순한 방법은 <strong>Full Table Scan</strong>이다. 힙(heap)의
+모든 페이지를 처음부터 끝까지 읽으면 언젠가는 원하는 행을 만난다. 문제는 비용이다.</p>
+<p>행 하나가 128바이트이고 행이 10억 개, 페이지 크기가 8KB라고 하자.</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>페이지당 행 수 = 8,192 / 128 ≈ 64행</span></span>
+<span class="line"><span>전체 페이지 수 = 1,000,000,000 / 64 ≈ 15,625,000 페이지</span></span>
+<span class="line"><span>전체 크기      ≈ 15,625,000 × 8KB ≈ 122GB</span></span></code></pre>
+<p><code>WHERE id = 999991931</code> 하나를 찾기 위해 최악의 경우 <strong>1,500만 번 이상의 페이지 읽기</strong>가
+필요하다. 순차 읽기라 랜덤 읽기보다는 빠르지만, 초당 1GB를 읽는 스토리지에서도 2분이
+넘는다. 트랜잭션 하나에 쓸 수 있는 시간이 아니다.</p>
 
 
 
@@ -87,176 +88,575 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<table><thead><tr><th>ID</th><th>Name</th></tr></thead><tbody><tr><td>1</td><td>John</td></tr><tr><td>2</td><td>Ali</td></tr><tr><td>3</td><td>Rick</td></tr><tr><td>4</td><td>Sara</td></tr><tr><td>5</td><td>Edmond</td></tr><tr><td>…</td><td>…</td></tr><tr><td>591828734</td><td>Chansy</td></tr><tr><td>591828735</td><td>Bird</td></tr><tr><td>591828736</td><td>Chip</td></tr><tr><td>…</td><td>…</td></tr><tr><td>999991929</td><td>Dorit</td></tr><tr><td>999991930</td><td>Sally</td></tr><tr><td>999991931</td><td>Kory</td></tr></tbody></table>
-<ul>
-<li><code>ID = 5</code>를 찾는 것은 빠를 수 있지만, <code>ID = 591828738</code>이나 <code>ID = 999991931</code>을 찾으려면 거의 모든 행을 스캔해야 한다</li>
-</ul>
+<table><thead><tr><th>ID</th><th>Name</th></tr></thead><tbody><tr><td>1</td><td>John</td></tr><tr><td>2</td><td>Ali</td></tr><tr><td>…</td><td>…</td></tr><tr><td>591828736</td><td>Chip</td></tr><tr><td>…</td><td>…</td></tr><tr><td>999991931</td><td>Kory</td></tr></tbody></table>
+<p><code>ID = 5</code>는 첫 페이지에서 바로 찾을 수 있지만 <code>ID = 999991931</code>은 사실상 전부를 읽어야
+한다. 그래서 필요한 것이 <strong>검색 공간(search space)을 줄여 주는 별도의 자료구조</strong>,
+즉 인덱스다.</p>
 <hr>
-<h2 id="b-tree">B-Tree<a class="heading-anchor" aria-label="이 제목으로 연결" href="#b-tree"></a></h2>
-<h3 id="기본-개념">기본 개념<a class="heading-anchor" aria-label="이 제목으로 연결" href="#기본-개념"></a></h3>
+<h2 id="왜-이진-탐색-트리로는-안-되는가">왜 이진 탐색 트리로는 안 되는가<a class="heading-anchor" aria-label="이 제목으로 연결" href="#왜-이진-탐색-트리로는-안-되는가"></a></h2>
+<p>정렬된 데이터에서의 검색이라면 이진 탐색 트리(BST)나 AVL 트리, 레드-블랙 트리를
+떠올리는 게 자연스럽다. 실제로 시간 복잡도는 모두 <code>O(log N)</code>이다. 그런데도 디스크
+기반 데이터베이스는 이들을 인덱스로 쓰지 않는다. 이유는 <strong>복잡도의 밑(base)이 다르기
+때문</strong>이다.</p>
+<p>메모리 자료구조의 비용 모델은 “비교 연산 횟수”다. 디스크 자료구조의 비용 모델은
+<strong>“디스크 페이지를 몇 번 읽는가”</strong> 다. 이 둘은 자릿수가 다르다.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>접근</th><th>대략적인 지연 시간</th><th>비율</th></tr></thead><tbody><tr><td>L1 캐시 참조</td><td>~1ns</td><td>1</td></tr><tr><td>메인 메모리 참조</td><td>~100ns</td><td>100</td></tr><tr><td>NVMe SSD 랜덤 읽기</td><td>~100μs</td><td>100,000</td></tr><tr><td>HDD 랜덤 읽기 (seek 포함)</td><td>~10ms</td><td>10,000,000</td></tr></tbody></table>
+<p>이진 트리는 노드 하나에 <strong>키 하나</strong>만 담는다. 노드마다 자식이 둘뿐이므로 10억 개
+항목에 대한 트리 높이는 <code>log₂(10⁹) ≈ 30</code>이다. 각 노드가 디스크의 서로 다른 위치에
+흩어져 있으므로, 검색 한 번에 <strong>약 30번의 랜덤 IO</strong>가 발생한다. SSD에서도 3ms,
+HDD라면 300ms다.</p>
+<p>게다가 디스크는 바이트 단위로 읽을 수 없다. 최소 단위가 페이지(Postgres 8KB,
+MySQL InnoDB 16KB)다. 16바이트짜리 이진 트리 노드 하나를 읽으려고 8KB를 읽어 오면
+<strong>나머지 8,176바이트를 버리는 셈</strong>이다.</p>
+<p>여기서 결론이 나온다.</p>
+<blockquote>
+<p>디스크 자료구조는 <strong>높이를 줄이고</strong>, <strong>한 번 읽은 페이지를 최대한 활용</strong>해야 한다.
+그러려면 노드 하나에 키를 최대한 많이 담아야 한다.</p>
+</blockquote>
+<p>이것이 B-Tree의 설계 동기다. <strong>1 노드 = 1 디스크 페이지</strong>로 맞추고, 그 페이지 안에
+수백 개의 키를 담아 자식을 수백 개로 분기시킨다. 밑이 2인 로그를 밑이 수백인 로그로
+바꾸는 것이다.</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>이진 트리   : log₂(10억)   ≈ 30 레벨  → 랜덤 IO 30회</span></span>
+<span class="line"><span>B-Tree(400) : log₄₀₀(10억) ≈ 3.5 레벨 → 랜덤 IO 4회</span></span></code></pre>
+<hr>
+<h2 id="b-tree의-구조">B-Tree의 구조<a class="heading-anchor" aria-label="이 제목으로 연결" href="#b-tree의-구조"></a></h2>
+<h3 id="정의와-불변식">정의와 불변식<a class="heading-anchor" aria-label="이 제목으로 연결" href="#정의와-불변식"></a></h3>
+<p>차수(order/degree)가 <code>m</code>인 B-Tree는 다음을 만족한다.</p>
 <ul>
-<li><strong>균형 잡힌(Balanced) 데이터 구조</strong>로 빠른 탐색을 위해 설계됨</li>
-<li>B-Tree는 <strong>노드(Node)</strong> 로 구성됨</li>
-<li>차수(degree) “m”인 B-Tree에서 일부 노드는 최대 <strong>m개의 자식 노드</strong>를 가질 수 있음</li>
-<li>각 노드는 최대 <strong>(m-1)개의 요소(element)</strong> 를 가짐</li>
+<li>모든 노드는 최대 <code>m</code>개의 자식과 최대 <code>m-1</code>개의 키를 가진다</li>
+<li>루트를 제외한 모든 노드는 최소 <code>⌈m/2⌉ - 1</code>개의 키를 가진다 (최소 채움률 약 50%)</li>
+<li>노드 안의 키는 정렬되어 있고, 키 사이사이에 자식 포인터가 놓인다</li>
+<li><strong>모든 리프 노드는 같은 깊이에 있다</strong> (완전 균형)</li>
 </ul>
-<h3 id="노드-구조">노드 구조<a class="heading-anchor" aria-label="이 제목으로 연결" href="#노드-구조"></a></h3>
+<p>마지막 조건이 핵심이다. B-Tree는 삽입/삭제 시 회전(rotation)이 아니라
+<strong>분할(split)과 병합(merge)</strong> 으로 균형을 유지하며, 트리가 위로 자란다.
+덕분에 어떤 키를 찾든 <strong>읽는 페이지 수가 트리 높이를 넘지 않는다.</strong></p>
+<p>여기서 두 가지를 구분해 두자.</p>
 <ul>
-<li>각 요소는 <strong>key</strong>와 <strong>value</strong>를 가짐</li>
-<li>value는 보통 해당 행에 대한 <strong>데이터 포인터(data pointer)</strong></li>
-<li>데이터 포인터는 primary key 또는 tuple을 가리킬 수 있음</li>
-<li>노드의 종류: <strong>Root Node</strong>, <strong>Internal Node</strong>, <strong>Leaf Node</strong></li>
-<li><strong>1 노드 = 1 디스크 페이지</strong></li>
+<li><strong>“항상 높이만큼 읽는다”는 뜻은 아니다.</strong> B-Tree는 모든 노드가 value를 함께 들고
+있으므로, 찾는 키가 루트나 내부 노드에 있으면 <strong>거기서 탐색이 끝난다.</strong> 아래
+예시에서 <code>2</code>나 <code>4</code>를 찾는다면 루트 페이지 한 번으로 답이 나온다. 즉 트리 높이는
+<strong>최악의 경우에 대한 상한</strong>이고, 실제 페이지 접근 수는 키가 어느 레벨에 있느냐에
+따라 달라진다.</li>
+<li><strong>“페이지 접근”과 “물리적 디스크 IO”도 다르다.</strong> 상위 레벨 페이지는 접근 빈도가
+높아 버퍼 풀에 상주하는 경우가 많고, 그때는 페이지를 읽어도 디스크까지 가지 않는다.</li>
 </ul>
-<h3 id="b-tree가-검색을-돕는-방식">B-Tree가 검색을 돕는 방식<a class="heading-anchor" aria-label="이 제목으로 연결" href="#b-tree가-검색을-돕는-방식"></a></h3>
+<p>뒤에서 보겠지만 B+Tree는 반대로 <strong>항상 리프까지 내려간다.</strong> 운 좋은 조기 종료를
+포기하는 대신 모든 조회의 비용이 같아져, 응답 시간 예측이 중요한 OLTP에서는
+오히려 이쪽이 다루기 쉽다.</p>
+<h3 id="노드의-내용">노드의 내용<a class="heading-anchor" aria-label="이 제목으로 연결" href="#노드의-내용"></a></h3>
+<p>B-Tree에서는 <strong>모든 노드(루트, 내부, 리프)의 모든 엔트리가 key와 value를 함께 가진다.</strong>
+여기서 value는 보통 실제 행을 가리키는 <strong>데이터 포인터</strong>다.</p>
+<ul>
+<li>PostgreSQL: TID(tuple id) — <code>(페이지 번호, 페이지 내 오프셋)</code>, 6바이트</li>
+<li>MySQL InnoDB: Primary Key 값</li>
+</ul>
 <pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>         [2:702 | 4:704]          ← Root Node</span></span>
 <span class="line"><span>        /       |       \</span></span>
-<span class="line"><span>  [1:701]   [3:703]   [5:705]    ← Leaf Nodes</span></span></code></pre>
-<ul>
-<li>각 요소는 <code>Key:Value</code> 형태 (예: <code>5:705</code>에서 5는 Key, 705는 TID)</li>
-<li>Value(TID)는 실제 테이블의 tuple id / page# / rowid를 가리킴</li>
-</ul>
-<h3 id="검색-예시">검색 예시<a class="heading-anchor" aria-label="이 제목으로 연결" href="#검색-예시"></a></h3>
-<p><strong>Find ID 3:</strong></p>
+<span class="line"><span>  [1:701]   [3:703]   [5:705]     ← Leaf Nodes</span></span></code></pre>
+<p><code>5:705</code>에서 <code>5</code>는 키, <code>705</code>는 그 행이 저장된 위치를 가리키는 포인터다.</p>
+<h3 id="검색-과정">검색 과정<a class="heading-anchor" aria-label="이 제목으로 연결" href="#검색-과정"></a></h3>
+<p><strong><code>ID = 3</code> 찾기</strong></p>
 <ol>
-<li>Root 노드 접근 → <code>2:702</code>, <code>4:704</code> 확인</li>
-<li>3은 2와 4 사이 → 가운데 자식으로 이동</li>
-<li><code>3:703</code> 발견 → TID 703으로 실제 행 접근</li>
+<li>루트 페이지를 읽는다 (IO 1) → <code>2</code>, <code>4</code> 확인</li>
+<li><code>2 &#x3C; 3 &#x3C; 4</code> 이므로 가운데 자식으로 이동</li>
+<li>리프 페이지를 읽는다 (IO 2) → <code>3:703</code> 발견</li>
+<li>TID <code>703</code>으로 힙 페이지를 읽는다 (IO 3) → 실제 행 획득</li>
 </ol>
-<p><strong>Find ID 1:</strong></p>
-<ol>
-<li>Root 노드 접근 → 1은 2보다 작음 → 왼쪽 자식으로 이동</li>
-<li><code>1:701</code> 발견 → TID 701로 실제 행 접근</li>
-</ol>
-<h3 id="더-많은-항목이-추가된-b-tree-11개-항목">더 많은 항목이 추가된 B-Tree (11개 항목)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#더-많은-항목이-추가된-b-tree-11개-항목"></a></h3>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>              [4:704 | 8:802]              ← ROOT 노드</span></span>
+<p>노드 안에서 키를 찾는 것은 이미 메모리에 올라온 페이지 안에서의 이진 탐색이므로
+사실상 공짜다. <strong>비용은 오직 페이지를 몇 개 읽었는가로 결정된다.</strong></p>
+<p>항목이 11개로 늘어난 B-Tree는 이렇게 자란다.</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>              [4:704 | 8:802]              ← Root</span></span>
 <span class="line"><span>             /       |       \</span></span>
-<span class="line"><span>      [2:702]    [6:800]    [10:804]       ← Internal 노드</span></span>
+<span class="line"><span>      [2:702]    [6:800]    [10:804]       ← Internal</span></span>
 <span class="line"><span>       /   \      /   \       /    \</span></span>
-<span class="line"><span> [1:701][3:703][5:705][7:801][9:803][11:805] ← Leaf 노드</span></span></code></pre>
+<span class="line"><span> [1:701][3:703][5:705][7:801][9:803][11:805] ← Leaf</span></span></code></pre>
 <blockquote>
-<p>참고: B-Tree 시각화 도구 - <a href="https://www.cs.usfca.edu/~galles/visualization/BTree.html">https://www.cs.usfca.edu/~galles/visualization/BTree.html</a></p>
+<p>B-Tree 시각화 도구: <a href="https://www.cs.usfca.edu/~galles/visualization/BTree.html">https://www.cs.usfca.edu/~galles/visualization/BTree.html</a></p>
+</blockquote>
+<h3 id="삽입과-분할">삽입과 분할<a class="heading-anchor" aria-label="이 제목으로 연결" href="#삽입과-분할"></a></h3>
+<p>키를 넣을 리프에 자리가 없으면 <strong>노드를 반으로 쪼개고(split), 가운데 키를 부모로
+올린다.</strong> 부모도 가득 차 있으면 부모를 다시 쪼갠다. 이 연쇄가 루트까지 도달하면
+루트가 분할되고 <strong>트리의 높이가 1 증가한다.</strong> B-Tree가 아래가 아니라 위로 자라는
+이유이자, 모든 리프의 깊이가 항상 같은 이유다.</p>
+<p>삭제는 반대다. 노드의 채움률이 최소치 아래로 떨어지면 형제에게서 키를 빌리거나
+(borrow/redistribute) 형제와 병합(merge)한다.</p>
+<hr>
+<h2 id="fanout-이-모든-것을-결정하는-숫자">fanout: 이 모든 것을 결정하는 숫자<a class="heading-anchor" aria-label="이 제목으로 연결" href="#fanout-이-모든-것을-결정하는-숫자"></a></h2>
+<p>트리의 높이는 <strong>fanout(노드 하나가 가지는 자식 수)</strong> 이 결정한다. 그리고 fanout은
+<code>페이지 크기 ÷ 엔트리 크기</code>다. <strong>엔트리를 작게 만들수록 트리가 낮아지고 IO가 줄어든다.</strong></p>
+<p>PostgreSQL의 8KB 페이지에 <code>BIGINT</code> 키를 인덱싱한다고 하자. 먼저 엔트리 하나의
+크기를 구한다.</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>페이지에서 실제로 쓸 수 있는 공간</span></span>
+<span class="line"><span>  8,192B - 페이지 헤더 24B - btree special area 16B ≈ 8,152B</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>엔트리 하나</span></span>
+<span class="line"><span>  IndexTuple 헤더 8B + 키(BIGINT) 8B = 16B</span></span>
+<span class="line"><span>  + 페이지 내 라인 포인터 4B</span></span>
+<span class="line"><span>  = 20B</span></span></code></pre>
+<p>여기서 <strong>리프 페이지와 내부 페이지를 나눠서 계산해야 한다.</strong> PostgreSQL의
+<code>fillfactor</code>(btree 기본값 90)는 <strong>리프 페이지의 채움률</strong>을 가리키는 설정이고,
+내부(non-leaf) 페이지는 인덱스 생성 시 별도 상수인 <code>BTREE_NONLEAF_FILLFACTOR</code>
+= 70%를 목표로 채운다. 이 둘을 뭉뚱그리면 분기 수를 과대평가하게 된다.</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>리프 페이지 용량  L = 8,152 × 0.90 / 20 ≈ 367  →  약 360 엔트리</span></span>
+<span class="line"><span>내부 노드 fanout  F = 8,152 × 0.70 / 20 ≈ 285  →  약 280 자식</span></span></code></pre>
+<p>이제 높이별 수용량이 나온다. <strong>높이 <code>h</code>인 트리는 루트 아래로 <code>h-1</code>번 분기하므로
+리프 페이지가 <code>F^(h-1)</code>개</strong>이고, 리프 하나에 <code>L</code>개의 엔트리가 들어가므로 총
+행 수는 <code>F^(h-1) × L</code>이다.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>트리 높이 h</th><th>리프 페이지 수 <code>F^(h-1)</code></th><th>담을 수 있는 행 수 <code>× L</code></th><th>최대 페이지 접근</th></tr></thead><tbody><tr><td>2</td><td>280</td><td>280 × 360 ≈ <strong>10만</strong></td><td>2</td></tr><tr><td>3</td><td>280² = 78,400</td><td>78,400 × 360 ≈ <strong>2,800만</strong></td><td>3</td></tr><tr><td>4</td><td>280³ ≈ 2,195만</td><td>2,195만 × 360 ≈ <strong>79억</strong></td><td>4</td></tr></tbody></table>
+<p>정확한 값은 키 타입, <code>fillfactor</code> 설정, 중복 키 압축(PostgreSQL 13+의 deduplication),
+InnoDB의 16KB 페이지 등에 따라 달라지므로 <strong>자릿수 감각을 잡는 근사치</strong>로 보면 된다.
+그래도 결론은 견고하다. <strong>10억 행 테이블이라도 인덱스 높이는 4 정도</strong>이며, 상위
+레벨은 버퍼 풀에 상주하므로 실제 디스크 IO는 리프 1회 + 힙 1회 수준으로 떨어진다.</p>
+<p>fanout이 왜 중요한지는 반대로 생각하면 분명하다. 키가 <code>UUID(16B)</code>나 긴 문자열이면
+엔트리가 커지고 fanout이 떨어지며 트리가 높아진다. <strong>인덱스 키를 작게 유지하라</strong>는
+조언은 여기서 나온다.</p>
+<hr>
+<h2 id="b-tree의-두-가지-한계">B-Tree의 두 가지 한계<a class="heading-anchor" aria-label="이 제목으로 연결" href="#b-tree의-두-가지-한계"></a></h2>
+<h3 id="1-내부-노드가-value를-들고-있어-fanout을-낭비한다">1. 내부 노드가 value를 들고 있어 fanout을 낭비한다<a class="heading-anchor" aria-label="이 제목으로 연결" href="#1-내부-노드가-value를-들고-있어-fanout을-낭비한다"></a></h3>
+<p>B-Tree는 모든 노드에 <code>key + value</code>를 저장한다. 그런데 <strong>내부 노드의 value는 탐색에
+전혀 쓰이지 않는다.</strong> 내부 노드가 하는 일은 “어느 자식으로 내려갈지” 결정하는 것뿐이고,
+그 판단에 필요한 것은 키뿐이다. value는 순수한 공간 낭비이며, 그 공간만큼 자식 수가
+줄어 트리가 높아진다.</p>
+<p>value가 6바이트 TID라면 손해는 크지 않다. 그러나 value가 <strong>행 전체</strong>라면(클러스터드
+인덱스), 내부 노드 하나에 겨우 몇 개의 키만 들어가면서 fanout이 붕괴한다.</p>
+<h3 id="2-범위-쿼리가-느리다">2. 범위 쿼리가 느리다<a class="heading-anchor" aria-label="이 제목으로 연결" href="#2-범위-쿼리가-느리다"></a></h3>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><span aria-label="코드 언어: SQL" class="code-language" data-pagefind-ignore="">SQL</span><code><span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">SELECT</span><span style="color:#D73A49;--shiki-dark:#F97583"> *</span><span style="color:#D73A49;--shiki-dark:#F97583"> FROM</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> t </span><span style="color:#D73A49;--shiki-dark:#F97583">WHERE</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> id </span><span style="color:#D73A49;--shiki-dark:#F97583">BETWEEN</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 4</span><span style="color:#D73A49;--shiki-dark:#F97583"> AND</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 9</span><span style="color:#24292E;--shiki-dark:#E1E4E8">;</span></span></code></pre>
+<p>B-Tree에서 이 쿼리를 처리하려면 <strong>중위 순회(in-order traversal)</strong> 를 해야 한다.
+값이 트리 전체에 흩어져 있기 때문이다. 위 11개짜리 트리를 보자.</p>
+<ul>
+<li><code>4</code>는 루트에 있다</li>
+<li><code>5</code>는 루트의 두 번째 서브트리 → <code>6:800</code>의 왼쪽 리프</li>
+<li><code>6</code>은 내부 노드에 있다</li>
+<li><code>7</code>은 다시 리프</li>
+<li><code>8</code>은 루트에 있다</li>
+<li><code>9</code>는 오른쪽 서브트리의 리프</li>
+</ul>
+<p>즉 <strong>리프와 내부 노드를 오르내리며 트리를 헤집고 다녀야 하고</strong>, 접근 패턴이 랜덤이다.
+읽기 순서를 미리 알 수 없으니 스토리지의 prefetch/readahead도 활용할 수 없다.
+정렬된 결과가 필요한 <code>ORDER BY</code>, <code>LIMIT</code>, 페이징도 같은 문제를 겪는다.</p>
+<blockquote>
+<p>실무 쿼리의 상당수는 점 조회(point lookup)가 아니라 범위 조회다.
+<code>created_at > ?</code>, <code>status = ? ORDER BY id LIMIT 20</code>, <code>BETWEEN</code> 같은 것들 말이다.</p>
 </blockquote>
 <hr>
-<h2 id="b-tree의-한계">B-Tree의 한계<a class="heading-anchor" aria-label="이 제목으로 연결" href="#b-tree의-한계"></a></h2>
-<ul>
-<li><strong>모든 노드의 요소가 key와 value를 모두 저장</strong>한다</li>
-<li>Internal 노드가 더 많은 공간을 차지하므로 → <strong>더 많은 I/O가 필요</strong>하고 탐색이 느려질 수 있다</li>
-<li><strong>범위 쿼리(Range Query)가 느리다</strong> - 랜덤 액세스 때문 (예: 1~5 사이의 모든 값 조회)</li>
-<li>Internal 노드를 메모리에 올리기 어렵다</li>
-</ul>
-<h3 id="범위-쿼리-예시-id-between-4-and-9">범위 쿼리 예시: <code>ID BETWEEN 4 AND 9</code><a class="heading-anchor" aria-label="이 제목으로 연결" href="#범위-쿼리-예시-id-between-4-and-9"></a></h3>
-<p>B-Tree에서는 4, 5, 6, 7, 8, 9를 찾기 위해 <strong>트리를 여러 번 탐색</strong>해야 한다:</p>
-<ul>
-<li>Root에서 4 발견, 8 발견</li>
-<li>다시 내려가서 5, 6, 7 발견</li>
-<li>다시 내려가서 9 발견</li>
-<li>각 값을 찾을 때마다 Root부터 다시 탐색 → <strong>비효율적</strong></li>
-</ul>
-<p>→ <strong>B+Tree가 이 두 가지 문제를 모두 해결한다</strong></p>
-<hr>
-<h2 id="btree">B+Tree<a class="heading-anchor" aria-label="이 제목으로 연결" href="#btree"></a></h2>
-<h3 id="핵심-특징">핵심 특징<a class="heading-anchor" aria-label="이 제목으로 연결" href="#핵심-특징"></a></h3>
-<ul>
-<li>B-Tree와 거의 동일하지만, <strong>Internal 노드에는 key만 저장</strong></li>
-<li><strong>Value는 Leaf 노드에만 저장</strong></li>
-<li>Internal 노드가 작아지므로 <strong>더 많은 요소를 담을 수 있음</strong></li>
-<li><strong>Leaf 노드끼리 연결(linked)</strong> 되어 있어, 한 key를 찾으면 앞뒤 값도 쉽게 찾을 수 있음</li>
-<li><strong>범위 쿼리에 매우 유리함</strong></li>
-</ul>
-<h3 id="btree-구조-차수-3">B+Tree 구조 (차수 3)<a class="heading-anchor" aria-label="이 제목으로 연결" href="#btree-구조-차수-3"></a></h3>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>                    [5]                         ← Root (key만)</span></span>
-<span class="line"><span>                   /   \</span></span>
-<span class="line"><span>              [3]       [7 | 9]                 ← Internal (key만)</span></span>
-<span class="line"><span>             /   \     /   |   \</span></span>
-<span class="line"><span>           [2]  [4]  [6]  [8]  [10]             ← Internal (key만)</span></span>
-<span class="line"><span>           / \  / \  / \  / \   / \</span></span>
-<span class="line"><span>Leaf:  1→ 2→ 3→ 4→ 5→ 6→ 7→ 8→ 9→ 10→ 11      ← Leaf (key:value, 서로 연결됨)</span></span>
-<span class="line"><span>       701 702 703 704 705 800 801 802 803 804 805</span></span></code></pre>
-<ul>
-<li>Leaf 노드: <code>1:701 → 2:702 → 3:703 → ... → 11:805</code> (링크드 리스트로 연결)</li>
-</ul>
-<h3 id="범위-쿼리-예시-id-between-4-and-9-1">범위 쿼리 예시: <code>ID BETWEEN 4 AND 9</code><a class="heading-anchor" aria-label="이 제목으로 연결" href="#범위-쿼리-예시-id-between-4-and-9-1"></a></h3>
+<h2 id="btree-두-문제를-한-번에-해결하다">B+Tree: 두 문제를 한 번에 해결하다<a class="heading-anchor" aria-label="이 제목으로 연결" href="#btree-두-문제를-한-번에-해결하다"></a></h2>
+<p>B+Tree는 B-Tree에 두 가지 변경을 가한다.</p>
 <ol>
-<li>Root(5)에서 시작 → 4는 5보다 작으므로 왼쪽으로</li>
-<li>Internal(3) → 4는 3보다 크므로 오른쪽 자식으로</li>
-<li>Internal(4) → Leaf 노드에서 <code>4:704</code> 발견</li>
-<li><strong>Leaf 노드의 링크를 따라가며</strong> 5, 6, 7, 8, 9까지 순차적으로 접근</li>
-<li>트리를 다시 탐색할 필요 없이 <strong>순차 접근으로 완료</strong></li>
+<li><strong>value는 리프 노드에만 저장한다.</strong> 내부 노드에는 키(정확히는 자식을 가르는
+구분자, separator key)만 둔다.</li>
+<li><strong>리프 노드들을 링크드 리스트로 연결한다.</strong> (InnoDB와 PostgreSQL은 양방향)</li>
 </ol>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>                        [ 5 | 9 ]                        ← Root (구분자 키만)</span></span>
+<span class="line"><span>                     /      |      \</span></span>
+<span class="line"><span>             [ 3 ]      [ 7 ]      [ 11 ]                ← Internal (구분자 키만)</span></span>
+<span class="line"><span>            /    \      /   \      /    \</span></span>
+<span class="line"><span>  Leaf:  [1:701 2:702] [3:703 4:704] [5:705 6:800] ...   ← Leaf (key+value)</span></span>
+<span class="line"><span>            ↕            ↕             ↕</span></span>
+<span class="line"><span>         ←──────────── 양방향 링크 ────────────→</span></span></code></pre>
+<p>여기서 주의할 점 하나. <strong>내부 노드의 키는 리프에 다시 등장한다.</strong> 내부 노드의 <code>5</code>는
+데이터가 아니라 “5 미만은 왼쪽, 5 이상은 오른쪽”이라는 이정표이고, 실제 <code>5:705</code>는
+리프에 있다. 그래서 B+Tree는 키를 약간 중복 저장하지만, 그 대가로 얻는 것이 훨씬 크다.</p>
+<h3 id="효과-1-fanout이-커지고-트리가-낮아진다">효과 1: fanout이 커지고 트리가 낮아진다<a class="heading-anchor" aria-label="이 제목으로 연결" href="#효과-1-fanout이-커지고-트리가-낮아진다"></a></h3>
+<p>내부 노드에서 value가 사라지면 같은 페이지에 더 많은 구분자를 담을 수 있다.
+특히 <strong>모든 데이터가 리프에만 있으므로 내부 노드 전체의 크기가 작아진다.</strong></p>
+<p>앞의 수치(<code>L≈360</code>, <code>F≈280</code>)로 10억 행 인덱스를 쌓아 보면 크기 차이가 분명해진다.</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>리프 페이지      1,000,000,000 / 360 ≈ 2,778,000 페이지 ≈ 21GB</span></span>
+<span class="line"><span>그 위 레벨       2,778,000 / 280    ≈     9,921 페이지</span></span>
+<span class="line"><span>그 위 레벨       9,921 / 280        ≈        36 페이지</span></span>
+<span class="line"><span>루트                                =         1 페이지</span></span>
+<span class="line"><span>────────────────────────────────────────────────────────</span></span>
+<span class="line"><span>내부 노드 합계   ≈ 9,958 페이지 ≈ 78MB   (전체 인덱스의 약 0.4%)</span></span></code></pre>
+<blockquote>
+<p>이것이 결정적이다. 21GB짜리 인덱스라도 <strong>탐색에 필요한 내부 노드는 78MB뿐이라
+통째로 메모리에 상주시킬 수 있다.</strong> 그러면 조회당 디스크 IO는 리프 접근 1회로
+줄어든다. 내부 노드에 value를 함께 저장했다면 이 78MB가 몇 배로 불어난다.</p>
+</blockquote>
+<h3 id="효과-2-범위-쿼리가-순차-접근이-된다">효과 2: 범위 쿼리가 순차 접근이 된다<a class="heading-anchor" aria-label="이 제목으로 연결" href="#효과-2-범위-쿼리가-순차-접근이-된다"></a></h3>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><span aria-label="코드 언어: SQL" class="code-language" data-pagefind-ignore="">SQL</span><code><span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">SELECT</span><span style="color:#D73A49;--shiki-dark:#F97583"> *</span><span style="color:#D73A49;--shiki-dark:#F97583"> FROM</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> t </span><span style="color:#D73A49;--shiki-dark:#F97583">WHERE</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> id </span><span style="color:#D73A49;--shiki-dark:#F97583">BETWEEN</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 4</span><span style="color:#D73A49;--shiki-dark:#F97583"> AND</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 9</span><span style="color:#24292E;--shiki-dark:#E1E4E8">;</span></span></code></pre>
+<ol>
+<li>루트 → 내부 → 리프로 내려가 <strong>시작점 <code>4</code>를 한 번만 찾는다</strong> (높이만큼의 IO)</li>
+<li>리프의 링크를 따라 <code>5, 6, 7, 8, 9</code>를 <strong>옆으로 읽어 나간다</strong></li>
+<li><code>9</code>를 넘어서면 멈춘다</li>
+</ol>
+<p>핵심은 <strong>트리를 다시 탐색하지 않는다</strong>는 점이다. B-Tree라면 값 하나를 읽을 때마다
+루트부터 다시 내려가야 했지만, B+Tree는 한 번 내려간 뒤로는 리프 레벨에서 옆으로만
+이동한다. N개를 읽는 비용이 <code>N × 트리 높이</code>에서 <code>트리 높이 + N</code>으로 바뀐다.</p>
+<h4 id="잠깐-readahead가-뭔가">잠깐, readahead가 뭔가?<a class="heading-anchor" aria-label="이 제목으로 연결" href="#잠깐-readahead가-뭔가"></a></h4>
+<p><strong>readahead(선행 읽기, prefetch)</strong> 는 “지금 요청한 블록 다음 블록도 곧 필요할 것”
+이라고 예측해서 <strong>요청하기 전에 미리 읽어 두는</strong> 최적화다. OS 커널, 스토리지
+컨트롤러, DBMS가 각자 층위에서 수행한다.</p>
+<p>readahead가 없다면 페이지 N개를 순서대로 읽는 과정은 이렇게 흘러간다.</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>readahead 없음 (매번 요청 → 대기 → 처리)</span></span>
+<span class="line"><span>  요청 P1 ─── 대기 100μs ───▶ 처리</span></span>
+<span class="line"><span>                              요청 P2 ─── 대기 100μs ───▶ 처리</span></span>
+<span class="line"><span>                                                          요청 P3 ─ ...</span></span>
+<span class="line"><span>  총 시간 ≈ N × 100μs        ← 지연 시간이 N번 그대로 누적된다</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>readahead 있음 (순차 패턴 감지 후 미리 당겨옴)</span></span>
+<span class="line"><span>  요청 P1 ─── 대기 100μs ───▶ 처리</span></span>
+<span class="line"><span>       └ 커널이 P2..P16을 미리 읽어 캐시에 올려 둠</span></span>
+<span class="line"><span>                              P2 요청 → 캐시 히트(즉시)</span></span>
+<span class="line"><span>                              P3 요청 → 캐시 히트(즉시) ...</span></span>
+<span class="line"><span>  총 시간 ≈ 100μs + α        ← 지연 시간이 한 번으로 압축된다</span></span></code></pre>
+<p>핵심은 <strong>디스크의 대역폭이 아니라 지연 시간(latency)을 숨긴다</strong>는 데 있다.
+SSD는 대역폭이 넉넉하지만 요청 하나하나의 왕복 지연은 여전히 존재하고, 그
+지연을 N번 순서대로 기다리는 것이 순차 스캔의 진짜 비용이다. readahead는 이
+왕복을 병렬화·일괄화해서, 작은 요청 여러 번을 <strong>큰 요청 몇 번</strong>으로 바꾼다.</p>
+<p>각 층에서 실제로 동작하는 것들은 다음과 같다.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>층위</th><th>메커니즘</th></tr></thead><tbody><tr><td>Linux 커널</td><td>파일에 대한 순차 접근을 감지하면 뒤따르는 페이지를 미리 읽는다 (<code>blockdev --setra</code>로 조정)</td></tr><tr><td>PostgreSQL</td><td><code>effective_io_concurrency</code>로 여러 페이지 읽기를 동시에 요청한다. OS 캐시 readahead에도 상당 부분 의존한다</td></tr><tr><td>MySQL InnoDB</td><td>익스텐트(1MB) 안에서 순차 접근이 감지되면 다음 익스텐트를 통째로 당겨온다 (linear read-ahead, <code>innodb_read_ahead_threshold</code>)</td></tr></tbody></table>
+<p>그리고 여기가 요점이다. <strong>이 모든 메커니즘은 “접근 패턴이 순차적으로 보일 때”만
+발동한다.</strong> 페이지 번호가 뒤죽박죽이면 커널도 InnoDB도 다음에 무엇을 읽을지 예측할
+수 없어 readahead가 꺼지고, 그러면 위의 첫 번째 그림으로 돌아간다.</p>
+<h4 id="그래서-링크가-보장하는-것과-보장하지-않는-것">그래서 링크가 보장하는 것과 보장하지 않는 것<a class="heading-anchor" aria-label="이 제목으로 연결" href="#그래서-링크가-보장하는-것과-보장하지-않는-것"></a></h4>
+<p><strong>리프 링크가 보장하는 것은 키의 논리적 순서이지, 디스크상의 물리적 인접성이
+아니다.</strong> 갓 생성했거나 <code>REINDEX</code> / <code>OPTIMIZE TABLE</code>로 재구축한 인덱스는 리프가 키
+순서대로 붙어 있어 위의 readahead 이점을 그대로 받는다. 그러나 랜덤 삽입과 페이지
+분할이 누적되면 논리적으로 이웃한 리프가 디스크상 멀리 떨어지고(뒤의
+“페이지 분할과 단편화” 참고), 그때 범위 스캔은 링크를 따라가면서도 물리적으로는
+랜덤 읽기를 하게 된다.</p>
+<blockquote>
+<p>리프 링크가 <strong>확실히</strong> 없애 주는 것은 반복적인 루트 탐색이다.
+물리적 순차성은 인덱스가 정돈되어 있을 때 따라오는 보너스다.</p>
+</blockquote>
+<p>PostgreSQL에서는 <code>pg_stats</code>의 <code>correlation</code> 값(논리적 순서와 물리적 순서의 상관
+계수, 1에 가까울수록 정돈됨)으로 이 상태를 가늠할 수 있고, 플래너도 이 값을 보고
+인덱스 스캔 비용을 추정한다.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th></th><th>B-Tree</th><th>B+Tree</th></tr></thead><tbody><tr><td>시작점 찾기</td><td>높이만큼 페이지 접근</td><td>높이만큼 페이지 접근</td></tr><tr><td>이후 N개 읽기</td><td>매번 루트부터 재탐색</td><td>리프 링크를 따라 이동</td></tr><tr><td>총 페이지 접근</td><td><code>N × 높이</code>에 가까움</td><td><code>높이 + 리프 페이지 수</code></td></tr><tr><td>readahead</td><td>활용 불가</td><td>인덱스가 정돈되어 있으면 활용 가능</td></tr></tbody></table>
+<p><code>ORDER BY id</code>, <code>LIMIT/OFFSET</code> 페이징, <code>MIN()</code>/<code>MAX()</code>, 커서 기반 페이징이 모두 같은
+이유로 빨라진다. <strong>리프 레벨 자체가 정렬된 연결 리스트</strong>이기 때문이다.</p>
+<h3 id="효과-3-리프-레벨만-훑으면-전체-스캔이-된다">효과 3: 리프 레벨만 훑으면 전체 스캔이 된다<a class="heading-anchor" aria-label="이 제목으로 연결" href="#효과-3-리프-레벨만-훑으면-전체-스캔이-된다"></a></h3>
+<p>인덱스만으로 답할 수 있는 쿼리(covering index / index-only scan)에서는
+힙에 가지 않고 리프 체인만 순회하면 된다. <code>COUNT(*)</code>나 집계에도 유리하다.</p>
 <hr>
-<h2 id="btree--dbms-고려사항">B+Tree &#x26; DBMS 고려사항<a class="heading-anchor" aria-label="이 제목으로 연결" href="#btree--dbms-고려사항"></a></h2>
+<h2 id="실제-dbms는-어떻게-구현하는가">실제 DBMS는 어떻게 구현하는가<a class="heading-anchor" aria-label="이 제목으로 연결" href="#실제-dbms는-어떻게-구현하는가"></a></h2>
+<h3 id="용어에-대한-주의">용어에 대한 주의<a class="heading-anchor" aria-label="이 제목으로 연결" href="#용어에-대한-주의"></a></h3>
+<p>MySQL과 PostgreSQL 문서 모두 인덱스 타입을 <strong>“B-tree”</strong> 라고 부르지만,
+실제 구현은 거의 예외 없이 <strong>B+Tree</strong> 다. PostgreSQL의 <code>nbtree</code>는 정확히는
+동시성을 위해 각 레벨에 오른쪽 형제 포인터를 둔 <strong>Lehman-Yao B-link tree</strong> 변형이다.
+문서의 “B-tree”를 문자 그대로의 B-Tree로 읽지 않는 편이 좋다.</p>
+<h3 id="mysql-innodb-클러스터드-인덱스">MySQL InnoDB: 클러스터드 인덱스<a class="heading-anchor" aria-label="이 제목으로 연결" href="#mysql-innodb-클러스터드-인덱스"></a></h3>
+<p>InnoDB의 테이블은 <strong>그 자체가 Primary Key로 정렬된 B+Tree</strong>다
+(Index Organized Table). 별도의 힙이 없다.</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>Primary Key(클러스터드) B+Tree</span></span>
+<span class="line"><span>   Leaf = [PK | 나머지 컬럼 전부]   ← 리프가 곧 테이블 데이터</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Secondary Index B+Tree</span></span>
+<span class="line"><span>   Leaf = [인덱스 키 | PK 값]      ← 힙 포인터가 아니라 PK를 저장</span></span></code></pre>
+<h4 id="bookmark-lookup-세컨더리-인덱스는-왜-두-번-탐색하는가">bookmark lookup: 세컨더리 인덱스는 왜 두 번 탐색하는가<a class="heading-anchor" aria-label="이 제목으로 연결" href="#bookmark-lookup-세컨더리-인덱스는-왜-두-번-탐색하는가"></a></h4>
+<p>PostgreSQL의 세컨더리 인덱스는 리프에 TID, 즉 <strong>“힙의 몇 번 페이지, 몇 번째 슬롯”</strong>
+이라는 물리적 주소를 담는다. 주소를 알고 있으니 힙 페이지 하나만 곧장 읽으면 된다.</p>
+<p>반면 InnoDB의 세컨더리 인덱스는 리프에 <strong>PK 값</strong>을 담는다. 물리적 주소가 아니라
+논리적 식별자다. 그래서 실제 행에 닿으려면 그 PK를 들고 <strong>클러스터드 인덱스를
+루트부터 다시 탐색</strong>해야 한다. 이 되돌아가기를 <strong>bookmark lookup</strong>
+(또는 back to index / 북마크 조회)이라고 부른다.</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><span aria-label="코드 언어: SQL" class="code-language" data-pagefind-ignore="">SQL</span><code><span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">-- users(id BIGINT PK, email VARCHAR, name VARCHAR, ...)</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">-- INDEX idx_email (email)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">SELECT</span><span style="color:#D73A49;--shiki-dark:#F97583"> name</span><span style="color:#D73A49;--shiki-dark:#F97583"> FROM</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> users </span><span style="color:#D73A49;--shiki-dark:#F97583">WHERE</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> email </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> 'a@b.com'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">;</span></span></code></pre>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>1) 세컨더리 인덱스 idx_email 탐색            ← 높이만큼 페이지 접근 (예: 3)</span></span>
+<span class="line"><span>     리프에서 발견: ['a@b.com' | id=1234]</span></span>
+<span class="line"><span>     └ 여기에는 name이 없다. 있는 것은 PK뿐.</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>2) 클러스터드 인덱스(PK)를 id=1234로 재탐색   ← 다시 높이만큼 (예: 3)</span></span>
+<span class="line"><span>     리프에서 발견: [1234 | email, name, ...]  ← 리프가 곧 행 전체</span></span>
+<span class="line"><span>     └ 여기서 name을 얻는다.</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>합계: 트리 탐색 2회</span></span></code></pre>
+<p><strong>왜 이렇게 만들었나?</strong> InnoDB의 리프는 곧 행 데이터이므로, 페이지 분할이나 행 이동이
+일어나면 행의 물리적 위치가 바뀐다. 세컨더리 인덱스가 물리적 주소를 들고 있었다면
+행이 움직일 때마다 <strong>모든 세컨더리 인덱스를 갱신</strong>해야 한다. PK 값은 변하지 않으므로
+그럴 필요가 없다. 물리적 안정성을 얻는 대신 조회 시 한 번 더 탐색하는 것이다.</p>
+<p><strong>언제 두 번째 탐색이 사라지나?</strong> 필요한 컬럼이 세컨더리 인덱스 안에 전부 들어 있을
+때다(<strong>covering index</strong>). 위 쿼리라면 <code>INDEX idx_email_name (email, name)</code>을 만들면
+1단계 리프에서 <code>name</code>까지 얻을 수 있어 클러스터드 인덱스로 돌아갈 일이 없다.
+<code>EXPLAIN</code>의 <code>Extra</code>에 <code>Using index</code>가 찍히면 커버링이 된 것이다.</p>
+<h4 id="pk-크기가-모든-인덱스에-전파된다">PK 크기가 모든 인덱스에 전파된다<a class="heading-anchor" aria-label="이 제목으로 연결" href="#pk-크기가-모든-인덱스에-전파된다"></a></h4>
+<p>PK 값이 <strong>모든 세컨더리 인덱스의 모든 리프 엔트리에 복제</strong>되므로, PK 타입 선택의
+비용이 인덱스 개수만큼 곱해진다.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>PK 타입</th><th>크기</th><th>세컨더리 인덱스 5개일 때 1억 행 기준 추가 비용</th></tr></thead><tbody><tr><td><code>BIGINT</code></td><td>8B</td><td>8B × 1억 × 5 ≈ 4GB</td></tr><tr><td><code>BINARY(16)</code> (UUID)</td><td>16B</td><td>16B × 1억 × 5 ≈ 8GB</td></tr><tr><td><code>CHAR(36)</code> (UUID 문자열)</td><td>36B</td><td>36B × 1억 × 5 ≈ 18GB</td></tr></tbody></table>
+<p>크기가 커지면 그만큼 fanout이 떨어져 <strong>세컨더리 인덱스의 높이까지 함께 올라간다.</strong>
+UUID를 PK로 써야 한다면 최소한 <code>CHAR(36)</code>이 아니라 <code>BINARY(16)</code>으로 저장할 일이다.</p>
+<h3 id="postgresql-힙--세컨더리-인덱스">PostgreSQL: 힙 + 세컨더리 인덱스<a class="heading-anchor" aria-label="이 제목으로 연결" href="#postgresql-힙--세컨더리-인덱스"></a></h3>
+<p>PostgreSQL에는 클러스터드 인덱스가 없다. 데이터는 힙에 있고, <strong>PK를 포함한 모든
+인덱스가 동등하게 세컨더리 인덱스</strong>이며 리프에 TID(6B)를 저장한다.</p>
 <ul>
-<li>Leaf 포인터의 비용은 저렴하다 (cheap)</li>
-<li><strong>1 노드 = 1 DBMS 페이지</strong> (대부분의 DBMS)</li>
-<li>Internal 노드는 key만 저장하므로 <strong>메모리에 쉽게 올릴 수 있어</strong> 빠른 탐색 가능</li>
-<li>Leaf 노드는 <strong>힙(heap)의 데이터 파일에 존재</strong>할 수 있음</li>
-<li><strong>대부분의 DBMS 시스템이 B+Tree를 사용</strong>한다</li>
+<li>PK 크기가 다른 인덱스로 전파되지 않는다. 모든 인덱스가 6바이트 TID만 저장한다</li>
+<li>대신 인덱스 조회는 <strong>항상 힙 접근이 필요</strong>하다. InnoDB의 클러스터드 인덱스처럼
+“리프가 곧 데이터”인 경우가 없다</li>
+<li>bookmark lookup은 없다. TID가 곧 물리적 주소이므로 힙 페이지 하나를 바로 읽는다</li>
 </ul>
-<h3 id="스토리지-구조">스토리지 구조<a class="heading-anchor" aria-label="이 제목으로 연결" href="#스토리지-구조"></a></h3>
-<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>┌─────────────────────────────────────────┐</span></span>
-<span class="line"><span>│  Internal 노드 (key만)                    │  ← 메모리에 올려야 함</span></span>
-<span class="line"><span>│  Root + Internal Nodes                   │</span></span>
-<span class="line"><span>└─────────────────────────────────────────┘</span></span>
-<span class="line"><span>┌─────────────────────────────────────────┐</span></span>
-<span class="line"><span>│  Leaf 노드 (key + value)                  │  ← 디스크에 있어도 되지만</span></span>
-<span class="line"><span>│  1:701 → 2:702 → 3:703 → ...            │     메모리에 있는 것이 좋음</span></span>
-<span class="line"><span>└─────────────────────────────────────────┘</span></span></code></pre>
+<h4 id="visibility-map과-vacuum-index-only-scan의-전제-조건">visibility map과 VACUUM: index-only scan의 전제 조건<a class="heading-anchor" aria-label="이 제목으로 연결" href="#visibility-map과-vacuum-index-only-scan의-전제-조건"></a></h4>
+<p>PostgreSQL은 MVCC를 위해 <strong>행의 가시성 정보(어느 트랜잭션이 만들었고 지웠는지)를
+힙 튜플에만 저장한다.</strong> 인덱스 엔트리에는 없다. 그래서 원칙적으로는 인덱스에서 값을
+찾아도 <strong>“이 행이 지금 내 트랜잭션에 보이는 행인가”</strong> 를 확인하러 힙에 가야 한다.
+인덱스 안에 필요한 컬럼이 다 있어도 마찬가지다.</p>
+<p>이 확인을 건너뛰게 해 주는 것이 <strong>visibility map(VM)</strong> 이다. 힙 페이지당 2비트짜리
+아주 작은 비트맵으로, 그중 <code>all-visible</code> 비트는 <strong>“이 페이지의 모든 튜플은 현재
+모든 트랜잭션에게 보인다”</strong> 를 뜻한다.</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>index-only scan의 판단 흐름</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>인덱스 리프에서 (키, TID) 획득</span></span>
+<span class="line"><span>        │</span></span>
+<span class="line"><span>        ├─ VM에서 TID의 힙 페이지가 all-visible?</span></span>
+<span class="line"><span>        │        │</span></span>
+<span class="line"><span>        │        ├─ YES → 힙 접근 생략. 인덱스 값만으로 결과 반환  ✅</span></span>
+<span class="line"><span>        │        └─ NO  → 힙 페이지를 읽어 가시성 확인 (heap fetch) ❌</span></span></code></pre>
+<p><strong>그런데 이 all-visible 비트를 세워 주는 것이 <code>VACUUM</code>이다.</strong> 따라서:</p>
+<ul>
+<li><code>INSERT</code>/<code>UPDATE</code>가 들어온 직후의 페이지는 all-visible이 아니다. 방금 대량 적재한
+테이블은 인덱스가 완벽해도 index-only scan이 힙을 읽는다</li>
+<li>autovacuum이 뒤처지면(대량 갱신, 긴 트랜잭션이 오래 열려 있어 정리가 밀리는 경우)
+index-only scan을 노린 설계가 조용히 무력화된다</li>
+<li><code>EXPLAIN (ANALYZE, BUFFERS)</code>의 <strong><code>Heap Fetches:</code></strong> 값이 이 상태를 그대로 보여 준다.
+<code>Heap Fetches: 0</code>이면 의도대로 동작한 것이고, 숫자가 크면 이름만 index-only scan이다</li>
+</ul>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><span aria-label="코드 언어: SQL" class="code-language" data-pagefind-ignore="">SQL</span><code><span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">EXPLAIN (ANALYZE, BUFFERS) </span><span style="color:#D73A49;--shiki-dark:#F97583">SELECT</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> id </span><span style="color:#D73A49;--shiki-dark:#F97583">FROM</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> t </span><span style="color:#D73A49;--shiki-dark:#F97583">WHERE</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> id </span><span style="color:#D73A49;--shiki-dark:#F97583">BETWEEN</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 100</span><span style="color:#D73A49;--shiki-dark:#F97583"> AND</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 200</span><span style="color:#24292E;--shiki-dark:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">--  Index Only Scan using t_pkey on t  (actual rows=101 ...)</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">--    Heap Fetches: 101      ← VM이 안 서 있다. VACUUM 후 0이 된다</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">VACUUM (ANALYZE) t;</span></span></code></pre>
+<p>정리하면, PostgreSQL의 index-only scan은 <strong>인덱스 설계만으로 얻어지지 않고
+VACUUM 상태에 의존한다.</strong> InnoDB의 covering index가 구조만으로 성립하는 것과
+대조되는 지점이다.</p>
+<h4 id="hot-update-인덱스-갱신을-피하는-장치">HOT update: 인덱스 갱신을 피하는 장치<a class="heading-anchor" aria-label="이 제목으로 연결" href="#hot-update-인덱스-갱신을-피하는-장치"></a></h4>
+<p>PostgreSQL의 <code>UPDATE</code>는 제자리 수정이 아니라 <strong>새 튜플을 쓰고 옛 튜플을 죽은 것으로
+표시</strong>하는 방식이다. 새 튜플은 위치가 다르므로 TID가 바뀌고, 원칙대로라면 <strong>그 테이블의
+모든 인덱스</strong>가 새 TID를 가리키도록 갱신되어야 한다. 인덱스가 5개면 <code>UPDATE</code> 한 번에
+B+Tree 6개를 건드리는 셈이다.</p>
+<p><strong>HOT(Heap-Only Tuple) update</strong>는 두 조건이 맞을 때 이 비용을 없앤다.</p>
+<ol>
+<li><strong>갱신된 컬럼 중 인덱싱된 것이 하나도 없다</strong> — 인덱스의 키 값이 안 변했다는 뜻</li>
+<li><strong>새 버전을 같은 힙 페이지 안에 넣을 자리가 있다</strong></li>
+</ol>
+<p>이때는 인덱스를 전혀 건드리지 않고, 옛 튜플에서 새 튜플로 이어지는 <strong>페이지 내부
+포인터 체인</strong>만 만든다. 인덱스는 계속 옛 TID를 가리키고, 조회 시 그 페이지에서 체인을
+따라가 최신 버전을 찾는다.</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><span aria-label="코드 언어: Text" class="code-language" data-pagefind-ignore="">Text</span><code><span class="line"><span>[힙 페이지 7]</span></span>
+<span class="line"><span>  슬롯 2: (구버전) ──HOT chain──▶ 슬롯 9: (신버전)</span></span>
+<span class="line"><span>     ▲</span></span>
+<span class="line"><span>     └── 인덱스는 여전히 (7,2)를 가리킨다. 인덱스 갱신 0회.</span></span></code></pre>
+<p>실무에서 끌어낼 수 있는 것은 두 가지다.</p>
+<ul>
+<li><strong>자주 갱신되는 컬럼에는 인덱스를 만들지 않는다.</strong> 인덱스 하나 때문에 HOT이
+깨지면 그 테이블의 모든 <code>UPDATE</code>가 전체 인덱스 갱신으로 바뀐다</li>
+<li><strong><code>fillfactor</code>를 낮춰 페이지에 여유 공간을 둔다.</strong> 갱신이 잦은 테이블에
+<code>ALTER TABLE t SET (fillfactor = 80)</code>처럼 설정하면 같은 페이지에 새 버전이 들어갈
+자리가 남아 HOT 성공률이 올라간다 (기본값은 힙 100, btree 90)</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>항목</th><th>MySQL (InnoDB)</th><th>PostgreSQL</th></tr></thead><tbody><tr><td>테이블 저장</td><td>PK 기준 클러스터드 B+Tree</td><td>힙 (정렬 없음)</td></tr><tr><td>세컨더리 인덱스 value</td><td>PK 값</td><td>TID (페이지, 오프셋)</td></tr><tr><td>PK 크기의 영향</td><td>모든 세컨더리 인덱스에 전파</td><td>영향 없음</td></tr><tr><td>PK 순서 범위 스캔</td><td>리프가 곧 데이터, 매우 빠름</td><td>힙 랜덤 접근 발생</td></tr><tr><td>인덱스만으로 조회</td><td>covering index</td><td>index-only scan + visibility map</td></tr><tr><td>페이지 크기</td><td>16KB</td><td>8KB</td></tr><tr><td>언더플로 시 병합</td><td><code>MERGE_THRESHOLD</code>(기본 50%)로 병합</td><td>병합하지 않음, 빈 페이지만 회수</td></tr></tbody></table>
 <hr>
-<h2 id="btree-스토리지-비용-mysql-vs-postgres">B+Tree 스토리지 비용: MySQL vs Postgres<a class="heading-anchor" aria-label="이 제목으로 연결" href="#btree-스토리지-비용-mysql-vs-postgres"></a></h2>
-<h3 id="secondary-index의-value가-가리키는-대상">Secondary Index의 Value가 가리키는 대상<a class="heading-anchor" aria-label="이 제목으로 연결" href="#secondary-index의-value가-가리키는-대상"></a></h3>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<table><thead><tr><th>DBMS</th><th>Secondary Index Value가 가리키는 대상</th></tr></thead><tbody><tr><td><strong>Postgres</strong></td><td>tuple을 직접 가리킴 (TID)</td></tr><tr><td><strong>MySQL (InnoDB)</strong></td><td>Primary Key를 가리킴</td></tr></tbody></table>
-<h3 id="주요-차이점">주요 차이점<a class="heading-anchor" aria-label="이 제목으로 연결" href="#주요-차이점"></a></h3>
+<h2 id="btree의-대가">B+Tree의 대가<a class="heading-anchor" aria-label="이 제목으로 연결" href="#btree의-대가"></a></h2>
+<p>B+Tree는 만능이 아니다. 읽기에 최적화된 구조인 만큼 쓰기에서 값을 치른다.</p>
+<p><strong>페이지 분할(page split)과 단편화.</strong> 삽입 위치가 랜덤하면 가득 찬 리프가 계속
+쪼개진다. 분할된 페이지는 각각 절반만 차서 인덱스 크기가 부풀고(bloat), 논리적
+순서와 물리적 순서가 어긋나 범위 스캔의 순차성이 무너진다.</p>
+<p><strong>쓰기 증폭(write amplification).</strong> 8바이트 키 하나를 추가해도 8KB 페이지 전체가
+더티가 되어 다시 쓰인다. 여기에 WAL 기록까지 더해진다.</p>
+<p><strong>인덱스 개수만큼 곱해지는 쓰기 비용.</strong> <code>INSERT</code> 한 번은 테이블 쓰기 한 번이 아니라
+<code>1 + 인덱스 개수</code>만큼의 B+Tree 갱신이다. 쓰지 않는 인덱스는 순수한 손해다.</p>
+<p>이 때문에 쓰기가 압도적으로 많은 워크로드에서는 <strong>LSM Tree</strong>(RocksDB, Cassandra,
+ScyllaDB 등)를 쓴다. LSM은 쓰기를 메모리에 모아 순차적으로 flush해 랜덤 쓰기를
+없애는 대신, 읽기 시 여러 SSTable을 확인해야 하고 컴팩션 비용을 부담한다.
+<strong>B+Tree는 읽기 최적화, LSM Tree는 쓰기 최적화</strong>라는 트레이드오프다.</p>
+<hr>
+<h2 id="실무로-옮기면">실무로 옮기면<a class="heading-anchor" aria-label="이 제목으로 연결" href="#실무로-옮기면"></a></h2>
+<p>지금까지 본 구조에서 인덱스 설계 원칙이 거의 기계적으로 따라 나온다.</p>
 <ul>
-<li><strong>MySQL (InnoDB)</strong>: Primary Key 데이터 타입이 크면 (예: UUID) <strong>모든 secondary index에서 bloat 발생</strong> 가능</li>
-<li><strong>MySQL (InnoDB)</strong>: Leaf 노드에 <strong>전체 행(row) 데이터가 포함</strong>됨 (IOT / Clustered Index이므로)</li>
-<li><strong>Postgres</strong>: Secondary index가 tuple을 직접 가리키므로 primary key 크기의 영향을 덜 받음</li>
+<li><strong>랜덤 PK를 피하라.</strong> 삽입 위치는 키 값이 결정한다. <code>UUIDv4</code>처럼 무작위인 키는
+트리 전역에 페이지 분할을 일으키고 작업 집합을 인덱스 전체로 넓힌다</li>
+<li><strong>인덱스 키를 작게 유지하라.</strong> 키 크기가 fanout을 정하고, fanout이 트리 높이를
+정한다. 긴 문자열에는 접두사 인덱스나 해시 컬럼을 쓴다</li>
+<li><strong>복합 인덱스의 컬럼 순서가 곧 정렬 순서다.</strong> <code>(a, b)</code> 리프는 <code>a</code>로 먼저 정렬되고
+<code>a</code>가 같은 것끼리 <code>b</code>로 정렬된다. 그래서 <code>b</code> 단독 조건은 연속 구간이 아니다</li>
+<li><strong>범위 조건 컬럼은 뒤로 보내라.</strong> 범위 조건이 걸린 순간부터 뒤쪽 컬럼의 정렬이
+깨져, 구간을 좁히지 못하고 읽은 뒤 버리는 필터가 된다</li>
+<li><strong>커버링 인덱스를 활용하라.</strong> 리프에 필요한 값이 다 있으면 InnoDB의 bookmark
+lookup이나 PostgreSQL의 힙 접근이 통째로 사라진다</li>
 </ul>
+<p>각 원칙의 근거와 예외, 그리고 접두사 인덱스의 N을 정하는 법이나 PostgreSQL <code>INCLUDE</code>
+절의 쓰임 같은 구체적인 적용 방법은 별도 글로 정리했다.</p>
+<blockquote>
+<p><strong>→ <a href="../btree-index-design-practices.pub/">B+Tree 구조에서 끌어내는 인덱스 설계 원칙 5가지</a></strong></p>
+</blockquote>
 <hr>
 <h2 id="summary">Summary<a class="heading-anchor" aria-label="이 제목으로 연결" href="#summary"></a></h2>
 
@@ -299,4 +699,39 @@
 
 
 
-<table><thead><tr><th>항목</th><th>B-Tree</th><th>B+Tree</th></tr></thead><tbody><tr><td>Internal 노드 저장</td><td>key + value</td><td><strong>key만</strong></td></tr><tr><td>Leaf 노드 연결</td><td>연결 없음</td><td><strong>링크드 리스트로 연결</strong></td></tr><tr><td>범위 쿼리</td><td>느림 (랜덤 액세스)</td><td><strong>빠름 (순차 접근)</strong></td></tr><tr><td>Internal 노드 크기</td><td>큼</td><td><strong>작음 (더 많은 key 저장 가능)</strong></td></tr><tr><td>메모리 효율성</td><td>낮음</td><td><strong>높음</strong></td></tr><tr><td>DBMS 채택</td><td>드묾</td><td><strong>대부분의 DBMS가 사용</strong></td></tr></tbody></table></div><footer class="mt-16"><div data-sw-separator role="separator" aria-orientation="horizontal" data-orientation="horizontal" class="bg-border shrink-0 h-[1px] w-full" data-slot="separator"></div><div class="mt-5 flex flex-wrap gap-2" aria-label="태그"><a data-sw-badge="true" class="inline-flex items-center gap-1.5 rounded-full font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 px-2.5 py-0.5 text-xs [&amp;_svg:not([class*='size-'])]:size-3 cursor-pointer hover:bg-primary/20 bg-primary/10 text-foreground focus-visible:ring-primary/50" href="/playground/tags/engineering/" data-slot="badge">#engineering</a><a data-sw-badge="true" class="inline-flex items-center gap-1.5 rounded-full font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 px-2.5 py-0.5 text-xs [&amp;_svg:not([class*='size-'])]:size-3 cursor-pointer hover:bg-primary/20 bg-primary/10 text-foreground focus-visible:ring-primary/50" href="/playground/tags/resources/" data-slot="badge">#resources</a><a data-sw-badge="true" class="inline-flex items-center gap-1.5 rounded-full font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 px-2.5 py-0.5 text-xs [&amp;_svg:not([class*='size-'])]:size-3 cursor-pointer hover:bg-primary/20 bg-primary/10 text-foreground focus-visible:ring-primary/50" href="/playground/tags/database/" data-slot="badge">#database</a><a data-sw-badge="true" class="inline-flex items-center gap-1.5 rounded-full font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 px-2.5 py-0.5 text-xs [&amp;_svg:not([class*='size-'])]:size-3 cursor-pointer hover:bg-primary/20 bg-primary/10 text-foreground focus-visible:ring-primary/50" href="/playground/tags/backend/" data-slot="badge">#backend</a></div><nav class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2" aria-label="이전과 다음 글"><a class="group block no-underline" rel="prev" href="/playground/backend/database/indexes-storage/bloom-filter.pub/"><div data-sw-card class="bg-card text-card-foreground group/card ring-border flex flex-col gap-(--card-spacing) rounded-xl py-(--card-spacing) ring-1 has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl [--card-spacing:--spacing(5)] min-h-24 justify-center transition-colors group-hover:border-primary/35" data-size="md" data-slot="card"><div data-sw-card-content class="px-(--card-spacing)" data-slot="card-content"><small class="text-muted-foreground">이전 글</small><span class="mt-1 block group-hover:text-primary-accent">← Bloom Filters</span></div></div></a><a class="group block no-underline" rel="next" href="/playground/backend/database/fundamentals/webapp-security-performance-best-practices.pub/"><div data-sw-card class="bg-card text-card-foreground group/card ring-border flex flex-col gap-(--card-spacing) rounded-xl py-(--card-spacing) ring-1 has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl [--card-spacing:--spacing(5)] min-h-24 justify-center text-right transition-colors group-hover:border-primary/35" data-size="md" data-slot="card"><div data-sw-card-content class="px-(--card-spacing)" data-slot="card-content"><small class="text-muted-foreground">다음 글</small><span class="mt-1 block group-hover:text-primary-accent">웹앱에서 보안과 성능을 높이기 위한 best practice →</span></div></div></a></nav></footer></article><aside class="sticky top-24 hidden max-h-[calc(100vh-8rem)] self-start overflow-auto border-l pl-4 text-sm leading-snug text-muted-foreground lg:block" aria-label="목차" data-pagefind-ignore><strong class="text-foreground">목차</strong><ol class="mt-3 grid list-none gap-2 p-0"><li><a class="no-underline hover:text-primary-accent" href="#full-table-scan">Full Table Scan</a></li><li class="pl-3"><a class="no-underline hover:text-primary-accent" href="#예시">예시</a></li><li><a class="no-underline hover:text-primary-accent" href="#b-tree">B-Tree</a></li><li class="pl-3"><a class="no-underline hover:text-primary-accent" href="#기본-개념">기본 개념</a></li><li class="pl-3"><a class="no-underline hover:text-primary-accent" href="#노드-구조">노드 구조</a></li><li class="pl-3"><a class="no-underline hover:text-primary-accent" href="#b-tree가-검색을-돕는-방식">B-Tree가 검색을 돕는 방식</a></li><li class="pl-3"><a class="no-underline hover:text-primary-accent" href="#검색-예시">검색 예시</a></li><li class="pl-3"><a class="no-underline hover:text-primary-accent" href="#더-많은-항목이-추가된-b-tree-11개-항목">더 많은 항목이 추가된 B-Tree (11개 항목)</a></li><li><a class="no-underline hover:text-primary-accent" href="#b-tree의-한계">B-Tree의 한계</a></li><li class="pl-3"><a class="no-underline hover:text-primary-accent" href="#범위-쿼리-예시-id-between-4-and-9">범위 쿼리 예시: ID BETWEEN 4 AND 9</a></li><li><a class="no-underline hover:text-primary-accent" href="#btree">B+Tree</a></li><li class="pl-3"><a class="no-underline hover:text-primary-accent" href="#핵심-특징">핵심 특징</a></li><li class="pl-3"><a class="no-underline hover:text-primary-accent" href="#btree-구조-차수-3">B+Tree 구조 (차수 3)</a></li><li class="pl-3"><a class="no-underline hover:text-primary-accent" href="#범위-쿼리-예시-id-between-4-and-9-1">범위 쿼리 예시: ID BETWEEN 4 AND 9</a></li><li><a class="no-underline hover:text-primary-accent" href="#btree--dbms-고려사항">B+Tree &amp; DBMS 고려사항</a></li><li class="pl-3"><a class="no-underline hover:text-primary-accent" href="#스토리지-구조">스토리지 구조</a></li><li><a class="no-underline hover:text-primary-accent" href="#btree-스토리지-비용-mysql-vs-postgres">B+Tree 스토리지 비용: MySQL vs Postgres</a></li><li class="pl-3"><a class="no-underline hover:text-primary-accent" href="#secondary-index의-value가-가리키는-대상">Secondary Index의 Value가 가리키는 대상</a></li><li class="pl-3"><a class="no-underline hover:text-primary-accent" href="#주요-차이점">주요 차이점</a></li><li><a class="no-underline hover:text-primary-accent" href="#summary">Summary</a></li></ol></aside></div><script type="module" src="/playground/_astro/Mermaid.astro_astro_type_script_index_0_lang.CnMy96kI.js"></script></main><footer class="mt-20 border-t bg-muted text-muted-foreground" data-pagefind-ignore><div class="mx-auto flex min-h-28 w-[min(calc(100%-2rem),76rem)] flex-col items-start justify-center gap-3 sm:flex-row sm:items-center sm:justify-between"><p>배운 것을 설명하며 더 단단하게 이해합니다.</p><nav class="flex gap-4 text-sm" aria-label="푸터 탐색"><a class="hover:text-primary-accent" href="/playground/rss.xml">RSS</a><a class="hover:text-primary-accent" href="/playground/sitemap/">Sitemap</a><a class="hover:text-primary-accent" href="https://github.com/kim-hyunjin" rel="me">GitHub</a></nav></div></footer></body></html><script type="module">for(let e of document.querySelectorAll(`.blog-prose pre:not(.mermaid)`)){let t=document.createElement(`button`);t.className=`copy-code`,t.type=`button`,t.textContent=`복사`,t.addEventListener(`click`,async()=>{let n=e.querySelector(`code`)?.textContent??``;await navigator.clipboard.writeText(n),t.textContent=`복사됨`,window.setTimeout(()=>t.textContent=`복사`,1400)}),e.append(t)}</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>항목</th><th>B-Tree</th><th>B+Tree</th></tr></thead><tbody><tr><td>내부 노드 저장 내용</td><td>key + value</td><td><strong>key(구분자)만</strong></td></tr><tr><td>value 위치</td><td>모든 노드</td><td><strong>리프 노드에만</strong></td></tr><tr><td>키 중복</td><td>없음</td><td>구분자 키가 리프에 다시 등장</td></tr><tr><td>리프 연결</td><td>없음</td><td><strong>양방향 링크드 리스트</strong></td></tr><tr><td>fanout</td><td>상대적으로 작음</td><td><strong>큼 (내부 노드가 작아서)</strong></td></tr><tr><td>트리 높이</td><td>상대적으로 높음</td><td><strong>낮음</strong></td></tr><tr><td>점 조회</td><td>운이 좋으면 내부 노드에서 조기 종료</td><td>항상 리프까지 내려감 (예측 가능)</td></tr><tr><td>범위 쿼리 / ORDER BY</td><td>느림 (값마다 루트부터 재탐색)</td><td><strong>빠름 (리프 링크로 이동, <code>높이 + N</code>)</strong></td></tr><tr><td>내부 노드 캐싱</td><td>불리 (크기가 큼)</td><td><strong>유리 (전체 인덱스의 1% 미만)</strong></td></tr><tr><td>DBMS 채택</td><td>거의 없음</td><td><strong>대부분의 RDBMS</strong></td></tr></tbody></table>
+<p>핵심을 한 줄로 줄이면 이렇다.</p>
+<blockquote>
+<p><strong>B+Tree는 “탐색에 필요한 것(키)“과 “결과에 필요한 것(값)“을 분리해서,
+상위 레벨은 메모리에 올리고 리프 레벨은 정렬된 연결 리스트로 만든 구조다.</strong></p>
+</blockquote>
+<hr>
+<h2 id="함께-보기">함께 보기<a class="heading-anchor" aria-label="이 제목으로 연결" href="#함께-보기"></a></h2>
+<ul>
+<li><a href="../btree-index-design-practices.pub/">B+Tree 구조에서 끌어내는 인덱스 설계 원칙 5가지</a></li>
+<li><a href="../table-index-disk-storage.pub/">How Tables and Indexes Are Stored on Disk</a></li>
+<li><a href="../why-database-reads-pages.pub/">데이터베이스 강의 노트: 인덱스와 데이터 저장 구조의 이해</a></li>
+<li><a href="../why-database-uses-full-table-scan.pub/">인덱스가 있는데 왜 전체 테이블 스캔을 하나요</a></li>
+<li><a href="../composite-index-efficient-query.pub/">복합인덱스 (Composite Indexes)</a></li>
+<li><a href="../identifier-index-and-index-only-scan.pub/">식별자와 비식별자 인덱싱, Index 스캔과 Index Only 스캔</a></li>
+</ul></div><footer class="mt-16"><div data-sw-separator role="separator" aria-orientation="horizontal" data-orientation="horizontal" class="bg-border shrink-0 h-[1px] w-full" data-slot="separator"></div><div class="mt-5 flex flex-wrap gap-2" aria-label="태그"><a data-sw-badge="true" class="inline-flex items-center gap-1.5 rounded-full font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 px-2.5 py-0.5 text-xs [&amp;_svg:not([class*='size-'])]:size-3 cursor-pointer hover:bg-primary/20 bg-primary/10 text-foreground focus-visible:ring-primary/50" href="/playground/tags/engineering/" data-slot="badge">#engineering</a><a data-sw-badge="true" class="inline-flex items-center gap-1.5 rounded-full font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 px-2.5 py-0.5 text-xs [&amp;_svg:not([class*='size-'])]:size-3 cursor-pointer hover:bg-primary/20 bg-primary/10 text-foreground focus-visible:ring-primary/50" href="/playground/tags/resources/" data-slot="badge">#resources</a><a data-sw-badge="true" class="inline-flex items-center gap-1.5 rounded-full font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 px-2.5 py-0.5 text-xs [&amp;_svg:not([class*='size-'])]:size-3 cursor-pointer hover:bg-primary/20 bg-primary/10 text-foreground focus-visible:ring-primary/50" href="/playground/tags/database/" data-slot="badge">#database</a><a data-sw-badge="true" class="inline-flex items-center gap-1.5 rounded-full font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 px-2.5 py-0.5 text-xs [&amp;_svg:not([class*='size-'])]:size-3 cursor-pointer hover:bg-primary/20 bg-primary/10 text-foreground focus-visible:ring-primary/50" href="/playground/tags/backend/" data-slot="badge">#backend</a><a data-sw-badge="true" class="inline-flex items-center gap-1.5 rounded-full font-medium whitespace-nowrap [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 transition-all outline-none focus-visible:ring-3 aria-invalid:border-error aria-invalid:focus-visible:ring-error/40 px-2.5 py-0.5 text-xs [&amp;_svg:not([class*='size-'])]:size-3 cursor-pointer hover:bg-primary/20 bg-primary/10 text-foreground focus-visible:ring-primary/50" href="/playground/tags/index-tag/" data-slot="badge">#index</a></div><nav class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2" aria-label="이전과 다음 글"><a class="group block no-underline" rel="prev" href="/playground/backend/database/indexes-storage/bloom-filter.pub/"><div data-sw-card class="bg-card text-card-foreground group/card ring-border flex flex-col gap-(--card-spacing) rounded-xl py-(--card-spacing) ring-1 has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl [--card-spacing:--spacing(5)] min-h-24 justify-center transition-colors group-hover:border-primary/35" data-size="md" data-slot="card"><div data-sw-card-content class="px-(--card-spacing)" data-slot="card-content"><small class="text-muted-foreground">이전 글</small><span class="mt-1 block group-hover:text-primary-accent">← Bloom Filters</span></div></div></a><a class="group block no-underline" rel="next" href="/playground/backend/database/fundamentals/webapp-security-performance-best-practices.pub/"><div data-sw-card class="bg-card text-card-foreground group/card ring-border flex flex-col gap-(--card-spacing) rounded-xl py-(--card-spacing) ring-1 has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl [--card-spacing:--spacing(5)] min-h-24 justify-center text-right transition-colors group-hover:border-primary/35" data-size="md" data-slot="card"><div data-sw-card-content class="px-(--card-spacing)" data-slot="card-content"><small class="text-muted-foreground">다음 글</small><span class="mt-1 block group-hover:text-primary-accent">웹앱에서 보안과 성능을 높이기 위한 best practice →</span></div></div></a></nav></footer></article><aside class="sticky top-24 hidden max-h-[calc(100vh-8rem)] self-start overflow-auto border-l pl-4 text-sm leading-snug text-muted-foreground lg:block" aria-label="목차" data-pagefind-ignore><strong class="text-foreground">목차</strong><ol class="mt-3 grid list-none gap-2 p-0"><li><a class="no-underline hover:text-primary-accent" href="#출발점-검색-공간을-줄여야-한다">출발점: 검색 공간을 줄여야 한다</a></li><li><a class="no-underline hover:text-primary-accent" href="#왜-이진-탐색-트리로는-안-되는가">왜 이진 탐색 트리로는 안 되는가</a></li><li><a class="no-underline hover:text-primary-accent" href="#b-tree의-구조">B-Tree의 구조</a></li><li class="pl-3"><a class="no-underline hover:text-primary-accent" href="#정의와-불변식">정의와 불변식</a></li><li class="pl-3"><a class="no-underline hover:text-primary-accent" href="#노드의-내용">노드의 내용</a></li><li class="pl-3"><a class="no-underline hover:text-primary-accent" href="#검색-과정">검색 과정</a></li><li class="pl-3"><a class="no-underline hover:text-primary-accent" href="#삽입과-분할">삽입과 분할</a></li><li><a class="no-underline hover:text-primary-accent" href="#fanout-이-모든-것을-결정하는-숫자">fanout: 이 모든 것을 결정하는 숫자</a></li><li><a class="no-underline hover:text-primary-accent" href="#b-tree의-두-가지-한계">B-Tree의 두 가지 한계</a></li><li class="pl-3"><a class="no-underline hover:text-primary-accent" href="#1-내부-노드가-value를-들고-있어-fanout을-낭비한다">1. 내부 노드가 value를 들고 있어 fanout을 낭비한다</a></li><li class="pl-3"><a class="no-underline hover:text-primary-accent" href="#2-범위-쿼리가-느리다">2. 범위 쿼리가 느리다</a></li><li><a class="no-underline hover:text-primary-accent" href="#btree-두-문제를-한-번에-해결하다">B+Tree: 두 문제를 한 번에 해결하다</a></li><li class="pl-3"><a class="no-underline hover:text-primary-accent" href="#효과-1-fanout이-커지고-트리가-낮아진다">효과 1: fanout이 커지고 트리가 낮아진다</a></li><li class="pl-3"><a class="no-underline hover:text-primary-accent" href="#효과-2-범위-쿼리가-순차-접근이-된다">효과 2: 범위 쿼리가 순차 접근이 된다</a></li><li class="pl-3"><a class="no-underline hover:text-primary-accent" href="#효과-3-리프-레벨만-훑으면-전체-스캔이-된다">효과 3: 리프 레벨만 훑으면 전체 스캔이 된다</a></li><li><a class="no-underline hover:text-primary-accent" href="#실제-dbms는-어떻게-구현하는가">실제 DBMS는 어떻게 구현하는가</a></li><li class="pl-3"><a class="no-underline hover:text-primary-accent" href="#용어에-대한-주의">용어에 대한 주의</a></li><li class="pl-3"><a class="no-underline hover:text-primary-accent" href="#mysql-innodb-클러스터드-인덱스">MySQL InnoDB: 클러스터드 인덱스</a></li><li class="pl-3"><a class="no-underline hover:text-primary-accent" href="#postgresql-힙--세컨더리-인덱스">PostgreSQL: 힙 + 세컨더리 인덱스</a></li><li><a class="no-underline hover:text-primary-accent" href="#btree의-대가">B+Tree의 대가</a></li><li><a class="no-underline hover:text-primary-accent" href="#실무로-옮기면">실무로 옮기면</a></li><li><a class="no-underline hover:text-primary-accent" href="#summary">Summary</a></li><li><a class="no-underline hover:text-primary-accent" href="#함께-보기">함께 보기</a></li></ol></aside></div><script type="module" src="/playground/_astro/Mermaid.astro_astro_type_script_index_0_lang.CnMy96kI.js"></script></main><footer class="mt-20 border-t bg-muted text-muted-foreground" data-pagefind-ignore><div class="mx-auto flex min-h-28 w-[min(calc(100%-2rem),76rem)] flex-col items-start justify-center gap-3 sm:flex-row sm:items-center sm:justify-between"><p>배운 것을 설명하며 더 단단하게 이해합니다.</p><nav class="flex gap-4 text-sm" aria-label="푸터 탐색"><a class="hover:text-primary-accent" href="/playground/rss.xml">RSS</a><a class="hover:text-primary-accent" href="/playground/sitemap/">Sitemap</a><a class="hover:text-primary-accent" href="https://github.com/kim-hyunjin" rel="me">GitHub</a></nav></div></footer></body></html><script type="module">for(let e of document.querySelectorAll(`.blog-prose pre:not(.mermaid)`)){let t=document.createElement(`button`);t.className=`copy-code`,t.type=`button`,t.textContent=`복사`,t.addEventListener(`click`,async()=>{let n=e.querySelector(`code`)?.textContent??``;await navigator.clipboard.writeText(n),t.textContent=`복사됨`,window.setTimeout(()=>t.textContent=`복사`,1400)}),e.append(t)}</script>
