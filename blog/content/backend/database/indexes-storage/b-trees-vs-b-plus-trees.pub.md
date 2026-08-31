@@ -578,130 +578,23 @@ ScyllaDB 등)를 쓴다. LSM은 쓰기를 메모리에 모아 순차적으로 fl
 
 ## 실무로 옮기면
 
-**랜덤 PK를 피하라.** `UUIDv4`를 PK로 쓰면 삽입 위치가 매번 무작위여서 클러스터드
-인덱스 전역에 페이지 분할이 발생하고, 작업 집합이 인덱스 전체로 퍼져 버퍼 풀 적중률도
-떨어진다. `AUTO_INCREMENT`/`BIGSERIAL`처럼 단조 증가하는 키는 삽입이 항상 트리의
-오른쪽 끝에서 일어나므로 분할이 그 지점에만 국한된다.
+지금까지 본 구조에서 인덱스 설계 원칙이 거의 기계적으로 따라 나온다.
 
-`UUIDv7`/`ULID`는 그 중간에 있다. **정렬이 보장되는 것은 상위 비트의 타임스탬프
-부분까지**이고, 같은 밀리초 안에서 생성된 값들은 하위 랜덤 비트로 순서가 갈린다.
-초당 수천 건이 들어오거나 여러 노드에서 동시에 생성하는 상황에서는 **나중에 만든 값이
-직전 값보다 작을 수 있어** 오른쪽 끝 삽입이 깨진다. 이를 보장하려면 같은 타임스탬프
-안에서 카운터를 증가시키는 **단조 증가(monotonic) 생성기**를 써야 한다
-(ULID 명세의 monotonic factory, UUIDv7의 counter 방식).
+- **랜덤 PK를 피하라.** 삽입 위치는 키 값이 결정한다. `UUIDv4`처럼 무작위인 키는
+  트리 전역에 페이지 분할을 일으키고 작업 집합을 인덱스 전체로 넓힌다
+- **인덱스 키를 작게 유지하라.** 키 크기가 fanout을 정하고, fanout이 트리 높이를
+  정한다. 긴 문자열에는 접두사 인덱스나 해시 컬럼을 쓴다
+- **복합 인덱스의 컬럼 순서가 곧 정렬 순서다.** `(a, b)` 리프는 `a`로 먼저 정렬되고
+  `a`가 같은 것끼리 `b`로 정렬된다. 그래서 `b` 단독 조건은 연속 구간이 아니다
+- **범위 조건 컬럼은 뒤로 보내라.** 범위 조건이 걸린 순간부터 뒤쪽 컬럼의 정렬이
+  깨져, 구간을 좁히지 못하고 읽은 뒤 버리는 필터가 된다
+- **커버링 인덱스를 활용하라.** 리프에 필요한 값이 다 있으면 InnoDB의 bookmark
+  lookup이나 PostgreSQL의 힙 접근이 통째로 사라진다
 
-그런 생성기를 쓰지 않더라도 UUIDv4에 비하면 삽입 지점이 최근 시간대의 좁은 구간으로
-모여 분할과 버퍼 풀 낭비가 크게 줄어든다. "완전한 append-only는 아니지만 국소적"
-정도로 이해하면 된다. 한편 InnoDB에서는 PK 크기가 모든 세컨더리 인덱스에 전파되므로,
-정렬 가능성과 별개로 `BINARY(16)` 저장 여부도 함께 챙겨야 한다.
+각 원칙의 근거와 예외, 그리고 접두사 인덱스의 N을 정하는 법이나 PostgreSQL `INCLUDE`
+절의 쓰임 같은 구체적인 적용 방법은 별도 글로 정리했다.
 
-**인덱스 키를 작게 유지하라.** 키가 작을수록 fanout이 크고 트리가 낮다. 그런데
-`VARCHAR(255)` URL이나 긴 경로 문자열처럼 키가 클 수밖에 없는 경우가 있다. 이때
-쓰는 두 가지 우회법이 **접두사 인덱스**와 **해시 컬럼**이다.
-
-**접두사 인덱스(prefix index)** 는 컬럼 값 전체가 아니라 **앞의 N글자만 인덱싱**한다.
-MySQL은 문법으로 지원한다.
-
-```sql
--- url 컬럼의 앞 30바이트만 인덱싱한다
-CREATE INDEX idx_url ON pages (url(30));
-```
-
-키가 255B에서 30B로 줄면 fanout이 몇 배로 늘고 인덱스 크기도 그만큼 작아진다.
-대신 잃는 것이 있다.
-
-- **커버링이 안 된다.** 인덱스에 값의 일부만 있으므로 원본 값이 필요하면 반드시
-  테이블로 돌아가야 한다
-- **정렬에 못 쓴다.** `ORDER BY url`을 인덱스 순서로 해결할 수 없다
-- **N을 잘못 잡으면 무의미하다.** 앞부분이 같은 값이 많으면(`https://example.com/...`
-  처럼 공통 접두사가 긴 경우) 카디널리티가 무너져 필터링이 안 된다. 원본 대비
-  선택도를 재서 N을 정해야 한다
-
-```sql
--- 전체 카디널리티에 얼마나 근접하는지 비교해 N을 고른다
-SELECT COUNT(DISTINCT url)     / COUNT(*) AS full,
-       COUNT(DISTINCT LEFT(url, 20)) / COUNT(*) AS p20,
-       COUNT(DISTINCT LEFT(url, 30)) / COUNT(*) AS p30
-FROM pages;
-```
-
-PostgreSQL에는 접두사 인덱스 문법이 없지만 **표현식 인덱스**로 같은 일을 한다.
-단, 쿼리도 같은 표현식을 써야 인덱스가 쓰인다.
-
-```sql
-CREATE INDEX idx_url_prefix ON pages ((left(url, 30)));
-SELECT * FROM pages WHERE left(url, 30) = left($1, 30) AND url = $1;
-```
-
-**해시 컬럼**은 긴 값의 **해시를 별도 컬럼에 저장하고 그 컬럼을 인덱싱**하는
-방법이다. 255B 문자열 대신 8B 정수를 인덱싱하게 된다.
-
-```sql
-ALTER TABLE pages ADD COLUMN url_hash BIGINT;   -- 예: CRC32/xxHash 결과
-CREATE INDEX idx_url_hash ON pages (url_hash);
-
--- 조회 시에는 해시와 원본을 함께 건다
-SELECT * FROM pages WHERE url_hash = CRC32($1) AND url = $1;
-```
-
-`url` 조건을 함께 거는 것이 중요하다. 해시는 **충돌**할 수 있어서, 해시만으로
-필터링하면 다른 URL이 섞여 들어온다. 해시로 후보를 좁히고 원본 비교로 확정하는
-구조다. 대신 제약이 분명하다.
-
-- **등치 비교 전용이다.** 해시는 순서를 보존하지 않으므로 범위 조회, `LIKE 'prefix%'`,
-  `ORDER BY`에 전혀 쓸 수 없다
-- **컬럼과 인덱스를 추가로 유지해야 한다.** 트리거나 생성 컬럼
-  (MySQL의 `GENERATED`, PostgreSQL의 `GENERATED ALWAYS AS ... STORED`)으로
-  자동 갱신하는 편이 안전하다
-
-PostgreSQL이라면 별도 컬럼 없이 **해시 인덱스**(`USING hash`)나 `md5(url)` 표현식
-인덱스로 대신할 수도 있다. 해시 인덱스 역시 `=`만 지원하고 정렬·유니크 제약에는
-쓸 수 없다는 점은 같다.
-
-정리하면 **접두사 인덱스는 범위·정렬을 일부 살리면서 크기를 줄이는 쪽,
-해시 컬럼은 정확한 등치 조회에 몰아주고 크기를 극단적으로 줄이는 쪽**이다.
-
-**복합 인덱스의 컬럼 순서가 곧 정렬 순서다.** B+Tree 리프는 인덱스 정의 순서대로
-정렬되어 있으므로, `(a, b)` 인덱스는 `a` 또는 `a, b` 조건에는 그대로 쓰이지만
-`b` 단독 조건에는 리프의 정렬 순서를 활용할 수 없어 기본적으로 쓰이지 못한다.
-
-다만 이제는 절대적인 규칙이 아니다. **선행 컬럼의 고유값이 아주 적을 때**는 옵티마이저가
-선행 컬럼 값 하나하나에 대해 `b` 구간을 반복 탐색하는 **skip scan**을 고를 수 있다
-(MySQL 8.0.13+의 index skip scan, PostgreSQL 18+의 B-tree skip scan). 어디까지나
-비용 기반 선택이고 선행 컬럼의 카디널리티가 조금만 높아져도 무너지므로, **설계는
-여전히 선행 컬럼 기준으로 하고 skip scan은 안전망 정도로 보는 것**이 맞다.
-
-**범위 조건 컬럼은 뒤로 보내라.** 리프 체인을 순차적으로 훑는 구조 때문에, 등치
-조건을 앞에, 범위 조건을 뒤에 두어야 스캔 구간이 좁아진다.
-
-**커버링 인덱스를 활용하라.** 쿼리가 필요로 하는 컬럼이 인덱스 안에 모두 있으면
-InnoDB의 bookmark lookup이나 PostgreSQL의 힙 접근을 없앨 수 있다.
-
-PostgreSQL에는 이를 위한 `INCLUDE` 절이 있다. `INCLUDE`로 지정한 컬럼은 **리프
-페이지에만 payload로 얹히고, 내부 노드의 구분자 키에는 들어가지 않는다.**
-
-```sql
--- 두 방식 모두 이 쿼리를 커버한다
---   SELECT name FROM users WHERE email = ?;
-CREATE INDEX ON users (email, name);            -- name도 키의 일부
-CREATE INDEX ON users (email) INCLUDE (name);   -- name은 리프에만
-```
-
-차이는 세 가지다.
-
-- **fanout이 유지된다.** `name`이 내부 노드에 들어가지 않으므로 구분자 키가 작게
-  유지되고, 트리 높이가 올라가지 않는다. 앞의 fanout 계산이 그대로 적용되는 이유다
-- **정렬·탐색에는 쓰이지 않는다.** `ORDER BY email, name`이나 `name` 조건 탐색에는
-  도움이 되지 않는다. 오직 힙 접근을 줄이는 용도다
-- **`UNIQUE` 제약과 함께 쓸 수 있다.** `UNIQUE (email) INCLUDE (name)`은 `email`에만
-  유일성을 걸면서 `name`을 함께 담는다. `(email, name)` 복합 인덱스로는 불가능하다
-
-즉 **정렬이나 조건 탐색에 필요한 컬럼은 키로, 결과를 만들기 위해서만 필요한 컬럼은
-`INCLUDE`로** 두는 것이 원칙이다. (InnoDB에는 `INCLUDE`가 없으므로 복합 인덱스의
-뒤쪽 컬럼으로 같은 효과를 낸다. 대신 그만큼 키가 커진다.)
-
-단, PostgreSQL에서는 커버링 인덱스를 만들어도 **VM이 서 있어야 실제로 힙 접근이
-사라진다는 점**을 잊으면 안 된다(앞의 visibility map 참고).
+> **→ [B+Tree 구조에서 끌어내는 인덱스 설계 원칙 5가지](./btree-index-design-practices.pub.md)**
 
 ---
 
@@ -729,6 +622,7 @@ CREATE INDEX ON users (email) INCLUDE (name);   -- name은 리프에만
 
 ## 함께 보기
 
+- [B+Tree 구조에서 끌어내는 인덱스 설계 원칙 5가지](./btree-index-design-practices.pub.md)
 - [How Tables and Indexes Are Stored on Disk](./table-index-disk-storage.pub.md)
 - [데이터베이스 강의 노트: 인덱스와 데이터 저장 구조의 이해](./why-database-reads-pages.pub.md)
 - [인덱스가 있는데 왜 전체 테이블 스캔을 하나요](./why-database-uses-full-table-scan.pub.md)
