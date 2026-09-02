@@ -17,7 +17,6 @@ export interface TopicBreadcrumb {
 }
 
 const TOPIC_LABELS: Record<string, string> = {
-  ai: 'AI',
   algorithms: 'Algorithms',
   backend: 'Backend',
   blockchain: 'Blockchain',
@@ -26,8 +25,6 @@ const TOPIC_LABELS: Record<string, string> = {
   language: 'Language',
   mobile: 'Mobile',
   security: 'Security',
-  'ai/deeplearning-from-scratch': 'Deep Learning from Scratch',
-  'ai/deeplearning-master': 'Deep Learning Master',
   'backend/backend-engineering': 'Backend Engineering',
   'backend/backend-engineering/asynchronous-processing': 'Asynchronous Processing',
   'backend/backend-engineering/communications': 'Communications',
@@ -52,7 +49,6 @@ const TOPIC_LABELS: Record<string, string> = {
 };
 
 const TOPIC_ORDER = [
-  'ai',
   'algorithms',
   'backend',
   'blockchain',
