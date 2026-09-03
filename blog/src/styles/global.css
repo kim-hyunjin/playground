@@ -156,6 +156,18 @@ a {
   color: #141413;
 }
 
+/* KaTeX 수식은 본문 글꼴 크기를 따르고, 긴 블록 수식은 가로 스크롤한다. */
+.blog-prose .katex {
+  font-size: 1.05em;
+}
+
+.blog-prose .katex-display {
+  margin-block: var(--prose-spacing, 1.15em);
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-block: 0.25em;
+}
+
 @media (max-width: 44rem) {
   .blog-prose {
     font-size: 1rem;
