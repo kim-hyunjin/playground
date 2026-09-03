@@ -15,6 +15,7 @@ import {
 import { Prose } from '../components/starwind/prose';
 import { Separator } from '../components/starwind/separator';
 import { entryTopicBreadcrumbs, entryUrl, tagUrl } from '../lib/content';
+import { containsMath } from '../lib/math';
 
 interface Props {
   entry: BlogEntry;
@@ -27,6 +28,8 @@ interface Props {
 const { entry, entries, headings, previous, next } = Astro.props;
 const toc = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
 const topicBreadcrumbs = entryTopicBreadcrumbs(entry);
+// KaTeX CSS is only needed on the few posts that actually contain math.
+const hasMath = containsMath(entry.body ?? '');
 ---
 
 <BaseLayout
@@ -35,6 +38,7 @@ const topicBreadcrumbs = entryTopicBreadcrumbs(entry);
   entries={entries}
   canonical={entry.data.canonical}
   type="article"
+  math={hasMath}
 >
   <div class="mx-auto grid w-[min(calc(100%-2rem),77rem)] grid-cols-1 justify-center gap-16 lg:grid-cols-[minmax(0,48rem)_15rem]">
     <article class="min-w-0 pt-10 lg:pt-16">

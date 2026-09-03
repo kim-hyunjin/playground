@@ -17,6 +17,7 @@ import {
   addCodeLanguageLabel,
   codeLanguageLabel,
 } from '../src/lib/code-language-label.ts';
+import { containsMath } from '../src/lib/math.ts';
 import { transformCjkStrong } from '../src/lib/remark-cjk-strong.ts';
 import { joinBase, slugifySegment } from '../src/lib/url';
 
@@ -231,5 +232,19 @@ describe('Markdown rendering', () => {
       },
       { type: 'text', value: '을 뜻합니다.' },
     ]);
+  });
+});
+
+describe('LaTeX 수식 감지', () => {
+  it('본문 문장 안의 인라인 수식과 블록 수식을 찾는다', () => {
+    expect(containsMath('독립 변수 $x$를 사용합니다.')).toBe(true);
+    expect(containsMath('- **수식:** $f(x) = \\frac{1}{1 + e^{-x}}$')).toBe(true);
+    expect(containsMath('$$\n\\sum_{i=1}^{n} i\n$$')).toBe(true);
+  });
+
+  it('코드 블록과 인라인 코드 안의 달러 기호는 수식으로 보지 않는다', () => {
+    expect(containsMath('```sql\nWHERE (created_at, id) < ($1, $2)\n```')).toBe(false);
+    expect(containsMath('셸에서는 `"$BASE/api/posts/$ID"` 처럼 씁니다.')).toBe(false);
+    expect(containsMath('가격은 $100 입니다.')).toBe(false);
   });
 });
