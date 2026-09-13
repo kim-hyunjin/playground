@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class MenuItem(BaseModel):
     id: int
     name: str
@@ -7,6 +8,7 @@ class MenuItem(BaseModel):
     description: str
     price: float
     available: bool
+
 
 class MenuResponse(BaseModel):
     status: str = "success"

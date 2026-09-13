@@ -1,6 +1,5 @@
-from fastapi import FastAPI
-from fastapi import Request
 import uvicorn
+from fastapi import FastAPI, Request
 
 """
 Lifecycle of a FastAPI application:
@@ -32,20 +31,21 @@ async def vs def:
 app = FastAPI(
     title="Swiggy Order Service",
     description=(
-        "Internal API for managing orders"
-        "Handle creation, tracking of delivery systems"
+        "Internal API for managing orders, Handle creation, tracking of delivery systems"
     ),
     version="1.0.0",
-    docs_url="/docs", # swagger UI
+    docs_url="/docs",  # swagger UI
     redoc_url="/redoc",
-    openapi_url="/openapi.json"
+    openapi_url="/openapi.json",
 )
+
 
 @app.get("/")
 def read_root():
     """Root endpoint - Health check"""
     # FastAPI converts this dict into JSON
     return {"message": "Welcome to Swiggy Order Service!", "status": "healthy"}
+
 
 @app.get("/about")
 def about():
@@ -54,8 +54,9 @@ def about():
         "service": "order-service",
         "team": "backend platform",
         "region": "ap-south-1",
-        "version": "1.0.0"
+        "version": "1.0.0",
     }
+
 
 @app.get("/orders")
 def list_orders():
@@ -64,18 +65,16 @@ def list_orders():
         "orders": [
             {"id": 1, "item": "Pizza", "status": "delivered"},
             {"id": 2, "item": "Burger", "status": "in transit"},
-            {"id": 3, "item": "Sushi", "status": "preparing"}
+            {"id": 3, "item": "Sushi", "status": "preparing"},
         ]
     }
+
 
 @app.get("/orders/status")
 def order_status():
     """Get order status"""
-    return {
-        "total_today": 2_234_23,
-        "top_city": "Bangalore",
-        "top_item": "Pizza"
-    }
+    return {"total_today": 2_234_23, "top_city": "Bangalore", "top_item": "Pizza"}
+
 
 @app.get("/debug/request-info")
 async def request_info(request: Request):
@@ -86,28 +85,29 @@ async def request_info(request: Request):
         "headers": dict(request.headers),
         "path_params": request.path_params,
         "query_params": dict(request.query_params),
-        "client": request.client.host if request.client else None
+        "client": request.client.host if request.client else None,
     }
+
 
 @app.get(
     "/orders/active",
     summary="Get active orders",
     description=(
-        "Returns all orders that are currently being prepared"
-        " or are out for delivery"
+        "Returns all orders that are currently being prepared or are out for delivery"
     ),
     tags=["orders"],
     response_description="List of active orders",
-    deprecated=False
+    deprecated=False,
 )
 def get_active_orders():
     """Get all active orders"""
     return {
         "active_orders": [
             {"id": 1, "item": "Pizza", "status": "preparing"},
-            {"id": 2, "item": "Burger", "status": "out for delivery"}
+            {"id": 2, "item": "Burger", "status": "out for delivery"},
         ]
     }
+
 
 @app.get("/restaurants", tags=["restaurants"])
 def list_restaurants():
@@ -116,9 +116,10 @@ def list_restaurants():
         "restaurants": [
             {"id": 1, "name": "Pizza Hut", "rating": 4.5},
             {"id": 2, "name": "Burger King", "rating": 4.0},
-            {"id": 3, "name": "Sushi Express", "rating": 4.8}
+            {"id": 3, "name": "Sushi Express", "rating": 4.8},
         ]
     }
+
 
 if __name__ == "__main__":
     uvicorn.run("01-fastapi-foundation:app", host="0.0.0.0", port=8000, reload=True)
