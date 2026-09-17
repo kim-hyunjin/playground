@@ -1,5 +1,6 @@
 from database import init_db
 from fastapi import FastAPI
+from routes.analysis import router as analysis_router
 from routes.contracts import router as contracts_router
 
 app = FastAPI(
@@ -9,6 +10,7 @@ app = FastAPI(
 )
 
 app.include_router(contracts_router)
+app.include_router(analysis_router)
 
 
 @app.on_event("startup")
