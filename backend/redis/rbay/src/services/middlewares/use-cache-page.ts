@@ -24,7 +24,7 @@ export const useCachePage: Handle = async ({ event, resolve }) => {
 
 	const resCache = res.clone();
 	const body = await streamToString(resCache.body);
-	await setCachedPage(event.url.pathname, body);
+	setCachedPage(event.url.pathname, body);
 
 	return res;
 };
