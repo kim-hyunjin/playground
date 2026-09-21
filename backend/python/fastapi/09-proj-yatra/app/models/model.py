@@ -25,3 +25,19 @@ class WeatherForecast(BaseModel):
     latitude: float
     longitude: float
     daily: list[DailyForecast]
+
+
+class ExchangeRate(BaseModel):
+    base_currency: str
+    target_currency: str
+    rate: float
+    date: date
+
+
+class PlaceOfInterest(BaseModel):
+    name: str
+    description: str
+    category: str
+    rating: float
+    estimated_time_hours: float
+    entry_fee: float | None = None

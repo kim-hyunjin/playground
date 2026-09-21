@@ -1,5 +1,9 @@
+import asyncio
+
 from fastapi import APIRouter, HTTPException
 from models.model import TravelRequest
+from services.currency import get_exchange_rate_for_destination
+from services.places import fetch_places
 from services.weather import get_weather_forecast
 
 router = APIRouter(
@@ -29,11 +33,15 @@ async def create_travel_plan(request: TravelRequest):
 
     # weather data, currency rate, places data fetched and aggregate
 
-    weather_forecast = await get_weather_forecast(
-        request.destination, request.start_date, request.end_date
+    weather_forecast, place_data, exchange_rate = await asyncio.gather(
+        get_weather_forecast(request.destination, request.start_date, request.end_date),
+        fetch_places(request.destination),
+        get_exchange_rate_for_destination(request.destination, request.base_currency),
     )
 
     return {
         "message": "Travel plan created successfully",
         "weather_forecast": weather_forecast,
+        "place_data": place_data,
+        "exchange_rate": exchange_rate,
     }
