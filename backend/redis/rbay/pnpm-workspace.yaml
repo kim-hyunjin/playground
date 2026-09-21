@@ -2,4 +2,3 @@ allowBuilds:
   '@parcel/watcher': true
   core-js: true
   esbuild: true
-  svelte-preprocess: true

@@ -1,15 +1,15 @@
-/// <reference types="@sveltejs/kit" />
+// See https://svelte.dev/docs/kit/types#app.d.ts
+import type { Session } from '$services/types';
 
-declare namespace App {
-	type _Session = import('$services/types').Session;
-
-	interface Locals {
-		session: _Session;
+declare global {
+	namespace App {
+		interface Locals {
+			session: Session | null;
+		}
+		interface PageData {
+			session: Session | null;
+		}
 	}
-
-	interface Platform {}
-
-	interface Session extends _Session {}
-
-	interface Stuff {}
 }
+
+export {};

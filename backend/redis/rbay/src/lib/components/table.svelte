@@ -64,7 +64,7 @@
 					{#if (sort.sortBy === column.field || sort.sortBy === column.id) && sort.direction !== ''}
 						<Icon name={sort.direction === 'ASC' ? 'arrow_upward' : 'arrow_downward'} />
 					{:else}
-						<span style:display="inline-block" style:width="16px" />
+						<span style:display="inline-block" style:width="16px"></span>
 					{/if}
 				</th>
 			{/each}

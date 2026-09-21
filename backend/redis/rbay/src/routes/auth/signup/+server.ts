@@ -1,7 +1,8 @@
-import type { RequestHandler } from '@sveltejs/kit';
+import { json } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
 import { signup } from '$services/auth/auth';
 
-export const post: RequestHandler = async ({ request, locals }) => {
+export const POST: RequestHandler = async ({ request, locals }) => {
 	const { username, password } = await request.json();
 
 	const userId = await signup(username, password);
@@ -9,7 +10,5 @@ export const post: RequestHandler = async ({ request, locals }) => {
 	locals.session.userId = userId;
 	locals.session.username = username;
 
-	return {
-		status: 200
-	};
+	return json({});
 };

@@ -1,15 +1,13 @@
 <script>
 	import { post } from '$lib/fetch';
-	import { goto } from '$app/navigation';
-	import { session } from '$app/stores';
-	import { f } from '$lib/fetch';
+	import { goto, invalidateAll } from '$app/navigation';
+	import { page } from '$app/stores';
 	import Button from '$lib/components/button.svelte';
 	import Search from '$lib/components/search.svelte';
 
 	async function onClick() {
 		await post('/auth/signout');
-		const [data] = await f('/sessions');
-		session.set(data);
+		await invalidateAll();
 		goto('/');
 	}
 </script>
@@ -21,8 +19,8 @@
 		</a>
 		<Search />
 		<div class="flex items-center mr-8 hidden md:flex gap-4">
-			{#if $session && $session.userId}
-				<p>{$session.username}</p>
+			{#if $page.data.session && $page.data.session.userId}
+				<p>{$page.data.session.username}</p>
 				<a href="/dashboard/items/new"><Button>New</Button></a>
 				<a href="/dashboard/items"><Button>Dashboard</Button></a>
 				<Button role="secondary" on:click={onClick}>Logout</Button>

@@ -61,5 +61,5 @@
 			No Bids Yet
 		</div>
 	{/if}
-	<canvas bind:this={canvas} />
+	<canvas bind:this={canvas}></canvas>
 </div>

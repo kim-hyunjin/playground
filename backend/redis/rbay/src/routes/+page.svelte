@@ -1,16 +1,14 @@
 <script lang="ts">
-	import type { Item } from '$services/types';
+	import type { PageData } from './$types';
 	import Card from '$lib/components/card.svelte';
 	import Carousel from '$lib/components/carousel.svelte';
 
-	export let endingSoonest: Item[] = [];
-	export let mostViews: Item[] = [];
-	export let highestPrice: Item[] = [];
+	export let data: PageData;
 </script>
 
 <h1 class="text-3xl">Most Expensive</h1>
 <Carousel>
-	{#each highestPrice as item}
+	{#each data.highestPrice as item}
 		<div class="flex-1">
 			<Card {item} />
 		</div>
@@ -21,7 +19,7 @@
 
 <h1 class="text-3xl">Ending Soonest</h1>
 <Carousel>
-	{#each endingSoonest as item}
+	{#each data.endingSoonest as item}
 		<div class="flex-1">
 			<Card {item} />
 		</div>
@@ -32,7 +30,7 @@
 
 <h1 class="text-3xl">Most Views</h1>
 <Carousel>
-	{#each mostViews as item}
+	{#each data.mostViews as item}
 		<div class="flex-1">
 			<Card {item} showViews />
 		</div>

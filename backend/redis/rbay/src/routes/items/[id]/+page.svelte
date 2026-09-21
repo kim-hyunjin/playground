@@ -1,18 +1,23 @@
 <script lang="ts">
-	import type { Item } from '$services/types';
+	import type { PageData } from './$types';
 	import { DateTime } from 'luxon';
-	import { page, session } from '$app/stores';
-	import { post, del, get } from '$lib/fetch';
+	import { page } from '$app/stores';
+	import { invalidateAll } from '$app/navigation';
+	import { post, del } from '$lib/fetch';
 	import Chart from '$lib/components/chart.svelte';
 	import LikeButton from '$lib/components/like-button.svelte';
 	import Card from '$lib/components/card.svelte';
 	import Stat from '$lib/components/stat.svelte';
 
-	export let item: any = null;
-	export let userLikes: boolean = false;
-	export let history: { createdAt: string; amount: number }[] = [];
-	export let similarItems: Item[] = [];
-	export let userHasHighBid = false;
+	export let data: PageData;
+
+	let item: any = null;
+	let userLikes = false;
+	let history: any[] = [];
+	let similarItems: PageData['similarItems'] = [];
+	let userHasHighBid = false;
+
+	$: ({ item, userLikes, history, similarItems, userHasHighBid } = data);
 
 	let err = '';
 	let amount = '';
@@ -26,7 +31,7 @@
 			: DateTime.fromMillis(item.endingAt).toRelative().replace('in ', '');
 
 	async function onClickLike() {
-		if (!$session.userId) {
+		if (!$page.data.session?.userId) {
 			return;
 		}
 
@@ -56,9 +61,7 @@
 			return;
 		}
 
-		[{ item, userLikes, history, similarItems, userHasHighBid }] = await get(
-			`/items/${$page.params.id}`
-		);
+		await invalidateAll();
 		amount = '';
 		loading = false;
 		message = 'Success! You have the winning bid';
@@ -67,7 +70,7 @@
 
 {#if item}
 	<div>
-		<div class="flex justify-end mb-2" />
+		<div class="flex justify-end mb-2"></div>
 		<div class="flex gap-10">
 			<img alt="" class="w-1/3 p-3 border rounded" src={item.imageUrl} />
 			<div class="flex-1 flex flex-col gap-4">

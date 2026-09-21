@@ -2,10 +2,11 @@
 	import { DateTime } from 'luxon';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { browser } from '$app/env';
+	import { browser } from '$app/environment';
 	import ItemBadge from '$lib/components/item-badge.svelte';
 	import Table from '$lib/components/table.svelte';
 	import Link from '$lib/components/link.svelte';
+	import type { PageData } from './$types';
 
 	interface ItemSummary {
 		id: string;
@@ -35,8 +36,10 @@
 		}
 	};
 
-	export let totalPages = 0;
-	export let items: ItemSummary[] = [];
+	export let data: PageData;
+
+	$: items = data.items as ItemSummary[];
+	$: totalPages = data.totalPages;
 	let err = '';
 	$: sort = {
 		page: parse($page.url.searchParams.get('page'), 0),
@@ -86,8 +89,8 @@
 		const params = new URLSearchParams({ ...sort, ...update } as any);
 		goto(`/dashboard/items?${params.toString()}`, {
 			replaceState: true,
-			noscroll: true,
-			keepfocus: true
+			noScroll: true,
+			keepFocus: true
 		});
 	}
 

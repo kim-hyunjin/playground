@@ -1,11 +1,8 @@
-import type { RequestHandler } from '@sveltejs/kit';
+import { json } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
 import { searchItems } from '$services/queries/items';
 
-interface Params {
-	id: string;
-}
-
-export const get: RequestHandler<Params, any> = async ({ url }) => {
+export const GET: RequestHandler = async ({ url }) => {
 	const term = url.searchParams.get('term');
 
 	const items = ((await searchItems(term, 5)) || []).map((item) => {
@@ -13,7 +10,5 @@ export const get: RequestHandler<Params, any> = async ({ url }) => {
 		return item;
 	});
 
-	return {
-		body: { results: items }
-	};
+	return json({ results: items });
 };

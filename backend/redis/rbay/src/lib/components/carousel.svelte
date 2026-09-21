@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { tweened } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
-	import { browser } from '$app/env';
+	import { browser } from '$app/environment';
 	import Icon from '$lib/components/icon.svelte';
 
 	let container: HTMLDivElement = null;

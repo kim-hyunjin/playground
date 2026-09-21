@@ -13,6 +13,6 @@
 		class:bg-gray-300={role === 'secondary'}
 		class:bg-red-300={role === 'danger'}
 		class="absolute inset-0 opacity-50 rounded-full"
-	/>
+	></span>
 	<span class="relative"> <slot /> </span>
 </span>

@@ -1,7 +1,16 @@
-import type { RequestHandler } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
 import { itemsByUser } from '$services/queries/items';
 
-export const get: RequestHandler<any, any> = async ({ url, locals }) => {
+const parse = (val: string, def: number) => {
+	const parsed = parseInt(val);
+	if (isNaN(parsed)) {
+		return def;
+	} else {
+		return parsed;
+	}
+};
+
+export const load: PageServerLoad = async ({ url, locals }) => {
 	const sort = {
 		page: parse(url.searchParams.get('page'), 0),
 		perPage: parse(url.searchParams.get('perPage'), 10),
@@ -12,16 +21,5 @@ export const get: RequestHandler<any, any> = async ({ url, locals }) => {
 
 	const { items, totalPages } = await itemsByUser(locals.session.userId, sort);
 
-	return {
-		body: { items, totalPages }
-	};
-};
-
-const parse = (val: string, def: number) => {
-	const parsed = parseInt(val);
-	if (isNaN(parsed)) {
-		return def;
-	} else {
-		return parsed;
-	}
+	return { items, totalPages };
 };

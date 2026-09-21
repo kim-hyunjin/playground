@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { post, f } from '$lib/fetch';
-	import { session } from '$app/stores';
+	import { goto, invalidateAll } from '$app/navigation';
+	import { post } from '$lib/fetch';
 
 	let username = '';
 	let password = '';
@@ -9,15 +8,13 @@
 
 	async function onSubmit() {
 		let _data: any;
-		[_data, err] = await post('/auth/signin', { username, password });
+		[_data, err] = await post('/auth/signup', { username, password });
 
 		if (err) {
 			return;
 		}
 
-		const [data] = await f('/sessions');
-		session.set(data);
-
+		await invalidateAll();
 		goto('/dashboard/items');
 	}
 </script>
@@ -26,13 +23,13 @@
 	class="flex flex-col mx-auto items-center max-w-md px-4 py-8 bg-white rounded-lg shadow dark:bg-gray-800 sm:px-6 md:px-8 lg:px-10"
 >
 	<div class="self-center mb-2 text-xl font-light text-gray-800 sm:text-2xl dark:text-white">
-		Sign In
+		Create a new account
 	</div>
 	<span
 		class="justify-center text-sm text-center text-gray-500 flex-items-center dark:text-gray-400"
 	>
-		Don't have an account ?
-		<a href="/auth/signup" class="text-sm text-blue-500 underline hover:text-blue-700"> Sign up </a>
+		Already have an account ?
+		<a href="/auth/signin" class="text-sm text-blue-500 underline hover:text-blue-700"> Sign in </a>
 	</span>
 	<div class="p-6 mt-8">
 		<form on:submit|preventDefault={onSubmit}>
@@ -71,7 +68,7 @@
 					type="submit"
 					class="py-2 px-4 bg-purple-600 hover:bg-purple-700 focus:ring-purple-500 focus:ring-offset-purple-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg "
 				>
-					Sign In
+					Sign Up
 				</button>
 			</div>
 		</form>

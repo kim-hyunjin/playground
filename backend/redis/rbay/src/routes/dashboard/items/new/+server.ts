@@ -1,9 +1,10 @@
-import type { RequestHandler } from '@sveltejs/kit';
+import { json } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
 import { DateTime } from 'luxon';
 import { createItem } from '$services/queries/items/items';
 import { createImageUrl } from '$services/utils/image-url';
 
-export const post: RequestHandler = async ({ request, locals }) => {
+export const POST: RequestHandler = async ({ request, locals }) => {
 	const data = await request.json();
 
 	const id = await createItem(
@@ -24,10 +25,5 @@ export const post: RequestHandler = async ({ request, locals }) => {
 		locals.session.userId
 	);
 
-	return {
-		status: 200,
-		body: {
-			id
-		}
-	};
+	return json({ id });
 };

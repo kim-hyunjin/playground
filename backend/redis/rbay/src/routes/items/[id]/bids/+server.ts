@@ -1,24 +1,19 @@
-import type { RequestHandler } from '@sveltejs/kit';
+import { error, json } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
 import type { Item } from '$services/types';
 import { DateTime } from 'luxon';
 import { createBid } from '$services/queries/bids';
 import { getItem } from '$services/queries/items/items';
 
-export const post: RequestHandler<any> = async ({ request, params, locals }) => {
+export const POST: RequestHandler = async ({ request, params, locals }) => {
 	if (!locals.session.userId) {
-		return {
-			status: 401,
-			body: { message: 'You must login to do that' }
-		};
+		error(401, 'You must login to do that');
 	}
 
 	const item = (await getItem(params.id)) as any as Item;
 
 	if (!item) {
-		return {
-			status: 404,
-			body: { message: 'item not found' }
-		};
+		error(404, 'item not found');
 	}
 
 	const body = await request.json();
@@ -31,7 +26,5 @@ export const post: RequestHandler<any> = async ({ request, params, locals }) => 
 		itemEndingAt: item.endingAt
 	});
 
-	return {
-		status: 201
-	};
+	return json({}, { status: 201 });
 };
