@@ -43,3 +43,13 @@ class CropAnalysis(BaseModel):
     treatments: list[Treatment]
     overall_health: str
     additional_notes: str
+
+
+class BatchItemResult(BaseModel):
+    filename: str
+    analysis: CropAnalysis | None = None
+    error: str | None = None
+
+
+class BatchAnalysis(BaseModel):
+    results: list[BatchItemResult]
