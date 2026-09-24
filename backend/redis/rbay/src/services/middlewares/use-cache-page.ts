@@ -5,7 +5,13 @@ import { streamToString } from '$lib/util/stream-to-string';
 const cacheableRoutes = ['/about', '/privacy', '/auth/signin', '/auth/signup'];
 
 export const useCachePage: Handle = async ({ event, resolve }) => {
-	if (!cacheableRoutes.includes(event.url.pathname)) {
+	// Only cache plain page GETs. POSTs (e.g. /auth/signup) and SvelteKit data requests
+	// (__data.json, whose event.url is normalized to the page path) share the same pathname.
+	if (
+		event.request.method !== 'GET' ||
+		event.isDataRequest ||
+		!cacheableRoutes.includes(event.url.pathname)
+	) {
 		return resolve(event);
 	}
 
