@@ -1,7 +1,7 @@
 import type { CreateUserAttrs } from '$services/types';
 import { genId } from '$services/utils';
 import { client } from '$services/redis';
-import { usersKey } from '$services/keys';
+import { usersKey, usernamesUniqueKey } from '$services/keys';
 
 export const getUserByUsername = async (username: string) => {};
 
@@ -10,9 +10,15 @@ export const getUserById = async (id: string) => {
 	return deserialize(id, user);
 };
 
+// TODO: 동시성 문제 있음 - 추후에 해결예정
 export const createUser = async (attrs: CreateUserAttrs) => {
+	const exists = await client.sIsMember(usernamesUniqueKey(), attrs.username);
+	if (exists) throw new Error('Username already exists');
+
 	const id = genId();
+
 	await client.hSet(usersKey(id), serialize(attrs));
+	await client.sAdd(usernamesUniqueKey(), attrs.username);
 	return id;
 };
 
