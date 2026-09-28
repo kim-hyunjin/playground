@@ -2,7 +2,7 @@ import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { getItem, getSimilarItems } from '$services/queries/items';
 import { incrementView } from '$services/queries/views';
-import { userLikesItem } from '$services/queries/likes';
+import { isUserLikesItem } from '$services/queries/likes';
 import { getBidHistory } from '$services/queries/bids';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
@@ -13,7 +13,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 	}
 
 	await incrementView(item.id, locals.session.userId);
-	const userLikes = await userLikesItem(item.id, locals.session.userId);
+	const userLikes = await isUserLikesItem(item.id, locals.session.userId);
 	const history = await getBidHistory(item.id);
 	const similarItems = ((await getSimilarItems(item.id)) as any) || [];
 
